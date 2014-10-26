@@ -2,8 +2,6 @@ package tud.seemuh.nfcgate;
 
 import android.app.Activity;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
@@ -14,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 
 public class MainActivity extends Activity {
@@ -23,6 +22,20 @@ public class MainActivity extends Activity {
     private PendingIntent mPendingIntent;
     private IntentFilter[] mFilters;
     private String[][] mTechLists;
+
+    private IsoDep mSavedTag;
+
+    final private static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +71,16 @@ public class MainActivity extends Activity {
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())) {
             Log.i("NFCGATE_DEBUG","Discovered tag with intent: " + intent);
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-            Log.i("NFCGATE_DEBUG", tag.toString());
 
             //Ab hier koennte man schon mit dem Tag arbeiten!!!
+            mSavedTag = IsoDep.get(tag);
+
+            String tagId = bytesToHex(IsoDep.get(tag).getTag().getId());
+            Log.i("NFCGATE_DEBUG", "Found Tag with ID: " + tagId);
+
+            TextView view = (TextView) findViewById(R.id.hello);
+            view.setText("Found Tag: " + tagId);
+
         }
     }
 
