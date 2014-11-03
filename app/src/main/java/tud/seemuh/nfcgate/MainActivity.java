@@ -23,8 +23,8 @@ import tud.seemuh.nfcgate.network.WiFiDirectBroadcastReceiver;
 public class MainActivity extends Activity {
 
     private NfcAdapter mAdapter;
-    //private IntentFilter mIntentFilter = new IntentFilter();
-    private IntentFilter mIntentFilter;
+    private IntentFilter mIntentFilter = new IntentFilter();
+    //private IntentFilter mIntentFilter;
     private PendingIntent mPendingIntent;
     private IntentFilter[] mFilters;
     private String[][] mTechLists;
@@ -33,8 +33,6 @@ public class MainActivity extends Activity {
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
     private BroadcastReceiver mReceiver = null;
-
-    private IsoDep mSavedTag;
 
     final private static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
@@ -126,10 +124,25 @@ public class MainActivity extends Activity {
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
             //Ab hier koennte man schon mit dem Tag arbeiten!!!
-            mSavedTag = IsoDep.get(tag);
+            boolean found_supported_tag = false;
+            String tagId = "";
 
-            String tagId = bytesToHex(IsoDep.get(tag).getTag().getId());
-            Log.i("NFCGATE_DEBUG", "Found Tag with ID: " + tagId);
+            for(String type: tag.getTechList()) {
+                Log.i("NFCGATE_DEBUG", "Tag TechList: " + type);
+                if("android.nfc.tech.IsoDep".equals(type)) {
+                    tagId = bytesToHex(IsoDep.get(tag).getTag().getId());
+                    found_supported_tag = true;
+                    Log.i("NFCGATE_DEBUG", "Found Tag with ID: " + tagId);
+                } else if("android.nfc.tech.NfcA".equals(type)) {
+                    tagId = bytesToHex(NfcA.get(tag).getTag().getId());
+                    found_supported_tag = true;
+                    Log.i("NFCGATE_DEBUG", "Found Tag with ID: " + tagId);
+                }
+            }
+
+            if(!found_supported_tag) {
+                tagId = "Not supported";
+            }
 
             TextView view = (TextView) findViewById(R.id.hello);
             view.setText("Found Tag: " + tagId);
