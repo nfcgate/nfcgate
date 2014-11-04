@@ -10,6 +10,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
+import android.nfc.tech.Ndef;
 import android.nfc.tech.NfcA;
 import android.os.Bundle;
 import android.util.Log;
@@ -72,11 +73,15 @@ public class MainActivity extends Activity {
         mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
                 getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
-        // Setup an intent filter for NFC
-        IntentFilter tech = new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED);
+        // Setup an foreground intent filter for NFC
+        IntentFilter tech = new IntentFilter();
+        tech.addAction(NfcAdapter.ACTION_TECH_DISCOVERED);
         mFilters = new IntentFilter[] { tech, };
-        mTechLists = new String[][] { new String[] { IsoDep.class.getName(),
-                NfcA.class.getName() } };
+        // this thing must have the same structure as in the tech.xml
+        mTechLists = new String[][] {
+                new String[] {NfcA.class.getName()},
+                new String[] {Ndef.class.getName()},
+                new String[] {IsoDep.class.getName()}};
 
         //WiFi Direct
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
@@ -113,6 +118,16 @@ public class MainActivity extends Activity {
     }
 
     /**
+     * Called when activity is paused
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+        //WiFi Direct
+        unregisterReceiver(mReceiver);
+    }
+
+    /**
      * called when app is already open and intent is fired
      * @param intent
      */
@@ -131,12 +146,22 @@ public class MainActivity extends Activity {
                 Log.i("NFCGATE_DEBUG", "Tag TechList: " + type);
                 if("android.nfc.tech.IsoDep".equals(type)) {
                     tagId = bytesToHex(IsoDep.get(tag).getTag().getId());
+                    tagId = "IsoDep: "+tagId;
                     found_supported_tag = true;
-                    Log.i("NFCGATE_DEBUG", "Found Tag with ID: " + tagId);
+                    Log.i("NFCGATE_DEBUG", "Found 'IsoDep' Tag with ID: " + tagId);
+                    break;
                 } else if("android.nfc.tech.NfcA".equals(type)) {
                     tagId = bytesToHex(NfcA.get(tag).getTag().getId());
+                    tagId = "NfcA: "+tagId;
                     found_supported_tag = true;
-                    Log.i("NFCGATE_DEBUG", "Found Tag with ID: " + tagId);
+                    Log.i("NFCGATE_DEBUG", "Found 'NfcA' Tag with ID: " + tagId);
+                    break;
+                } else if("android.nfc.tech.Ndef".equals(type)) {
+                    tagId = bytesToHex(Ndef.get(tag).getTag().getId());
+                    tagId = "Ndef: "+tagId;
+                    found_supported_tag = true;
+                    Log.i("NFCGATE_DEBUG", "Found 'Ndef' Tag with ID: " + tagId);
+                    break;
                 }
             }
 
@@ -149,6 +174,24 @@ public class MainActivity extends Activity {
 
         }
     }
+
+    /*
+    TODO
+    manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
+
+        @Override
+        public void onSuccess() {
+            Toast.makeText(WiFiDirectActivity.this, "Discovery Initiated",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onFailure(int reasonCode) {
+            Toast.makeText(WiFiDirectActivity.this, "Discovery Failed : " + reasonCode,
+                    Toast.LENGTH_SHORT).show();
+        }
+    });
+     */
 
 
     @Override
