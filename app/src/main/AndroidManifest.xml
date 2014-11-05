@@ -4,7 +4,21 @@
 
     <uses-permission android:name="android.permission.NFC" />
 
-    <uses-sdk android:targetSdkVersion="19" />
+    <!-- < Wifi Direct > -->
+    <uses-permission
+        android:required="true"
+        android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission
+        android:required="true"
+        android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission
+        android:required="true"
+        android:name="android.permission.INTERNET"/>
+    <!-- < / Wifi Direct > -->
+
+    <uses-sdk
+        android:minSdkVersion="19"
+        android:targetSdkVersion="19" />
 
     <application
         android:allowBackup="true"
