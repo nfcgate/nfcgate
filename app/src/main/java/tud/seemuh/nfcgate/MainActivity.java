@@ -81,7 +81,9 @@ public class MainActivity extends Activity {
         mTechLists = new String[][] {
                 new String[] {NfcA.class.getName()},
                 new String[] {Ndef.class.getName()},
-                new String[] {IsoDep.class.getName()}};
+                new String[] {IsoDep.class.getName()}
+                //we could add all of the Types from the tech.xml here
+        };
 
         //WiFi Direct
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
