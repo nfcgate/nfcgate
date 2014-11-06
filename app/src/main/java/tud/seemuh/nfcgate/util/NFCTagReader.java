@@ -12,13 +12,11 @@ public interface NFCTagReader {
     public static final int READER_ISODEP            = 0;
     public static final int READER_MIFARE_CLASSIC    = 1;
     public static final int READER_MIFARE_ULTRALIGHT = 2;
-    public static final int READER_NDEF              = 3;
-    public static final int READER_NDEF_FORMATABLE   = 4;
-    public static final int READER_NFC_A             = 5;
-    public static final int READER_NFC_B             = 6;
-    public static final int READER_NFC_BARCODE       = 7;
-    public static final int READER_NFC_F             = 8;
-    public static final int READER_NFC_V             = 9;
+    public static final int READER_NFC_A             = 3;
+    public static final int READER_NFC_B             = 4;
+    public static final int READER_NFC_BARCODE       = 5;
+    public static final int READER_NFC_F             = 6;
+    public static final int READER_NFC_V             = 7;
 
     /**
      * Send a raw command to the NFC chip, receiving the answer as a byte[]
