@@ -1,7 +1,7 @@
 package tud.seemuh.nfcgate.util.reader;
 
 import android.nfc.Tag;
-import android.nfc.tech.NfcA;
+import android.nfc.tech.IsoDep;
 import android.util.Log;
 
 import java.io.IOException;
@@ -13,16 +13,16 @@ import tud.seemuh.nfcgate.util.NFCTagReader;
  *
  * Created by Max on 27.10.14.
  */
-public class NfcAReader implements NFCTagReader {
-    private NfcA adapter = null;
+public class IsoDepReader implements NFCTagReader {
+    private IsoDep adapter = null;
 
     /**
      * Constructor of NfcAReader-Class, providing an NFC reader interface using the NfcA-Tech.
      *
      * @param tag: A tag using the NfcA technology.
      */
-    public NfcAReader(Tag tag) {
-        adapter = NfcA.get(tag);
+    public IsoDepReader(Tag tag) {
+        adapter = IsoDep.get(tag);
     }
 
     /**
@@ -39,11 +39,11 @@ public class NfcAReader implements NFCTagReader {
             adapter.connect();
             byte[] retval = adapter.transceive(command);
             adapter.close();
-            Log.i("NFC_READER_NFCA", "Transceived succesfully, returned: " + retval.toString());
+            Log.i("NFC_READER_ISODEP", "Transceived succesfully, returned: " + retval.toString());
             return retval;
         } catch(IOException e) {
             // TODO: Handle Exception properly
-            Log.e("NFC_READER_NFCA", "Encountered IOException in sendCmd: " + e.toString());
+            Log.e("NFC_READER_ISODEP", "Encountered IOException in sendCmd: " + e.toString());
             return new byte[1];
         }
     }
@@ -55,7 +55,7 @@ public class NfcAReader implements NFCTagReader {
      * @return integer representation of the underlying NFC tag reader protocol
      */
     public int getProtocol() {
-        return READER_NFC_A;
+        return READER_ISODEP;
     }
 
 }
