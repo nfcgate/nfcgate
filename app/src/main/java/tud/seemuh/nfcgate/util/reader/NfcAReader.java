@@ -50,24 +50,6 @@ public class NfcAReader implements NFCTagReader {
     }
 
     /**
-     * Returns a HashTable containing meta-bytes. The exact bytes are protocol-specific.
-     * An exact list of which bytes will be returned will be added as soon as the functionality
-     * is finished.
-     *
-     * @return A Hashtable<String, byte[]> containing a mapping between the meta-byte names
-     *     and their values.
-     *
-     * TODO: Add list of provided bytes.
-     */
-    public Hashtable<String, byte[]> getMetaBytes() {
-        Hashtable<String, byte[]> retval = new Hashtable<String, byte[]>();
-        retval.put("Atqa", adapter.getAtqa());
-        // retval.put("Sak", adapter.getSak());
-        // TODO Add Sak bytes
-        return retval;
-    }
-
-    /**
      * Returns the integer representation of the protocol the used implementation is speaking.
      * This will be one of the READER_* constants defined by the util.NFCTagReader interface.
      *

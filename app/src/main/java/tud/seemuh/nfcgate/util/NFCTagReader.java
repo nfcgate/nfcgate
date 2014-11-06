@@ -30,18 +30,6 @@ public interface NFCTagReader {
     public byte[] sendCmd(byte[] command);
 
     /**
-     * Returns a HashTable containing meta-bytes. The exact bytes are protocol-specific.
-     * An exact list of which bytes will be returned will be added as soon as the functionality
-     * is finished.
-     *
-     * @return A Hashtable<String, byte[]> containing a mapping between the meta-byte names
-     *     and their values.
-     *
-     * TODO: Add list of provided bytes.
-     */
-    public Hashtable<String, byte[]> getMetaBytes();
-
-    /**
      * Returns the integer representation of the protocol the used implementation is speaking.
      * This will be one of the READER_* constants defined by the util.NFCTagReader interface.
      *
