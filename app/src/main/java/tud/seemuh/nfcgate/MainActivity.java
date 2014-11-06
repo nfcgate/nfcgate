@@ -16,8 +16,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
+import tud.seemuh.nfcgate.network.SimpleNetworkConnectionServer;
 import tud.seemuh.nfcgate.network.WiFiDirectBroadcastReceiver;
 
 
@@ -34,6 +36,9 @@ public class MainActivity extends Activity {
     private WifiP2pManager.Channel mChannel;
     private WifiP2pManager mManager;
     private BroadcastReceiver mReceiver = null;
+
+    //ConnectionServer
+    private SimpleNetworkConnectionServer mConnectionServer;
 
     final private static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
@@ -117,6 +122,22 @@ public class MainActivity extends Activity {
         //WiFi Direct
         mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
         registerReceiver(mReceiver, mIntentFilter);
+    }
+
+    /**
+     * Ugly button to stop server
+     * @param v
+     */
+    public void clickStartServer(View v) {
+        mConnectionServer = new SimpleNetworkConnectionServer(15000);
+    }
+
+    /**
+     * Ugly button to start server
+     * @param v
+     */
+    public void clickStopServer(View v) {
+        mConnectionServer.tearDown();
     }
 
     /**
