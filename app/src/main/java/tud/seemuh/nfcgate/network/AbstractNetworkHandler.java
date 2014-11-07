@@ -5,6 +5,6 @@ package tud.seemuh.nfcgate.network;
  */
 public interface AbstractNetworkHandler {
 
-    public void sendBytes(Byte[] msg);
+    public void sendBytes(byte[] msg);
 
 }

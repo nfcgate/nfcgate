@@ -19,8 +19,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.Arrays;
+
+import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClient;
 import tud.seemuh.nfcgate.network.SimpleNetworkConnectionServer;
 import tud.seemuh.nfcgate.network.WiFiDirectBroadcastReceiver;
+import tud.seemuh.nfcgate.util.reader.IsoDepReader;
+import tud.seemuh.nfcgate.util.reader.NfcAReader;
+import tud.seemuh.nfcgate.util.Utils;
 
 
 public class MainActivity extends Activity {
@@ -39,18 +45,11 @@ public class MainActivity extends Activity {
 
     //ConnectionServer
     private SimpleNetworkConnectionServer mConnectionServer;
+    private SimpleNetworkConnectionClient mConnectionClient;
 
-    final private static char[] hexArray = "0123456789ABCDEF".toCharArray();
-
-    public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
-    }
+    //Worker
+    private Worker workerRunnable = null;
+    private Thread workerThread;
 
     /**
      * called at FIRST, next: onStart()
@@ -93,6 +92,9 @@ public class MainActivity extends Activity {
         //WiFi Direct
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
+
+        //TCP Client
+        mConnectionClient = new SimpleNetworkConnectionClient("192.168.178.31", 5566);
     }
 
     /**
@@ -141,6 +143,14 @@ public class MainActivity extends Activity {
     }
 
     /**
+     * Ugly send text button
+     * @param v
+     */
+    public void clickSendText(View v) {
+        mConnectionClient.sendBytes(new byte[] {});
+    }
+
+    /**
      * Called when activity is paused
      */
     @Override
@@ -164,28 +174,61 @@ public class MainActivity extends Activity {
             //Ab hier koennte man schon mit dem Tag arbeiten!!!
             boolean found_supported_tag = false;
             String tagId = "";
+            byte[] bytesFromCard;
 
             for(String type: tag.getTechList()) {
                 Log.i("NFCGATE_DEBUG", "Tag TechList: " + type);
                 if("android.nfc.tech.IsoDep".equals(type)) {
-                    tagId = bytesToHex(IsoDep.get(tag).getTag().getId());
-                    tagId = "IsoDep: "+tagId;
+
+                    //tagId = Utils.bytesToHex(IsoDep.get(tag).getTag().getId());
+                    tagId = "IsoDep: " + tagId;
                     found_supported_tag = true;
-                    Log.i("NFCGATE_DEBUG", "Found 'IsoDep' Tag with ID: " + tagId);
+                    //Log.i("NFCGATE_DEBUG", "Found 'IsoDep' Tag with ID: " + tagId);
+
+                    /*
+                    //byte[] nwBytes = mConnectionClient.getBytes();
+                    IsoDepReader reader2 = new IsoDepReader(tag);
+                    byte[] nwBytes =  {0x00, (byte) 0xa4, 0x04};
+                    Log.d("NFCGATE_DEBUG", "got following bytes from nw: "+Utils.bytesToHex(nwBytes));
+                    bytesFromCard = reader2.sendCmd(nwBytes);
+                    Log.d("NFCGATE_DEBUG", "got the following bytes from tag 1: "+ Utils.bytesToHex(bytesFromCard));
+                    bytesFromCard = reader2.sendCmd(nwBytes);
+                    Log.d("NFCGATE_DEBUG", "got the following bytes from tag 2: "+ Utils.bytesToHex(bytesFromCard));
+                    */
+
+
+                    if(workerRunnable == null) {
+                        workerRunnable = new Worker(tag);
+                        workerThread = new Thread(workerRunnable);
+                        workerThread.start();
+                    }
                     break;
+                }
+
+                    //break;
+                /*
                 } else if("android.nfc.tech.NfcA".equals(type)) {
-                    tagId = bytesToHex(NfcA.get(tag).getTag().getId());
+                    tagId = Utils.bytesToHex(NfcA.get(tag).getTag().getId());
                     tagId = "NfcA: "+tagId;
                     found_supported_tag = true;
                     Log.i("NFCGATE_DEBUG", "Found 'NfcA' Tag with ID: " + tagId);
+
+
+                    NfcAReader reader2 = new NfcAReader(tag);
+                    byte[] nwBytes = mConnectionClient.getBytes();
+                    //bytesFromCard = reader.sendCmd(new byte[] {0x00, (byte) 0xa4, 0x04});
+                    Log.d("NFCGATE_DEBUG", "got following bytes from nw: "+Utils.bytesToHex(nwBytes));
+                    bytesFromCard = reader2.sendCmd(nwBytes);
+                    Log.d("NFCGATE_DEBUG", "got the following bytes: "+ Utils.bytesToHex(bytesFromCard));
                     break;
                 } else if("android.nfc.tech.Ndef".equals(type)) {
-                    tagId = bytesToHex(Ndef.get(tag).getTag().getId());
+                    tagId = Utils.bytesToHex(Ndef.get(tag).getTag().getId());
                     tagId = "Ndef: "+tagId;
                     found_supported_tag = true;
                     Log.i("NFCGATE_DEBUG", "Found 'Ndef' Tag with ID: " + tagId);
                     break;
                 }
+                */
             }
 
             if(!found_supported_tag) {
@@ -194,6 +237,39 @@ public class MainActivity extends Activity {
 
             TextView view = (TextView) findViewById(R.id.hello);
             view.setText("Found Tag: " + tagId);
+
+        }
+    }
+
+    private class Worker implements Runnable {
+        private Tag tag;
+
+        public Worker(Tag t) {
+            tag = t;
+        }
+
+        public void run() {
+            IsoDepReader reader = new IsoDepReader(tag);
+            byte[] bytesFromCard;
+            byte[] nwBytes = mConnectionClient.getBytes();
+            int sum = 0;
+
+            while(true) {
+                for (int i = 0; i < nwBytes.length; ++i) {
+                    sum |= nwBytes[i];
+                }
+
+                if (sum != 0) {
+                    Log.d("NFCGATE_DEBUG", "got following bytes from nw: " + Utils.bytesToHex(nwBytes));
+                    bytesFromCard = reader.sendCmd(nwBytes);
+                    Log.d("NFCGATE_DEBUG", "got the following bytes from tag: " + Utils.bytesToHex(bytesFromCard));
+                    mConnectionClient.sendBytes(bytesFromCard);
+                    nwBytes = mConnectionClient.getBytes();
+                }
+                try {
+                    Thread.sleep(100);
+                } catch( InterruptedException e ) { }
+            }
 
         }
     }

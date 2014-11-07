@@ -22,7 +22,9 @@ public class IsoDepReader implements NFCTagReader {
      * @param tag: A tag using the NfcA technology.
      */
     public IsoDepReader(Tag tag) {
+        Log.d("NFC_READER_ISODEP", "IsoDep constructor called");
         adapter = IsoDep.get(tag);
+        Log.d("NFC_READER_ISODEP", "IsoDep adapter just finished");
     }
 
     /**
@@ -45,6 +47,15 @@ public class IsoDepReader implements NFCTagReader {
             // TODO: Handle Exception properly
             Log.e("NFC_READER_ISODEP", "Encountered IOException in sendCmd: " + e.toString());
             return new byte[1];
+        } catch(Exception e) {
+            //TODO
+            return new byte[1];
+        } finally {
+            try {
+                adapter.close();
+            } catch (Exception e){
+                //TODO
+            }
         }
     }
 
