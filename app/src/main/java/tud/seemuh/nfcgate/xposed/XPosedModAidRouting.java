@@ -10,39 +10,58 @@ import static de.robv.android.xposed.XposedHelpers.findField;
 
 /**
  * Created by Max on 07.11.14.
+ *
+ * This is a Module for the XPosed Framework that aims to provide support for DESFire Application
+ * Select messages to the ADPU / HCE functions of Android. Android only allows "normal" AID select
+ * Messages right now (00 A4 04), but DESFire readers use a different set of bytes (90 5A).
+ *
+ * For now, all DESFire selects are redirected to the AID "F0010203040506".
  */
 public class XPosedModAidRouting implements IXposedHookLoadPackage {
+    /**
+     * Called when a package is loaded. Used to place our hook on the findSelectAid function.
+     */
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
         if (!lpparam.packageName.equals("com.android.nfc.cardemulation")) {
             return;
         }
-        findAndHookMethod("com.android.nfc.cardemulation", lpparam.classLoader, "findSelectAid",
-                byte[].class, SelectAidHook);
+        // Hook the findSelectAid function from com.android.nfc.cardemulation
+        findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager",
+                lpparam.classLoader, "findSelectAid", byte[].class, SelectAidHook);
     }
 
     private final static String MYAID = "F0010203040506";
 
+    /**
+     * Our Hook function to actually do the check for the DESFire select command
+     */
     private final XC_MethodHook SelectAidHook = new XC_MethodHook() {
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-            byte[] aid = (byte[]) param.args[0];
+            // The received command is saved in the cmd byte[].
+            byte[] cmd = (byte[]) param.args[0];
             XposedBridge.log("Entering hooked findSelectAid.");
 
-            if (aid != null && aid.length > 0) {
+            // Check if cmd can actually be a DESFire select.
+            if (cmd != null && cmd.length > 0) {
                 try {
+                    // Check if we are in a state where we are waiting for a select command
                     Object tObject = param.thisObject;
                     if (findField(tObject.getClass(), "mState").getInt(tObject) == 1) {
-                        // If we are in a state that is waiting for an AID, do this.
-                        if (aid[0] == 0x90 && aid[1] == 0x5a) {
+                        // If we are in a state that is waiting for an AID, check if cmd is a
+                        // DESFire select.
+                        if (cmd[0] == 0x90 && cmd[1] == 0x5a) {
                             XposedBridge.log("Found DESFire SELECT, substituting AID.");
-                            // DESFire SELECT: 90 5A 00 00 AA AA AA AA 00, w/ AA AA AA AA as the AID
+                            // Select detected, substituting AID and returning
+                            // The original function will not be called after this.
                             param.setResult(MYAID);
                         } else {
                             XposedBridge.log("This is no DESFire SELECT, ignoring.");
                         }
                     }
                 } catch (Exception e) {
-                    // Ignore
+                    XposedBridge.log(e);
+                    // Log, then ignore any exception, just carry on.
                 }
             }
         }
