@@ -2,6 +2,7 @@ package tud.seemuh.nfcgate.xposed;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
@@ -25,6 +26,7 @@ public class XPosedModAidRouting implements IXposedHookLoadPackage {
         @Override
         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
             byte[] aid = (byte[]) param.args[0];
+            XposedBridge.log("Entering hooked findSelectAid.");
 
             if (aid != null && aid.length > 0) {
                 try {
@@ -32,8 +34,11 @@ public class XPosedModAidRouting implements IXposedHookLoadPackage {
                     if (findField(tObject.getClass(), "mState").getInt(tObject) == 1) {
                         // If we are in a state that is waiting for an AID, do this.
                         if (aid[0] == 0x90 && aid[1] == 0x5a) {
+                            XposedBridge.log("Found DESFire SELECT, substituting AID.");
                             // DESFire SELECT: 90 5A 00 00 AA AA AA AA 00, w/ AA AA AA AA as the AID
                             param.setResult(MYAID);
+                        } else {
+                            XposedBridge.log("This is no DESFire SELECT, ignoring.");
                         }
                     }
                 } catch (Exception e) {
