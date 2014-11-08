@@ -46,19 +46,21 @@ public class XPosedModAidRouting implements IXposedHookLoadPackage {
             if (cmd != null && cmd.length > 0) {
                 try {
                     // Check if we are in a state where we are waiting for a select command
-                    Object tObject = param.thisObject;
-                    if (findField(tObject.getClass(), "mState").getInt(tObject) == 1) {
+                    // Object tObject = param.thisObject;
+                    // if (findField(tObject.getClass(), "mState").getInt(tObject) == 1) {
                         // If we are in a state that is waiting for an AID, check if cmd is a
                         // DESFire select.
-                        if (cmd[0] == 0x90 && cmd[1] == 0x5a) {
-                            XposedBridge.log("Found DESFire SELECT, substituting AID.");
-                            // Select detected, substituting AID and returning
-                            // The original function will not be called after this.
-                            param.setResult(MYAID);
-                        } else {
-                            XposedBridge.log("This is no DESFire SELECT, ignoring.");
-                        }
+                    if (cmd[0] == 0x90 && cmd[1] == 0x5a) {
+                        XposedBridge.log("Found DESFire SELECT, substituting AID.");
+                        // Select detected, substituting AID and returning
+                        // The original function will not be called after this.
+                        param.setResult(MYAID);
+                    } else {
+                        XposedBridge.log("This is no DESFire SELECT, ignoring.");
                     }
+                    // }
+                    // Commented out this if block, since I am not sure we even need it. Let's try
+                    // without the block and see what happens before we put it back in.
                 } catch (Exception e) {
                     XposedBridge.log(e);
                     // Log, then ignore any exception, just carry on.
