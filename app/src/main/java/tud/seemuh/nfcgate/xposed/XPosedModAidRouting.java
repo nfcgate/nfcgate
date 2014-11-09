@@ -22,7 +22,7 @@ public class XPosedModAidRouting implements IXposedHookLoadPackage {
      * Called when a package is loaded. Used to place our hook on the findSelectAid function.
      */
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
-        if (!lpparam.packageName.equals("com.android.nfc.cardemulation")) {
+        if (!lpparam.packageName.equals("com.android.nfc")) {
             return;
         }
         // Hook the findSelectAid function from com.android.nfc.cardemulation
