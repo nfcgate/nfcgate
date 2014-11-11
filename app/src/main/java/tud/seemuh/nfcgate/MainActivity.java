@@ -191,8 +191,6 @@ public class MainActivity extends Activity {
     }
 
     private class Worker implements Runnable {
-        // HUGE TODO!!!
-        // THIS ONLY WORKS FOR IsoDep Tags!!
         private Tag tag;
 
         public Worker(Tag t) {
