@@ -21,6 +21,8 @@ import android.widget.TextView;
 import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl;
 import tud.seemuh.nfcgate.network.WiFiDirectBroadcastReceiver;
 import tud.seemuh.nfcgate.reader.IsoDepReaderImpl;
+import tud.seemuh.nfcgate.reader.NFCTagReader;
+import tud.seemuh.nfcgate.reader.NfcAReaderImpl;
 import tud.seemuh.nfcgate.util.Utils;
 
 
@@ -148,6 +150,8 @@ public class MainActivity extends Activity {
             String tagId = "";
 
             for(String type: tag.getTechList()) {
+                // TODO: Refactor this into something much nicer to avoid redundant work betw.
+                //       this code and the worker thread, which also does this check.
                 Log.i("NFCGATE_DEBUG", "Tag TechList: " + type);
                 if("android.nfc.tech.IsoDep".equals(type)) {
                     tagId = Utils.bytesToHex(NfcA.get(tag).getTag().getId());
@@ -163,17 +167,7 @@ public class MainActivity extends Activity {
                     found_supported_tag = true;
 
                     //Start worker for NW communication
-                    //TODO The current impl. only works for IsoDep :-(
-                    //startWorker(tag);
-                    break;
-                } else if("android.nfc.tech.Ndef".equals(type)) {
-                    tagId = Utils.bytesToHex(Ndef.get(tag).getTag().getId());
-                    tagId = "Ndef: "+tagId;
-                    found_supported_tag = true;
-
-                    //Start worker for NW communication
-                    //TODO The current impl. only works for IsoDep :-(
-                    //startWorker(tag);
+                    startWorker(tag);
                     break;
                 }
             }
@@ -207,7 +201,26 @@ public class MainActivity extends Activity {
 
         public void run() {
             Log.d(Worker.class.getName(), "startet new worker thread for networking");
-            IsoDepReaderImpl reader = new IsoDepReaderImpl(tag);
+            NFCTagReader reader = null;
+            for(String type: tag.getTechList()) {
+                Log.i("NFCGATE_DEBUG", "Checking technology: " + type);
+                if ("android.nfc.tech.IsoDep".equals(type)) {
+                    reader = new IsoDepReaderImpl(tag);
+                    Log.d("NFCGATE_DEBUG", "Chose IsoDep technology.");
+                    break;
+                } else if ("android.nfc.tech.NfcA".equals(type)) {
+                    reader = new NfcAReaderImpl(tag);
+                    Log.d("NFCGATE_DEBUG", "Chose IsoDep technology.");
+                    break;
+                } else {
+                    Log.d("NFCGATE_DEBUG", "Technology not (yet) supported: " + type);
+                }
+            }
+            if (reader == null) {
+                Log.e("NFCGATE_DEBUG", "No supported tech found for this tag. Aborting :(");
+                return;
+            }
+
             byte[] bytesFromCard;
             byte[] nwBytes = mConnectionClient.getBytes();
 
