@@ -198,7 +198,7 @@ public class MainActivity extends Activity {
         }
 
         public void run() {
-            Log.d(Worker.class.getName(), "startet new worker thread for networking");
+            Log.d(Worker.class.getName(), "started new worker thread for networking");
             NFCTagReader reader = null;
             for(String type: tag.getTechList()) {
                 Log.i("NFCGATE_DEBUG", "Checking technology: " + type);
@@ -214,6 +214,8 @@ public class MainActivity extends Activity {
                     Log.d("NFCGATE_DEBUG", "Technology not (yet) supported: " + type);
                 }
             }
+
+            // Check if the reader was instantiated (if it was not, no supported tech was found)
             if (reader == null) {
                 Log.e("NFCGATE_DEBUG", "No supported tech found for this tag. Aborting :(");
                 return;
@@ -230,11 +232,14 @@ public class MainActivity extends Activity {
                     if(bytesFromCard != null) {
                         Log.d(Worker.class.getName(), "got the following bytes from tag: " + Utils.bytesToHex(bytesFromCard));
                         mConnectionClient.sendBytes(bytesFromCard);
+                    } else {
+                        Log.e(Worker.class.getName(), "Did not receive a reply from tag... :(");
+                        // TODO: This means that there probably was an exception in the Reader instance that we should handle
+                        //       (or at least notify the other party about)
                     }
                 }
                 nwBytes = mConnectionClient.getBytes();
             }
-
         }
     }
 
