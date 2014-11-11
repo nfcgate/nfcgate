@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate.util.reader;
+package tud.seemuh.nfcgate.reader;
 
 import android.nfc.Tag;
 import android.nfc.tech.NfcA;
@@ -6,23 +6,27 @@ import android.util.Log;
 
 import java.io.IOException;
 
-import tud.seemuh.nfcgate.util.NFCTagReader;
-
 /**
  * Implements an NFCTagReader using the NfcA technology
  *
  * Created by Max on 27.10.14.
  */
-public class NfcAReader implements NFCTagReader {
-    private NfcA adapter = null;
+public class NfcAReaderImpl implements NFCTagReader {
+    private NfcA mAapter = null;
 
     /**
      * Constructor of NfcAReader-Class, providing an NFC reader interface using the NfcA-Tech.
      *
      * @param tag: A tag using the NfcA technology.
      */
-    public NfcAReader(Tag tag) {
-        adapter = NfcA.get(tag);
+    public NfcAReaderImpl(Tag tag) {
+        mAapter = NfcA.get(tag);
+        try{
+            mAapter.connect();
+        } catch(IOException e) {
+            //TODO
+            Log.e("NFC_READER_NFCA", "Encountered IOException in constructor: " + e);
+        }
     }
 
     /**
@@ -36,15 +40,26 @@ public class NfcAReader implements NFCTagReader {
      */
     public byte[] sendCmd(byte[] command) {
         try {
-            adapter.connect();
-            byte[] retval = adapter.transceive(command);
-            adapter.close();
+            byte[] retval = mAapter.transceive(command);
+
             Log.i("NFC_READER_NFCA", "Transceived succesfully, returned: " + retval.toString());
             return retval;
         } catch(IOException e) {
             // TODO: Handle Exception properly
-            Log.e("NFC_READER_NFCA", "Encountered IOException in sendCmd: " + e.toString());
-            return new byte[1];
+            Log.e("NFC_READER_NFCA", "Encountered IOException in sendCmd: " + e);
+            return null;
+        }
+    }
+
+    /**
+     * Close the connection to the mAapter, only do this at the END of the app
+     * consecutive commands must be executed without close in between!
+     */
+    public void closeConnection() {
+        try{
+            mAapter.close();
+        } catch(IOException e) {
+            //TODO
         }
     }
 

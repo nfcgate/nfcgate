@@ -1,25 +1,20 @@
 package tud.seemuh.nfcgate.network;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.BufferedWriter;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-
 import android.util.Log;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 import tud.seemuh.nfcgate.util.Utils;
-import tud.seemuh.nfcgate.util.reader.NfcAReader;
 
 /**
  * Created by daniel on 11/6/14.
  */
-public class SimpleNetworkConnectionClient implements AbstractNetworkHandler {
+public class SimpleNetworkConnectionClientImpl implements NetworkHandler {
 
     private int mServerPort = 15000;
     private InetAddress mServerAddress;
@@ -29,7 +24,7 @@ public class SimpleNetworkConnectionClient implements AbstractNetworkHandler {
 
     private Socket mSocket;
 
-    public SimpleNetworkConnectionClient(String serverAddress, int serverPort) {
+    public SimpleNetworkConnectionClientImpl(String serverAddress, int serverPort) {
         try {
             mServerAddress = InetAddress.getByName(serverAddress);
 
@@ -38,32 +33,27 @@ public class SimpleNetworkConnectionClient implements AbstractNetworkHandler {
                 mClientThread = new Thread(mRunnableClientThread);
                 mClientThread.start();
             } else {
-                Log.d(SimpleNetworkConnectionServer.class.getName(), "Client thread already started");
+                Log.d(SimpleNetworkConnectionClientImpl.class.getName(), "Client thread already started");
             }
 
         } catch (UnknownHostException e1){
-            Log.e(SimpleNetworkConnectionClient.class.getName(), "Unknown Host: "+serverAddress);
+            Log.e(SimpleNetworkConnectionClientImpl.class.getName(), "Unknown Host: "+serverAddress);
         }
         mServerPort = serverPort;
     }
 
-    public byte[] getBytes() {
+    public synchronized byte[] getBytes() {
         return mRunnableClientThread.getBytesFromNW();
     }
 
     public void sendBytes(byte[] msg) {
-        try {
-            //EditText et = (EditText) findViewById(R.id.EditText01);
-            //String str = et.getText().toString();
+        DataOutputStream out;
 
-            /*
-            String str = "test string 123";
-            PrintWriter out = new PrintWriter(new BufferedWriter(
-                    new OutputStreamWriter(mSocket.getOutputStream())),
-                    true);
-            out.println(str);
-            out.flush();*/
-            mSocket.getOutputStream().write(msg);
+        try {
+            out = new DataOutputStream(mSocket.getOutputStream());
+            out.writeInt(msg.length);
+            out.write(msg);
+            out.flush();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -73,10 +63,10 @@ public class SimpleNetworkConnectionClient implements AbstractNetworkHandler {
         }
     }
 
-    class ClientThread implements Runnable {
+    private class ClientThread implements Runnable {
 
         private CommunicationThread mRunnableComThread;
-        private Thread commThread;
+        private Thread commThread = null;
 
         @Override
         public void run() {
@@ -95,9 +85,12 @@ public class SimpleNetworkConnectionClient implements AbstractNetworkHandler {
 
         }
 
-        public byte[] getBytesFromNW(){
-            if(mRunnableComThread != null) {
-                return mRunnableComThread.readBytes;
+        public synchronized byte[] getBytesFromNW() {
+            byte[] ret;
+            if(commThread != null && mRunnableComThread.getSome == true) {
+                ret = mRunnableComThread.readBytes;
+                mRunnableComThread.getSome = false;
+                return ret;
             } else {
                 return null;
             }
@@ -108,24 +101,11 @@ public class SimpleNetworkConnectionClient implements AbstractNetworkHandler {
     private class CommunicationThread implements Runnable {
 
         private Socket mClientSocket;
-
-        private BufferedReader mBufReader;
-
-        public byte[] readBytes = new byte[200];
+        protected volatile byte[] readBytes = null;
+        protected volatile boolean getSome = false;
 
         public CommunicationThread(Socket clientSocket) {
-
             mClientSocket = clientSocket;
-
-            /*
-            try {
-                //create new buffer for reading
-                mBufReader = new BufferedReader(new InputStreamReader(mClientSocket.getInputStream()));
-
-            } catch (IOException e) {
-                //TODO
-                e.printStackTrace();
-            }*/
         }
 
         public void run() {
@@ -135,18 +115,20 @@ public class SimpleNetworkConnectionClient implements AbstractNetworkHandler {
             while (!Thread.currentThread().isInterrupted()) {
 
                 try {
-                    //read one line from socket
+                    DataInputStream dis = new DataInputStream(mClientSocket.getInputStream());
+                    //read length of data from socket (should be 4 bytes long)
+                    int len = dis.readInt();
 
-                    int read = mClientSocket.getInputStream().read(readBytes);
-                    readBytes = Arrays.copyOf(readBytes, read);
+                    Log.i(CommunicationThread.class.getName(), "Reading bytes of length:" + len);
 
-                    if(read != -1) {
-                        //mUpdateviewHandler.post(new updateUIThread(read));
-
-                        Log.d(CommunicationThread.class.getName(), "Got Message: " + Utils.bytesToHex(readBytes));
+                    // read the message data
+                    if (len > 0) {
+                        readBytes = new byte[len];
+                        dis.readFully(readBytes);
+                        Log.d(CommunicationThread.class.getName(), "Read data: " + Utils.bytesToHex(readBytes));
+                        getSome = true;
                     } else {
-                        Log.d(CommunicationThread.class.getName(), "Error!!!");
-                        readBytes = null;
+                        Log.e(CommunicationThread.class.getName(), "Error no postive number of bytes: " + len);
                     }
 
                 } catch (IOException e) {

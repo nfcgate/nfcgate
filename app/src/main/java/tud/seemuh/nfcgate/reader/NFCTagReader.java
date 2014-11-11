@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate.util;
+package tud.seemuh.nfcgate.reader;
 
 import android.nfc.Tag;
 import java.util.Hashtable;

@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate.util.reader;
+package tud.seemuh.nfcgate.reader;
 
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
@@ -6,25 +6,28 @@ import android.util.Log;
 
 import java.io.IOException;
 
-import tud.seemuh.nfcgate.util.NFCTagReader;
-
 /**
  * Implements an NFCTagReader using the NfcA technology
  *
  * Created by Max on 27.10.14.
  */
-public class IsoDepReader implements NFCTagReader {
-    private IsoDep adapter = null;
+public class IsoDepReaderImpl implements NFCTagReader {
+    private IsoDep mAdapter = null;
 
     /**
      * Constructor of NfcAReader-Class, providing an NFC reader interface using the NfcA-Tech.
      *
      * @param tag: A tag using the NfcA technology.
      */
-    public IsoDepReader(Tag tag) {
+    public IsoDepReaderImpl(Tag tag) {
         Log.d("NFC_READER_ISODEP", "IsoDep constructor called");
-        adapter = IsoDep.get(tag);
-        Log.d("NFC_READER_ISODEP", "IsoDep adapter just finished");
+        mAdapter = IsoDep.get(tag);
+        try {
+            mAdapter.connect();
+        } catch (Exception e) {
+            //TODO
+            Log.e("NFC_READER_ISODEP", "Encountered error in constructor: " + e);
+        }
     }
 
     /**
@@ -38,24 +41,31 @@ public class IsoDepReader implements NFCTagReader {
      */
     public byte[] sendCmd(byte[] command) {
         try {
-            adapter.connect();
-            byte[] retval = adapter.transceive(command);
-            adapter.close();
+            //mAdapter.connect();
+            byte[] retval = mAdapter.transceive(command);
+            //mAdapter.close();
             Log.i("NFC_READER_ISODEP", "Transceived succesfully, returned: " + retval.toString());
             return retval;
         } catch(IOException e) {
             // TODO: Handle Exception properly
-            Log.e("NFC_READER_ISODEP", "Encountered IOException in sendCmd: " + e.toString());
-            return new byte[1];
+            Log.e("NFC_READER_ISODEP", "Encountered IOException in sendCmd: " + e);
+            return null;
         } catch(Exception e) {
             //TODO
-            return new byte[1];
-        } finally {
-            try {
-                adapter.close();
-            } catch (Exception e){
-                //TODO
-            }
+            Log.e("NFC_READER_ISODEP", "Encountered IOException in sendCmd: " + e);
+            return null;
+        }
+    }
+
+    /**
+     * Close the connection to the mAapter, only do this at the END of the app
+     * consecutive commands must be executed without close in between!
+     */
+    public void closeConnection() {
+        try{
+            mAdapter.close();
+        } catch(IOException e) {
+            //TODO
         }
     }
 
