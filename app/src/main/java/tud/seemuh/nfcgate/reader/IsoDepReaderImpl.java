@@ -7,7 +7,7 @@ import android.util.Log;
 import java.io.IOException;
 
 /**
- * Implements an NFCTagReader using the NfcA technology
+ * Implements an NFCTagReader using the IsoDep technology
  *
  * Created by Max on 27.10.14.
  */
@@ -35,9 +35,6 @@ public class IsoDepReaderImpl implements NFCTagReader {
      *
      * @param command: byte[]-representation of the command to be sent
      * @return byte[]-representation of the answer of the NFC chip
-     *
-     * TODO: Note to self: "Applications must not append the EoD (CRC) to the payload, it will be
-     *       automatically calculated. "
      */
     public byte[] sendCmd(byte[] command) {
         try {
@@ -52,20 +49,21 @@ public class IsoDepReaderImpl implements NFCTagReader {
             return null;
         } catch(Exception e) {
             //TODO
-            Log.e("NFC_READER_ISODEP", "Encountered IOException in sendCmd: " + e);
+            Log.e("NFC_READER_ISODEP", "Encountered Exception in sendCmd: " + e);
             return null;
         }
     }
 
     /**
-     * Close the connection to the mAapter, only do this at the END of the app
-     * consecutive commands must be executed without close in between!
+     * Closes the adapter, signalling that communication is over. Should be called only
+     * when no further communication with the adapter will follow, as the adapter will become
+     * unusable from this
      */
     public void closeConnection() {
         try{
             mAdapter.close();
         } catch(IOException e) {
-            //TODO
+            Log.e("NFC_READER_ISODEP", "Encountered IOException in closeConnection: " + e);
         }
     }
 

@@ -34,9 +34,6 @@ public class NfcAReaderImpl implements NFCTagReader {
      *
      * @param command: byte[]-representation of the command to be sent
      * @return byte[]-representation of the answer of the NFC chip
-     *
-     * TODO: Note to self: "Applications must not append the EoD (CRC) to the payload, it will be
-     *       automatically calculated. "
      */
     public byte[] sendCmd(byte[] command) {
         try {
@@ -52,14 +49,15 @@ public class NfcAReaderImpl implements NFCTagReader {
     }
 
     /**
-     * Close the connection to the mAapter, only do this at the END of the app
-     * consecutive commands must be executed without close in between!
+     * Closes the adapter, signalling that communication is over. Should be called only
+     * when no further communication with the adapter will follow, as the adapter will become
+     * unusable from this
      */
     public void closeConnection() {
         try{
             mAapter.close();
         } catch(IOException e) {
-            //TODO
+            Log.e("NFC_READER_NFCA", "Encountered IOException in sendCmd: " + e);
         }
     }
 
