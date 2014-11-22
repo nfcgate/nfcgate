@@ -83,10 +83,8 @@ public class MainActivity extends Activity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         // Create a generic PendingIntent that will be deliver to this activity.
-        // The NFC stack
-        // will fill in the intent with the details of the discovered tag before
-        // delivering to
-        // this activity.
+        // The NFC stack will fill in the intent with the details of the discovered tag before
+        // delivering to this activity.
         mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
                 getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
@@ -206,10 +204,8 @@ public class MainActivity extends Activity {
                 SimpleNetworkConnectionClientImpl.getInstance().setCallback(mNetCallback);
             }
 
-            //TextView view = (TextView) findViewById(R.id.hello);
-            //view.setText("Found Tag: " + tagId);
+            mOwnID.setText("Your own ID is: " + tagId);
             Toast.makeText(this, "Found Tag: " + tagId, Toast.LENGTH_SHORT).show();
-
         }
     }
 
@@ -226,20 +222,12 @@ public class MainActivity extends Activity {
     /** Called when the user touches the button 'reset application'  -- Code by Tom */
     public void reset(View view) {
         // do an entire reset of the application
-        // view.setBackgroundColor(255);
-        // view.setClickable(false);
-        // this.setVisible(false);
-        // view.setVisibility(View.INVISIBLE);
         this.setTitle("You clicked reset");
     }
 
     /** Called when the user touches the button 'Abort'  -- Code by Tom */
     public void abort(View view) {
         // Abort the current connection attempt
-        // view.setBackgroundColor(144);
-        // view.setClickable(false);
-        // this.setVisible(false);
-        // view.setVisibility(View.INVISIBLE);
         this.setTitle("You clicked abort");
     }
 
@@ -248,21 +236,11 @@ public class MainActivity extends Activity {
         // Connect to a given IP & port
         String ipaddress = mIP.getText().toString();
         String port = mPort.getText().toString();
-        // view.setBackgroundColor(22);
-        // view.setClickable(false);
-        // this.setVisible(false);
-        // view.setVisibility(View.INVISIBLE);
         this.setTitle("You clicked connect");
     }
 
     /** Called when the user checkes the checkbox 'enable dev mode'  -- Code by Tom */
     public void DevCheckboxClicked(View view) {
-        // Connect to xyz
-        //view.setBackgroundColor(22);
-        //view.setClickable(false);
-        //this.setTitle("test");
-        // this.setVisible(false);
-        // view.setVisibility(View.INVISIBLE);
         boolean checked = (((CheckBox) findViewById(R.id.checkBoxDevMode)).isChecked());
         mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
         if (checked) {
@@ -278,22 +256,10 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        // getMenuInflater().inflate(R.menu.menu_main, menu);
-        // menu.findItem(R.id.action_settings).getActionView();
-
         // Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         return super.onCreateOptionsMenu(menu);
-
-
-        //  getMenuInflater().inflate(R.menu.main_activity_actions, menu);
-        //  MenuItem searchItem = menu.findItem(R.id.action_search);
-        //  SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        //  Configure the search info and add any event listeners
-        //  return super.onCreateOptionsMenu(menu);
-        //  return true;
     }
 
     @Override
