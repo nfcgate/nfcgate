@@ -39,7 +39,7 @@ public class NfcAReaderImpl implements NFCTagReader {
         try {
             byte[] retval = mAdapter.transceive(command);
 
-            Log.i("NFC_READER_NFCA", "Transceived succesfully, returned: " + retval.toString());
+            Log.i("NFC_READER_NFCA", "Transceived succesfully");
             return retval;
         } catch(IOException e) {
             // TODO: Handle Exception properly

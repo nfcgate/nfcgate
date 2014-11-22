@@ -41,7 +41,7 @@ public class IsoDepReaderImpl implements NFCTagReader {
             //mAdapter.connect();
             byte[] retval = mAdapter.transceive(command);
             //mAdapter.close();
-            Log.i("NFC_READER_ISODEP", "Transceived succesfully, returned: " + retval.toString());
+            Log.i("NFC_READER_ISODEP", "Transceived succesfully");
             return retval;
         } catch(IOException e) {
             // TODO: Handle Exception properly
