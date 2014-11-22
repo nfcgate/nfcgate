@@ -249,24 +249,27 @@ public class MainActivity extends Activity {
             // the buttons name is connect & we want to connect to the server:port
             connectButtonEnabled = false;
             mConnect.setText("Disconnect");
+            String host = mIP.getText().toString();
+            int port;
+            try {
+                port = Integer.parseInt(mPort.getText().toString().trim());
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Please enter a valid port", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            this.setTitle("You clicked connect");
+            // -> please append code here to ButtonConnectClicked to IP:Port
+            mConnectionClient = SimpleNetworkConnectionClientImpl.getInstance().connect(host, port);
         }
         else
         {
             // the button connect was already clicked and we want to disconnect from the server:port
             connectButtonEnabled = true;
             mConnect.setText("Connect");
+            // do some fancy stuff to disconnect from the server!
+            // TODO
+            // implement server disconnect
         }
-        String host = mIP.getText().toString();
-        int port;
-        try {
-            port = Integer.parseInt(mPort.getText().toString().trim());
-        } catch (NumberFormatException e) {
-            Toast.makeText(this, "Please enter a valid port", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        this.setTitle("You clicked connect");
-        // -> please append code here to ButtonConnectClicked to IP:Port
-        mConnectionClient = SimpleNetworkConnectionClientImpl.getInstance().connect(host, port);
     }
 
     /** Called when the user checkes the checkbox 'enable dev mode'  -- Code by Tom */
