@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observable;
 
 import tud.seemuh.nfcgate.util.Utils;
 
@@ -137,7 +138,7 @@ public class SimpleNetworkConnectionClientImpl implements NetworkHandler {
 
     }
 
-    private class CommunicationThread implements Runnable {
+    private class CommunicationThread extends Observable implements Runnable {
 
         private Socket mClientSocket;
         protected volatile byte[] readBytes = null;

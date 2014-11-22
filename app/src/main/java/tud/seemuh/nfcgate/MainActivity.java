@@ -12,6 +12,7 @@ import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NfcA;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -25,7 +26,12 @@ import android.provider.Settings;
 import android.widget.Toast;
 
 
+import java.util.Observable;
+import java.util.Observer;
+
+import tud.seemuh.nfcgate.network.CallbackImpl;
 import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl;
+import tud.seemuh.nfcgate.network.UpdateUI;
 import tud.seemuh.nfcgate.network.WiFiDirectBroadcastReceiver;
 import tud.seemuh.nfcgate.reader.IsoDepReaderImpl;
 import tud.seemuh.nfcgate.reader.NFCTagReader;
@@ -54,11 +60,13 @@ public class MainActivity extends Activity {
     //Worker
     //private Worker workerRunnable = null;
     //private Thread workerThread;
-    NFCTagReader mReader = null;
+    //NFCTagReader mReader = null;
 
     // private var if dev mode is enabled or not
     private boolean mDevModeEnabled = false;
     private boolean connectButtonEnabled = true;
+
+    private CallbackImpl mNetCallback = new CallbackImpl();
 
     // declares main functionality
     Button mReset, mConnect, mAbort;
@@ -176,49 +184,14 @@ public class MainActivity extends Activity {
             boolean found_supported_tag = false;
             String tagId = "";
 
-            for(String type: tag.getTechList()) {
-                // TODO: Refactor this into something much nicer to avoid redundant work betw.
-                //       this code and the worker thread, which also does this check.
-                Log.i("NFCGATE_DEBUG", "Tag TechList: " + type);
-                if("android.nfc.tech.IsoDep".equals(type)) {
-                    tagId = Utils.bytesToHex(NfcA.get(tag).getTag().getId());
-                    found_supported_tag = true;
+            mNetCallback.setTag(tag);
+            mNetCallback.setUpdateButton(mDebuginfo);
 
-                    mReader = new IsoDepReaderImpl(tag);
-                    Log.d("NFCGATE_DEBUG", "Chose IsoDep technology.");
-                    break;
-                } else if("android.nfc.tech.NfcA".equals(type)) {
-                    tagId = Utils.bytesToHex(NfcA.get(tag).getTag().getId());
-                    tagId = "NfcA: " + tagId;
-                    found_supported_tag = true;
-
-                    mReader = new NfcAReaderImpl(tag);
-                    Log.d("NFCGATE_DEBUG", "Chose NfcA technology.");
-                    break;
-                }
-            }
-
-            if(!found_supported_tag) {
-                tagId = "Not supported";
-            } else {
-                SimpleNetworkConnectionClientImpl.getInstance().setCallback(mNetCallback);
-            }
 
             mOwnID.setText("Your own ID is: " + tagId);
             Toast.makeText(this, "Found Tag: " + tagId, Toast.LENGTH_SHORT).show();
         }
     }
-
-    private Callback mNetCallback = new Callback() {
-        @Override
-        public void onDataReceived(byte[] data) {
-            if(mReader.isConnected()) {
-                byte[] bytesFromCard = mReader.sendCmd(data);
-                mConnectionClient.sendBytes(bytesFromCard);
-                mDebuginfo.append(Utils.bytesToHex(bytesFromCard) + "\n");
-            }
-        }
-    };
 /*
     /** Called when the user touches the button 'ButtonResetClicked application'  -- Code by Tom */
     public void ButtonResetClicked(View view) {
@@ -278,11 +251,11 @@ public class MainActivity extends Activity {
         mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
         if (checked) {
             this.mDevModeEnabled = true;
-            mDebuginfo.setVisibility(View.VISIBLE); }
-        else {
+            mDebuginfo.setVisibility(View.VISIBLE);
+        } else {
             this.mDevModeEnabled = false;
-            mDebuginfo.setVisibility(View.INVISIBLE); }
-        mDebuginfo.setText("Value of DevMode = " + this.mDevModeEnabled);
+            mDebuginfo.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
