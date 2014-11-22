@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.provider.Settings;
+import android.widget.Toast;
 
 
 import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl;
@@ -61,12 +62,12 @@ public class MainActivity extends Activity {
     // declares main functionality
     Button mReset, mConnect, mAbort;
     CheckBox mDevmode;
-    TextView mOwnID, mInfo, mDebuginfo;
+    TextView mOwnID, mInfo, mDebuginfo, mIpPort;
 
 
     /**
      * called at FIRST, next: onStart()
-     * @param savedInstanceState
+     * @param savedInstanceState saved instance state
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +117,7 @@ public class MainActivity extends Activity {
         mOwnID = (TextView) findViewById(R.id.editTextOwnID);
         mInfo = (TextView) findViewById(R.id.DisplayMsg);
         mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
+        mIpPort = (TextView) findViewById(R.id.editIpPort);
     }
 
     /**
@@ -162,7 +164,7 @@ public class MainActivity extends Activity {
 
     /**
      * called when app is already open and intent is fired
-     * @param intent
+     * @param intent intent
      */
     @Override
     public void onNewIntent(Intent intent) {
@@ -181,7 +183,6 @@ public class MainActivity extends Activity {
                 Log.i("NFCGATE_DEBUG", "Tag TechList: " + type);
                 if("android.nfc.tech.IsoDep".equals(type)) {
                     tagId = Utils.bytesToHex(NfcA.get(tag).getTag().getId());
-                    tagId = "IsoDep: " + tagId;
                     found_supported_tag = true;
 
                     mReader = new IsoDepReaderImpl(tag);
@@ -206,6 +207,7 @@ public class MainActivity extends Activity {
 
             //TextView view = (TextView) findViewById(R.id.hello);
             //view.setText("Found Tag: " + tagId);
+            Toast.makeText(this, "Found Tag: " + tagId, Toast.LENGTH_SHORT).show();
 
         }
     }
@@ -228,7 +230,6 @@ public class MainActivity extends Activity {
         // this.setVisible(false);
         // view.setVisibility(View.INVISIBLE);
         this.setTitle("You clicked reset");
-        return;
     }
 
     /** Called when the user touches the button 'Abort'  -- Code by Tom */
@@ -239,7 +240,6 @@ public class MainActivity extends Activity {
         // this.setVisible(false);
         // view.setVisibility(View.INVISIBLE);
         this.setTitle("You clicked abort");
-        return;
     }
 
     /** Called when the user touches the button 'Connect'  -- Code by Tom */
@@ -250,7 +250,6 @@ public class MainActivity extends Activity {
         // this.setVisible(false);
         // view.setVisibility(View.INVISIBLE);
         this.setTitle("You clicked connect");
-        return;
     }
 
     /** Called when the user checkes the checkbox 'enable dev mode'  -- Code by Tom */
@@ -315,68 +314,6 @@ public class MainActivity extends Activity {
         }
     }
 
-/*
-    private void startWorker(Tag tag) {
-        if(workerRunnable == null || !workerThread.isAlive()) {
-            workerRunnable = new Worker(tag);
-            workerThread = new Thread(workerRunnable);
-            workerThread.start();
-        }
-    }
-
-    private class Worker implements Runnable {
-        private Tag tag;
-
-        public Worker(Tag t) {
-            tag = t;
-        }
-
-        public void run() {
-            Log.d(Worker.class.getName(), "started new worker thread for networking");
-            NFCTagReader reader = null;
-            for(String type: tag.getTechList()) {
-                Log.i("NFCGATE_DEBUG", "Checking technology: " + type);
-                if ("android.nfc.tech.IsoDep".equals(type)) {
-                    reader = new IsoDepReaderImpl(tag);
-                    Log.d("NFCGATE_DEBUG", "Chose IsoDep technology.");
-                    break;
-                } else if ("android.nfc.tech.NfcA".equals(type)) {
-                    reader = new NfcAReaderImpl(tag);
-                    Log.d("NFCGATE_DEBUG", "Chose IsoDep technology.");
-                    break;
-                } else {
-                    Log.d("NFCGATE_DEBUG", "Technology not (yet) supported: " + type);
-                }
-            }
-
-            // Check if the reader was instantiated (if it was not, no supported tech was found)
-            if (reader == null) {
-                Log.e("NFCGATE_DEBUG", "No supported tech found for this tag. Aborting :(");
-                return;
-            }
-
-            byte[] bytesFromCard;
-            byte[] nwBytes = mConnectionClient.getBytes();
-
-            while(reader.isConnected()) {
-                if (nwBytes != null && nwBytes.length != 0) {
-                    Log.d(Worker.class.getName(), "got following bytes from nw: " + Utils.bytesToHex(nwBytes));
-
-                    bytesFromCard = reader.sendCmd(nwBytes);
-                    if(bytesFromCard != null) {
-                        Log.d(Worker.class.getName(), "got the following bytes from tag: " + Utils.bytesToHex(bytesFromCard));
-                        mConnectionClient.sendBytes(bytesFromCard);
-                    } else {
-                        Log.e(Worker.class.getName(), "Did not receive a reply from tag... :(");
-                        // TODO: This means that there probably was an exception in the Reader instance that we should handle
-                        //       (or at least notify the other party about)
-                    }
-                }
-                nwBytes = mConnectionClient.getBytes();
-            }
-        }
-    }
-*/
     /*
     TODO
     manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
