@@ -58,6 +58,11 @@ public class SimpleNetworkConnectionClientImpl implements NetworkHandler {
         return this;
     }
 
+    public SimpleNetworkConnectionClientImpl setCallback(Callback callback) {
+        mCallback = callback;
+        return this;
+    }
+
     public synchronized byte[] getBytes() {
         return mRunnableClientThread.getBytesFromNW();
     }
