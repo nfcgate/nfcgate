@@ -24,7 +24,7 @@ import tud.seemuh.nfcgate.reader.IsoDepReaderImpl;
 import tud.seemuh.nfcgate.reader.NFCTagReader;
 import tud.seemuh.nfcgate.reader.NfcAReaderImpl;
 import tud.seemuh.nfcgate.util.Utils;
-
+import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl.Callback;
 
 public class MainActivity extends Activity {
 
@@ -44,8 +44,9 @@ public class MainActivity extends Activity {
     private SimpleNetworkConnectionClientImpl mConnectionClient;
 
     //Worker
-    private Worker workerRunnable = null;
-    private Thread workerThread;
+    //private Worker workerRunnable = null;
+    //private Thread workerThread;
+    NFCTagReader mReader = null;
 
     /**
      * called at FIRST, next: onStart()
@@ -158,22 +159,24 @@ public class MainActivity extends Activity {
                     tagId = "IsoDep: " + tagId;
                     found_supported_tag = true;
 
-                    //Start worker for NW communication
-                    startWorker(tag);
+                    mReader = new IsoDepReaderImpl(tag);
+                    Log.d("NFCGATE_DEBUG", "Chose IsoDep technology.");
                     break;
                 } else if("android.nfc.tech.NfcA".equals(type)) {
                     tagId = Utils.bytesToHex(NfcA.get(tag).getTag().getId());
                     tagId = "NfcA: " + tagId;
                     found_supported_tag = true;
 
-                    //Start worker for NW communication
-                    startWorker(tag);
+                    mReader = new NfcAReaderImpl(tag);
+                    Log.d("NFCGATE_DEBUG", "Chose NfcA technology.");
                     break;
                 }
             }
 
             if(!found_supported_tag) {
                 tagId = "Not supported";
+            } else {
+                SimpleNetworkConnectionClientImpl.getInstance().setCallback(mNetCallback);
             }
 
             TextView view = (TextView) findViewById(R.id.hello);
@@ -182,6 +185,16 @@ public class MainActivity extends Activity {
         }
     }
 
+    private Callback mNetCallback = new Callback() {
+        @Override
+        public void onDataReceived(byte[] data) {
+            if(mReader.isConnected()) {
+                byte[] bytesFromCard = mReader.sendCmd(data);
+                mConnectionClient.sendBytes(bytesFromCard);
+            }
+        }
+    };
+/*
     private void startWorker(Tag tag) {
         if(workerRunnable == null || !workerThread.isAlive()) {
             workerRunnable = new Worker(tag);
@@ -242,7 +255,7 @@ public class MainActivity extends Activity {
             }
         }
     }
-
+*/
     /*
     TODO
     manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
