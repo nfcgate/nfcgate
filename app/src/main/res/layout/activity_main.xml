@@ -12,7 +12,7 @@
         android:layout_alignParentTop="true">
 
         <Button
-            android:layout_width="246dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="Reset status"
             android:id="@+id/resetstatus"
@@ -21,10 +21,10 @@
             android:layout_row="5"
             android:layout_column="0"
             android:onClick="reset"
-            android:layout_columnSpan="2" />
+            android:layout_columnSpan="1" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="Connect"
             android:id="@+id/connectbutton"
@@ -35,7 +35,7 @@
             android:onClick="connect" />
 
         <Button
-            android:layout_width="91dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="Abort"
             android:id="@+id/abortbutton"
