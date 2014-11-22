@@ -77,4 +77,6 @@ public class IsoDepReaderImpl implements NFCTagReader {
         return READER_ISODEP;
     }
 
+    public boolean isConnected() { return mAdapter.isConnected(); }
+
 }

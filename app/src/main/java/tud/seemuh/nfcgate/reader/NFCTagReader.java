@@ -43,4 +43,9 @@ public interface NFCTagReader {
      * unusable from this
      */
     public void closeConnection();
+
+    /**
+     * Returns True if communication should be possible, False otherwise
+     */
+    public boolean isConnected();
 }

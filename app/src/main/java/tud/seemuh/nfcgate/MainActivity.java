@@ -183,7 +183,7 @@ public class MainActivity extends Activity {
     }
 
     private void startWorker(Tag tag) {
-        if(workerRunnable == null) {
+        if(workerRunnable == null || !workerThread.isAlive()) {
             workerRunnable = new Worker(tag);
             workerThread = new Thread(workerRunnable);
             workerThread.start();
@@ -224,7 +224,7 @@ public class MainActivity extends Activity {
             byte[] bytesFromCard;
             byte[] nwBytes = mConnectionClient.getBytes();
 
-            while(true) {
+            while(reader.isConnected()) {
                 if (nwBytes != null && nwBytes.length != 0) {
                     Log.d(Worker.class.getName(), "got following bytes from nw: " + Utils.bytesToHex(nwBytes));
 

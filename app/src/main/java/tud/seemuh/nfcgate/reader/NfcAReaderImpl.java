@@ -12,7 +12,7 @@ import java.io.IOException;
  * Created by Max on 27.10.14.
  */
 public class NfcAReaderImpl implements NFCTagReader {
-    private NfcA mAapter = null;
+    private NfcA mAdapter = null;
 
     /**
      * Constructor of NfcAReader-Class, providing an NFC reader interface using the NfcA-Tech.
@@ -20,9 +20,9 @@ public class NfcAReaderImpl implements NFCTagReader {
      * @param tag: A tag using the NfcA technology.
      */
     public NfcAReaderImpl(Tag tag) {
-        mAapter = NfcA.get(tag);
+        mAdapter = NfcA.get(tag);
         try{
-            mAapter.connect();
+            mAdapter.connect();
         } catch(IOException e) {
             //TODO
             Log.e("NFC_READER_NFCA", "Encountered IOException in constructor: " + e);
@@ -37,7 +37,7 @@ public class NfcAReaderImpl implements NFCTagReader {
      */
     public byte[] sendCmd(byte[] command) {
         try {
-            byte[] retval = mAapter.transceive(command);
+            byte[] retval = mAdapter.transceive(command);
 
             Log.i("NFC_READER_NFCA", "Transceived succesfully, returned: " + retval.toString());
             return retval;
@@ -55,7 +55,7 @@ public class NfcAReaderImpl implements NFCTagReader {
      */
     public void closeConnection() {
         try{
-            mAapter.close();
+            mAdapter.close();
         } catch(IOException e) {
             Log.e("NFC_READER_NFCA", "Encountered IOException in sendCmd: " + e);
         }
@@ -70,5 +70,7 @@ public class NfcAReaderImpl implements NFCTagReader {
     public int getProtocol() {
         return READER_NFC_A;
     }
+
+    public boolean isConnected() { return mAdapter.isConnected(); }
 
 }
