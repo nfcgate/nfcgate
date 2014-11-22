@@ -35,10 +35,6 @@ public class SimpleNetworkConnectionClientImpl implements NetworkHandler {
     }
 
     public SimpleNetworkConnectionClientImpl connect(String serverAddress, int serverPort) {
-        return connect(serverAddress, serverPort, null);
-    }
-
-    public SimpleNetworkConnectionClientImpl connect(String serverAddress, int serverPort, Callback callback) {
         try {
             mServerAddress = InetAddress.getByName(serverAddress);
 
@@ -54,7 +50,6 @@ public class SimpleNetworkConnectionClientImpl implements NetworkHandler {
             Log.e(SimpleNetworkConnectionClientImpl.class.getName(), "Unknown Host: "+serverAddress);
         }
         mServerPort = serverPort;
-        mCallback = callback;
         return this;
     }
 

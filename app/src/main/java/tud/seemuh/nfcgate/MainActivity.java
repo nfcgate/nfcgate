@@ -105,7 +105,6 @@ public class MainActivity extends Activity {
         mChannel = mManager.initialize(this, getMainLooper(), null);
 
         //TCP Client
-        mConnectionClient = SimpleNetworkConnectionClientImpl.getInstance().connect("192.168.178.31", 5566);
 
         // Create Buttons & TextViews
         mReset = (Button) findViewById(R.id.resetstatus);
@@ -228,8 +227,6 @@ public class MainActivity extends Activity {
         mOwnID.setText("Your own ID is:");
         mInfo.setText("Please hold your device next to an NFC tag / reader");
         mDebuginfo.setText("");
-        mIP.setText("Enter <IP> address");
-        mPort.setText("Enter <Port>");
         this.setTitle("You clicked reset");
     }
 
@@ -243,9 +240,17 @@ public class MainActivity extends Activity {
     /** Called when the user touches the button 'Connect'  -- Code by Tom */
     public void connect(View view) {
         // Connect to a given IP & port
-        String ipaddress = mIP.getText().toString();
-        String port = mPort.getText().toString();
+        String host = mIP.getText().toString();
+        int port;
+        try {
+            port = Integer.parseInt(mPort.getText().toString().trim());
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Please enter a valid port", Toast.LENGTH_SHORT).show();
+            return;
+        }
         this.setTitle("You clicked connect");
+        mConnectionClient = SimpleNetworkConnectionClientImpl.getInstance().connect(host, port);
+
         // -> please append code here to connect to IP:Port
     }
 
