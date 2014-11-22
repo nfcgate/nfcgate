@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
     // declares main functionality
     Button mReset, mConnect, mAbort;
     CheckBox mDevmode;
-    TextView mOwnID, mInfo, mDebuginfo, mIpPort;
+    TextView mOwnID, mInfo, mDebuginfo, mIP, mPort;
 
 
     /**
@@ -117,7 +117,8 @@ public class MainActivity extends Activity {
         mOwnID = (TextView) findViewById(R.id.editTextOwnID);
         mInfo = (TextView) findViewById(R.id.DisplayMsg);
         mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
-        mIpPort = (TextView) findViewById(R.id.editIpPort);
+        mIP = (TextView) findViewById(R.id.editIP);
+        mPort = (TextView) findViewById(R.id.editPort);
     }
 
     /**
@@ -244,7 +245,9 @@ public class MainActivity extends Activity {
 
     /** Called when the user touches the button 'Connect'  -- Code by Tom */
     public void connect(View view) {
-        // Connect to device xyz
+        // Connect to a given IP & port
+        String ipaddress = mIP.getText().toString();
+        String port = mPort.getText().toString();
         // view.setBackgroundColor(22);
         // view.setClickable(false);
         // this.setVisible(false);

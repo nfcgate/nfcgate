@@ -23,6 +23,14 @@
             android:onClick="reset"
             android:layout_columnSpan="1" />
 
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/editPort"
+            android:layout_row="8"
+            android:layout_column="1"
+            android:text="Enter &lt;Port>" />
+
         <Button
             android:layout_width="100dp"
             android:layout_height="wrap_content"
@@ -30,7 +38,7 @@
             android:id="@+id/connectbutton"
             android:layout_alignTop="@+id/resetstatus"
             android:layout_alignStart="@+id/abortbutton"
-            android:layout_row="12"
+            android:layout_row="13"
             android:layout_column="0"
             android:onClick="connect" />
 
@@ -42,61 +50,61 @@
             android:layout_below="@+id/connectbutton"
             android:layout_alignEnd="@+id/connectbutton"
             android:layout_alignStart="@+id/connectbutton"
-            android:layout_row="12"
+            android:layout_row="13"
             android:layout_column="1"
             android:onClick="abort" />
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="294dp"
         android:layout_height="wrap_content"
         android:id="@+id/editTextOwnID"
         android:layout_row="0"
         android:layout_column="0"
         android:text="Your own ID is:"
-        android:layout_columnSpan="4" />
+        android:layout_columnSpan="2" />
 
     <CheckBox
-        android:layout_width="371dp"
+        android:layout_width="305dp"
         android:layout_height="wrap_content"
         android:text="Enable Developer Mode"
         android:id="@+id/checkBoxDevMode"
-        android:layout_row="19"
+        android:layout_row="20"
         android:layout_column="0"
         android:onClick="DevCheckboxClicked"
         android:checked="false"
-        android:layout_columnSpan="4" />
+        android:layout_columnSpan="3" />
 
         <EditText
-            android:layout_width="242dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/editIpPort"
+            android:id="@+id/editIP"
             android:layout_row="8"
             android:layout_column="0"
-            android:text="Pleaser enter &lt;IP:Port>"
-            android:layout_columnSpan="2" />
+            android:text="Enter &lt;IP> address"
+            android:layout_gravity="center" />
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="120dp"
             android:id="@+id/DisplayMsg"
-            android:layout_row="17"
+            android:layout_row="18"
             android:layout_column="0"
             android:text="Please hold your device next to an NFC tag / reader"
             android:layout_rowSpan="2"
             android:editable="false"
             android:enabled="true"
             android:focusable="false"
-            android:layout_columnSpan="4" />
+            android:layout_columnSpan="2" />
 
         <EditText
         android:layout_width="match_parent"
         android:layout_height="156dp"
         android:id="@+id/editTextDevModeEnabledDebugging"
-        android:layout_row="21"
+        android:layout_row="22"
         android:layout_column="0"
         android:text="Debugging Info's: "
         android:layout_rowSpan="10"
-        android:layout_columnSpan="4"
+        android:layout_columnSpan="3"
             android:visibility="invisible" />
 
 </GridLayout>
