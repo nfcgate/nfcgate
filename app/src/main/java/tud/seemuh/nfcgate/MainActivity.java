@@ -57,11 +57,11 @@ public class MainActivity extends Activity {
     NFCTagReader mReader = null;
 
     // private var if dev mode is enabled or not
-    private boolean mDevMode = false;
+    private boolean mDevModeEnabled = false;
 
     // declares main functionality
     Button mReset, mConnect, mAbort;
-    CheckBox mDevmode;
+    CheckBox mDevMode;
     TextView mOwnID, mInfo, mDebuginfo, mIP, mPort;
 
 
@@ -111,7 +111,7 @@ public class MainActivity extends Activity {
         mReset = (Button) findViewById(R.id.resetstatus);
         mConnect = (Button) findViewById(R.id.connectbutton);
         mAbort = (Button) findViewById(R.id.abortbutton);
-        mDevmode = (CheckBox) findViewById(R.id.checkBoxDevMode);
+        mDevMode = (CheckBox) findViewById(R.id.checkBoxDevMode);
         mOwnID = (TextView) findViewById(R.id.editTextOwnID);
         mInfo = (TextView) findViewById(R.id.DisplayMsg);
         mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
@@ -222,12 +222,21 @@ public class MainActivity extends Activity {
     /** Called when the user touches the button 'reset application'  -- Code by Tom */
     public void reset(View view) {
         // do an entire reset of the application
+        mDevModeEnabled = false;
+        mDevMode.setChecked(false);
+        mDebuginfo.setVisibility(View.INVISIBLE);
+        mOwnID.setText("Your own ID is:");
+        mInfo.setText("Please hold your device next to an NFC tag / reader");
+        mDebuginfo.setText("");
+        mIP.setText("Enter <IP> address");
+        mPort.setText("Enter <Port>");
         this.setTitle("You clicked reset");
     }
 
     /** Called when the user touches the button 'Abort'  -- Code by Tom */
     public void abort(View view) {
         // Abort the current connection attempt
+        // -> please append code here to kill network connections etc.
         this.setTitle("You clicked abort");
     }
 
@@ -237,6 +246,7 @@ public class MainActivity extends Activity {
         String ipaddress = mIP.getText().toString();
         String port = mPort.getText().toString();
         this.setTitle("You clicked connect");
+        // -> please append code here to connect to IP:Port
     }
 
     /** Called when the user checkes the checkbox 'enable dev mode'  -- Code by Tom */
@@ -244,14 +254,13 @@ public class MainActivity extends Activity {
         boolean checked = (((CheckBox) findViewById(R.id.checkBoxDevMode)).isChecked());
         mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
         if (checked) {
-            this.mDevMode = true;
+            this.mDevModeEnabled = true;
             mDebuginfo.setVisibility(View.VISIBLE); }
         else {
-            this.mDevMode = false;
+            this.mDevModeEnabled = false;
             mDebuginfo.setVisibility(View.INVISIBLE); }
 
-        mDebuginfo.setText("");
-        mDebuginfo.append("Value of DevMode = " + this.mDevMode);
+        mDebuginfo.setText("Value of DevMode = " + this.mDevModeEnabled);
     }
 
     @Override
