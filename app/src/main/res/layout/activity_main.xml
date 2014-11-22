@@ -107,7 +107,7 @@
         android:text="Debugging Info's: "
         android:layout_rowSpan="10"
         android:layout_columnSpan="3"
-        android:visibility="invisible"
+        android:visibility="visible"
         android:editable="false" />
 
 </GridLayout>
