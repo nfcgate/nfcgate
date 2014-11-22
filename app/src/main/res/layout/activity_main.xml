@@ -20,7 +20,7 @@
             android:layout_alignParentStart="true"
             android:layout_row="5"
             android:layout_column="0"
-            android:onClick="reset"
+            android:onClick="ButtonResetClicked"
             android:layout_columnSpan="1" />
 
         <EditText
@@ -29,7 +29,8 @@
             android:id="@+id/editPort"
             android:layout_row="8"
             android:layout_column="1"
-            android:hint="Enter &lt;Port>" />
+            android:hint="Enter &lt;Port>"
+            android:text="5566" />
 
         <Button
             android:layout_width="100dp"
@@ -40,7 +41,7 @@
             android:layout_alignStart="@+id/abortbutton"
             android:layout_row="13"
             android:layout_column="0"
-            android:onClick="connect" />
+            android:onClick="ButtonConnectClicked" />
 
         <Button
             android:layout_width="100dp"
@@ -52,7 +53,7 @@
             android:layout_alignStart="@+id/connectbutton"
             android:layout_row="13"
             android:layout_column="1"
-            android:onClick="abort" />
+            android:onClick="ButtonAbortClicked" />
 
     <EditText
         android:layout_width="315dp"
@@ -81,7 +82,8 @@
             android:layout_row="8"
             android:layout_column="0"
             android:layout_gravity="center"
-            android:hint="Enter &lt;IP> address" />
+            android:hint="Enter &lt;IP> address"
+            android:text="192.168.178.31" />
 
         <EditText
             android:layout_width="wrap_content"

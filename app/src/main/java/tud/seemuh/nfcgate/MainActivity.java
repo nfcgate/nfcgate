@@ -219,9 +219,9 @@ public class MainActivity extends Activity {
         }
     };
 /*
-    /** Called when the user touches the button 'reset application'  -- Code by Tom */
-    public void reset(View view) {
-        // do an entire reset of the application
+    /** Called when the user touches the button 'ButtonResetClicked application'  -- Code by Tom */
+    public void ButtonResetClicked(View view) {
+        // do an entire ButtonResetClicked of the application
         mDevModeEnabled = false;
         mDevMode.setChecked(false);
         mDebuginfo.setVisibility(View.INVISIBLE);
@@ -232,14 +232,16 @@ public class MainActivity extends Activity {
     }
 
     /** Called when the user touches the button 'Abort'  -- Code by Tom */
-    public void abort(View view) {
+    public void ButtonAbortClicked(View view) {
         // Abort the current connection attempt
         // -> please append code here to kill network connections etc.
+        boolean isHceSupported = getPackageManager().hasSystemFeature("android.hardware.nfc.hce");
+        Toast.makeText(this, "HCE: " + (isHceSupported ? "Yes" : "No"), Toast.LENGTH_SHORT).show();
         this.setTitle("You clicked abort");
     }
 
     /** Called when the user touches the button 'Connect'  -- Code by Tom */
-    public void connect(View view) {
+    public void ButtonConnectClicked(View view) {
         // Connect to a given IP & port
         String host = mIP.getText().toString();
         int port;
@@ -252,7 +254,7 @@ public class MainActivity extends Activity {
         this.setTitle("You clicked connect");
         mConnectionClient = SimpleNetworkConnectionClientImpl.getInstance().connect(host, port);
 
-        // -> please append code here to connect to IP:Port
+        // -> please append code here to ButtonConnectClicked to IP:Port
     }
 
     /** Called when the user checkes the checkbox 'enable dev mode'  -- Code by Tom */
