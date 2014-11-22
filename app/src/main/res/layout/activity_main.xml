@@ -72,7 +72,7 @@
         android:layout_row="20"
         android:layout_column="0"
         android:onClick="DevCheckboxClicked"
-        android:checked="false"
+        android:checked="true"
         android:layout_columnSpan="3" />
 
         <EditText
@@ -107,7 +107,8 @@
         android:text="Debugging Info's: "
         android:layout_rowSpan="10"
         android:layout_columnSpan="3"
-            android:visibility="invisible" />
+        android:visibility="invisible"
+        android:editable="false" />
 
 </GridLayout>
 
