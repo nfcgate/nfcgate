@@ -214,6 +214,7 @@ public class MainActivity extends Activity {
             if(mReader.isConnected()) {
                 byte[] bytesFromCard = mReader.sendCmd(data);
                 mConnectionClient.sendBytes(bytesFromCard);
+                mDebuginfo.append(Utils.bytesToHex(bytesFromCard) + "\n");
             }
         }
     };
