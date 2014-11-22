@@ -30,7 +30,7 @@
             android:id="@+id/connectbutton"
             android:layout_alignTop="@+id/resetstatus"
             android:layout_alignStart="@+id/abortbutton"
-            android:layout_row="8"
+            android:layout_row="12"
             android:layout_column="0"
             android:onClick="connect" />
 
@@ -42,7 +42,7 @@
             android:layout_below="@+id/connectbutton"
             android:layout_alignEnd="@+id/connectbutton"
             android:layout_alignStart="@+id/connectbutton"
-            android:layout_row="8"
+            android:layout_row="12"
             android:layout_column="1"
             android:onClick="abort" />
 
@@ -53,43 +53,61 @@
         android:layout_row="0"
         android:layout_column="0"
         android:text="Your own ID is:"
-        android:layout_columnSpan="3" />
+        android:layout_columnSpan="4" />
 
     <CheckBox
         android:layout_width="371dp"
         android:layout_height="wrap_content"
         android:text="Enable Developer Mode"
         android:id="@+id/checkBoxDevMode"
-        android:layout_row="18"
+        android:layout_row="19"
         android:layout_column="0"
         android:onClick="DevCheckboxClicked"
         android:checked="false"
-        android:layout_columnSpan="3" />
+        android:layout_columnSpan="4" />
+
+        <EditText
+            android:layout_width="242dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/editIpPort"
+            android:layout_row="8"
+            android:layout_column="0"
+            android:text="Pleaser enter &lt;IP:Port>"
+            android:layout_columnSpan="2" />
 
         <EditText
             android:layout_width="wrap_content"
-            android:layout_height="157dp"
+            android:layout_height="120dp"
             android:id="@+id/DisplayMsg"
-            android:layout_row="12"
+            android:layout_row="17"
             android:layout_column="0"
             android:text="Please hold your device next to an NFC tag / reader"
             android:layout_rowSpan="2"
             android:editable="false"
             android:enabled="true"
             android:focusable="false"
-            android:layout_columnSpan="3" />
+            android:layout_columnSpan="4" />
 
         <EditText
         android:layout_width="match_parent"
         android:layout_height="156dp"
         android:id="@+id/editTextDevModeEnabledDebugging"
-        android:layout_row="20"
+        android:layout_row="21"
         android:layout_column="0"
         android:text="Debugging Info's: "
         android:layout_rowSpan="10"
-        android:layout_columnSpan="3"
+        android:layout_columnSpan="4"
             android:visibility="invisible" />
 
 </GridLayout>
+
+    <Gallery
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/gallery"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="56dp"
+        android:layout_marginTop="168dp" />
 
 </RelativeLayout>
