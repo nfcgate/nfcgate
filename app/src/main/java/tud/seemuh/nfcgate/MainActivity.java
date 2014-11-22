@@ -58,6 +58,7 @@ public class MainActivity extends Activity {
 
     // private var if dev mode is enabled or not
     private boolean mDevModeEnabled = false;
+    private boolean connectButtonEnabled = true;
 
     // declares main functionality
     Button mReset, mConnect, mAbort;
@@ -243,6 +244,18 @@ public class MainActivity extends Activity {
     /** Called when the user touches the button 'Connect'  -- Code by Tom */
     public void ButtonConnectClicked(View view) {
         // Connect to a given IP & port
+        if (connectButtonEnabled == true)
+        {
+            // the buttons name is connect & we want to connect to the server:port
+            connectButtonEnabled = false;
+            mConnect.setText("Disconnect");
+        }
+        else
+        {
+            // the button connect was already clicked and we want to disconnect from the server:port
+            connectButtonEnabled = true;
+            mConnect.setText("Connect");
+        }
         String host = mIP.getText().toString();
         int port;
         try {
@@ -252,9 +265,8 @@ public class MainActivity extends Activity {
             return;
         }
         this.setTitle("You clicked connect");
-        mConnectionClient = SimpleNetworkConnectionClientImpl.getInstance().connect(host, port);
-
         // -> please append code here to ButtonConnectClicked to IP:Port
+        mConnectionClient = SimpleNetworkConnectionClientImpl.getInstance().connect(host, port);
     }
 
     /** Called when the user checkes the checkbox 'enable dev mode'  -- Code by Tom */
@@ -267,7 +279,6 @@ public class MainActivity extends Activity {
         else {
             this.mDevModeEnabled = false;
             mDebuginfo.setVisibility(View.INVISIBLE); }
-
         mDebuginfo.setText("Value of DevMode = " + this.mDevModeEnabled);
     }
 
