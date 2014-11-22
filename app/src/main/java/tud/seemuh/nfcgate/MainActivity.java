@@ -176,8 +176,8 @@ public class MainActivity extends Activity {
                 tagId = "Not supported";
             }
 
-            TextView view = (TextView) findViewById(R.id.hello);
-            view.setText("Found Tag: " + tagId);
+            //TextView view = (TextView) findViewById(R.id.hello);
+            //view.setText("Found Tag: " + tagId);
 
         }
     }
