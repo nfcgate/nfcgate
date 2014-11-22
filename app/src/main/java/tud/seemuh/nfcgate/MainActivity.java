@@ -16,7 +16,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MenuInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
+import android.provider.Settings;
+
 
 import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl;
 import tud.seemuh.nfcgate.network.WiFiDirectBroadcastReceiver;
@@ -25,6 +31,7 @@ import tud.seemuh.nfcgate.reader.NFCTagReader;
 import tud.seemuh.nfcgate.reader.NfcAReaderImpl;
 import tud.seemuh.nfcgate.util.Utils;
 import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl.Callback;
+
 
 public class MainActivity extends Activity {
 
@@ -47,6 +54,15 @@ public class MainActivity extends Activity {
     //private Worker workerRunnable = null;
     //private Thread workerThread;
     NFCTagReader mReader = null;
+
+    // private var if dev mode is enabled or not
+    private boolean mDevMode = false;
+
+    // declares main functionality
+    Button mReset, mConnect, mAbort;
+    CheckBox mDevmode;
+    TextView mOwnID, mInfo, mDebuginfo;
+
 
     /**
      * called at FIRST, next: onStart()
@@ -90,7 +106,16 @@ public class MainActivity extends Activity {
         mChannel = mManager.initialize(this, getMainLooper(), null);
 
         //TCP Client
-        mConnectionClient = SimpleNetworkConnectionClientImpl.getInstance().connect("192.168.178.31", 5566);
+        mConnectionClient = SimpleNetworkConnectionClientImpl.getInstance().connect("192.168.178.20", 5566);
+
+        // Create Buttons & TextViews
+        mReset = (Button) findViewById(R.id.resetstatus);
+        mConnect = (Button) findViewById(R.id.connectbutton);
+        mAbort = (Button) findViewById(R.id.abortbutton);
+        mDevmode = (CheckBox) findViewById(R.id.checkBoxDevMode);
+        mOwnID = (TextView) findViewById(R.id.editTextOwnID);
+        mInfo = (TextView) findViewById(R.id.DisplayMsg);
+        mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
     }
 
     /**
@@ -179,8 +204,8 @@ public class MainActivity extends Activity {
                 SimpleNetworkConnectionClientImpl.getInstance().setCallback(mNetCallback);
             }
 
-            TextView view = (TextView) findViewById(R.id.hello);
-            view.setText("Found Tag: " + tagId);
+            //TextView view = (TextView) findViewById(R.id.hello);
+            //view.setText("Found Tag: " + tagId);
 
         }
     }
@@ -194,6 +219,102 @@ public class MainActivity extends Activity {
             }
         }
     };
+/*
+    /** Called when the user touches the button 'reset application'  -- Code by Tom */
+    public void reset(View view) {
+        // do an entire reset of the application
+        // view.setBackgroundColor(255);
+        // view.setClickable(false);
+        // this.setVisible(false);
+        // view.setVisibility(View.INVISIBLE);
+        this.setTitle("You clicked reset");
+        return;
+    }
+
+    /** Called when the user touches the button 'Abort'  -- Code by Tom */
+    public void abort(View view) {
+        // Abort the current connection attempt
+        // view.setBackgroundColor(144);
+        // view.setClickable(false);
+        // this.setVisible(false);
+        // view.setVisibility(View.INVISIBLE);
+        this.setTitle("You clicked abort");
+        return;
+    }
+
+    /** Called when the user touches the button 'Connect'  -- Code by Tom */
+    public void connect(View view) {
+        // Connect to device xyz
+        // view.setBackgroundColor(22);
+        // view.setClickable(false);
+        // this.setVisible(false);
+        // view.setVisibility(View.INVISIBLE);
+        this.setTitle("You clicked connect");
+        return;
+    }
+
+    /** Called when the user checkes the checkbox 'enable dev mode'  -- Code by Tom */
+    public void DevCheckboxClicked(View view) {
+        // Connect to xyz
+        //view.setBackgroundColor(22);
+        //view.setClickable(false);
+        //this.setTitle("test");
+        // this.setVisible(false);
+        // view.setVisibility(View.INVISIBLE);
+        boolean checked = (((CheckBox) findViewById(R.id.checkBoxDevMode)).isChecked());
+        mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
+        if (checked) {
+            this.mDevMode = true;
+            mDebuginfo.setVisibility(View.VISIBLE); }
+        else {
+            this.mDevMode = false;
+            mDebuginfo.setVisibility(View.INVISIBLE); }
+
+        mDebuginfo.setText("");
+        mDebuginfo.append("Value of DevMode = " + this.mDevMode);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        // getMenuInflater().inflate(R.menu.menu_main, menu);
+        // menu.findItem(R.id.action_settings).getActionView();
+
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+
+
+        //  getMenuInflater().inflate(R.menu.main_activity_actions, menu);
+        //  MenuItem searchItem = menu.findItem(R.id.action_search);
+        //  SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        //  Configure the search info and add any event listeners
+        //  return super.onCreateOptionsMenu(menu);
+        //  return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_nfc:
+                startActivityForResult(new Intent(Settings.ACTION_NFC_SETTINGS), 0);
+                return true;
+            case R.id.action_app:
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                return true;
+            case R.id.action_about:
+                startActivity(new Intent(MainActivity.this, AboutActivity.class));
+                return true;
+            case  R.id.action_settings:
+                startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 /*
     private void startWorker(Tag tag) {
         if(workerRunnable == null || !workerThread.isAlive()) {
@@ -274,26 +395,7 @@ public class MainActivity extends Activity {
     });
      */
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+    //TODO
+    //onStop()
+    //destory all threads
 }
