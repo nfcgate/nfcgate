@@ -89,7 +89,7 @@ public class MainActivity extends Activity {
         mChannel = mManager.initialize(this, getMainLooper(), null);
 
         //TCP Client
-        mConnectionClient = new SimpleNetworkConnectionClientImpl("192.168.178.20", 5566);
+        //mConnectionClient = SimpleNetworkConnectionClientImpl.getInstance().connect("192.168.178.20", 5566);
     }
 
     /**

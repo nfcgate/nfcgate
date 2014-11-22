@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tud.seemuh.nfcgate" >
 
-    <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:required="true" android:name="android.permission.NFC" />
 
     <!-- < Wifi Direct > -->
     <uses-permission
@@ -50,6 +50,18 @@
                 android:resource="@xml/tech" />
         </activity-alias>
 
+        <service
+            android:name=".hce.ApduService"
+            android:exported="true"
+            android:permission="android.permission.BIND_NFC_SERVICE" >
+            <intent-filter>
+                <action android:name="android.nfc.cardemulation.action.HOST_APDU_SERVICE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.nfc.cardemulation.host_apdu_service"
+                android:resource="@xml/hce" />
+        </service>
     </application>
 
 </manifest>

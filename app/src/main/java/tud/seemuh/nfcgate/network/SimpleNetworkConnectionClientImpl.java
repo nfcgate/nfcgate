@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.LinkedList;
+import java.util.List;
 
 import tud.seemuh.nfcgate.util.Utils;
 
@@ -23,8 +25,20 @@ public class SimpleNetworkConnectionClientImpl implements NetworkHandler {
     private Thread mClientThread = null;
 
     private Socket mSocket;
+    private Callback mCallback;
 
-    public SimpleNetworkConnectionClientImpl(String serverAddress, int serverPort) {
+    private static SimpleNetworkConnectionClientImpl mInstance;
+
+    public static SimpleNetworkConnectionClientImpl getInstance() {
+        if(mInstance == null) mInstance = new SimpleNetworkConnectionClientImpl();
+        return mInstance;
+    }
+
+    public SimpleNetworkConnectionClientImpl connect(String serverAddress, int serverPort) {
+        return connect(serverAddress, serverPort, null);
+    }
+
+    public SimpleNetworkConnectionClientImpl connect(String serverAddress, int serverPort, Callback callback) {
         try {
             mServerAddress = InetAddress.getByName(serverAddress);
 
@@ -40,6 +54,8 @@ public class SimpleNetworkConnectionClientImpl implements NetworkHandler {
             Log.e(SimpleNetworkConnectionClientImpl.class.getName(), "Unknown Host: "+serverAddress);
         }
         mServerPort = serverPort;
+        mCallback = callback;
+        return this;
     }
 
     public synchronized byte[] getBytes() {
@@ -47,26 +63,15 @@ public class SimpleNetworkConnectionClientImpl implements NetworkHandler {
     }
 
     public void sendBytes(byte[] msg) {
-        DataOutputStream out;
-
-        try {
-            out = new DataOutputStream(mSocket.getOutputStream());
-            out.writeInt(msg.length);
-            out.write(msg);
-            out.flush();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        mRunnableClientThread.sendBytes(msg);
     }
 
     private class ClientThread implements Runnable {
 
         private CommunicationThread mRunnableComThread;
         private Thread commThread = null;
+        private List<byte[]> mSendQueue = new LinkedList<byte[]>();
+        private final Object mSendQueueSync = new Object();
 
         @Override
         public void run() {
@@ -76,8 +81,14 @@ public class SimpleNetworkConnectionClientImpl implements NetworkHandler {
 
                 //read answer from SOCKET
                 mRunnableComThread = new CommunicationThread(mSocket);
-                commThread = new Thread(mRunnableComThread);
-                commThread.start();
+                synchronized (mSendQueueSync) {
+                    commThread = new Thread(mRunnableComThread);
+                    commThread.start();
+                    for(byte[] msg : mSendQueue) {
+                        reallySendBytes(msg);
+                    }
+                    mSendQueue.clear();
+                }
 
             } catch (IOException e1) {
                 e1.printStackTrace();
@@ -87,7 +98,7 @@ public class SimpleNetworkConnectionClientImpl implements NetworkHandler {
 
         public synchronized byte[] getBytesFromNW() {
             byte[] ret;
-            if(commThread != null && mRunnableComThread.getSome == true) {
+            if(commThread != null && mRunnableComThread.getSome) {
                 ret = mRunnableComThread.readBytes;
                 mRunnableComThread.getSome = false;
                 return ret;
@@ -95,6 +106,34 @@ public class SimpleNetworkConnectionClientImpl implements NetworkHandler {
                 return null;
             }
         }
+
+        public void sendBytes(byte[] msg) {
+            synchronized (mSendQueueSync) {
+                if(commThread == null) {
+                    mSendQueue.add(msg);
+                    return;
+                }
+            }
+            reallySendBytes(msg);
+        }
+
+        private void reallySendBytes(byte[] msg) {
+            DataOutputStream out;
+            try {
+                out = new DataOutputStream(mSocket.getOutputStream());
+                out.writeInt(msg.length);
+                out.write(msg);
+                out.flush();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
 
     }
 
@@ -126,7 +165,10 @@ public class SimpleNetworkConnectionClientImpl implements NetworkHandler {
                         readBytes = new byte[len];
                         dis.readFully(readBytes);
                         Log.d(CommunicationThread.class.getName(), "Read data: " + Utils.bytesToHex(readBytes));
-                        getSome = true;
+                        if(mCallback != null)
+                            mCallback.onDataReceived(readBytes);
+                        else
+                            getSome = true;
                     } else {
                         Log.e(CommunicationThread.class.getName(), "Error no postive number of bytes: " + len);
                     }
@@ -138,5 +180,8 @@ public class SimpleNetworkConnectionClientImpl implements NetworkHandler {
             }
         }
 
+    }
+    public interface Callback {
+        public void onDataReceived(byte[] data);
     }
 }
