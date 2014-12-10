@@ -75,7 +75,7 @@ public class MainActivity extends Activity {
 
 
     /**
-     * called at FIRST, next: onStart()
+     * called first, next: onStart()
      * @param savedInstanceState saved instance state
      */
     @Override
@@ -91,7 +91,7 @@ public class MainActivity extends Activity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
-        // Create a generic PendingIntent that will be deliver to this activity.
+        // Create a generic PendingIntent that will be delivered to this activity.
         // The NFC stack will fill in the intent with the details of the discovered tag before
         // delivering to this activity.
         mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
@@ -133,7 +133,7 @@ public class MainActivity extends Activity {
      */
 
     /**
-     * called at THIRD
+     * called after onStart()
      */
     @Override
     public void onResume() {
