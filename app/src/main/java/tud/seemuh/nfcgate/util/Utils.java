@@ -9,7 +9,7 @@ public class Utils {
 
     /**
      * Convert a byte-array to a hexadecimal String.
-     * 
+     *
      * @param bytes Byte[] to convert to String
      * @return Byte[] as hex-string
      */

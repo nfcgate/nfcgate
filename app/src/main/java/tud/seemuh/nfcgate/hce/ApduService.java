@@ -11,30 +11,43 @@ import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl.Callback;
 import tud.seemuh.nfcgate.util.Utils;
 
 public class ApduService extends HostApduService {
-
     private final static String TAG = "ApduService";
-    private final byte[] DONT_RESPOND = new byte[]{};
 
+    /**
+     * Callback from the network thread whenever we get data from it
+     * empty apdu byte array
+     * when returned in the processCommandApdu, the hce service will not respond to the
+     * reader request
+     */
     private Callback mCallback = new SimpleNetworkConnectionClientImpl.Callback() {
         @Override
         public void onDataReceived(byte[] data) {
-            Log.d(TAG, "callback: " + Utils.bytesToHex(data));
+            // send apdu from network to reader
             ApduService.this.sendResponseApdu(data);
         }
     };
 
+    /**
+     * callback from the hce service when a apdu from a reader is received
+     * @param apdu apdu data received from hce service
+     * @param extras not used
+     * @return apdu to answer
+     */
     @Override
     public byte[] processCommandApdu(byte[] apdu, Bundle extras) {
+        // the byte sequence 0x00a4 is a SELECT command. this is ever the first command we get
+        // when a reader wants to talk to us
         if (apdu.length >= 2 && apdu[0] == (byte)0 && apdu[1] == (byte)0xa4) {
 
             Log.i(TAG, "App selected");
 
-            //SimpleNetworkConnectionClientImpl.getInstance().connect("192.168.178.31", 5566);
+            // new nfc interaction, so set the network callback to us
             SimpleNetworkConnectionClientImpl.getInstance().setCallback(mCallback);
-            // TODO momentan den SELECT befehl nicht weiter leiten
+            // for the moment, we do not relay the select. This is only for the reader board
+            // to select our app. The second apdu is the conversation with the card
             return new byte[]{0};
         }
-
+        // raw send the apdu over the network
         SimpleNetworkConnectionClientImpl.getInstance().sendBytes(apdu);
         Log.d(TAG, "nfc: " + Utils.bytesToHex(apdu));
 
