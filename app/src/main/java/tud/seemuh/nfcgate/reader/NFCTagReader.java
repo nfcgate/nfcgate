@@ -1,14 +1,12 @@
-package tud.seemuh.nfcgate.util;
-
-import android.nfc.Tag;
-import java.util.Hashtable;
-
+package tud.seemuh.nfcgate.reader;
 
 /**
  * Interface to all NFCTagReader-Classes.
- * Created by Max on 25.10.14.
  */
 public interface NFCTagReader {
+    // Constants to indicate the used NFC reader technology
+    // Not all of these are guaranteed to be available, as the android API does not guarantee
+    // support for some of these.
     public static final int READER_ISODEP            = 0;
     public static final int READER_MIFARE_CLASSIC    = 1;
     public static final int READER_MIFARE_ULTRALIGHT = 2;
@@ -23,9 +21,6 @@ public interface NFCTagReader {
      *
      * @param command: byte[]-representation of the command to be sent
      * @return byte[]-representation of the answer of the NFC chip
-     *
-     * TODO: Note to self: "Applications must not append the EoD (CRC) to the payload, it will be
-     *       automatically calculated. "
      */
     public byte[] sendCmd(byte[] command);
 
@@ -36,4 +31,16 @@ public interface NFCTagReader {
      * @return integer representation of the underlying NFC tag reader protocol
      */
     public int getProtocol();
+
+    /**
+     * Closes the adapter, signalling that communication is over. Should be called only
+     * when no further communication with the adapter will follow, as the adapter will become
+     * unusable from this
+     */
+    public void closeConnection();
+
+    /**
+     * Returns True if communication should be possible, False otherwise
+     */
+    public boolean isConnected();
 }
