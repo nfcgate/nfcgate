@@ -12,39 +12,27 @@ import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NfcA;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.provider.Settings;
 import android.widget.Toast;
-
-
-import java.util.Observable;
-import java.util.Observer;
 
 import tud.seemuh.nfcgate.network.CallbackImpl;
 import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl;
-import tud.seemuh.nfcgate.network.UpdateUI;
 import tud.seemuh.nfcgate.network.WiFiDirectBroadcastReceiver;
-import tud.seemuh.nfcgate.reader.IsoDepReaderImpl;
-import tud.seemuh.nfcgate.reader.NFCTagReader;
-import tud.seemuh.nfcgate.reader.NfcAReaderImpl;
-import tud.seemuh.nfcgate.util.Utils;
-import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl.Callback;
 
 
 public class MainActivity extends Activity {
 
     private NfcAdapter mAdapter;
     private IntentFilter mIntentFilter = new IntentFilter();
-    //private IntentFilter mIntentFilter;
     private PendingIntent mPendingIntent;
     private IntentFilter[] mFilters;
     private String[][] mTechLists;
@@ -56,11 +44,6 @@ public class MainActivity extends Activity {
 
     //Connection Client
     private SimpleNetworkConnectionClientImpl mConnectionClient;
-
-    //Worker
-    //private Worker workerRunnable = null;
-    //private Thread workerThread;
-    //NFCTagReader mReader = null;
 
     // private var if dev mode is enabled or not
     private boolean mDevModeEnabled = false;

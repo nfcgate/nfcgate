@@ -1,9 +1,5 @@
 package tud.seemuh.nfcgate.reader;
 
-import android.nfc.Tag;
-import java.util.Hashtable;
-
-
 /**
  * Interface to all NFCTagReader-Classes.
  * Created by Max on 25.10.14.

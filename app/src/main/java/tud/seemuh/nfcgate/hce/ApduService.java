@@ -2,22 +2,17 @@ package tud.seemuh.nfcgate.hce;
 
 import android.nfc.cardemulation.HostApduService;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.util.Log;
 
-import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.util.Arrays;
 
 import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl;
-import tud.seemuh.nfcgate.util.Utils;
 import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl.Callback;
+import tud.seemuh.nfcgate.util.Utils;
 
 public class ApduService extends HostApduService {
 
     private final static String TAG = "ApduService";
-    Socket _socket;
     private final byte[] DONT_RESPOND = new byte[]{};
 
     private Callback mCallback = new SimpleNetworkConnectionClientImpl.Callback() {

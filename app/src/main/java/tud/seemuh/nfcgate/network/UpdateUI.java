@@ -1,10 +1,7 @@
 package tud.seemuh.nfcgate.network;
 
 import android.os.AsyncTask;
-import android.view.View;
 import android.widget.TextView;
-
-import tud.seemuh.nfcgate.MainActivity;
 
 /**
  * Created by daniel on 11/22/14.

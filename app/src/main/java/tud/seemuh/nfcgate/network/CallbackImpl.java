@@ -1,13 +1,9 @@
 package tud.seemuh.nfcgate.network;
 
 import android.nfc.Tag;
-import android.nfc.tech.NfcA;
 import android.util.Log;
 import android.widget.TextView;
 
-import java.util.Observable;
-
-import tud.seemuh.nfcgate.MainActivity;
 import tud.seemuh.nfcgate.reader.IsoDepReaderImpl;
 import tud.seemuh.nfcgate.reader.NFCTagReader;
 import tud.seemuh.nfcgate.reader.NfcAReaderImpl;
