@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 /**
  * Created by Tom on 21.11.2014.
+ *
+ *  This activity creates the view for our about section using the about.xml file
  */
 public class AboutActivity extends Activity{
 
