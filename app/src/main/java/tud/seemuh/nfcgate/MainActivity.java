@@ -146,18 +146,15 @@ public class MainActivity extends Activity {
          */
 
         /* TODO
-        ---> Hier laufen wir noch in eine Null Pointer Exception! -> Fix code
+        // ---> Hier laufen wir noch in eine Null Pointer Exception wenn wir kein NFC benutzen! -> Fix code?
         */
 
-        /*
         mAdapter.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
-        // ---> Hier laufen wir noch in eine Null Pointer Exception! -> Fix code
+        // ---> Hier laufen wir noch in eine Null Pointer Exception wenn wir kein NFC benutzen! -> Fix code?
             Log.i("NFCGATE_DEBUG", "onResume(): starting onNewIntent()...");
             onNewIntent(getIntent());
         }
-        */
-
 
         //WiFi Direct
         mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
