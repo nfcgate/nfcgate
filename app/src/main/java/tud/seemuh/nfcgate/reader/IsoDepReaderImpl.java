@@ -9,7 +9,6 @@ import java.io.IOException;
 /**
  * Implements an NFCTagReader using the IsoDep technology
  *
- * Created by Max on 27.10.14.
  */
 public class IsoDepReaderImpl implements NFCTagReader {
     private IsoDep mAdapter = null;

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 /**
- * Created by Tom on 21.11.2014.
  *
  * This activity creates the view for our splash screen which is the first activity started when launching the application
  * Here we use our splash.xml file

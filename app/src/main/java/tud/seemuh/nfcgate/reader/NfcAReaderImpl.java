@@ -9,7 +9,6 @@ import java.io.IOException;
 /**
  * Implements an NFCTagReader using the NfcA technology
  *
- * Created by Max on 27.10.14.
  */
 public class NfcAReaderImpl implements NFCTagReader {
     private NfcA mAdapter = null;

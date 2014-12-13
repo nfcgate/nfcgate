@@ -3,7 +3,6 @@ package tud.seemuh.nfcgate.reader;
 /**
  * Interface to all NFC Tag Emulator classes
  *
- * Created by Max on 25.10.14.
  */
 public interface NFCTagEmulator {
     // These constants are a proposal to the developer of this part of the app

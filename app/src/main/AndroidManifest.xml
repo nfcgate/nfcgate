@@ -16,9 +16,6 @@
         android:name="android.permission.INTERNET"/>
     <!-- < / Wifi Direct > -->
 
-    <uses-sdk
-        android:minSdkVersion="19"
-        android:targetSdkVersion="19" />
 
     <application
         android:allowBackup="true"

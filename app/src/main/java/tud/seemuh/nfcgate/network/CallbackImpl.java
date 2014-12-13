@@ -9,13 +9,11 @@ import tud.seemuh.nfcgate.reader.NFCTagReader;
 import tud.seemuh.nfcgate.reader.NfcAReaderImpl;
 import tud.seemuh.nfcgate.util.Utils;
 
-/**
- * Created by daniel on 11/22/14.
- */
+
 public class CallbackImpl implements SimpleNetworkConnectionClientImpl.Callback {
 
-    NFCTagReader mReader = null;
-    TextView debugView;
+    private NFCTagReader mReader = null;
+    private TextView debugView;
 
     public void setUpdateButton(TextView ldebugView) {
         debugView = ldebugView;
@@ -37,8 +35,8 @@ public class CallbackImpl implements SimpleNetworkConnectionClientImpl.Callback 
 
     /**
      * Called on nfc tag intend
-     * @param tag
-     * @return
+     * @param tag nfc tag
+     * @return true if a supported tag is found
      */
     public boolean setTag(Tag tag) {
 

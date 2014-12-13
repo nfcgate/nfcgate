@@ -1,8 +1,5 @@
 package tud.seemuh.nfcgate.util;
 
-/**
- * Created by daniel on 11/7/14.
- */
 public class Utils {
 
     final private static char[] hexArray = "0123456789ABCDEF".toCharArray();

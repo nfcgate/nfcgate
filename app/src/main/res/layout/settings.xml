@@ -9,7 +9,7 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:text="Some setting will be displayed here at a later time"
         android:id="@+id/textView_settings"
         android:layout_weight="0.06" />

@@ -3,9 +3,7 @@ package tud.seemuh.nfcgate.network;
 import android.os.AsyncTask;
 import android.widget.TextView;
 
-/**
- * Created by daniel on 11/22/14.
- */
+
 public class UpdateUI extends AsyncTask<String, Void, String> {
     private TextView debugView;
 

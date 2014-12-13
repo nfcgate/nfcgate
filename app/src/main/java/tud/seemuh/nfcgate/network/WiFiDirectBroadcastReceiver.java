@@ -7,9 +7,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 
 import tud.seemuh.nfcgate.MainActivity;
 
-/**
- * Created by daniel on 11/3/14.
- */
+
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
     private WifiP2pManager mManager;

@@ -4,7 +4,6 @@ import android.nfc.cardemulation.HostApduService;
 import android.os.Bundle;
 import android.util.Log;
 
-import java.net.Socket;
 
 import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl;
 import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl.Callback;
@@ -14,10 +13,14 @@ public class ApduService extends HostApduService {
     private final static String TAG = "ApduService";
 
     /**
-     * Callback from the network thread whenever we get data from it
      * empty apdu byte array
      * when returned in the processCommandApdu, the hce service will not respond to the
      * reader request
+     */
+    private final byte[] DONT_RESPOND = new byte[]{};
+
+    /**
+     * Callback from the network threa whenever we get data from it
      */
     private Callback mCallback = new SimpleNetworkConnectionClientImpl.Callback() {
         @Override

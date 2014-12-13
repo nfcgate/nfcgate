@@ -14,9 +14,7 @@ import java.util.Observable;
 
 import tud.seemuh.nfcgate.util.Utils;
 
-/**
- * Created by daniel on 11/6/14.
- */
+
 public class SimpleNetworkConnectionClientImpl implements NetworkHandler {
 
     private int mServerPort = 15000;

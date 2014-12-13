@@ -2,7 +2,6 @@ package tud.seemuh.nfcgate.reader;
 
 /**
  * Interface to all NFCTagReader-Classes.
- * Created by Max on 25.10.14.
  */
 public interface NFCTagReader {
     // Constants to indicate the used NFC reader technology

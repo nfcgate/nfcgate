@@ -16,8 +16,6 @@
             android:layout_height="wrap_content"
             android:text="Reset status"
             android:id="@+id/resetstatus"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
             android:layout_row="5"
             android:layout_column="0"
             android:onClick="ButtonResetClicked"
@@ -37,8 +35,6 @@
             android:layout_height="wrap_content"
             android:text="Connect"
             android:id="@+id/connectbutton"
-            android:layout_alignTop="@+id/resetstatus"
-            android:layout_alignStart="@+id/abortbutton"
             android:layout_row="13"
             android:layout_column="0"
             android:onClick="ButtonConnectClicked" />
@@ -48,9 +44,6 @@
             android:layout_height="wrap_content"
             android:text="Abort"
             android:id="@+id/abortbutton"
-            android:layout_below="@+id/connectbutton"
-            android:layout_alignEnd="@+id/connectbutton"
-            android:layout_alignStart="@+id/connectbutton"
             android:layout_row="13"
             android:layout_column="1"
             android:onClick="ButtonAbortClicked" />

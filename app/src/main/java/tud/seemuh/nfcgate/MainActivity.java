@@ -43,18 +43,18 @@ public class MainActivity extends Activity {
     private BroadcastReceiver mReceiver = null;
 
     //Connection Client
-    private SimpleNetworkConnectionClientImpl mConnectionClient;
+    protected SimpleNetworkConnectionClientImpl mConnectionClient;
 
     // private var if dev mode is enabled or not
-    private boolean mDevModeEnabled = false;
+    protected boolean mDevModeEnabled = false;
     private boolean connectButtonEnabled = true;
 
     private CallbackImpl mNetCallback = new CallbackImpl();
 
     // declares main functionality
-    Button mReset, mConnect, mAbort;
-    CheckBox mDevMode;
-    TextView mOwnID, mInfo, mDebuginfo, mIP, mPort;
+    private Button mReset, mConnect, mAbort;
+    private CheckBox mDevMode;
+    private TextView mOwnID, mInfo, mDebuginfo, mIP, mPort;
 
 
     /**
@@ -168,7 +168,6 @@ public class MainActivity extends Activity {
             Log.i("NFCGATE_DEBUG","Discovered tag with intent: " + intent);
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
-            boolean found_supported_tag = false;
             String tagId = "";
 
             mNetCallback.setTag(tag);
@@ -204,7 +203,7 @@ public class MainActivity extends Activity {
     /** Called when the user touches the button 'Connect'  -- Code by Tom */
     public void ButtonConnectClicked(View view) {
         // Connect to a given IP & port
-        if (connectButtonEnabled == true)
+        if (connectButtonEnabled)
         {
             // the buttons name is connect & we want to connect to the server:port
             connectButtonEnabled = false;

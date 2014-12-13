@@ -9,7 +9,7 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:text="Here you can read all version detail, disclaimers and legal stuff about the NFC Wormhole Android App v0.1"
         android:id="@+id/textView_settings"
         android:layout_weight="0.06" />
