@@ -20,10 +20,14 @@ public class NfcAReaderImpl implements NFCTagReader {
      * @param tag: A tag using the NfcA technology.
      */
     public NfcAReaderImpl(Tag tag) {
+        Log.d("NFC_READER_NFCA", "NfcA constructor called");
+        // Create NFC Adapter to use
         mAdapter = NfcA.get(tag);
         try{
+            // Connect the adapter to the NFC card
             mAdapter.connect();
         } catch(IOException e) {
+            // Something went wrong. For the moment, we will only log this
             //TODO
             Log.e("NFC_READER_NFCA", "Encountered IOException in constructor: " + e);
         }
@@ -37,6 +41,7 @@ public class NfcAReaderImpl implements NFCTagReader {
      */
     public byte[] sendCmd(byte[] command) {
         try {
+            // Transceive command (transmit command and receive answer)
             byte[] retval = mAdapter.transceive(command);
 
             Log.i("NFC_READER_NFCA", "Transceived succesfully");

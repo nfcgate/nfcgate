@@ -21,8 +21,10 @@ public class IsoDepReaderImpl implements NFCTagReader {
      */
     public IsoDepReaderImpl(Tag tag) {
         Log.d("NFC_READER_ISODEP", "IsoDep constructor called");
+        // Create NFC Adapter to use
         mAdapter = IsoDep.get(tag);
         try {
+            // Connect to the NFC card
             mAdapter.connect();
         } catch (Exception e) {
             //TODO
@@ -38,10 +40,11 @@ public class IsoDepReaderImpl implements NFCTagReader {
      */
     public byte[] sendCmd(byte[] command) {
         try {
-            //mAdapter.connect();
+            // Transceive command and store reply
             byte[] retval = mAdapter.transceive(command);
-            //mAdapter.close();
+
             Log.i("NFC_READER_ISODEP", "Transceived succesfully");
+
             return retval;
         } catch(IOException e) {
             // TODO: Handle Exception properly
