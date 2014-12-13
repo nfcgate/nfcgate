@@ -12,6 +12,10 @@ import tud.seemuh.nfcgate.MainActivity;
 public class UpdateUI extends AsyncTask<String, Void, String> {
     private TextView debugView;
 
+    /**
+     *
+     * @param ldebugView: we need the view to append debug output to that
+     */
     public UpdateUI(TextView ldebugView) {
         debugView = ldebugView;
     }

@@ -25,20 +25,30 @@ public class CallbackImpl implements SimpleNetworkConnectionClientImpl.Callback 
         debugView = ldebugView;
     }
 
+    /**
+     * Implementation of SimpleNetworkConnectionClientImpl.Callback
+     * @param data: received bytes
+     */
     @Override
     public void onDataReceived(byte[] data) {
         if(mReader.isConnected()) {
             byte[] bytesFromCard = mReader.sendCmd(data);
             SimpleNetworkConnectionClientImpl.getInstance().sendBytes(bytesFromCard);
-            //TO GUI
+            //Ugly way to send data to the GUI from an external thread
             new UpdateUI(debugView).execute(Utils.bytesToHex(bytesFromCard)+"\n");
         }
     }
 
+    /**
+     * Called on nfc tag intend
+     * @param tag
+     * @return
+     */
     public boolean setTag(Tag tag) {
 
         boolean found_supported_tag = false;
 
+        //identify tag type
         for(String type: tag.getTechList()) {
             // TODO: Refactor this into something much nicer to avoid redundant work betw.
             //       this code and the worker thread, which also does this check.
@@ -58,6 +68,7 @@ public class CallbackImpl implements SimpleNetworkConnectionClientImpl.Callback 
             }
         }
 
+        //set callback when data is received
         if(found_supported_tag){
             SimpleNetworkConnectionClientImpl.getInstance().setCallback(this);
         }

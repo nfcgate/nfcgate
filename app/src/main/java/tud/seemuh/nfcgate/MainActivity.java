@@ -185,7 +185,6 @@ public class MainActivity extends Activity {
             Log.i("NFCGATE_DEBUG","Discovered tag with intent: " + intent);
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
-            //Ab hier koennte man schon mit dem Tag arbeiten!!!
             boolean found_supported_tag = false;
             String tagId = "";
 
