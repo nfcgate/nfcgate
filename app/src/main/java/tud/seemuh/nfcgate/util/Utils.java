@@ -7,6 +7,12 @@ public class Utils {
 
     final private static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
+    /**
+     * Convert a byte-array to a hexadecimal String.
+     * 
+     * @param bytes Byte[] to convert to String
+     * @return Byte[] as hex-string
+     */
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for ( int j = 0; j < bytes.length; j++ ) {
