@@ -28,7 +28,7 @@
             android:layout_row="8"
             android:layout_column="1"
             android:hint="Enter &lt;Port>"
-            android:text="5566" />
+            android:text="" />
 
         <Button
             android:layout_width="100dp"
@@ -57,17 +57,6 @@
         android:text="Your own ID is:"
         android:layout_columnSpan="2" />
 
-    <CheckBox
-        android:layout_width="305dp"
-        android:layout_height="wrap_content"
-        android:text="Enable Developer Mode"
-        android:id="@+id/checkBoxDevMode"
-        android:layout_row="20"
-        android:layout_column="0"
-        android:onClick="DevCheckboxClicked"
-        android:checked="true"
-        android:layout_columnSpan="3" />
-
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -76,7 +65,7 @@
             android:layout_column="0"
             android:layout_gravity="center"
             android:hint="Enter &lt;IP> address"
-            android:text="192.168.178.31" />
+            android:text="" />
 
         <EditText
             android:layout_width="wrap_content"
@@ -93,11 +82,11 @@
 
         <EditText
         android:layout_width="match_parent"
-        android:layout_height="156dp"
+        android:layout_height="173dp"
         android:id="@+id/editTextDevModeEnabledDebugging"
         android:layout_row="22"
         android:layout_column="0"
-        android:text="Debugging Info's: "
+        android:text="Debugging Infos: "
         android:layout_rowSpan="10"
         android:layout_columnSpan="3"
         android:visibility="visible"
