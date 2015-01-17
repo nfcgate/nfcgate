@@ -1755,6 +1755,14 @@ public final class C2C {
        * <code>READER_REMOVED = 4;</code>
        */
       READER_REMOVED(4, 4),
+      /**
+       * <code>INVALID_MSG_FMT = 5;</code>
+       */
+      INVALID_MSG_FMT(5, 5),
+      /**
+       * <code>UNKNOWN_ERROR = 6;</code>
+       */
+      UNKNOWN_ERROR(6, 6),
       ;
 
       /**
@@ -1777,6 +1785,14 @@ public final class C2C {
        * <code>READER_REMOVED = 4;</code>
        */
       public static final int READER_REMOVED_VALUE = 4;
+      /**
+       * <code>INVALID_MSG_FMT = 5;</code>
+       */
+      public static final int INVALID_MSG_FMT_VALUE = 5;
+      /**
+       * <code>UNKNOWN_ERROR = 6;</code>
+       */
+      public static final int UNKNOWN_ERROR_VALUE = 6;
 
 
       public final int getNumber() { return value; }
@@ -1788,6 +1804,8 @@ public final class C2C {
           case 2: return CARD_REMOVED;
           case 3: return READER_FOUND;
           case 4: return READER_REMOVED;
+          case 5: return INVALID_MSG_FMT;
+          case 6: return UNKNOWN_ERROR;
           default: return null;
         }
       }
@@ -2209,12 +2227,13 @@ public final class C2C {
       "orCode:\rERROR_NOERROR\"\"\n\nDataSource\022\n\n\006R",
       "EADER\020\000\022\010\n\004CARD\020\001\"`\n\020NFCDataErrorCode\022\021\n" +
       "\rERROR_NOERROR\020\000\022\021\n\rERROR_NO_CARD\020\001\022\023\n\017E" +
-      "RROR_NO_READER\020\002\022\021\n\rERROR_UNKNOWN\020\003\"\256\001\n\006" +
+      "RROR_NO_READER\020\002\022\021\n\rERROR_UNKNOWN\020\003\"\327\001\n\006" +
       "Status\022?\n\004code\030\001 \002(\01621.tud.seemuh.nfcgat" +
-      "e.network.c2c.Status.StatusCode\"c\n\nStatu" +
-      "sCode\022\r\n\tKEEPALIVE\020\000\022\016\n\nCARD_FOUND\020\001\022\020\n\014" +
-      "CARD_REMOVED\020\002\022\020\n\014READER_FOUND\020\003\022\022\n\016READ" +
-      "ER_REMOVED\020\004"
+      "e.network.c2c.Status.StatusCode\"\213\001\n\nStat" +
+      "usCode\022\r\n\tKEEPALIVE\020\000\022\016\n\nCARD_FOUND\020\001\022\020\n" +
+      "\014CARD_REMOVED\020\002\022\020\n\014READER_FOUND\020\003\022\022\n\016REA" +
+      "DER_REMOVED\020\004\022\023\n\017INVALID_MSG_FMT\020\005\022\021\n\rUN" +
+      "KNOWN_ERROR\020\006"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
