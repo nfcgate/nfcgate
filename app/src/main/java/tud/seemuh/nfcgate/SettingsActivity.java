@@ -2,13 +2,12 @@ package tud.seemuh.nfcgate;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  *
@@ -18,6 +17,7 @@ public class SettingsActivity extends Activity{
 
     // Define whether Debugging Mode is enabled or not
     private CheckBox mDevMode;
+    private TextView supportedFeatures;
     private boolean mDevModeEnabled;
     private Button mbtnSaveSettings;
 
@@ -25,6 +25,11 @@ public class SettingsActivity extends Activity{
     private TextView mIP,mPort;
     private String ip;
     private int port;
+
+    // Heardware features of the current smartphone
+    private NfcAdapter mAdapter;
+    private boolean nfcisActive;
+    private boolean hce;
 
     // Defined name of the Shared Preferences Buffer
     public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
@@ -35,10 +40,10 @@ public class SettingsActivity extends Activity{
         mDevMode = (CheckBox) findViewById(R.id.checkBoxDevMode);
         mIP = (TextView) findViewById(R.id.editIP);
         mPort = (TextView) findViewById(R.id.editPort);
+        supportedFeatures = (TextView) findViewById(R.id.textViewSupportedFeatures);
         mbtnSaveSettings = (Button) findViewById(R.id.btnSaveSettings);
 
         // create Shared Preferences Buffer in private mode
-        // SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
 
         // retrieve mDevModeEnabled from the preferences buffer, if not found set to false
@@ -51,37 +56,32 @@ public class SettingsActivity extends Activity{
         mPort.setText(String.valueOf(port));
         mDevMode.setChecked(mDevModeEnabled);
 
-       /* mIP.setOnFocusChangeListener(new View.OnFocusChangeListener(){
-            @Override
-            public void onFocusChange(View v,boolean hasFocus){
-                if (!hasFocus) {
-                    ip = mIP.getText().toString();
-                    // Toast.makeText(this, "had focus and then lost focus", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        nfcisActive = false;
+        hce = getPackageManager().hasSystemFeature("android.hardware.nfc.hce");
 
-        mPort.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    try {
-                        port = Integer.parseInt(mPort.getText().toString().trim());
-                    } catch (NumberFormatException e) {
-                        // Toast.makeText(this, "Please enter a valid port", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        });
+        mAdapter = NfcAdapter.getDefaultAdapter(this);
+        if (mAdapter != null && mAdapter.isEnabled()) {nfcisActive = true; }
 
+        String values = " NFC: ";
+        if (nfcisActive)
+        {
+            values = values + "is enabled";
+        }
+        else
+        {
+            values = values + "is not enabled";
+        }
+        values = values + "\n HCE: ";
+        if (hce)
+        {
+            values = values + "is enabled";
+        }
+        else
+        {
+            values = values + "is not enabled";
+        }
+        supportedFeatures.setText("\n Supported features by your smartphone: \n" + values);
 
-        // Store some of the application settings in the preferences buffer
-        SharedPreferences.Editor editor = preferences.edit();
-        // save ip into the to the preferences buffer
-        editor.putString("ip", ip);
-        // save port into the to the preferences buffer
-        editor.putInt("port", port);
-        editor.commit();*/
     }
 
     /** Called when the user touches the button 'btnSaveSettingsClicked'  -- Code by Tom */
@@ -94,17 +94,10 @@ public class SettingsActivity extends Activity{
             // Toast.makeText(this, "Please enter a valid port", Toast.LENGTH_SHORT).show();
         }
 
-        boolean checked = (((CheckBox) findViewById(R.id.checkBoxDevMode)).isChecked());
-        if (checked) {
-            this.mDevModeEnabled = true;
-        } else {
-            this.mDevModeEnabled = false;
-        }
+        mDevModeEnabled = (((CheckBox) findViewById(R.id.checkBoxDevMode)).isChecked());
 
-        // save all these values
         // create Shared Preferences Buffer in private mode
         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-       // SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Store some of the application settings in the preferences buffer
         SharedPreferences.Editor editor = preferences.edit();
@@ -117,33 +110,11 @@ public class SettingsActivity extends Activity{
         editor.commit();
     }
 
-/*
-    public void onFocusChange(View v, boolean hasFocus)
-    {
-        if (!hasFocus)
-        {
-            ip = mIP.getText().toString();
-            try {
-                port = Integer.parseInt(mPort.getText().toString().trim());
-            } catch (NumberFormatException e) {
-                // Toast.makeText(this, "Please enter a valid port", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-*/
-
     public void DevCheckboxClicked(View view) {
-        boolean checked = (((CheckBox) findViewById(R.id.checkBoxDevMode)).isChecked());
-
-        if (checked) {
-            this.mDevModeEnabled = true;
-        } else {
-            this.mDevModeEnabled = false;
-        }
+        mDevModeEnabled = (((CheckBox) findViewById(R.id.checkBoxDevMode)).isChecked());
 
         // store some of the application settings in the preferences buffer
-        // SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         // save mDevModeEnabled into the to the preferences buffer
         editor.putBoolean("mDevModeEnabled", mDevModeEnabled);

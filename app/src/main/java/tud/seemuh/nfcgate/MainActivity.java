@@ -23,7 +23,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.preference.PreferenceManager;
 import tud.seemuh.nfcgate.network.CallbackImpl;
 import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl;
 import tud.seemuh.nfcgate.network.WiFiDirectBroadcastReceiver;
@@ -63,11 +62,6 @@ public class MainActivity extends Activity {
     private Button mReset, mConnect, mAbort;
     private TextView mOwnID, mInfo, mDebuginfo, mIP, mPort;
 
-
-    /**
-     * called first, next: onStart()
-     * @param savedInstanceState saved instance state
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,7 +116,6 @@ public class MainActivity extends Activity {
         Log.i("DEBUG", "onResume(): intent: " + getIntent().getAction());
 
         // Load values from the Shared Preferences Buffer
-       //  SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
         mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
 
@@ -142,7 +135,6 @@ public class MainActivity extends Activity {
         port = preferences.getInt("port",5566);
         mIP.setText(ip);
         mPort.setText(String.valueOf(port));
-
         if (mAdapter != null && mAdapter.isEnabled()) {
             mAdapter.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
             if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
@@ -158,9 +150,6 @@ public class MainActivity extends Activity {
         mConnect.requestFocus();
     }
 
-    /**
-     * Called when activity is paused
-     */
     @Override
     public void onPause() {
         super.onPause();
@@ -171,10 +160,6 @@ public class MainActivity extends Activity {
         //kill our threads here?
     }
 
-    /**
-     * called when app is already open and intent is fired
-     * @param intent intent
-     */
     @Override
     public void onNewIntent(Intent intent) {
         Log.i("DEBUG", "onNewIntent(): started");
@@ -193,13 +178,11 @@ public class MainActivity extends Activity {
         }
     }
 
-/*
     /** Called when the user touches the button 'ButtonResetClicked application'  -- Code by Tom */
     public void ButtonResetClicked(View view) {
-        // do an entire ButtonResetClicked of the application
+        // do an entire ButtonReset of the application
 
         // Load values from the Shared Preferences Buffer
-        //  SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
 
         // Store some of the application settings in the preferences buffer
