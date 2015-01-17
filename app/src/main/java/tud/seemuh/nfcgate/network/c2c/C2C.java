@@ -1719,103 +1719,112 @@ public final class C2C {
     public enum StatusCode
         implements com.google.protobuf.ProtocolMessageEnum {
       /**
-       * <code>KEEPALIVE = 0;</code>
+       * <code>KEEPALIVE_REQ = 0;</code>
        */
-      KEEPALIVE(0, 0),
+      KEEPALIVE_REQ(0, 0),
       /**
-       * <code>CARD_FOUND = 1;</code>
+       * <code>KEEPALIVE_REP = 1;</code>
        */
-      CARD_FOUND(1, 1),
+      KEEPALIVE_REP(1, 1),
       /**
-       * <code>CARD_REMOVED = 2;</code>
+       * <code>CARD_FOUND = 2;</code>
        */
-      CARD_REMOVED(2, 2),
+      CARD_FOUND(2, 2),
       /**
-       * <code>READER_FOUND = 3;</code>
+       * <code>CARD_REMOVED = 3;</code>
        */
-      READER_FOUND(3, 3),
+      CARD_REMOVED(3, 3),
       /**
-       * <code>READER_REMOVED = 4;</code>
+       * <code>READER_FOUND = 4;</code>
        */
-      READER_REMOVED(4, 4),
+      READER_FOUND(4, 4),
       /**
-       * <code>NFC_NO_CONN = 5;</code>
+       * <code>READER_REMOVED = 5;</code>
        */
-      NFC_NO_CONN(5, 5),
+      READER_REMOVED(5, 5),
       /**
-       * <code>INVALID_MSG_FMT = 6;</code>
+       * <code>NFC_NO_CONN = 6;</code>
        */
-      INVALID_MSG_FMT(6, 6),
+      NFC_NO_CONN(6, 6),
       /**
-       * <code>NOT_IMPLEMENTED = 7;</code>
+       * <code>INVALID_MSG_FMT = 7;</code>
        */
-      NOT_IMPLEMENTED(7, 7),
+      INVALID_MSG_FMT(7, 7),
       /**
-       * <code>UNKNOWN_MESSAGE = 8;</code>
+       * <code>NOT_IMPLEMENTED = 8;</code>
        */
-      UNKNOWN_MESSAGE(8, 8),
+      NOT_IMPLEMENTED(8, 8),
       /**
-       * <code>UNKNOWN_ERROR = 9;</code>
+       * <code>UNKNOWN_MESSAGE = 9;</code>
        */
-      UNKNOWN_ERROR(9, 9),
+      UNKNOWN_MESSAGE(9, 9),
+      /**
+       * <code>UNKNOWN_ERROR = 10;</code>
+       */
+      UNKNOWN_ERROR(10, 10),
       ;
 
       /**
-       * <code>KEEPALIVE = 0;</code>
+       * <code>KEEPALIVE_REQ = 0;</code>
        */
-      public static final int KEEPALIVE_VALUE = 0;
+      public static final int KEEPALIVE_REQ_VALUE = 0;
       /**
-       * <code>CARD_FOUND = 1;</code>
+       * <code>KEEPALIVE_REP = 1;</code>
        */
-      public static final int CARD_FOUND_VALUE = 1;
+      public static final int KEEPALIVE_REP_VALUE = 1;
       /**
-       * <code>CARD_REMOVED = 2;</code>
+       * <code>CARD_FOUND = 2;</code>
        */
-      public static final int CARD_REMOVED_VALUE = 2;
+      public static final int CARD_FOUND_VALUE = 2;
       /**
-       * <code>READER_FOUND = 3;</code>
+       * <code>CARD_REMOVED = 3;</code>
        */
-      public static final int READER_FOUND_VALUE = 3;
+      public static final int CARD_REMOVED_VALUE = 3;
       /**
-       * <code>READER_REMOVED = 4;</code>
+       * <code>READER_FOUND = 4;</code>
        */
-      public static final int READER_REMOVED_VALUE = 4;
+      public static final int READER_FOUND_VALUE = 4;
       /**
-       * <code>NFC_NO_CONN = 5;</code>
+       * <code>READER_REMOVED = 5;</code>
        */
-      public static final int NFC_NO_CONN_VALUE = 5;
+      public static final int READER_REMOVED_VALUE = 5;
       /**
-       * <code>INVALID_MSG_FMT = 6;</code>
+       * <code>NFC_NO_CONN = 6;</code>
        */
-      public static final int INVALID_MSG_FMT_VALUE = 6;
+      public static final int NFC_NO_CONN_VALUE = 6;
       /**
-       * <code>NOT_IMPLEMENTED = 7;</code>
+       * <code>INVALID_MSG_FMT = 7;</code>
        */
-      public static final int NOT_IMPLEMENTED_VALUE = 7;
+      public static final int INVALID_MSG_FMT_VALUE = 7;
       /**
-       * <code>UNKNOWN_MESSAGE = 8;</code>
+       * <code>NOT_IMPLEMENTED = 8;</code>
        */
-      public static final int UNKNOWN_MESSAGE_VALUE = 8;
+      public static final int NOT_IMPLEMENTED_VALUE = 8;
       /**
-       * <code>UNKNOWN_ERROR = 9;</code>
+       * <code>UNKNOWN_MESSAGE = 9;</code>
        */
-      public static final int UNKNOWN_ERROR_VALUE = 9;
+      public static final int UNKNOWN_MESSAGE_VALUE = 9;
+      /**
+       * <code>UNKNOWN_ERROR = 10;</code>
+       */
+      public static final int UNKNOWN_ERROR_VALUE = 10;
 
 
       public final int getNumber() { return value; }
 
       public static StatusCode valueOf(int value) {
         switch (value) {
-          case 0: return KEEPALIVE;
-          case 1: return CARD_FOUND;
-          case 2: return CARD_REMOVED;
-          case 3: return READER_FOUND;
-          case 4: return READER_REMOVED;
-          case 5: return NFC_NO_CONN;
-          case 6: return INVALID_MSG_FMT;
-          case 7: return NOT_IMPLEMENTED;
-          case 8: return UNKNOWN_MESSAGE;
-          case 9: return UNKNOWN_ERROR;
+          case 0: return KEEPALIVE_REQ;
+          case 1: return KEEPALIVE_REP;
+          case 2: return CARD_FOUND;
+          case 3: return CARD_REMOVED;
+          case 4: return READER_FOUND;
+          case 5: return READER_REMOVED;
+          case 6: return NFC_NO_CONN;
+          case 7: return INVALID_MSG_FMT;
+          case 8: return NOT_IMPLEMENTED;
+          case 9: return UNKNOWN_MESSAGE;
+          case 10: return UNKNOWN_ERROR;
           default: return null;
         }
       }
@@ -1894,7 +1903,7 @@ public final class C2C {
     }
 
     private void initFields() {
-      code_ = tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode.KEEPALIVE;
+      code_ = tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode.KEEPALIVE_REQ;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -2051,7 +2060,7 @@ public final class C2C {
 
       public Builder clear() {
         super.clear();
-        code_ = tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode.KEEPALIVE;
+        code_ = tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode.KEEPALIVE_REQ;
         bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
@@ -2135,7 +2144,7 @@ public final class C2C {
       }
       private int bitField0_;
 
-      private tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode code_ = tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode.KEEPALIVE;
+      private tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode code_ = tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode.KEEPALIVE_REQ;
       /**
        * <code>required .tud.seemuh.nfcgate.network.c2c.Status.StatusCode code = 1;</code>
        *
@@ -2185,7 +2194,7 @@ public final class C2C {
        */
       public Builder clearCode() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        code_ = tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode.KEEPALIVE;
+        code_ = tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode.KEEPALIVE_REQ;
         onChanged();
         return this;
       }
@@ -2237,14 +2246,14 @@ public final class C2C {
       "orCode:\rERROR_NOERROR\"\"\n\nDataSource\022\n\n\006R",
       "EADER\020\000\022\010\n\004CARD\020\001\"O\n\020NFCDataErrorCode\022\021\n" +
       "\rERROR_NOERROR\020\000\022\025\n\021ERROR_NO_NFC_CONN\020\001\022" +
-      "\021\n\rERROR_UNKNOWN\020\003\"\222\002\n\006Status\022?\n\004code\030\001 " +
+      "\021\n\rERROR_UNKNOWN\020\003\"\251\002\n\006Status\022?\n\004code\030\001 " +
       "\002(\01621.tud.seemuh.nfcgate.network.c2c.Sta" +
-      "tus.StatusCode\"\306\001\n\nStatusCode\022\r\n\tKEEPALI" +
-      "VE\020\000\022\016\n\nCARD_FOUND\020\001\022\020\n\014CARD_REMOVED\020\002\022\020" +
-      "\n\014READER_FOUND\020\003\022\022\n\016READER_REMOVED\020\004\022\017\n\013" +
-      "NFC_NO_CONN\020\005\022\023\n\017INVALID_MSG_FMT\020\006\022\023\n\017NO" +
-      "T_IMPLEMENTED\020\007\022\023\n\017UNKNOWN_MESSAGE\020\010\022\021\n\r" +
-      "UNKNOWN_ERROR\020\t"
+      "tus.StatusCode\"\335\001\n\nStatusCode\022\021\n\rKEEPALI" +
+      "VE_REQ\020\000\022\021\n\rKEEPALIVE_REP\020\001\022\016\n\nCARD_FOUN" +
+      "D\020\002\022\020\n\014CARD_REMOVED\020\003\022\020\n\014READER_FOUND\020\004\022" +
+      "\022\n\016READER_REMOVED\020\005\022\017\n\013NFC_NO_CONN\020\006\022\023\n\017" +
+      "INVALID_MSG_FMT\020\007\022\023\n\017NOT_IMPLEMENTED\020\010\022\023" +
+      "\n\017UNKNOWN_MESSAGE\020\t\022\021\n\rUNKNOWN_ERROR\020\n"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

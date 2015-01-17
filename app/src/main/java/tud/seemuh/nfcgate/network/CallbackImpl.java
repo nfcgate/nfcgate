@@ -138,8 +138,18 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
 
     private void handleStatus(C2C.Status msg) {
-        Log.e(TAG, "MessageCase.STATUS: Not implemented");
-        sendErrorMessage(C2C.Status.StatusCode.NOT_IMPLEMENTED);
+        if (msg.getCode() == C2C.Status.StatusCode.KEEPALIVE_REQ) {
+            // Received keepalive request, reply with response
+            Log.i(TAG, "Got Keepalive request, replying");
+            sendErrorMessage(C2C.Status.StatusCode.KEEPALIVE_REP);
+        } else if (msg.getCode() == C2C.Status.StatusCode.KEEPALIVE_REP) {
+            // Got keepalive response, do nothing for now
+            Log.i(TAG, "Got Keepalive response. Doing nothing");
+        } else {
+            // Not implemented
+            Log.e(TAG, "MessageCase.STATUS: Not implemented");
+            sendErrorMessage(C2C.Status.StatusCode.NOT_IMPLEMENTED);
+        }
     }
 
 
@@ -155,6 +165,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
     }
 
 
+    // TODO Refactor this part into another class
     /**
      * Called on nfc tag intent
      * @param tag nfc tag
