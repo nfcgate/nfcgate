@@ -7,11 +7,30 @@
     android:weightSum="1"
     tools:context=".AboutActivity">
 
-    <TextView
+    <GridLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:text="Here you can read all version detail, disclaimers and legal stuff about the NFC Wormhole Android App v0.1"
-        android:id="@+id/textView_settings"
-        android:layout_weight="0.06" />
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:columnCount="10"
+        android:rowCount="10">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="             "
+            android:id="@+id/textView_blankspace"
+            android:layout_column="1"
+            android:layout_columnSpan="2"
+            android:layout_row="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Here you can read all version detail, disclaimers and legal stuff about the NFC Wormhole Android App v0.2"
+            android:id="@+id/textView_settings"
+            android:layout_weight="0.45"
+            android:layout_row="2"
+            android:layout_column="1" />
+    </GridLayout>
 
 </LinearLayout>
