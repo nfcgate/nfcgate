@@ -27,7 +27,7 @@ public class ApduService extends HostApduService {
      */
     private Callback mCallback = new SimpleNetworkConnectionClientImpl.Callback() {
         @Override
-        public void onDataReceived(byte[] data) {
+        public void onDataReceived(byte[] data) { // FIXME This currently passes raw protobuf messages
             // send apdu from network to reader
             ApduService.this.sendResponseApdu(data);
         }

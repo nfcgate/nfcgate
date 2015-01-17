@@ -960,17 +960,13 @@ public final class C2C {
        */
       ERROR_NOERROR(0, 0),
       /**
-       * <code>ERROR_NO_CARD = 1;</code>
+       * <code>ERROR_NO_NFC_CONN = 1;</code>
        */
-      ERROR_NO_CARD(1, 1),
-      /**
-       * <code>ERROR_NO_READER = 2;</code>
-       */
-      ERROR_NO_READER(2, 2),
+      ERROR_NO_NFC_CONN(1, 1),
       /**
        * <code>ERROR_UNKNOWN = 3;</code>
        */
-      ERROR_UNKNOWN(3, 3),
+      ERROR_UNKNOWN(2, 3),
       ;
 
       /**
@@ -978,13 +974,9 @@ public final class C2C {
        */
       public static final int ERROR_NOERROR_VALUE = 0;
       /**
-       * <code>ERROR_NO_CARD = 1;</code>
+       * <code>ERROR_NO_NFC_CONN = 1;</code>
        */
-      public static final int ERROR_NO_CARD_VALUE = 1;
-      /**
-       * <code>ERROR_NO_READER = 2;</code>
-       */
-      public static final int ERROR_NO_READER_VALUE = 2;
+      public static final int ERROR_NO_NFC_CONN_VALUE = 1;
       /**
        * <code>ERROR_UNKNOWN = 3;</code>
        */
@@ -996,8 +988,7 @@ public final class C2C {
       public static NFCDataErrorCode valueOf(int value) {
         switch (value) {
           case 0: return ERROR_NOERROR;
-          case 1: return ERROR_NO_CARD;
-          case 2: return ERROR_NO_READER;
+          case 1: return ERROR_NO_NFC_CONN;
           case 3: return ERROR_UNKNOWN;
           default: return null;
         }
@@ -1748,13 +1739,17 @@ public final class C2C {
        */
       READER_REMOVED(4, 4),
       /**
-       * <code>INVALID_MSG_FMT = 5;</code>
+       * <code>NFC_NO_CONN = 5;</code>
        */
-      INVALID_MSG_FMT(5, 5),
+      NFC_NO_CONN(5, 5),
       /**
-       * <code>UNKNOWN_ERROR = 6;</code>
+       * <code>INVALID_MSG_FMT = 6;</code>
        */
-      UNKNOWN_ERROR(6, 6),
+      INVALID_MSG_FMT(6, 6),
+      /**
+       * <code>UNKNOWN_ERROR = 7;</code>
+       */
+      UNKNOWN_ERROR(7, 7),
       ;
 
       /**
@@ -1778,13 +1773,17 @@ public final class C2C {
        */
       public static final int READER_REMOVED_VALUE = 4;
       /**
-       * <code>INVALID_MSG_FMT = 5;</code>
+       * <code>NFC_NO_CONN = 5;</code>
        */
-      public static final int INVALID_MSG_FMT_VALUE = 5;
+      public static final int NFC_NO_CONN_VALUE = 5;
       /**
-       * <code>UNKNOWN_ERROR = 6;</code>
+       * <code>INVALID_MSG_FMT = 6;</code>
        */
-      public static final int UNKNOWN_ERROR_VALUE = 6;
+      public static final int INVALID_MSG_FMT_VALUE = 6;
+      /**
+       * <code>UNKNOWN_ERROR = 7;</code>
+       */
+      public static final int UNKNOWN_ERROR_VALUE = 7;
 
 
       public final int getNumber() { return value; }
@@ -1796,8 +1795,9 @@ public final class C2C {
           case 2: return CARD_REMOVED;
           case 3: return READER_FOUND;
           case 4: return READER_REMOVED;
-          case 5: return INVALID_MSG_FMT;
-          case 6: return UNKNOWN_ERROR;
+          case 5: return NFC_NO_CONN;
+          case 6: return INVALID_MSG_FMT;
+          case 7: return UNKNOWN_ERROR;
           default: return null;
         }
       }
@@ -2211,21 +2211,21 @@ public final class C2C {
       "c2c\"\214\001\n\003Kex\022F\n\talgorithm\030\001 \002(\01623.tud.see" +
       "muh.nfcgate.network.c2c.Kex.CryptoAlgori" +
       "thm\022\026\n\016crypto_message\030\002 \002(\014\"%\n\017CryptoAlg" +
-      "orithm\022\022\n\016DHE_RSA_AES256\020\000\"\306\002\n\007NFCData\022G" +
+      "orithm\022\022\n\016DHE_RSA_AES256\020\000\"\265\002\n\007NFCData\022G" +
       "\n\013data_source\030\001 \002(\01622.tud.seemuh.nfcgate" +
       ".network.c2c.NFCData.DataSource\022\022\n\ndata_" +
       "bytes\030\002 \002(\014\022X\n\007errcode\030\003 \001(\01628.tud.seemu" +
       "h.nfcgate.network.c2c.NFCData.NFCDataErr" +
       "orCode:\rERROR_NOERROR\"\"\n\nDataSource\022\n\n\006R",
-      "EADER\020\000\022\010\n\004CARD\020\001\"`\n\020NFCDataErrorCode\022\021\n" +
-      "\rERROR_NOERROR\020\000\022\021\n\rERROR_NO_CARD\020\001\022\023\n\017E" +
-      "RROR_NO_READER\020\002\022\021\n\rERROR_UNKNOWN\020\003\"\327\001\n\006" +
-      "Status\022?\n\004code\030\001 \002(\01621.tud.seemuh.nfcgat" +
-      "e.network.c2c.Status.StatusCode\"\213\001\n\nStat" +
-      "usCode\022\r\n\tKEEPALIVE\020\000\022\016\n\nCARD_FOUND\020\001\022\020\n" +
-      "\014CARD_REMOVED\020\002\022\020\n\014READER_FOUND\020\003\022\022\n\016REA" +
-      "DER_REMOVED\020\004\022\023\n\017INVALID_MSG_FMT\020\005\022\021\n\rUN" +
-      "KNOWN_ERROR\020\006"
+      "EADER\020\000\022\010\n\004CARD\020\001\"O\n\020NFCDataErrorCode\022\021\n" +
+      "\rERROR_NOERROR\020\000\022\025\n\021ERROR_NO_NFC_CONN\020\001\022" +
+      "\021\n\rERROR_UNKNOWN\020\003\"\350\001\n\006Status\022?\n\004code\030\001 " +
+      "\002(\01621.tud.seemuh.nfcgate.network.c2c.Sta" +
+      "tus.StatusCode\"\234\001\n\nStatusCode\022\r\n\tKEEPALI" +
+      "VE\020\000\022\016\n\nCARD_FOUND\020\001\022\020\n\014CARD_REMOVED\020\002\022\020" +
+      "\n\014READER_FOUND\020\003\022\022\n\016READER_REMOVED\020\004\022\017\n\013" +
+      "NFC_NO_CONN\020\005\022\023\n\017INVALID_MSG_FMT\020\006\022\021\n\rUN" +
+      "KNOWN_ERROR\020\007"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
