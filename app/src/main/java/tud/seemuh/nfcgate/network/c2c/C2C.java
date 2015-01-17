@@ -727,7 +727,7 @@ public final class C2C {
     com.google.protobuf.ByteString getDataBytes();
 
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
      *
      * <pre>
      * Error Code
@@ -736,7 +736,7 @@ public final class C2C {
      */
     boolean hasErrcode();
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
      *
      * <pre>
      * Error Code
@@ -1106,7 +1106,7 @@ public final class C2C {
     public static final int ERRCODE_FIELD_NUMBER = 3;
     private tud.seemuh.nfcgate.network.c2c.C2C.NFCData.NFCDataErrorCode errcode_;
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
      *
      * <pre>
      * Error Code
@@ -1117,7 +1117,7 @@ public final class C2C {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
      *
      * <pre>
      * Error Code
@@ -1144,10 +1144,6 @@ public final class C2C {
         return false;
       }
       if (!hasDataBytes()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasErrcode()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -1394,10 +1390,6 @@ public final class C2C {
           
           return false;
         }
-        if (!hasErrcode()) {
-          
-          return false;
-        }
         return true;
       }
 
@@ -1536,7 +1528,7 @@ public final class C2C {
 
       private tud.seemuh.nfcgate.network.c2c.C2C.NFCData.NFCDataErrorCode errcode_ = tud.seemuh.nfcgate.network.c2c.C2C.NFCData.NFCDataErrorCode.ERROR_NOERROR;
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
        *
        * <pre>
        * Error Code
@@ -1547,7 +1539,7 @@ public final class C2C {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
        *
        * <pre>
        * Error Code
@@ -1558,7 +1550,7 @@ public final class C2C {
         return errcode_;
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
        *
        * <pre>
        * Error Code
@@ -1575,7 +1567,7 @@ public final class C2C {
         return this;
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
        *
        * <pre>
        * Error Code
@@ -2222,7 +2214,7 @@ public final class C2C {
       "orithm\022\022\n\016DHE_RSA_AES256\020\000\"\306\002\n\007NFCData\022G" +
       "\n\013data_source\030\001 \002(\01622.tud.seemuh.nfcgate" +
       ".network.c2c.NFCData.DataSource\022\022\n\ndata_" +
-      "bytes\030\002 \002(\014\022X\n\007errcode\030\003 \002(\01628.tud.seemu" +
+      "bytes\030\002 \002(\014\022X\n\007errcode\030\003 \001(\01628.tud.seemu" +
       "h.nfcgate.network.c2c.NFCData.NFCDataErr" +
       "orCode:\rERROR_NOERROR\"\"\n\nDataSource\022\n\n\006R",
       "EADER\020\000\022\010\n\004CARD\020\001\"`\n\020NFCDataErrorCode\022\021\n" +

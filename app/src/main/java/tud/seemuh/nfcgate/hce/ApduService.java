@@ -5,9 +5,12 @@ import android.os.Bundle;
 import android.util.Log;
 
 
+import com.google.protobuf.ByteString;
+
 import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl;
 import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl.Callback;
 import tud.seemuh.nfcgate.util.Utils;
+import tud.seemuh.nfcgate.network.c2c.C2C;
 
 public class ApduService extends HostApduService {
     private final static String TAG = "ApduService";
@@ -50,8 +53,17 @@ public class ApduService extends HostApduService {
             // to select our app. The second apdu is the conversation with the card
             return new byte[]{0};
         }
-        // raw send the apdu over the network
-        SimpleNetworkConnectionClientImpl.getInstance().sendBytes(apdu);
+
+        // Package the ADPU into a C2C message
+        C2C.NFCData.Builder apduMessage= C2C.NFCData.newBuilder();
+        apduMessage.setDataSource(C2C.NFCData.DataSource.READER);
+        apduMessage.setDataBytes(ByteString.copyFrom(apdu));
+
+        // Serialize the message into a byte[]
+        byte[] apduMessageBytes = apduMessage.build().toByteArray();
+
+        // Send NFCData message bytes
+        SimpleNetworkConnectionClientImpl.getInstance().sendBytes(apduMessageBytes);
         Log.d(TAG, "nfc: " + Utils.bytesToHex(apdu));
 
         return DONT_RESPOND;

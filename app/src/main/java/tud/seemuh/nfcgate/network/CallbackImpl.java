@@ -32,8 +32,13 @@ public class CallbackImpl implements SimpleNetworkConnectionClientImpl.Callback 
             byte[] answer;
             byte[] bytesFromCard = new byte[] {(byte)0x00};
             try {
+                // Parse incoming NFCData Protobuf message
                 C2C.NFCData NFCData = C2C.NFCData.parseFrom(data);
+
+                // Extract NFC Bytes and send them to the card
                 bytesFromCard = mReader.sendCmd(NFCData.getDataBytes().toByteArray());
+
+                // Begin constructing reply
                 C2C.NFCData.Builder reply = C2C.NFCData.newBuilder();
                 ByteString replyBytes = ByteString.copyFrom(bytesFromCard);
                 reply.setDataBytes(replyBytes);
