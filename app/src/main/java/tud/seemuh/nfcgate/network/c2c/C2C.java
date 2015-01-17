@@ -1747,9 +1747,17 @@ public final class C2C {
        */
       INVALID_MSG_FMT(6, 6),
       /**
-       * <code>UNKNOWN_ERROR = 7;</code>
+       * <code>NOT_IMPLEMENTED = 7;</code>
        */
-      UNKNOWN_ERROR(7, 7),
+      NOT_IMPLEMENTED(7, 7),
+      /**
+       * <code>UNKNOWN_MESSAGE = 8;</code>
+       */
+      UNKNOWN_MESSAGE(8, 8),
+      /**
+       * <code>UNKNOWN_ERROR = 9;</code>
+       */
+      UNKNOWN_ERROR(9, 9),
       ;
 
       /**
@@ -1781,9 +1789,17 @@ public final class C2C {
        */
       public static final int INVALID_MSG_FMT_VALUE = 6;
       /**
-       * <code>UNKNOWN_ERROR = 7;</code>
+       * <code>NOT_IMPLEMENTED = 7;</code>
        */
-      public static final int UNKNOWN_ERROR_VALUE = 7;
+      public static final int NOT_IMPLEMENTED_VALUE = 7;
+      /**
+       * <code>UNKNOWN_MESSAGE = 8;</code>
+       */
+      public static final int UNKNOWN_MESSAGE_VALUE = 8;
+      /**
+       * <code>UNKNOWN_ERROR = 9;</code>
+       */
+      public static final int UNKNOWN_ERROR_VALUE = 9;
 
 
       public final int getNumber() { return value; }
@@ -1797,7 +1813,9 @@ public final class C2C {
           case 4: return READER_REMOVED;
           case 5: return NFC_NO_CONN;
           case 6: return INVALID_MSG_FMT;
-          case 7: return UNKNOWN_ERROR;
+          case 7: return NOT_IMPLEMENTED;
+          case 8: return UNKNOWN_MESSAGE;
+          case 9: return UNKNOWN_ERROR;
           default: return null;
         }
       }
@@ -2219,13 +2237,14 @@ public final class C2C {
       "orCode:\rERROR_NOERROR\"\"\n\nDataSource\022\n\n\006R",
       "EADER\020\000\022\010\n\004CARD\020\001\"O\n\020NFCDataErrorCode\022\021\n" +
       "\rERROR_NOERROR\020\000\022\025\n\021ERROR_NO_NFC_CONN\020\001\022" +
-      "\021\n\rERROR_UNKNOWN\020\003\"\350\001\n\006Status\022?\n\004code\030\001 " +
+      "\021\n\rERROR_UNKNOWN\020\003\"\222\002\n\006Status\022?\n\004code\030\001 " +
       "\002(\01621.tud.seemuh.nfcgate.network.c2c.Sta" +
-      "tus.StatusCode\"\234\001\n\nStatusCode\022\r\n\tKEEPALI" +
+      "tus.StatusCode\"\306\001\n\nStatusCode\022\r\n\tKEEPALI" +
       "VE\020\000\022\016\n\nCARD_FOUND\020\001\022\020\n\014CARD_REMOVED\020\002\022\020" +
       "\n\014READER_FOUND\020\003\022\022\n\016READER_REMOVED\020\004\022\017\n\013" +
-      "NFC_NO_CONN\020\005\022\023\n\017INVALID_MSG_FMT\020\006\022\021\n\rUN" +
-      "KNOWN_ERROR\020\007"
+      "NFC_NO_CONN\020\005\022\023\n\017INVALID_MSG_FMT\020\006\022\023\n\017NO" +
+      "T_IMPLEMENTED\020\007\022\023\n\017UNKNOWN_MESSAGE\020\010\022\021\n\r" +
+      "UNKNOWN_ERROR\020\t"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

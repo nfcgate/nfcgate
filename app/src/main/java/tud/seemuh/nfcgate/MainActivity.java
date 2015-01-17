@@ -24,7 +24,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import tud.seemuh.nfcgate.network.CallbackImpl;
-import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl;
+import tud.seemuh.nfcgate.network.SimpleLowLevelNetworkConnectionClientImpl;
 import tud.seemuh.nfcgate.network.WiFiDirectBroadcastReceiver;
 
 
@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
     private BroadcastReceiver mReceiver = null;
 
     //Connection Client
-    protected SimpleNetworkConnectionClientImpl mConnectionClient;
+    protected SimpleLowLevelNetworkConnectionClientImpl mConnectionClient;
 
     // Defined name of the Shared Preferences Buffer
     public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
@@ -234,7 +234,7 @@ public class MainActivity extends Activity {
             }
             this.setTitle("You clicked connect");
             // -> please append code here to ButtonConnectClicked to IP:Port
-            mConnectionClient = SimpleNetworkConnectionClientImpl.getInstance().connect(host, port);
+            mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(host, port);
         }
         else
         {
