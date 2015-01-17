@@ -48,6 +48,7 @@ public class ApduService extends HostApduService {
         // the byte sequence 0x00a4 is a SELECT command. this is ever the first command we get
         // when a reader wants to talk to us
         if (apdu.length >= 2 && apdu[0] == (byte)0 && apdu[1] == (byte)0xa4) {
+            // FIXME This is our terrible workaround, which we should remove.
 
             Log.i(TAG, "App selected");
 
