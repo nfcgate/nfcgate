@@ -14,11 +14,13 @@ import tud.seemuh.nfcgate.util.Utils;
 import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
+import tud.seemuh.nfcgate.hce.ApduService;
 
 
 public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.Callback {
     private final static String TAG = "ApduService";
 
+    private ApduService apdu;
     private NFCTagReader mReader = null;
     private TextView debugView;
     private NetHandler Handler = new NetHandler();
@@ -27,6 +29,12 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
         debugView = ldebugView;
     }
 
+
+    public CallbackImpl(ApduService as) {
+        apdu = as;
+    }
+
+    public CallbackImpl() {}
 
     /**
      * Implementation of SimpleNetworkConnectionClientImpl.Callback
@@ -89,27 +97,42 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
 
     private void handleNFCData(C2C.NFCData msg) {
-        if(mReader.isConnected()) {
-            // Extract NFC Bytes and send them to the card
-            byte[] bytesFromCard = mReader.sendCmd(msg.getDataBytes().toByteArray());
+        if (msg.getDataSource() == C2C.NFCData.DataSource.READER) {
+            // We received a signal FROM a reader device and are required to talk TO a card.
+            if (mReader.isConnected()) {
+                Log.i(TAG, "Received message for a card, forwarding...");
+                // Extract NFC Bytes and send them to the card
+                byte[] bytesFromCard = mReader.sendCmd(msg.getDataBytes().toByteArray());
 
-            // Begin constructing reply
-            C2C.NFCData.Builder reply = C2C.NFCData.newBuilder();
-            ByteString replyBytes = ByteString.copyFrom(bytesFromCard);
-            reply.setDataBytes(replyBytes);
-            reply.setDataSource(C2C.NFCData.DataSource.CARD);
+                // Begin constructing reply
+                C2C.NFCData.Builder reply = C2C.NFCData.newBuilder();
+                ByteString replyBytes = ByteString.copyFrom(bytesFromCard);
+                reply.setDataBytes(replyBytes);
+                reply.setDataSource(C2C.NFCData.DataSource.CARD);
 
-            // Send reply
-            Handler.sendMessage(reply.build(), MessageCase.NFCDATA);
+                // Send reply
+                Handler.sendMessage(reply.build(), MessageCase.NFCDATA);
 
-            //Ugly way to send data to the GUI from an external thread
-            new UpdateUI(debugView).execute(Utils.bytesToHex(bytesFromCard) + "\n");
+                //Ugly way to send data to the GUI from an external thread
+                new UpdateUI(debugView).execute(Utils.bytesToHex(bytesFromCard) + "\n");
+                Log.i(TAG, "Received and forwarded reply from card");
+            } else {
+                Log.e(TAG, "No NFC connection active");
+                // There is no connected NFC device
+                sendErrorMessage(C2C.Status.StatusCode.NFC_NO_CONN);
+
+                // Update UI
+                new UpdateUI(debugView).execute("Received NFC bytes, but we are not connected to any device.\n");
+            }
         } else {
-            // There is no connected NFC device
-            sendErrorMessage(C2C.Status.StatusCode.NFC_NO_CONN);
-
-            // Update UI
-            new UpdateUI(debugView).execute("Received NFC bytes, but we are not connected to any device.\n");
+            if (apdu != null) {
+                Log.i(TAG, "Received a message for a reader, forwarding...");
+                // We received a signal FROM a card and are required to talk TO a reader.
+                apdu.sendResponseApdu(msg.getDataBytes().toByteArray());
+            } else {
+                Log.e(TAG, "Received a message for a reader, but no APDU instance active.");
+                sendErrorMessage(C2C.Status.StatusCode.NFC_NO_CONN);
+            }
         }
     }
 

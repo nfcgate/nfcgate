@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.google.protobuf.ByteString;
 
+import tud.seemuh.nfcgate.network.CallbackImpl;
 import tud.seemuh.nfcgate.network.NetHandler;
 import tud.seemuh.nfcgate.network.SimpleLowLevelNetworkConnectionClientImpl;
 import tud.seemuh.nfcgate.network.SimpleLowLevelNetworkConnectionClientImpl.Callback;
@@ -29,13 +30,7 @@ public class ApduService extends HostApduService {
     /**
      * Callback from the network threa whenever we get data from it
      */
-    private Callback mCallback = new SimpleLowLevelNetworkConnectionClientImpl.Callback() {
-        @Override
-        public void onDataReceived(byte[] data) { // FIXME This currently passes raw protobuf messages
-            // send apdu from network to reader
-            ApduService.this.sendResponseApdu(data);
-        }
-    };
+    private Callback mCallback = new CallbackImpl(this);
 
     /**
      * callback from the hce service when a apdu from a reader is received
