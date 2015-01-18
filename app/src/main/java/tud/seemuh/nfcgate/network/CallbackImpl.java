@@ -81,6 +81,9 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
     }
 
 
+    /*
+    Private helper function to send Status messages.
+     */
     private void sendStatusMessage(StatusCode code) {
         // Create error message
         C2C.Status.Builder ErrorMsg = C2C.Status.newBuilder();
@@ -88,6 +91,38 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
         // Send message
         Handler.sendMessage(ErrorMsg.build(), MessageCase.STATUS);
+    }
+
+
+    /*
+    Notify the other party that a reader has been detected in the proximity of the device
+     */
+    public void notifyReaderDetected() {
+        sendStatusMessage(StatusCode.READER_FOUND);
+    }
+
+
+    /*
+    Notify the other party that a reader has left the proximity of the device
+     */
+    public void notifyReaderRemoved() {
+        sendStatusMessage(StatusCode.READER_REMOVED);
+    }
+
+
+    /*
+    Notify the other party that a card has been detected in the proximity of the device
+     */
+    public void notifyCardDetected() {
+        sendStatusMessage(StatusCode.CARD_FOUND);
+    }
+
+
+    /*
+    Notify the other party that the card has left the proximity of the device
+     */
+    public void notifyCardRemoved() {
+        sendStatusMessage(StatusCode.CARD_REMOVED);
     }
 
 
