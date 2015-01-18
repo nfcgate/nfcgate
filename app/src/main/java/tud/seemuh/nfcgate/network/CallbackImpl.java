@@ -14,6 +14,7 @@ import tud.seemuh.nfcgate.util.Utils;
 import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
+import tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode;
 import tud.seemuh.nfcgate.hce.ApduService;
 
 
@@ -48,39 +49,39 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
             // Determine which type of Message the MetaMessage contains
             if (Wrapper.getMessageCase() == MessageCase.DATA) {
-                Log.i(TAG, "MessageCase.DATA: Sending to handler");
+                Log.i(TAG, "onDataReceived: MessageCase.DATA: Sending to handler");
                 handleData(Wrapper.getData());
             }
             else if (Wrapper.getMessageCase() == MessageCase.KEX) {
-                Log.i(TAG, "MessageCase.KEX: Sending to handler");
+                Log.i(TAG, "onDataReceived: MessageCase.KEX: Sending to handler");
                 handleKex(Wrapper.getKex());
             }
             else if (Wrapper.getMessageCase() == MessageCase.NFCDATA) {
-                Log.i(TAG, "MessageCase:NFCDATA: Sending to handler");
+                Log.i(TAG, "onDataReceived: MessageCase:NFCDATA: Sending to handler");
                 handleNFCData(Wrapper.getNFCData());
             }
             else if (Wrapper.getMessageCase() == MessageCase.SESSION) {
-                Log.i(TAG, "MessageCase.SESSION: Sending to handler");
+                Log.i(TAG, "onDataReceived: MessageCase.SESSION: Sending to handler");
                 handleSession(Wrapper.getSession());
             }
             else if (Wrapper.getMessageCase() == MessageCase.STATUS) {
-                Log.i(TAG, "MessageCase.STATUS: Sending to handler");
+                Log.i(TAG, "onDataReceived: MessageCase.STATUS: Sending to handler");
                 handleStatus(Wrapper.getStatus());
             }
             else {
-                Log.e(TAG, "Message fits no known case! This is fucked up");
-                sendErrorMessage(C2C.Status.StatusCode.UNKNOWN_MESSAGE);
+                Log.e(TAG, "onDataReceived: Message fits no known case! This is fucked up");
+                sendStatusMessage(StatusCode.UNKNOWN_MESSAGE);
             }
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
             // We have received a message in an invalid format.
             // Send error message
-            Log.e(TAG, "Message was malformed, discarding and sending error message");
-            sendErrorMessage(C2C.Status.StatusCode.INVALID_MSG_FMT);
+            Log.e(TAG, "onDataReceived: Message was malformed, discarding and sending error message");
+            sendStatusMessage(StatusCode.INVALID_MSG_FMT);
         }
     }
 
 
-    private void sendErrorMessage(C2C.Status.StatusCode code) {
+    private void sendStatusMessage(StatusCode code) {
         // Create error message
         C2C.Status.Builder ErrorMsg = C2C.Status.newBuilder();
         ErrorMsg.setCode(code);
@@ -90,9 +91,18 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
     }
 
 
+    /*
+    Send a keepalive packet to the peer, who will respond with a keepalive response message.
+     */
+    public void sendKeepaliveMessage() {
+        Log.i(TAG, "sendKeepaliveMessage: Keepalive msg sent.");
+        sendStatusMessage(StatusCode.KEEPALIVE_REQ);
+    }
+
+
     private void handleKex(C2C.Kex msg) {
-        Log.e(TAG, "MessageCase.KEX: Not implemented");
-        sendErrorMessage(C2C.Status.StatusCode.NOT_IMPLEMENTED);
+        Log.e(TAG, "handleKex: Not implemented");
+        sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
     }
 
 
@@ -100,7 +110,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
         if (msg.getDataSource() == C2C.NFCData.DataSource.READER) {
             // We received a signal FROM a reader device and are required to talk TO a card.
             if (mReader.isConnected()) {
-                Log.i(TAG, "Received message for a card, forwarding...");
+                Log.i(TAG, "HandleNFCData: Received message for a card, forwarding...");
                 // Extract NFC Bytes and send them to the card
                 byte[] bytesFromCard = mReader.sendCmd(msg.getDataBytes().toByteArray());
 
@@ -115,53 +125,53 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
                 //Ugly way to send data to the GUI from an external thread
                 new UpdateUI(debugView).execute(Utils.bytesToHex(bytesFromCard) + "\n");
-                Log.i(TAG, "Received and forwarded reply from card");
+                Log.i(TAG, "HandleNFCData: Received and forwarded reply from card");
             } else {
-                Log.e(TAG, "No NFC connection active");
+                Log.e(TAG, "HandleNFCData: No NFC connection active");
                 // There is no connected NFC device
-                sendErrorMessage(C2C.Status.StatusCode.NFC_NO_CONN);
+                sendStatusMessage(StatusCode.NFC_NO_CONN);
 
                 // Update UI
-                new UpdateUI(debugView).execute("Received NFC bytes, but we are not connected to any device.\n");
+                new UpdateUI(debugView).execute("HandleNFCData: Received NFC bytes, but we are not connected to any device.\n");
             }
         } else {
             if (apdu != null) {
-                Log.i(TAG, "Received a message for a reader, forwarding...");
+                Log.i(TAG, "HandleNFCData: Received a message for a reader, forwarding...");
                 // We received a signal FROM a card and are required to talk TO a reader.
                 apdu.sendResponseApdu(msg.getDataBytes().toByteArray());
             } else {
-                Log.e(TAG, "Received a message for a reader, but no APDU instance active.");
-                sendErrorMessage(C2C.Status.StatusCode.NFC_NO_CONN);
+                Log.e(TAG, "HandleNFCData: Received a message for a reader, but no APDU instance active.");
+                sendStatusMessage(StatusCode.NFC_NO_CONN);
             }
         }
     }
 
 
     private void handleStatus(C2C.Status msg) {
-        if (msg.getCode() == C2C.Status.StatusCode.KEEPALIVE_REQ) {
+        if (msg.getCode() == StatusCode.KEEPALIVE_REQ) {
             // Received keepalive request, reply with response
-            Log.i(TAG, "Got Keepalive request, replying");
-            sendErrorMessage(C2C.Status.StatusCode.KEEPALIVE_REP);
-        } else if (msg.getCode() == C2C.Status.StatusCode.KEEPALIVE_REP) {
+            Log.i(TAG, "handleStatus: Got Keepalive request, replying");
+            sendStatusMessage(StatusCode.KEEPALIVE_REP);
+        } else if (msg.getCode() == StatusCode.KEEPALIVE_REP) {
             // Got keepalive response, do nothing for now
-            Log.i(TAG, "Got Keepalive response. Doing nothing");
+            Log.i(TAG, "handleStatus: Got Keepalive response. Doing nothing");
         } else {
             // Not implemented
-            Log.e(TAG, "MessageCase.STATUS: Not implemented");
-            sendErrorMessage(C2C.Status.StatusCode.NOT_IMPLEMENTED);
+            Log.e(TAG, "handleStatus: Message case not implemented");
+            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
         }
     }
 
 
     private void handleData(C2S.Data msg) {
-        Log.e(TAG, "MessageCase.DATA: Not implemented");
-        sendErrorMessage(C2C.Status.StatusCode.NOT_IMPLEMENTED);
+        Log.e(TAG, "handleData: Not implemented");
+        sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
     }
 
 
     private void handleSession(C2S.Session msg) {
-        Log.e(TAG, "MessageCase.SESSION: Not implemented");
-        sendErrorMessage(C2C.Status.StatusCode.NOT_IMPLEMENTED);
+        Log.e(TAG, "handleSession: Not implemented");
+        sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
     }
 
 
@@ -179,18 +189,18 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
         for(String type: tag.getTechList()) {
             // TODO: Refactor this into something much nicer to avoid redundant work betw.
             //       this code and the worker thread, which also does this check.
-            Log.i("NFCGATE_DEBUG", "Tag TechList: " + type);
+            Log.i(TAG, "setTag: Tag TechList: " + type);
             if("android.nfc.tech.IsoDep".equals(type)) {
                 found_supported_tag = true;
 
                 mReader = new IsoDepReaderImpl(tag);
-                Log.d("NFCGATE_DEBUG", "Chose IsoDep technology.");
+                Log.d(TAG, "setTag: Chose IsoDep technology.");
                 break;
             } else if("android.nfc.tech.NfcA".equals(type)) {
                 found_supported_tag = true;
 
                 mReader = new NfcAReaderImpl(tag);
-                Log.d("NFCGATE_DEBUG", "Chose NfcA technology.");
+                Log.d(TAG, "setTag: Chose NfcA technology.");
                 break;
             }
         }
