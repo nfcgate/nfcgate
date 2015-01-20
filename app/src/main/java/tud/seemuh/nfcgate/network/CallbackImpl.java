@@ -81,7 +81,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
     }
 
 
-    /*
+    /**
     Private helper function to send Status messages.
      */
     private void sendStatusMessage(StatusCode code) {
@@ -94,7 +94,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
     }
 
 
-    /*
+    /**
     Notify the other party that a reader has been detected in the proximity of the device
      */
     public void notifyReaderDetected() {
@@ -102,7 +102,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
     }
 
 
-    /*
+    /**
     Notify the other party that a reader has left the proximity of the device
      */
     public void notifyReaderRemoved() {
@@ -110,7 +110,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
     }
 
 
-    /*
+    /**
     Notify the other party that a card has been detected in the proximity of the device
      */
     public void notifyCardDetected() {
@@ -118,7 +118,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
     }
 
 
-    /*
+    /**
     Notify the other party that the card has left the proximity of the device
      */
     public void notifyCardRemoved() {
@@ -126,7 +126,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
     }
 
 
-    /*
+    /**
     Send a keepalive packet to the peer, who will respond with a keepalive response message.
      */
     public void sendKeepaliveMessage() {
