@@ -207,7 +207,13 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
         } else if (msg.getCode() == StatusCode.KEEPALIVE_REP) {
             // Got keepalive response, do nothing for now
             Log.i(TAG, "handleStatus: Got Keepalive response. Doing nothing");
-        } else {
+        } else if (msg.getCode() == StatusCode.NOT_IMPLEMENTED) {
+            Log.e(TAG, "handleStatus: Other party sent NOT_IMPLEMENTED. Doing nothing");
+        } else if (msg.getCode() == StatusCode.UNKNOWN_ERROR) {
+            Log.e(TAG, "handleStatus: Other party sent UNKNOWN_ERROR. Doing nothing");
+        } else if (msg.getCode() == StatusCode.UNKNOWN_MESSAGE) {
+            Log.e(TAG, "handleStatus: Other party sent UNKNOWN_MESSAGE. Doing nothing");
+        }else {
             // Not implemented
             Log.e(TAG, "handleStatus: Message case not implemented");
             sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
