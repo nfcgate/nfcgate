@@ -222,8 +222,42 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
 
     private void handleSession(C2S.Session msg) {
-        Log.e(TAG, "handleSession: Not implemented");
-        sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+        if (msg.getOpcode() == SessionOpcode.SESSION_CREATE_FAIL) {
+            Log.e(TAG, "handleSession: SESSION_CREATE_FAIL: Not implemented");
+            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+        }
+        else if (msg.getOpcode() == SessionOpcode.SESSION_CREATE_SUCCESS) {
+            Log.e(TAG, "handleSession: SESSION_CREATE_SUCCESS: Not implemented");
+            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+        }
+        else if (msg.getOpcode() == SessionOpcode.SESSION_JOIN_FAIL) {
+            Log.e(TAG, "handleSession: SESSION_JOIN_FAIL: Not implemented");
+            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+        }
+        else if (msg.getOpcode() == SessionOpcode.SESSION_JOIN_SUCCESS) {
+            Log.e(TAG, "handleSession: SESSION_JOIN_SUCCESS: Not implemented");
+            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+        }
+        else if (msg.getOpcode() == SessionOpcode.SESSION_LEAVE_FAIL) {
+            Log.e(TAG, "handleSession: SESSION_LEAVE_FAIL: Not implemented");
+            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+        }
+        else if (msg.getOpcode() == SessionOpcode.SESSION_LEAVE_SUCCESS) {
+            Log.e(TAG, "handleSession: SESSION_LEAVE_SUCCESS: Not implemented");
+            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+        }
+        else if (msg.getOpcode() == SessionOpcode.SESSION_PEER_JOINED) {
+            Log.e(TAG, "handleSession: SESSION_PEER_JOINED: Not implemented");
+            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+        }
+        else if (msg.getOpcode() == SessionOpcode.SESSION_PEER_LEFT) {
+            Log.e(TAG, "handleSession: SESSION_PEER_LEFT: Not implemented");
+            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+        }
+        else {
+            Log.e(TAG, "handleSession: Unknown Opcode!");
+            sendStatusMessage(StatusCode.UNKNOWN_MESSAGE);
+        }
     }
 
 
