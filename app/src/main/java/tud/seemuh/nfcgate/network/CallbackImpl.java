@@ -15,6 +15,8 @@ import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
 import tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode;
+import tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode;
+import tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode;
 import tud.seemuh.nfcgate.hce.ApduService;
 
 
@@ -82,7 +84,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
 
     /**
-    Private helper function to send Status messages.
+     * Private helper function to send Status messages.
      */
     private void sendStatusMessage(StatusCode code) {
         // Create error message
@@ -95,7 +97,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
 
     /**
-    Notify the other party that a reader has been detected in the proximity of the device
+     * Notify the other party that a reader has been detected in the proximity of the device
      */
     public void notifyReaderDetected() {
         sendStatusMessage(StatusCode.READER_FOUND);
@@ -103,7 +105,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
 
     /**
-    Notify the other party that a reader has left the proximity of the device
+     * Notify the other party that a reader has left the proximity of the device
      */
     public void notifyReaderRemoved() {
         sendStatusMessage(StatusCode.READER_REMOVED);
@@ -111,7 +113,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
 
     /**
-    Notify the other party that a card has been detected in the proximity of the device
+     * Notify the other party that a card has been detected in the proximity of the device
      */
     public void notifyCardDetected() {
         sendStatusMessage(StatusCode.CARD_FOUND);
@@ -127,7 +129,22 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
 
     /**
-    Send a keepalive packet to the peer, who will respond with a keepalive response message.
+     * Join an existing session at the server.
+     * @param secret String with the session secret
+     */
+    public void joinSession(String secret) {
+        // Create a message builder and fill in the relevant data
+        C2S.Session.Builder sessionMessage = C2S.Session.newBuilder();
+        sessionMessage.setOpcode(SessionOpcode.SESSION_CREATE);
+        sessionMessage.setSessionSecret(secret);
+        sessionMessage.setErrcode(SessionErrorCode.ERROR_NOERROR);
+
+        // Send the message
+        Handler.sendMessage(sessionMessage.build(), MessageCase.SESSION);
+    }
+
+    /**
+     * Send a keepalive packet to the peer, who will respond with a keepalive response message.
      */
     public void sendKeepaliveMessage() {
         Log.i(TAG, "sendKeepaliveMessage: Keepalive msg sent.");
