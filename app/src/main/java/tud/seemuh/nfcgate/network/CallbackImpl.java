@@ -133,6 +133,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
      * @param secret String with the session secret
      */
     public void joinSession(String secret) {
+        Log.d(TAG, "joinSession: Trying to join session with secret " + secret);
         // Create a message builder and fill in the relevant data
         C2S.Session.Builder sessionMessage = C2S.Session.newBuilder();
         sessionMessage.setOpcode(SessionOpcode.SESSION_CREATE);
