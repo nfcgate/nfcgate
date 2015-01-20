@@ -262,7 +262,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
         }
         else {
             Log.e(TAG, "handleSession: Unknown Opcode!");
-            sendStatusMessage(StatusCode.UNKNOWN_MESSAGE);
+            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
         }
     }
 
