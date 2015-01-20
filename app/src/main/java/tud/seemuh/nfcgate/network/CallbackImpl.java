@@ -204,16 +204,39 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
             // Received keepalive request, reply with response
             Log.i(TAG, "handleStatus: Got Keepalive request, replying");
             sendStatusMessage(StatusCode.KEEPALIVE_REP);
-        } else if (msg.getCode() == StatusCode.KEEPALIVE_REP) {
+        }
+        else if (msg.getCode() == StatusCode.KEEPALIVE_REP) {
             // Got keepalive response, do nothing for now
             Log.i(TAG, "handleStatus: Got Keepalive response. Doing nothing");
-        } else if (msg.getCode() == StatusCode.NOT_IMPLEMENTED) {
+        }
+        else if (msg.getCode() == StatusCode.NOT_IMPLEMENTED) {
             Log.e(TAG, "handleStatus: Other party sent NOT_IMPLEMENTED. Doing nothing");
-        } else if (msg.getCode() == StatusCode.UNKNOWN_ERROR) {
+        }
+        else if (msg.getCode() == StatusCode.UNKNOWN_ERROR) {
             Log.e(TAG, "handleStatus: Other party sent UNKNOWN_ERROR. Doing nothing");
-        } else if (msg.getCode() == StatusCode.UNKNOWN_MESSAGE) {
+        }
+        else if (msg.getCode() == StatusCode.UNKNOWN_MESSAGE) {
             Log.e(TAG, "handleStatus: Other party sent UNKNOWN_MESSAGE. Doing nothing");
-        }else {
+        }
+        else if (msg.getCode() == StatusCode.READER_FOUND) {
+            Log.e(TAG, "handleStatus: Other party sent READER_FOUND. Doing nothing");
+        }
+        else if (msg.getCode() == StatusCode.READER_REMOVED) {
+            Log.e(TAG, "handleStatus: Other party sent READER_REMOVED. Doing nothing");
+        }
+        else if (msg.getCode() == StatusCode.CARD_FOUND) {
+            Log.e(TAG, "handleStatus: Other party sent CARD_FOUND. Doing nothing");
+        }
+        else if (msg.getCode() == StatusCode.CARD_REMOVED) {
+            Log.e(TAG, "handleStatus: Other party sent CARD_REMOVED. Doing nothing");
+        }
+        else if (msg.getCode() == StatusCode.NFC_NO_CONN) {
+            Log.e(TAG, "handleStatus: Other party sent NFC_NO_CONN. Doing nothing");
+        }
+        else if (msg.getCode() == StatusCode.INVALID_MSG_FMT) {
+            Log.e(TAG, "handleStatus: Other party sent INVALID_MSG_FMT. Doing nothing");
+        }
+        else {
             // Not implemented
             Log.e(TAG, "handleStatus: Message case not implemented");
             sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
