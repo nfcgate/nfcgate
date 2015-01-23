@@ -21,7 +21,7 @@ import tud.seemuh.nfcgate.hce.ApduService;
 
 
 public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.Callback {
-    private final static String TAG = "ApduService";
+    private final static String TAG = "CallbackImpl";
 
     private ApduService apdu;
     private NFCTagReader mReader = null;
@@ -179,6 +179,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
                 //Ugly way to send data to the GUI from an external thread
                 new UpdateUI(debugView).execute(Utils.bytesToHex(bytesFromCard) + "\n");
                 Log.i(TAG, "HandleNFCData: Received and forwarded reply from card");
+                Log.i(TAG, "HandleNFCData: BytesFromCard: " + Utils.bytesToHex(bytesFromCard));
             } else {
                 Log.e(TAG, "HandleNFCData: No NFC connection active");
                 // There is no connected NFC device
