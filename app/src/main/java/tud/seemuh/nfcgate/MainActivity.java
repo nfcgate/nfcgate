@@ -117,30 +117,26 @@ public class MainActivity extends Activity {
 
         // Load values from the Shared Preferences Buffer
         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-        mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
 
-        // De- or Enables Debug Window
-        mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
-        if (mDevModeEnabled)
-        {
-            mDebuginfo.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            mDebuginfo.setVisibility(View.INVISIBLE);
-        }
-
-        // reload saved values from preferences buffer
-        ip = preferences.getString("ip", "192.168.178.31");
-        port = preferences.getInt("port",5566);
-        mIP.setText(ip);
-        mPort.setText(String.valueOf(port));
         if (mAdapter != null && mAdapter.isEnabled()) {
             mAdapter.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
             if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
                 Log.i("NFCGATE_DEBUG", "onResume(): starting onNewIntent()...");
                 onNewIntent(getIntent());
             }
+        }
+
+        boolean chgsett;
+        if (preferences.getBoolean("changed_settings", false))
+        {
+            SharedPreferences.Editor editor = preferences.edit();
+            ip = preferences.getString("ip", "192.168.178.31");
+            port = preferences.getInt("port",5566);
+            mIP.setText(ip);
+            mPort.setText(String.valueOf(port));
+            chgsett = false;
+            editor.putBoolean("changed_settings", chgsett);
+            editor.commit();
         }
 
         //WiFi Direct
@@ -172,7 +168,6 @@ public class MainActivity extends Activity {
             mNetCallback.setTag(tag);
             mNetCallback.setUpdateButton(mDebuginfo);
 
-
             mOwnID.setText("Your own ID is: " + tagId);
             Toast.makeText(this, "Found Tag: " + tagId, Toast.LENGTH_SHORT).show();
         }
@@ -180,39 +175,41 @@ public class MainActivity extends Activity {
 
     /** Called when the user touches the button 'ButtonResetClicked application'  -- Code by Tom */
     public void ButtonResetClicked(View view) {
-        // do an entire ButtonReset of the application
+        // reset the entire application by pressing this button
+
+        mOwnID.setText("Your own ID is:");
+        mInfo.setText("Please hold your device next to an NFC tag / reader");
+        mDebuginfo.setText("Debugging Infos: ");
+        this.setTitle("You clicked reset");
 
         // Load values from the Shared Preferences Buffer
         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
+        // De- or Enables Debug Window
+        mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
+        if (mDevModeEnabled)
+        {
+            mDebuginfo.setVisibility(View.VISIBLE);
+            mDebuginfo.requestFocus();
+        }
+        else
+        {
+            mDebuginfo.setVisibility(View.GONE);  // View.invisible results in an error
+        }
 
-        // Store some of the application settings in the preferences buffer
-        SharedPreferences.Editor editor = preferences.edit();
-        // save mDevModeEnabled into the to the preferences buffer
-        editor.putBoolean("mDevModeEnabled", false);
-        // save ip into the to the preferences buffer
-        editor.putString("ip", "192.168.178.31");
-        // save port into the to the preferences buffer
-        editor.putInt("port", 5566);
-        editor.commit();
-
+        ip = preferences.getString("ip", "192.168.178.31");
+        port = preferences.getInt("port",5566);
         mIP.setText(ip);
         mPort.setText(String.valueOf(port));
-
-        mDevModeEnabled = false;
-        mOwnID.setText("Your own ID is:");
-        mInfo.setText("Please hold your device next to an NFC tag / reader");
-        mDebuginfo.setText("");
-        this.setTitle("You clicked reset");
-
-        onResume();
     }
 
     /** Called when the user touches the button 'Abort'  -- Code by Tom */
     public void ButtonAbortClicked(View view) {
         // Abort the current connection attempt
         // -> please append code here to kill network connections etc.
-        boolean isHceSupported = getPackageManager().hasSystemFeature("android.hardware.nfc.hce");
-        Toast.makeText(this, "HCE: " + (isHceSupported ? "Yes" : "No"), Toast.LENGTH_SHORT).show();
+        // boolean isHceSupported = getPackageManager().hasSystemFeature("android.hardware.nfc.hce");
+        // Toast.makeText(this, "HCE: " + (isHceSupported ? "Yes" : "No"), Toast.LENGTH_SHORT).show();
+        // TODO Aboard the connection e.g. properly close Server Connection etc.
         this.setTitle("You clicked abort");
     }
 

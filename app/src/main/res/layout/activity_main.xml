@@ -14,7 +14,7 @@
         <Button
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:text="Reset status"
+            android:text="Reset"
             android:id="@+id/resetstatus"
             android:layout_row="5"
             android:layout_column="0"
@@ -27,6 +27,7 @@
             android:id="@+id/editPort"
             android:layout_row="8"
             android:layout_column="1"
+            android:freezesText="true"
             android:hint="Enter &lt;Port>"
             android:text="" />
 
@@ -65,6 +66,7 @@
             android:layout_column="0"
             android:layout_gravity="center"
             android:hint="Enter &lt;IP> address"
+            android:freezesText="true"
             android:text="" />
 
         <EditText
