@@ -99,7 +99,7 @@ public class MainActivity extends Activity {
 
         // Create Buttons & TextViews
         mReset = (Button) findViewById(R.id.resetstatus);
-        mConnect = (Button) findViewById(R.id.connectbutton);
+        mConnect = (Button) findViewById(R.id.btnCreateSession);
         mAbort = (Button) findViewById(R.id.abortbutton);
         mOwnID = (TextView) findViewById(R.id.editTextOwnID);
         mInfo = (TextView) findViewById(R.id.DisplayMsg);
@@ -213,14 +213,13 @@ public class MainActivity extends Activity {
         this.setTitle("You clicked abort");
     }
 
-    /** Called when the user touches the button 'Connect'  -- Code by Tom */
-    public void ButtonConnectClicked(View view) {
-        // Connect to a given IP & port
+    /** Called when the user touches the button 'Create Session'  -- Code by Tom */
+    public void ButtonCreateSessionClicked(View view) {
+        // Create a new Session
         if (connectButtonEnabled)
         {
-            // the buttons name is connect & we want to connect to the server:port
             connectButtonEnabled = false;
-            mConnect.setText("Disconnect");
+            mConnect.setText("Leave Session"); // Todo den anderen button ausgrauen wenn dieser angeklickt wurde & ein Interface bereitstellen um den Session Code einzugeben
             String host = mIP.getText().toString();
             int port;
             try {
@@ -230,14 +229,42 @@ public class MainActivity extends Activity {
                 return;
             }
             this.setTitle("You clicked connect");
-            // -> please append code here to ButtonConnectClicked to IP:Port
             mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(host, port);
         }
         else
         {
-            // the button connect was already clicked and we want to disconnect from the server:port
+            // the button was already clicked and we want to disconnect from the session
             connectButtonEnabled = true;
-            mConnect.setText("Connect");
+            mConnect.setText("Create Session");
+            // do some fancy stuff to disconnect from the server!
+            // TODO
+            // implement server disconnect
+        }
+    }
+
+    /** Called when the user touches the button 'Join Session'  -- Code by Tom */
+    public void ButtonJoinSessionClicked(View view) {
+        // Join an existing session
+        if (connectButtonEnabled)
+        {
+            connectButtonEnabled = false;
+            mConnect.setText("Leave Session"); // Todo den anderen button ausgrauen wenn dieser angeklickt wurde & ein Interface bereitstellen um den Session Code einzugeben
+            String host = mIP.getText().toString();
+            int port;
+            try {
+                port = Integer.parseInt(mPort.getText().toString().trim());
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Please enter a valid port", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            this.setTitle("You clicked connect");
+            mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(host, port);
+        }
+        else
+        {
+            // the button was already clicked and we want to disconnect from the session
+            connectButtonEnabled = true;
+            mConnect.setText("Join Session");
             // do some fancy stuff to disconnect from the server!
             // TODO
             // implement server disconnect
