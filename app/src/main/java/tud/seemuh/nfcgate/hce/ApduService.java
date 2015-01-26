@@ -42,6 +42,9 @@ public class ApduService extends HostApduService {
     public byte[] processCommandApdu(byte[] apdu, Bundle extras) {
         // the byte sequence 0x00a4 is a SELECT command. this is ever the first command we get
         // when a reader wants to talk to us
+
+        SimpleLowLevelNetworkConnectionClientImpl.getInstance().setCallback(mCallback);
+        /*
         if (apdu.length >= 2 && apdu[0] == (byte)0 && apdu[1] == (byte)0xa4) {
             // FIXME This is our terrible workaround, which we should remove.
 
@@ -52,7 +55,7 @@ public class ApduService extends HostApduService {
             // for the moment, we do not relay the select. This is only for the reader board
             // to select our app. The second apdu is the conversation with the card
             return new byte[]{0};
-        }
+        }*/
 
         // Package the ADPU into a C2C message
         C2C.NFCData.Builder apduMessage= C2C.NFCData.newBuilder();
