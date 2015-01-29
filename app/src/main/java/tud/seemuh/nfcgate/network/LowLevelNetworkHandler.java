@@ -1,7 +1,7 @@
 package tud.seemuh.nfcgate.network;
 
 
-public interface NetworkHandler {
+public interface LowLevelNetworkHandler {
 
     public void sendBytes(byte[] msg);
 

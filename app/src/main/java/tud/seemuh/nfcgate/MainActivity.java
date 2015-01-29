@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
@@ -20,12 +21,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import tud.seemuh.nfcgate.network.CallbackImpl;
-import tud.seemuh.nfcgate.network.SimpleNetworkConnectionClientImpl;
+import tud.seemuh.nfcgate.network.SimpleLowLevelNetworkConnectionClientImpl;
 import tud.seemuh.nfcgate.network.WiFiDirectBroadcastReceiver;
 
 
@@ -43,24 +42,26 @@ public class MainActivity extends Activity {
     private BroadcastReceiver mReceiver = null;
 
     //Connection Client
-    protected SimpleNetworkConnectionClientImpl mConnectionClient;
+    protected SimpleLowLevelNetworkConnectionClientImpl mConnectionClient;
 
-    // private var if dev mode is enabled or not
-    protected boolean mDevModeEnabled = false;
+    // Defined name of the Shared Preferences Buffer
+    public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
+
+    // private var set by settings dialog whether dev mode is enabled or not
+    private boolean mDevModeEnabled = false;
+    // private var if connect Button is enabled or not
     private boolean connectButtonEnabled = true;
+
+    // IP:Port combination saved for enhanced user comfort
+    private String ip;
+    private int port;
 
     private CallbackImpl mNetCallback = new CallbackImpl();
 
     // declares main functionality
     private Button mReset, mConnect, mAbort;
-    private CheckBox mDevMode;
     private TextView mOwnID, mInfo, mDebuginfo, mIP, mPort;
 
-
-    /**
-     * called first, next: onStart()
-     * @param savedInstanceState saved instance state
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,57 +97,55 @@ public class MainActivity extends Activity {
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
 
-        //TCP Client
-
         // Create Buttons & TextViews
         mReset = (Button) findViewById(R.id.resetstatus);
-        mConnect = (Button) findViewById(R.id.connectbutton);
+        mConnect = (Button) findViewById(R.id.btnCreateSession);
         mAbort = (Button) findViewById(R.id.abortbutton);
-        mDevMode = (CheckBox) findViewById(R.id.checkBoxDevMode);
         mOwnID = (TextView) findViewById(R.id.editTextOwnID);
         mInfo = (TextView) findViewById(R.id.DisplayMsg);
         mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
         mIP = (TextView) findViewById(R.id.editIP);
         mPort = (TextView) findViewById(R.id.editPort);
+
+        mConnect.requestFocus();
     }
 
-    /**
-     * called at SECOND, next onResume()
-     * onStart(), currently not implemented
-     */
-
-    /**
-     * called after onStart()
-     */
     @Override
     public void onResume() {
         super.onResume();
         Log.i("DEBUG", "onResume(): intent: " + getIntent().getAction());
 
-        /* TODO
-        Ist NFC Aktiviert checken...
-        Utils.checkNfcEnabled(this,mAdapter);
-         */
+        // Load values from the Shared Preferences Buffer
+        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
 
-        /* TODO
-        // ---> Hier laufen wir noch in eine Null Pointer Exception wenn wir kein NFC benutzen! -> Fix code?
-        */
+        if (mAdapter != null && mAdapter.isEnabled()) {
+            mAdapter.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
+            if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
+                Log.i("NFCGATE_DEBUG", "onResume(): starting onNewIntent()...");
+                onNewIntent(getIntent());
+            }
+        }
 
-        mAdapter.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
-        if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
-        // ---> Hier laufen wir noch in eine Null Pointer Exception wenn wir kein NFC benutzen! -> Fix code?
-            Log.i("NFCGATE_DEBUG", "onResume(): starting onNewIntent()...");
-            onNewIntent(getIntent());
+        boolean chgsett;
+        if (preferences.getBoolean("changed_settings", false))
+        {
+            SharedPreferences.Editor editor = preferences.edit();
+            ip = preferences.getString("ip", "192.168.178.31");
+            port = preferences.getInt("port",5566);
+            mIP.setText(ip);
+            mPort.setText(String.valueOf(port));
+            chgsett = false;
+            editor.putBoolean("changed_settings", chgsett);
+            editor.commit();
         }
 
         //WiFi Direct
         mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
         registerReceiver(mReceiver, mIntentFilter);
+
+        mConnect.requestFocus();
     }
 
-    /**
-     * Called when activity is paused
-     */
     @Override
     public void onPause() {
         super.onPause();
@@ -157,10 +156,6 @@ public class MainActivity extends Activity {
         //kill our threads here?
     }
 
-    /**
-     * called when app is already open and intent is fired
-     * @param intent intent
-     */
     @Override
     public void onNewIntent(Intent intent) {
         Log.i("DEBUG", "onNewIntent(): started");
@@ -173,41 +168,58 @@ public class MainActivity extends Activity {
             mNetCallback.setTag(tag);
             mNetCallback.setUpdateButton(mDebuginfo);
 
-
             mOwnID.setText("Your own ID is: " + tagId);
             Toast.makeText(this, "Found Tag: " + tagId, Toast.LENGTH_SHORT).show();
         }
     }
-/*
+
     /** Called when the user touches the button 'ButtonResetClicked application'  -- Code by Tom */
     public void ButtonResetClicked(View view) {
-        // do an entire ButtonResetClicked of the application
-        mDevModeEnabled = false;
-        mDevMode.setChecked(false);
-        mDebuginfo.setVisibility(View.INVISIBLE);
+        // reset the entire application by pressing this button
+
         mOwnID.setText("Your own ID is:");
         mInfo.setText("Please hold your device next to an NFC tag / reader");
-        mDebuginfo.setText("");
+        mDebuginfo.setText("Debugging Infos: ");
         this.setTitle("You clicked reset");
+
+        // Load values from the Shared Preferences Buffer
+        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
+        // De- or Enables Debug Window
+        mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
+        if (mDevModeEnabled)
+        {
+            mDebuginfo.setVisibility(View.VISIBLE);
+            mDebuginfo.requestFocus();
+        }
+        else
+        {
+            mDebuginfo.setVisibility(View.GONE);  // View.invisible results in an error
+        }
+
+        ip = preferences.getString("ip", "192.168.178.31");
+        port = preferences.getInt("port",5566);
+        mIP.setText(ip);
+        mPort.setText(String.valueOf(port));
     }
 
     /** Called when the user touches the button 'Abort'  -- Code by Tom */
     public void ButtonAbortClicked(View view) {
         // Abort the current connection attempt
         // -> please append code here to kill network connections etc.
-        boolean isHceSupported = getPackageManager().hasSystemFeature("android.hardware.nfc.hce");
-        Toast.makeText(this, "HCE: " + (isHceSupported ? "Yes" : "No"), Toast.LENGTH_SHORT).show();
+        // boolean isHceSupported = getPackageManager().hasSystemFeature("android.hardware.nfc.hce");
+        // Toast.makeText(this, "HCE: " + (isHceSupported ? "Yes" : "No"), Toast.LENGTH_SHORT).show();
+        // TODO Aboard the connection e.g. properly close Server Connection etc.
         this.setTitle("You clicked abort");
     }
 
-    /** Called when the user touches the button 'Connect'  -- Code by Tom */
-    public void ButtonConnectClicked(View view) {
-        // Connect to a given IP & port
+    /** Called when the user touches the button 'Create Session'  -- Code by Tom */
+    public void ButtonCreateSessionClicked(View view) {
+        // Create a new Session
         if (connectButtonEnabled)
         {
-            // the buttons name is connect & we want to connect to the server:port
             connectButtonEnabled = false;
-            mConnect.setText("Disconnect");
+            mConnect.setText("Leave Session"); // Todo den anderen button ausgrauen wenn dieser angeklickt wurde & ein Interface bereitstellen um den Session Code einzugeben
             String host = mIP.getText().toString();
             int port;
             try {
@@ -217,30 +229,45 @@ public class MainActivity extends Activity {
                 return;
             }
             this.setTitle("You clicked connect");
-            // -> please append code here to ButtonConnectClicked to IP:Port
-            mConnectionClient = SimpleNetworkConnectionClientImpl.getInstance().connect(host, port);
+            mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(host, port);
         }
         else
         {
-            // the button connect was already clicked and we want to disconnect from the server:port
+            // the button was already clicked and we want to disconnect from the session
             connectButtonEnabled = true;
-            mConnect.setText("Connect");
+            mConnect.setText("Create Session");
             // do some fancy stuff to disconnect from the server!
             // TODO
             // implement server disconnect
         }
     }
 
-    /** Called when the user checkes the checkbox 'enable dev mode'  -- Code by Tom */
-    public void DevCheckboxClicked(View view) {
-        boolean checked = (((CheckBox) findViewById(R.id.checkBoxDevMode)).isChecked());
-        mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
-        if (checked) {
-            this.mDevModeEnabled = true;
-            mDebuginfo.setVisibility(View.VISIBLE);
-        } else {
-            this.mDevModeEnabled = false;
-            mDebuginfo.setVisibility(View.INVISIBLE);
+    /** Called when the user touches the button 'Join Session'  -- Code by Tom */
+    public void ButtonJoinSessionClicked(View view) {
+        // Join an existing session
+        if (connectButtonEnabled)
+        {
+            connectButtonEnabled = false;
+            mConnect.setText("Leave Session"); // Todo den anderen button ausgrauen wenn dieser angeklickt wurde & ein Interface bereitstellen um den Session Code einzugeben
+            String host = mIP.getText().toString();
+            int port;
+            try {
+                port = Integer.parseInt(mPort.getText().toString().trim());
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Please enter a valid port", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            this.setTitle("You clicked connect");
+            mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(host, port);
+        }
+        else
+        {
+            // the button was already clicked and we want to disconnect from the session
+            connectButtonEnabled = true;
+            mConnect.setText("Join Session");
+            // do some fancy stuff to disconnect from the server!
+            // TODO
+            // implement server disconnect
         }
     }
 

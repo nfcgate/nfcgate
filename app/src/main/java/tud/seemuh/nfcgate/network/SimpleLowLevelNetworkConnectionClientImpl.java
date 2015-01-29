@@ -15,7 +15,7 @@ import java.util.Observable;
 import tud.seemuh.nfcgate.util.Utils;
 
 
-public class SimpleNetworkConnectionClientImpl implements NetworkHandler {
+public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetworkHandler {
 
     private int mServerPort = 15000;
     private InetAddress mServerAddress;
@@ -26,14 +26,14 @@ public class SimpleNetworkConnectionClientImpl implements NetworkHandler {
     private Socket mSocket;
     private Callback mCallback;
 
-    private static SimpleNetworkConnectionClientImpl mInstance;
+    private static SimpleLowLevelNetworkConnectionClientImpl mInstance;
 
-    public static SimpleNetworkConnectionClientImpl getInstance() {
-        if(mInstance == null) mInstance = new SimpleNetworkConnectionClientImpl();
+    public static SimpleLowLevelNetworkConnectionClientImpl getInstance() {
+        if(mInstance == null) mInstance = new SimpleLowLevelNetworkConnectionClientImpl();
         return mInstance;
     }
 
-    public SimpleNetworkConnectionClientImpl connect(String serverAddress, int serverPort) {
+    public SimpleLowLevelNetworkConnectionClientImpl connect(String serverAddress, int serverPort) {
         try {
             mServerAddress = InetAddress.getByName(serverAddress);
 
@@ -42,17 +42,17 @@ public class SimpleNetworkConnectionClientImpl implements NetworkHandler {
                 mClientThread = new Thread(mRunnableClientThread);
                 mClientThread.start();
             } else {
-                Log.d(SimpleNetworkConnectionClientImpl.class.getName(), "Client thread already started");
+                Log.d(SimpleLowLevelNetworkConnectionClientImpl.class.getName(), "Client thread already started");
             }
 
         } catch (UnknownHostException e1){
-            Log.e(SimpleNetworkConnectionClientImpl.class.getName(), "Unknown Host: "+serverAddress);
+            Log.e(SimpleLowLevelNetworkConnectionClientImpl.class.getName(), "Unknown Host: "+serverAddress);
         }
         mServerPort = serverPort;
         return this;
     }
 
-    public SimpleNetworkConnectionClientImpl setCallback(Callback callback) {
+    public SimpleLowLevelNetworkConnectionClientImpl setCallback(Callback callback) {
         mCallback = callback;
         return this;
     }

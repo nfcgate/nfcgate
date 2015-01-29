@@ -12,41 +12,55 @@
         android:layout_alignParentTop="true">
 
         <Button
-            android:layout_width="100dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="Reset status"
+            android:text="Reset"
             android:id="@+id/resetstatus"
-            android:layout_row="5"
+            android:layout_row="9"
             android:layout_column="0"
             android:onClick="ButtonResetClicked"
-            android:layout_columnSpan="1" />
+            android:layout_gravity="left" />
 
         <EditText
             android:layout_width="140dp"
             android:layout_height="wrap_content"
             android:id="@+id/editPort"
-            android:layout_row="8"
+            android:layout_row="5"
             android:layout_column="1"
+            android:freezesText="true"
             android:hint="Enter &lt;Port>"
-            android:text="5566" />
+            android:text=""
+            android:layout_gravity="left" />
 
         <Button
-            android:layout_width="100dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:text="Connect"
-            android:id="@+id/connectbutton"
-            android:layout_row="13"
+            android:text="Create Session"
+            android:id="@+id/btnCreateSession"
+            android:layout_row="7"
             android:layout_column="0"
-            android:onClick="ButtonConnectClicked" />
+            android:onClick="ButtonCreateSessionClicked"
+            android:layout_gravity="left" />
 
         <Button
-            android:layout_width="100dp"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="Join Session"
+            android:id="@+id/btnJoinSession"
+            android:layout_row="7"
+            android:layout_column="1"
+            android:onClick="ButtonJoinSessionClicked"
+            android:layout_gravity="left" />
+
+        <Button
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="Abort"
             android:id="@+id/abortbutton"
-            android:layout_row="13"
+            android:layout_row="9"
             android:layout_column="1"
-            android:onClick="ButtonAbortClicked" />
+            android:onClick="ButtonAbortClicked"
+            android:layout_gravity="left" />
 
     <EditText
         android:layout_width="315dp"
@@ -57,32 +71,22 @@
         android:text="Your own ID is:"
         android:layout_columnSpan="2" />
 
-    <CheckBox
-        android:layout_width="305dp"
-        android:layout_height="wrap_content"
-        android:text="Enable Developer Mode"
-        android:id="@+id/checkBoxDevMode"
-        android:layout_row="20"
-        android:layout_column="0"
-        android:onClick="DevCheckboxClicked"
-        android:checked="true"
-        android:layout_columnSpan="3" />
-
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/editIP"
-            android:layout_row="8"
+            android:layout_row="5"
             android:layout_column="0"
-            android:layout_gravity="center"
-            android:hint="Enter &lt;IP> address"
-            android:text="192.168.178.31" />
+            android:layout_gravity="left|center"
+            android:hint="Enter &lt;IP>  "
+            android:freezesText="true"
+            android:text="" />
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="120dp"
             android:id="@+id/DisplayMsg"
-            android:layout_row="18"
+            android:layout_row="11"
             android:layout_column="0"
             android:text="Please hold your device next to an NFC tag / reader"
             android:layout_rowSpan="2"
@@ -93,13 +97,13 @@
 
         <EditText
         android:layout_width="match_parent"
-        android:layout_height="156dp"
+        android:layout_height="173dp"
         android:id="@+id/editTextDevModeEnabledDebugging"
-        android:layout_row="22"
+        android:layout_row="13"
         android:layout_column="0"
-        android:text="Debugging Info's: "
+        android:text="Debugging Infos: "
         android:layout_rowSpan="10"
-        android:layout_columnSpan="3"
+        android:layout_columnSpan="2"
         android:visibility="visible"
         android:editable="false" />
 
