@@ -1,6 +1,7 @@
 package tud.seemuh.nfcgate;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,12 +24,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import tud.seemuh.nfcgate.network.CallbackImpl;
 import tud.seemuh.nfcgate.network.SimpleLowLevelNetworkConnectionClientImpl;
 import tud.seemuh.nfcgate.network.WiFiDirectBroadcastReceiver;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements token_dialog.NoticeDialogListener{
 
     private NfcAdapter mAdapter;
     private IntentFilter mIntentFilter = new IntentFilter();
@@ -180,7 +182,7 @@ public class MainActivity extends Activity {
         mConnStatus.setText("Connection status: Resetting");  // ToDo -> really reset network connection
         mPartnerDevice.setText("Status of partner: no device");  // Todo -> notify partner on reset method called
         mInfo.setText("Please hold your device next to an NFC tag / reader");
-        mDebuginfo.setText("Debugging Infos: ");
+        mDebuginfo.setText("Debugging Output: ");
         this.setTitle("You clicked reset");
 
         // Load values from the Shared Preferences Buffer
@@ -230,10 +232,10 @@ public class MainActivity extends Activity {
                 return;
             }
             this.setTitle("You clicked connect");
-            // Todo ein Interface bereitstellen um den Session Code einzugeben
             mConnStatus.setText("Connection status: Connecting");
             mPartnerDevice.setText("Status of partner: waiting");
             mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(host, port);
+            // Todo notify user about the token the server assigned him
         }
         else
         {
@@ -264,7 +266,10 @@ public class MainActivity extends Activity {
                 return;
             }
             this.setTitle("You clicked connect");
-            // Todo ein Interface bereitstellen um den Session Code einzugeben
+
+            // Display dialog to enter the token
+            showTokenDialog();
+
             mConnStatus.setText("Connection status: Connecting");
             mPartnerDevice.setText("Status of partner: waiting");
             mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(host, port);
@@ -308,6 +313,27 @@ public class MainActivity extends Activity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void showTokenDialog() {
+        // Create an instance of the dialog fragment and show it
+        DialogFragment dialog = new token_dialog();
+        dialog.show(this.getFragmentManager(), "Enter token: ");
+    }
+
+    // The dialog fragment receives a reference to this Activity through the
+    // Fragment.onAttach() callback, which it uses to call the following methods
+    // defined by the token_dialog.NoticeDialogListener interface
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        // User touched the dialog's positive button
+        // todo user typed token into field & pressed submit
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+        // todo user canceled token input
     }
 
     /*
