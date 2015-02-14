@@ -179,8 +179,10 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     public void ButtonResetClicked(View view) {
         // reset the entire application by pressing this button
 
-        mConnStatus.setText("Connection status: Resetting");  // ToDo -> really reset network connection
-        mPartnerDevice.setText("Status of partner: no device");  // Todo -> notify partner on reset method called
+        mConnStatus.setText("Connection status: Resetting");
+        // ToDo -> really reset network connection
+        mPartnerDevice.setText("Status of partner: no device");
+        // Todo -> notify partner on reset method called
         mInfo.setText("Please hold your device next to an NFC tag / reader");
         mDebuginfo.setText("Debugging Output: ");
         this.setTitle("You clicked reset");
@@ -211,7 +213,8 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         // Abort the current connection attempt
         // TODO Aboard the connection -> properly close network connection
         mConnStatus.setText("Connection status: Disconnecting");
-        mPartnerDevice.setText("Status of partner: no device"); // Todo -> notify Partner about abort
+        mPartnerDevice.setText("Status of partner: no device");
+        // Todo -> notify Partner about abort
         this.setTitle("You clicked abort");
     }
 
