@@ -62,14 +62,25 @@
             android:onClick="ButtonAbortClicked"
             android:layout_gravity="left" />
 
-    <EditText
-        android:layout_width="315dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/editTextOwnID"
-        android:layout_row="0"
-        android:layout_column="0"
-        android:text="Your own ID is:"
-        android:layout_columnSpan="2" />
+        <EditText
+            android:layout_width="315dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/editConnectionStatus"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:text="Connection status: "
+            android:editable="false"
+            android:layout_columnSpan="2" />
+
+        <EditText
+            android:layout_width="315dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/editOtherDevice"
+            android:layout_row="2"
+            android:layout_column="0"
+            android:text="Status of partner: "
+            android:editable="false"
+            android:layout_columnSpan="2" />
 
         <EditText
             android:layout_width="wrap_content"
@@ -84,7 +95,7 @@
 
         <EditText
             android:layout_width="wrap_content"
-            android:layout_height="120dp"
+            android:layout_height="100dp"
             android:id="@+id/DisplayMsg"
             android:layout_row="11"
             android:layout_column="0"
@@ -97,7 +108,7 @@
 
         <EditText
         android:layout_width="match_parent"
-        android:layout_height="173dp"
+        android:layout_height="150dp"
         android:id="@+id/editTextDevModeEnabledDebugging"
         android:layout_row="13"
         android:layout_column="0"

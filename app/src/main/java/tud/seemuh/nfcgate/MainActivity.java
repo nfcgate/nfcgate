@@ -49,8 +49,6 @@ public class MainActivity extends Activity {
 
     // private var set by settings dialog whether dev mode is enabled or not
     private boolean mDevModeEnabled = false;
-    // private var if connect Button is enabled or not
-    private boolean connectButtonEnabled = true;
 
     // IP:Port combination saved for enhanced user comfort
     private String ip;
@@ -59,8 +57,8 @@ public class MainActivity extends Activity {
     private CallbackImpl mNetCallback = new CallbackImpl();
 
     // declares main functionality
-    private Button mReset, mConnect, mAbort;
-    private TextView mOwnID, mInfo, mDebuginfo, mIP, mPort;
+    private Button mReset, mConnecttoSession, mAbort, mJoinSession;
+    private TextView mConnStatus, mInfo, mDebuginfo, mIP, mPort, mPartnerDevice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,15 +97,16 @@ public class MainActivity extends Activity {
 
         // Create Buttons & TextViews
         mReset = (Button) findViewById(R.id.resetstatus);
-        mConnect = (Button) findViewById(R.id.btnCreateSession);
+        mConnecttoSession = (Button) findViewById(R.id.btnCreateSession);
+        mJoinSession = (Button) findViewById(R.id.btnJoinSession);
         mAbort = (Button) findViewById(R.id.abortbutton);
-        mOwnID = (TextView) findViewById(R.id.editTextOwnID);
+        mConnStatus = (TextView) findViewById(R.id.editConnectionStatus);
         mInfo = (TextView) findViewById(R.id.DisplayMsg);
         mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
         mIP = (TextView) findViewById(R.id.editIP);
         mPort = (TextView) findViewById(R.id.editPort);
-
-        mConnect.requestFocus();
+        mPartnerDevice = (TextView) findViewById(R.id.editOtherDevice);
+        mConnecttoSession.requestFocus();
     }
 
     @Override
@@ -126,6 +125,7 @@ public class MainActivity extends Activity {
             }
         }
 
+        // check if settings were changed -> if no reload default values
         boolean chgsett;
         if (preferences.getBoolean("changed_settings", false))
         {
@@ -143,7 +143,7 @@ public class MainActivity extends Activity {
         mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
         registerReceiver(mReceiver, mIntentFilter);
 
-        mConnect.requestFocus();
+        mConnecttoSession.requestFocus();
     }
 
     @Override
@@ -168,7 +168,7 @@ public class MainActivity extends Activity {
             mNetCallback.setTag(tag);
             mNetCallback.setUpdateButton(mDebuginfo);
 
-            mOwnID.setText("Your own ID is: " + tagId);
+            mDebuginfo.setText(mDebuginfo + "\n Identified a new Tag: " + tagId);
             Toast.makeText(this, "Found Tag: " + tagId, Toast.LENGTH_SHORT).show();
         }
     }
@@ -177,7 +177,8 @@ public class MainActivity extends Activity {
     public void ButtonResetClicked(View view) {
         // reset the entire application by pressing this button
 
-        mOwnID.setText("Your own ID is:");
+        mConnStatus.setText("Connection status: Resetting");  // ToDo -> really reset network connection
+        mPartnerDevice.setText("Status of partner: no device");  // Todo -> notify partner on reset method called
         mInfo.setText("Please hold your device next to an NFC tag / reader");
         mDebuginfo.setText("Debugging Infos: ");
         this.setTitle("You clicked reset");
@@ -206,20 +207,20 @@ public class MainActivity extends Activity {
     /** Called when the user touches the button 'Abort'  -- Code by Tom */
     public void ButtonAbortClicked(View view) {
         // Abort the current connection attempt
-        // -> please append code here to kill network connections etc.
-        // boolean isHceSupported = getPackageManager().hasSystemFeature("android.hardware.nfc.hce");
-        // Toast.makeText(this, "HCE: " + (isHceSupported ? "Yes" : "No"), Toast.LENGTH_SHORT).show();
-        // TODO Aboard the connection e.g. properly close Server Connection etc.
+        // TODO Aboard the connection -> properly close network connection
+        mConnStatus.setText("Connection status: Disconnecting");
+        mPartnerDevice.setText("Status of partner: no device"); // Todo -> notify Partner about abort
         this.setTitle("You clicked abort");
     }
 
     /** Called when the user touches the button 'Create Session'  -- Code by Tom */
     public void ButtonCreateSessionClicked(View view) {
         // Create a new Session
-        if (connectButtonEnabled)
+        if (!mConnecttoSession.getText().equals("Leave Session"))
         {
-            connectButtonEnabled = false;
-            mConnect.setText("Leave Session"); // Todo den anderen button ausgrauen wenn dieser angeklickt wurde & ein Interface bereitstellen um den Session Code einzugeben
+            mConnecttoSession.setText("Leave Session");
+            mJoinSession.setEnabled(false);
+
             String host = mIP.getText().toString();
             int port;
             try {
@@ -229,26 +230,31 @@ public class MainActivity extends Activity {
                 return;
             }
             this.setTitle("You clicked connect");
+            // Todo ein Interface bereitstellen um den Session Code einzugeben
+            mConnStatus.setText("Connection status: Connecting");
+            mPartnerDevice.setText("Status of partner: waiting");
             mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(host, port);
         }
         else
         {
             // the button was already clicked and we want to disconnect from the session
-            connectButtonEnabled = true;
-            mConnect.setText("Create Session");
-            // do some fancy stuff to disconnect from the server!
-            // TODO
-            // implement server disconnect
+            mConnecttoSession.setText("Create Session");
+            mConnStatus.setText("Connection status: Disconnecting");
+            mPartnerDevice.setText("Status of partner: no device");
+            mJoinSession.setEnabled(true);
+            this.setTitle("You clicked disconnect");
+            // TODO -> implement server disconnect
         }
     }
 
     /** Called when the user touches the button 'Join Session'  -- Code by Tom */
     public void ButtonJoinSessionClicked(View view) {
         // Join an existing session
-        if (connectButtonEnabled)
+        if (!mJoinSession.getText().equals("Leave Session"))
         {
-            connectButtonEnabled = false;
-            mConnect.setText("Leave Session"); // Todo den anderen button ausgrauen wenn dieser angeklickt wurde & ein Interface bereitstellen um den Session Code einzugeben
+            mJoinSession.setText("Leave Session");
+            mConnecttoSession.setEnabled(false);
+
             String host = mIP.getText().toString();
             int port;
             try {
@@ -258,16 +264,20 @@ public class MainActivity extends Activity {
                 return;
             }
             this.setTitle("You clicked connect");
+            // Todo ein Interface bereitstellen um den Session Code einzugeben
+            mConnStatus.setText("Connection status: Connecting");
+            mPartnerDevice.setText("Status of partner: waiting");
             mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(host, port);
         }
         else
         {
             // the button was already clicked and we want to disconnect from the session
-            connectButtonEnabled = true;
-            mConnect.setText("Join Session");
-            // do some fancy stuff to disconnect from the server!
-            // TODO
-            // implement server disconnect
+            mJoinSession.setText("Join Session");
+            mConnStatus.setText("Connection status: Disconnecting");
+            mPartnerDevice.setText("Status of partner: no device");
+            mConnecttoSession.setEnabled(true);
+            this.setTitle("You clicked disconnect");
+            // TODO -> implement server disconnect
         }
     }
 
