@@ -5,6 +5,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1"
+    android:background="#E5FDFC"
     tools:context=".SettingsActivity">
 
     <GridLayout
@@ -86,8 +87,10 @@
             android:text="Save settings"
             android:onClick="btnSaveSettingsClicked"
             android:id="@+id/btnSaveSettings"
+            android:background="#66DDFA"
             android:layout_row="8"
-            android:layout_column="0" />
+            android:layout_column="0"
+            android:layout_margin="3dp" />
 
         <TextView
             android:layout_width="wrap_content"
