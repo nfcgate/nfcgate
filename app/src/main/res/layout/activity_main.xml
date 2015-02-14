@@ -4,6 +4,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
+    android:background="#E5FDFC"
     android:id="@+id/activity_main">
 
     <GridLayout
@@ -19,7 +20,9 @@
             android:layout_row="9"
             android:layout_column="0"
             android:onClick="ButtonResetClicked"
-            android:layout_gravity="left" />
+            android:background="#E83D17"
+            android:layout_gravity="left"
+            android:layout_margin="3dp" />
 
         <EditText
             android:layout_width="140dp"
@@ -40,7 +43,9 @@
             android:layout_row="7"
             android:layout_column="0"
             android:onClick="ButtonCreateSessionClicked"
-            android:layout_gravity="left" />
+            android:background="#66DDFA"
+            android:layout_gravity="left"
+            android:layout_margin="3dp" />
 
         <Button
             android:layout_width="150dp"
@@ -50,7 +55,9 @@
             android:layout_row="7"
             android:layout_column="1"
             android:onClick="ButtonJoinSessionClicked"
-            android:layout_gravity="left" />
+            android:background="#66DDFA"
+            android:layout_gravity="left"
+            android:layout_margin="3dp" />
 
         <Button
             android:layout_width="150dp"
@@ -60,7 +67,9 @@
             android:layout_row="9"
             android:layout_column="1"
             android:onClick="ButtonAbortClicked"
-            android:layout_gravity="left" />
+            android:background="#E83D17"
+            android:layout_gravity="left"
+            android:layout_margin="3dp" />
 
         <EditText
             android:layout_width="315dp"
