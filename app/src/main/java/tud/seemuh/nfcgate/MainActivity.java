@@ -30,7 +30,7 @@ import tud.seemuh.nfcgate.network.SimpleLowLevelNetworkConnectionClientImpl;
 import tud.seemuh.nfcgate.network.WiFiDirectBroadcastReceiver;
 
 
-public class MainActivity extends Activity implements token_dialog.NoticeDialogListener{
+public class MainActivity extends Activity implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener{
 
     private NfcAdapter mAdapter;
     private IntentFilter mIntentFilter = new IntentFilter();
@@ -69,6 +69,12 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
         mAdapter = NfcAdapter.getDefaultAdapter(this);
         mIntentFilter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
+
+        if (!mAdapter.isEnabled())
+        {
+            // NFC is not enabled -> "Tell the user to enable NFC"
+            showEnableNFCDialog();
+        }
 
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -179,13 +185,18 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     public void ButtonResetClicked(View view) {
         // reset the entire application by pressing this button
 
-        mConnStatus.setText("Connection status: Resetting");
+        mConnStatus.setText("Server status: Resetting");
         // ToDo -> really reset network connection
-        mPartnerDevice.setText("Status of partner: no device");
+        mPartnerDevice.setText("Partner status: no device");
         // Todo -> notify partner on reset method called
         mInfo.setText("Please hold your device next to an NFC tag / reader");
         mDebuginfo.setText("Debugging Output: ");
         this.setTitle("You clicked reset");
+
+        mJoinSession.setText("Join Session");
+        mJoinSession.setEnabled(true);
+        mConnecttoSession.setText("Create Session");
+        mConnecttoSession.setEnabled(true);
 
         // Load values from the Shared Preferences Buffer
         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
@@ -217,8 +228,8 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mConnecttoSession.setText("Create Session");
         mConnecttoSession.setEnabled(true);
 
-        mConnStatus.setText("Connection status: Disconnecting");
-        mPartnerDevice.setText("Status of partner: no device");
+        mConnStatus.setText("Server status: Disconnecting");
+        mPartnerDevice.setText("Partner status: no device");
         // Todo -> notify Partner about abort
         this.setTitle("You clicked abort");
     }
@@ -240,8 +251,8 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
                 return;
             }
             this.setTitle("You clicked connect");
-            mConnStatus.setText("Connection status: Connecting - (token: )");
-            mPartnerDevice.setText("Status of partner: waiting");
+            mConnStatus.setText("Server status: Connecting - (token: )");
+            mPartnerDevice.setText("Partner status: waiting");
             mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(host, port);
             // Todo notify user about the token the server assigned him -> will be displayed at mConnStatus
         }
@@ -249,8 +260,8 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         {
             // the button was already clicked and we want to disconnect from the session
             mConnecttoSession.setText("Create Session");
-            mConnStatus.setText("Connection status: Disconnecting");
-            mPartnerDevice.setText("Status of partner: no device");
+            mConnStatus.setText("Server status: Disconnecting");
+            mPartnerDevice.setText("Partner status: no device");
             mJoinSession.setEnabled(true);
             this.setTitle("You clicked disconnect");
             // TODO -> implement server disconnect
@@ -278,16 +289,16 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             // Display dialog to enter the token
             showTokenDialog();
 
-            mConnStatus.setText("Connection status: Connecting");
-            mPartnerDevice.setText("Status of partner: waiting");
+            mConnStatus.setText("Server status: Connecting");
+            mPartnerDevice.setText("Partner status: waiting");
             mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(host, port);
         }
         else
         {
             // the button was already clicked and we want to disconnect from the session
             mJoinSession.setText("Join Session");
-            mConnStatus.setText("Connection status: Disconnecting");
-            mPartnerDevice.setText("Status of partner: no device");
+            mConnStatus.setText("Server status: Disconnecting");
+            mPartnerDevice.setText("Partner status: no device");
             mConnecttoSession.setEnabled(true);
             this.setTitle("You clicked disconnect");
             // TODO -> implement server disconnect
@@ -317,6 +328,12 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         }
     }
 
+    public void showEnableNFCDialog() {
+        // Create an instance of the dialog fragment and show it
+        DialogFragment dialog = new enablenfc_dialog();
+        dialog.show(this.getFragmentManager(), "Enable NFC: ");
+    }
+
     public void showTokenDialog() {
         // Create an instance of the dialog fragment and show it
         DialogFragment dialog = new token_dialog();
@@ -335,7 +352,21 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     @Override
     public void onDialogNegativeClick(DialogFragment dialog) {
         // User touched the dialog's negative button
-        // todo user canceled token input
+        Toast.makeText(this, "To abort the connection press the Abort button above", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onNFCDialogPositiveClick(DialogFragment dialog) {
+        // User touched the dialog's positive button
+        Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
+        startActivity(intent);
+}
+
+    @Override
+    public void onNFCDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+        // Tell the user he is stupid -> the app wont work without NFC enabled...
+        Toast.makeText(this, "Caution! The app won't work without NFC enabled -> please enable NFC in your phone settings", Toast.LENGTH_LONG).show();
     }
 
     /*
