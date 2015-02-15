@@ -11,29 +11,29 @@
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:rowCount="16"
-        android:columnCount="4">
+        android:rowCount="14"
+        android:columnCount="3">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="You can change your settings below:"
             android:id="@+id/textView_settings"
             android:layout_column="0"
-            android:layout_columnSpan="2"
-            android:layout_row="0" />
+            android:layout_row="0"
+            android:layout_columnSpan="1" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="             "
+            android:text="                          "
             android:id="@+id/textView_blankspace"
             android:layout_column="0"
-            android:layout_columnSpan="2"
-            android:layout_row="1" />
+            android:layout_row="1"
+            android:layout_columnSpan="1" />
 
         <CheckBox
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Check to enable Debug Window"
             android:id="@+id/checkBoxDevMode"
@@ -41,26 +41,7 @@
             android:layout_column="0"
             android:onClick="DevCheckboxClicked"
             android:checked="true"
-            android:layout_columnSpan="2" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Enter default Port"
-            android:id="@+id/textViewDefaultPort"
-            android:layout_row="4"
-            android:layout_column="0"
-            android:editable="false" />
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/editPort"
-            android:layout_row="4"
-            android:layout_column="1"
-            android:hint="&lt;Port&gt;"
-            android:text=""
-            android:layout_columnSpan="2" />
+            android:layout_columnSpan="1" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -69,20 +50,56 @@
             android:id="@+id/textViewDefaultIp"
             android:layout_row="3"
             android:layout_column="0"
-            android:editable="false" />
+            android:editable="false"
+            android:layout_gravity="left|center"
+            android:layout_columnSpan="1" />
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/editIP"
             android:layout_row="3"
-            android:layout_column="1"
+            android:layout_column="0"
             android:hint="&lt;IP&gt;  "
             android:text=""
-            android:layout_columnSpan="2" />
+            android:layout_gravity="left|center"
+            android:layout_columnSpan="2"
+            android:gravity="right" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enter default Port"
+            android:id="@+id/textViewDefaultPort"
+            android:layout_row="4"
+            android:layout_column="0"
+            android:editable="false"
+            android:layout_gravity="left|center"
+            android:layout_columnSpan="1" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editPort"
+            android:layout_row="4"
+            android:layout_column="0"
+            android:hint="&lt;Port&gt;"
+            android:text=""
+            android:layout_gravity="left|center"
+            android:layout_columnSpan="2"
+            android:gravity="right" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="                          "
+            android:id="@+id/textView_blankspace3"
+            android:layout_column="0"
+            android:layout_row="6"
+            android:layout_columnSpan="1" />
 
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Save settings"
             android:onClick="btnSaveSettingsClicked"
@@ -90,16 +107,26 @@
             android:background="#66DDFA"
             android:layout_row="8"
             android:layout_column="0"
-            android:layout_margin="3dp" />
+            android:layout_margin="3dp"
+            android:layout_columnSpan="1" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="                          "
+            android:id="@+id/textView_blankspace2"
+            android:layout_column="0"
+            android:layout_row="10"
+            android:layout_columnSpan="1" />
+
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Supported features by your smartphone"
             android:id="@+id/textViewSupportedFeatures"
             android:layout_row="12"
             android:layout_column="0"
-            android:layout_columnSpan="2" />
+            android:layout_columnSpan="1" />
 
     </GridLayout>
 

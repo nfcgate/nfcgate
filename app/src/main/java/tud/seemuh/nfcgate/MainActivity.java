@@ -212,6 +212,11 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     public void ButtonAbortClicked(View view) {
         // Abort the current connection attempt
         // TODO Aboard the connection -> properly close network connection
+        mJoinSession.setText("Join Session");
+        mJoinSession.setEnabled(true);
+        mConnecttoSession.setText("Create Session");
+        mConnecttoSession.setEnabled(true);
+
         mConnStatus.setText("Connection status: Disconnecting");
         mPartnerDevice.setText("Status of partner: no device");
         // Todo -> notify Partner about abort
@@ -235,10 +240,10 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
                 return;
             }
             this.setTitle("You clicked connect");
-            mConnStatus.setText("Connection status: Connecting");
+            mConnStatus.setText("Connection status: Connecting - (token: )");
             mPartnerDevice.setText("Status of partner: waiting");
             mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(host, port);
-            // Todo notify user about the token the server assigned him
+            // Todo notify user about the token the server assigned him -> will be displayed at mConnStatus
         }
         else
         {
@@ -301,17 +306,11 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
-            case R.id.action_nfc:
-                startActivityForResult(new Intent(Settings.ACTION_NFC_SETTINGS), 0);
-                return true;
-            case R.id.action_app:
+            case  R.id.action_settings:
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 return true;
             case R.id.action_about:
                 startActivity(new Intent(MainActivity.this, AboutActivity.class));
-                return true;
-            case  R.id.action_settings:
-                startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
