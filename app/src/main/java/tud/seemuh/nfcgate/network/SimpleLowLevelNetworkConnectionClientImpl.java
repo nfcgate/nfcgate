@@ -35,7 +35,12 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
 
     public SimpleLowLevelNetworkConnectionClientImpl connect(String serverAddress, int serverPort) {
         try {
-            mServerAddress = InetAddress.getByName(serverAddress);
+            // TODO: Properly support Domain Names & IP Addresses as input --> I just included a catch for the exception
+            // Resolve domain name to IP address as string
+            InetAddress addr = null;
+            addr = InetAddress.getByName(serverAddress);
+
+            mServerAddress = (InetAddress.getByName(addr.getHostAddress()));
 
             if(mClientThread == null) {
                 mRunnableClientThread = new ClientThread();
@@ -45,7 +50,7 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
                 Log.d(SimpleLowLevelNetworkConnectionClientImpl.class.getName(), "Client thread already started");
             }
 
-        } catch (UnknownHostException e1){
+        } catch (Exception e1){
             Log.e(SimpleLowLevelNetworkConnectionClientImpl.class.getName(), "Unknown Host: "+serverAddress);
         }
         mServerPort = serverPort;

@@ -107,6 +107,8 @@ public class SettingsActivity extends Activity{
         editor.putString("ip", ip);
         // save port into the to the preferences buffer
         editor.putInt("port", port);
+        boolean chgsett = true;
+        editor.putBoolean("changed_settings", chgsett);
         editor.commit();
     }
 
