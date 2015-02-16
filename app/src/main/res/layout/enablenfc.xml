@@ -13,14 +13,16 @@
         android:background="#FBFDBB34"
         android:contentDescription="@string/app_name" />
 
-    <EditText
-        android:id="@+id/token"
-        android:inputType="textEmailAddress"
+    <TextView
+        android:id="@+id/enablenfc"
+        android:inputType="text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
-        android:hint="Enter token here " />
+        android:editable="false"
+        android:hint="Please enable NFC to use this app " />
+
 </LinearLayout>
