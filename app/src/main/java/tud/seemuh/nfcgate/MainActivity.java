@@ -237,10 +237,13 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     /** Called when the user touches the button 'Create Session'  -- Code by Tom */
     public void ButtonCreateSessionClicked(View view) {
         // Create a new Session
+        // Todo -> nach cancel gedrückt -> setzt er trotzdem die button namen falsch
         if (!mConnecttoSession.getText().equals("Leave Session"))
         {
             mConnecttoSession.setText("Leave Session");
             mJoinSession.setEnabled(false);
+
+            // Todo -> check op valid IP
 
             String host = mIP.getText().toString();
             int port;
@@ -248,6 +251,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
                 port = Integer.parseInt(mPort.getText().toString().trim());
             } catch (NumberFormatException e) {
                 Toast.makeText(this, "Please enter a valid port", Toast.LENGTH_SHORT).show();
+                // Todo -> bei falschen port setzt er trotzdem die button namen falsch
                 return;
             }
             this.setTitle("You clicked connect");
@@ -271,6 +275,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     /** Called when the user touches the button 'Join Session'  -- Code by Tom */
     public void ButtonJoinSessionClicked(View view) {
         // Join an existing session
+        // Todo -> nach cancel gedrückt -> setzt er trotzdem die button namen falsch
         if (!mJoinSession.getText().equals("Leave Session"))
         {
             mJoinSession.setText("Leave Session");
