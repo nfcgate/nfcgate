@@ -43,12 +43,23 @@
             android:checked="true"
             android:layout_columnSpan="1" />
 
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enable ReaderMode only (disable HCE)"
+            android:id="@+id/checkReaderMode"
+            android:layout_row="3"
+            android:layout_column="0"
+            android:onClick="ReaderModeCkeckboxClicked"
+            android:checked="false"
+            android:layout_columnSpan="1" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Enter default IP address"
             android:id="@+id/textViewDefaultIp"
-            android:layout_row="3"
+            android:layout_row="4"
             android:layout_column="0"
             android:editable="false"
             android:layout_gravity="left|center"
@@ -58,7 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/editIP"
-            android:layout_row="3"
+            android:layout_row="4"
             android:layout_column="0"
             android:hint="&lt;IP&gt;  "
             android:text=""
@@ -71,7 +82,7 @@
             android:layout_height="wrap_content"
             android:text="Enter default Port"
             android:id="@+id/textViewDefaultPort"
-            android:layout_row="4"
+            android:layout_row="5"
             android:layout_column="0"
             android:editable="false"
             android:layout_gravity="left|center"
@@ -81,7 +92,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/editPort"
-            android:layout_row="4"
+            android:layout_row="5"
             android:layout_column="0"
             android:hint="&lt;Port&gt;"
             android:text=""
@@ -95,7 +106,7 @@
             android:text="                          "
             android:id="@+id/textView_blankspace3"
             android:layout_column="0"
-            android:layout_row="6"
+            android:layout_row="7"
             android:layout_columnSpan="1" />
 
         <Button
@@ -105,7 +116,7 @@
             android:onClick="btnSaveSettingsClicked"
             android:id="@+id/btnSaveSettings"
             android:background="#66DDFA"
-            android:layout_row="8"
+            android:layout_row="9"
             android:layout_column="0"
             android:layout_margin="3dp"
             android:layout_columnSpan="1" />
@@ -116,7 +127,7 @@
             android:text="                          "
             android:id="@+id/textView_blankspace2"
             android:layout_column="0"
-            android:layout_row="10"
+            android:layout_row="11"
             android:layout_columnSpan="1" />
 
         <TextView

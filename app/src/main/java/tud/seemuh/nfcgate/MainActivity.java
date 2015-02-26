@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.nfc.NfcAdapter;
+import android.nfc.NfcAdapter.ReaderCallback;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
 import android.nfc.tech.Ndef;
@@ -30,7 +31,7 @@ import tud.seemuh.nfcgate.network.SimpleLowLevelNetworkConnectionClientImpl;
 import tud.seemuh.nfcgate.network.WiFiDirectBroadcastReceiver;
 
 
-public class MainActivity extends Activity implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener{
+public class MainActivity extends Activity implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener, ReaderCallback{
 
     private NfcAdapter mAdapter;
     private IntentFilter mIntentFilter = new IntentFilter();
@@ -68,6 +69,8 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         setContentView(R.layout.activity_main);
 
         mAdapter = NfcAdapter.getDefaultAdapter(this);
+        //mAdapter.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
+
         mIntentFilter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
 
         if (!mAdapter.isEnabled())
@@ -142,6 +145,15 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             port = preferences.getInt("port",5566);
             mIP.setText(ip);
             mPort.setText(String.valueOf(port));
+
+            //ReaderMode
+            boolean lReaderMode = preferences.getBoolean("mReaderModeEnabled", false);
+            if(lReaderMode) {
+                mAdapter.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
+            } else {
+                mAdapter.disableReaderMode(this);
+            }
+
             chgsett = false;
             editor.putBoolean("changed_settings", chgsett);
             editor.commit();
@@ -162,6 +174,17 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
         //TODO
         //kill our threads here?
+    }
+
+    @Override
+    public void onTagDiscovered(Tag tag) {
+
+        Log.i("NFCGATE_DEBUG","Discovered tag in ReaderMode");
+        mNetCallback.setTag(tag);
+        //Set the view to update the GUI from another thread
+        mNetCallback.setUpdateView(mDebuginfo);
+
+        //Toast here is not possible -> exception...
     }
 
     @Override
@@ -371,26 +394,4 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         // Tell the user he is stupid -> the app wont work without NFC enabled...
         Toast.makeText(this, "Caution! The app won't work without NFC enabled -> please enable NFC in your phone settings", Toast.LENGTH_LONG).show();
     }
-
-    /*
-    TODO
-    manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
-
-        @Override
-        public void onSuccess() {
-            Toast.makeText(WiFiDirectActivity.this, "Discovery Initiated",
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onFailure(int reasonCode) {
-            Toast.makeText(WiFiDirectActivity.this, "Discovery Failed : " + reasonCode,
-                    Toast.LENGTH_SHORT).show();
-        }
-    });
-     */
-
-    //TODO
-    //onStop()
-    //destory all threads
 }
