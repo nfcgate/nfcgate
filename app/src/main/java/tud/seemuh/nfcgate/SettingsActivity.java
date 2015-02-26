@@ -93,7 +93,6 @@ public class SettingsActivity extends Activity{
 
     }
 
-    /** Called when the user touches the button 'btnSaveSettingsClicked'  -- Code by Tom */
     public void btnSaveSettingsClicked(View view)
     {
         ip = mIP.getText().toString();

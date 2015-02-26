@@ -26,6 +26,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import tud.seemuh.nfcgate.network.CallbackImpl;
 import tud.seemuh.nfcgate.network.SimpleLowLevelNetworkConnectionClientImpl;
 import tud.seemuh.nfcgate.network.WiFiDirectBroadcastReceiver;
@@ -62,6 +65,13 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     // declares main functionality
     private Button mReset, mConnecttoSession, mAbort, mJoinSession;
     private TextView mConnStatus, mInfo, mDebuginfo, mIP, mPort, mPartnerDevice;
+
+    // regex for IP checking
+    private static final String regexIPpattern ="^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+
+    // max. port possible
+    private static int maxPort = 65535;
+    int globalPort = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +153,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             SharedPreferences.Editor editor = preferences.edit();
             ip = preferences.getString("ip", "192.168.178.31");
             port = preferences.getInt("port",5566);
+            globalPort = preferences.getInt("port",5566);
             mIP.setText(ip);
             mPort.setText(String.valueOf(port));
 
@@ -172,8 +183,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         //WiFi Direct
         unregisterReceiver(mReceiver);
 
-        //TODO
-        //kill our threads here?
+        //TODO -> kill our threads here?
     }
 
     @Override
@@ -202,14 +212,13 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         }
     }
 
-    /** Called when the user touches the button 'ButtonResetClicked application'  -- Code by Tom */
     public void ButtonResetClicked(View view) {
         // reset the entire application by pressing this button
 
         mConnStatus.setText("Server status: Resetting");
-        // ToDo -> really reset network connection
+        // ToDo -> really reset network connection by calling the required method
         mPartnerDevice.setText("Partner status: no device");
-        // Todo -> notify partner on reset method called
+        // Todo -> notify partner on reset method called by calling the required method
         mInfo.setText("Please hold your device next to an NFC tag / reader");
         mDebuginfo.setText("Debugging Output: ");
         this.setTitle("You clicked reset");
@@ -236,14 +245,14 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
         ip = preferences.getString("ip", "192.168.178.31");
         port = preferences.getInt("port",5566);
+        globalPort = preferences.getInt("port",5566);
         mIP.setText(ip);
         mPort.setText(String.valueOf(port));
     }
 
-    /** Called when the user touches the button 'Abort'  -- Code by Tom */
     public void ButtonAbortClicked(View view) {
         // Abort the current connection attempt
-        // TODO Aboard the connection -> properly close network connection
+        // TODO Aboard the connection -> properly close network connection by calling the required method
         mJoinSession.setText("Join Session");
         mJoinSession.setEnabled(true);
         mConnecttoSession.setText("Create Session");
@@ -251,35 +260,27 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
         mConnStatus.setText("Server status: Disconnecting");
         mPartnerDevice.setText("Partner status: no device");
-        // Todo -> notify Partner about abort
+        // Todo -> notify Partner about abort by calling the required method
         this.setTitle("You clicked abort");
     }
 
-    /** Called when the user touches the button 'Create Session'  -- Code by Tom */
     public void ButtonCreateSessionClicked(View view) {
         // Create a new Session
-        // Todo -> nach cancel gedrückt -> setzt er trotzdem die button namen falsch
+        if (!checkIpPort(mIP.getText().toString(), mPort.getText().toString()))
+        {
+            Toast.makeText(this, "Please enter a valid ip & port", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         if (!mConnecttoSession.getText().equals("Leave Session"))
         {
             mConnecttoSession.setText("Leave Session");
             mJoinSession.setEnabled(false);
-
-            // Todo -> check op valid IP
-
-            String host = mIP.getText().toString();
-            int port;
-            try {
-                port = Integer.parseInt(mPort.getText().toString().trim());
-            } catch (NumberFormatException e) {
-                Toast.makeText(this, "Please enter a valid port", Toast.LENGTH_SHORT).show();
-                // Todo -> bei falschen port setzt er trotzdem die button namen falsch
-                return;
-            }
             this.setTitle("You clicked connect");
             mConnStatus.setText("Server status: Connecting - (token: )");
             mPartnerDevice.setText("Partner status: waiting");
-            mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(host, port);
-            // Todo notify user about the token the server assigned him -> will be displayed at mConnStatus
+            mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(mIP.getText().toString(), globalPort);
+            // Todo notify user about the token the server assigned him -> will later on be displayed at mConnStatus
         }
         else
         {
@@ -289,35 +290,23 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             mPartnerDevice.setText("Partner status: no device");
             mJoinSession.setEnabled(true);
             this.setTitle("You clicked disconnect");
-            // TODO -> implement server disconnect
+            // TODO -> do server disconnect by calling the required method
         }
     }
 
-    /** Called when the user touches the button 'Join Session'  -- Code by Tom */
     public void ButtonJoinSessionClicked(View view) {
         // Join an existing session
-        // Todo -> nach cancel gedrückt -> setzt er trotzdem die button namen falsch
+        if (!checkIpPort(mIP.getText().toString(), mPort.getText().toString()))
+        {
+            Toast.makeText(this, "Please enter a valid ip & port", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         if (!mJoinSession.getText().equals("Leave Session"))
         {
-            mJoinSession.setText("Leave Session");
-            mConnecttoSession.setEnabled(false);
-
-            String host = mIP.getText().toString();
-            int port;
-            try {
-                port = Integer.parseInt(mPort.getText().toString().trim());
-            } catch (NumberFormatException e) {
-                Toast.makeText(this, "Please enter a valid port", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            this.setTitle("You clicked connect");
-
             // Display dialog to enter the token
             showTokenDialog();
-
-            mConnStatus.setText("Server status: Connecting");
-            mPartnerDevice.setText("Partner status: waiting");
-            mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(host, port);
+            // all logic is implemented below in "onTokenDialogPositiveClick" method
         }
         else
         {
@@ -327,8 +316,29 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             mPartnerDevice.setText("Partner status: no device");
             mConnecttoSession.setEnabled(true);
             this.setTitle("You clicked disconnect");
-            // TODO -> implement server disconnect
+            // TODO -> do server disconnect by calling the required method
         }
+    }
+
+    public boolean checkIpPort(String ip, String port)
+    {
+        boolean validPort = false;
+        boolean gotException = false;
+        boolean validIp = false;
+        Pattern pattern = Pattern.compile(regexIPpattern);
+        Matcher matcher = pattern.matcher(ip);
+        int int_port = 0;
+        try {
+            int_port = Integer.parseInt(port.trim());
+        } catch (NumberFormatException e) {
+            gotException = true;
+        }
+        if (!gotException) {
+            if ((int_port > 0) && (int_port <= maxPort)) validPort = true;
+        }
+        validIp = matcher.matches();
+        if (validPort) globalPort = int_port;
+        return validPort && validIp;
     }
 
     @Override
@@ -344,7 +354,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case  R.id.action_settings:
-                startActivityForResult(new Intent(MainActivity.this, SettingsActivity.class),0);
+                startActivityForResult(new Intent(MainActivity.this, SettingsActivity.class), 0);
                 return true;
             case R.id.action_about:
                 startActivity(new Intent(MainActivity.this, AboutActivity.class));
@@ -366,32 +376,37 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         dialog.show(this.getFragmentManager(), "Enter token: ");
     }
 
-    // The dialog fragment receives a reference to this Activity through the
-    // Fragment.onAttach() callback, which it uses to call the following methods
-    // defined by the token_dialog.NoticeDialogListener interface
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        // User touched the dialog's positive button
-        // todo user typed token into field & pressed submit
+    public void onTokenDialogPositiveClick(DialogFragment dialog) {
+        // User touched the dialog's submit button
+        Toast.makeText(this, "You clicked submit, server is now processing your token...", Toast.LENGTH_LONG).show();
+
+        mJoinSession.setText("Leave Session");
+        mConnecttoSession.setEnabled(false);
+        this.setTitle("You clicked connect");
+        mConnStatus.setText("Server status: Connecting");
+        mPartnerDevice.setText("Partner status: waiting");
+        mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(mIP.getText().toString(), globalPort);
+        // TODO -> change simple server connect method above to "server connect with a token"
+
     }
 
     @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
-        // User touched the dialog's negative button
-        Toast.makeText(this, "To abort the connection press the Abort button above", Toast.LENGTH_LONG).show();
+    public void onTokenDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's cancel button
+        Toast.makeText(this, "You clicked cancel, no connection was established...", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onNFCDialogPositiveClick(DialogFragment dialog) {
-        // User touched the dialog's positive button
+        // User touched the dialog's goto settings button
         Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
         startActivity(intent);
 }
 
     @Override
     public void onNFCDialogNegativeClick(DialogFragment dialog) {
-        // User touched the dialog's negative button
-        // Tell the user he is stupid -> the app wont work without NFC enabled...
-        Toast.makeText(this, "Caution! The app won't work without NFC enabled -> please enable NFC in your phone settings", Toast.LENGTH_LONG).show();
+        // User touched the dialog's cancel button
+        Toast.makeText(this, "Caution! The app can't do something useful without NFC enabled -> please enable NFC in your phone settings", Toast.LENGTH_LONG).show();
     }
 }
