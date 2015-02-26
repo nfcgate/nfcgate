@@ -1,6 +1,7 @@
 package tud.seemuh.nfcgate;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  *
@@ -81,11 +83,11 @@ public class SettingsActivity extends Activity{
         values = values + "\n HCE: ";
         if (hce)
         {
-            values = values + "is enabled";
+            values = values + "is available";
         }
         else
         {
-            values = values + "is not enabled";
+            values = values + "is not available";
         }
         supportedFeatures.setText("\n Supported features by your smartphone: \n" + values);
 
@@ -120,6 +122,10 @@ public class SettingsActivity extends Activity{
         boolean chgsett = true;
         editor.putBoolean("changed_settings", chgsett);
         editor.commit();
+
+        // sent the user back to the main activity
+        Toast.makeText(this, "Settings saved!", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     public void DevCheckboxClicked(View view) {

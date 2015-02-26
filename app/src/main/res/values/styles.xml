@@ -1,8 +1,46 @@
 <resources>
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="Blue" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="my_color">@color/blue</item>
+    </style>
+
+    <style name="Purple" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="my_color">@color/purple</item>
+    </style>
+
+    <style name="Green" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="my_color">@color/green</item>
+    </style>
+
+    <style name="Orange" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="my_color">@color/orange</item>
+    </style>
+
+    <style name="Red" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="my_color">@color/red</item>
+    </style>
+
+    <style name="Darkblue" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="my_color">@color/darkblue</item>
+    </style>
+
+    <style name="Darkpurple" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="my_color">@color/darkpurple</item>
+    </style>
+
+    <style name="Darkgreen" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="my_color">@color/darkgreen</item>
+    </style>
+
+    <style name="Darkorange" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="my_color">@color/darkorange</item>
+    </style>
+
+    <style name="Darkred" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="my_color">@color/darkred</item>
     </style>
 
 </resources>

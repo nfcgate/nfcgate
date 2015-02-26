@@ -115,10 +115,14 @@
             android:text="Save settings"
             android:onClick="btnSaveSettingsClicked"
             android:id="@+id/btnSaveSettings"
-            android:background="#66DDFA"
             android:layout_row="9"
             android:layout_column="0"
             android:layout_margin="3dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:background="@drawable/color_selector1"
             android:layout_columnSpan="1" />
 
         <TextView

@@ -64,8 +64,12 @@
             android:layout_row="6"
             android:layout_column="0"
             android:onClick="ButtonCreateSessionClicked"
-            android:background="#66DDFA"
             android:layout_margin="3dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:background="@drawable/color_selector1"
             android:layout_gravity="center" />
 
         <Button
@@ -76,8 +80,12 @@
             android:layout_row="6"
             android:layout_column="1"
             android:onClick="ButtonJoinSessionClicked"
-            android:background="#66DDFA"
             android:layout_margin="3dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:background="@drawable/color_selector1"
             android:layout_gravity="center" />
 
         <Button
@@ -88,8 +96,12 @@
             android:layout_row="8"
             android:layout_column="0"
             android:onClick="ButtonResetClicked"
-            android:background="#E83D17"
             android:layout_margin="3dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:background="@drawable/color_selector2"
             android:layout_gravity="center" />
 
         <Button
@@ -100,8 +112,12 @@
             android:layout_row="8"
             android:layout_column="1"
             android:onClick="ButtonAbortClicked"
-            android:background="#E83D17"
             android:layout_margin="3dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:background="@drawable/color_selector2"
             android:layout_gravity="center" />
 
         <TextView

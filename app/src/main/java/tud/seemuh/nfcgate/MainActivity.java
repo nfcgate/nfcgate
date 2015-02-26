@@ -344,7 +344,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case  R.id.action_settings:
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                startActivityForResult(new Intent(MainActivity.this, SettingsActivity.class),0);
                 return true;
             case R.id.action_about:
                 startActivity(new Intent(MainActivity.this, AboutActivity.class));
