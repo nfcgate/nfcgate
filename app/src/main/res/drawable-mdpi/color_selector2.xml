@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@color/darkorange" android:state_pressed="true"></item>
-    <item android:drawable="@color/red"></item>
-    <item android:drawable="@color/darkred" android:state_focused="true"></item>
+    <item android:drawable="@color/red" android:state_pressed="true"></item>
+    <item android:drawable="@color/darkred"></item>
+    <item android:drawable="@color/darkorange" android:state_focused="true"></item>
 </selector>
