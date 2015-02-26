@@ -25,7 +25,10 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
     private TextView debugView;
     private NetHandler Handler = new NetHandler();
 
-    public void setUpdateButton(TextView ldebugView) {
+    /**
+     * Setter for View, that should be updated from another thread
+     */
+    public void setUpdateView(TextView ldebugView) {
         debugView = ldebugView;
     }
 

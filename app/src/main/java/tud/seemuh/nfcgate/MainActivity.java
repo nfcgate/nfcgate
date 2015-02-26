@@ -171,13 +171,11 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             Log.i("NFCGATE_DEBUG","Discovered tag with intent: " + intent);
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
-            String tagId = "";
-
             mNetCallback.setTag(tag);
-            mNetCallback.setUpdateButton(mDebuginfo);
+            //Set the view to update the GUI from another thread
+            mNetCallback.setUpdateView(mDebuginfo);
 
-            mDebuginfo.setText(mDebuginfo + "\n Identified a new Tag: " + tagId);
-            Toast.makeText(this, "Found Tag: " + tagId, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Found Tag", Toast.LENGTH_SHORT).show();
         }
     }
 
