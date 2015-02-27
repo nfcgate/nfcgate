@@ -3,12 +3,9 @@ package tud.seemuh.nfcgate;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.ReaderCallback;
 import android.nfc.Tag;
@@ -31,8 +28,6 @@ import java.util.regex.Pattern;
 
 import tud.seemuh.nfcgate.network.CallbackImpl;
 import tud.seemuh.nfcgate.network.SimpleLowLevelNetworkConnectionClientImpl;
-import tud.seemuh.nfcgate.network.WiFiDirectBroadcastReceiver;
-
 
 public class MainActivity extends Activity implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener, ReaderCallback{
 
@@ -41,11 +36,6 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     private PendingIntent mPendingIntent;
     private IntentFilter[] mFilters;
     private String[][] mTechLists;
-
-    //WiFi Direct
-    private WifiP2pManager.Channel mChannel;
-    private WifiP2pManager mManager;
-    private BroadcastReceiver mReceiver = null;
 
     //Connection Client
     protected SimpleLowLevelNetworkConnectionClientImpl mConnectionClient;
@@ -89,11 +79,6 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             showEnableNFCDialog();
         }
 
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-
         // Create a generic PendingIntent that will be delivered to this activity.
         // The NFC stack will fill in the intent with the details of the discovered tag before
         // delivering to this activity.
@@ -111,10 +96,6 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
                 new String[] {IsoDep.class.getName()}
                 //we could add all of the Types from the tech.xml here
         };
-
-        //WiFi Direct
-        mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        mChannel = mManager.initialize(this, getMainLooper(), null);
 
         // Create Buttons & TextViews
         mReset = (Button) findViewById(R.id.resetstatus);
@@ -170,18 +151,12 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             editor.commit();
         }
 
-        //WiFi Direct
-        mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
-        registerReceiver(mReceiver, mIntentFilter);
-
         mConnecttoSession.requestFocus();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        //WiFi Direct
-        unregisterReceiver(mReceiver);
 
         //TODO -> kill our threads here?
     }
