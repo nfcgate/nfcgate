@@ -4,9 +4,6 @@ import com.google.protobuf.Message;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
 
 public interface HighLevelNetworkHandler {
-    // TODO Make sendMessage function private and change all uses to use the utility funct instead
-    public void sendMessage(Message msg, MessageCase mcase);
-
     // Setup
     public HighLevelNetworkHandler connect(String addr, int port);
 

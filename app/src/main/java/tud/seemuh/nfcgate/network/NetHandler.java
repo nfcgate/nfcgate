@@ -32,7 +32,7 @@ public class NetHandler implements HighLevelNetworkHandler {
         sendMessage(ErrorMsg.build(), MessageCase.STATUS);
     }
 
-    public void sendMessage(Message msg, MessageCase mcase) {
+    private void sendMessage(Message msg, MessageCase mcase) {
         // Prepare a wrapper message
         Wrapper.Builder WrapperMsg = Wrapper.newBuilder();
 
