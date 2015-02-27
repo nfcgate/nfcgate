@@ -4,8 +4,6 @@ import android.nfc.Tag;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.google.protobuf.ByteString;
-
 import tud.seemuh.nfcgate.network.meta.MetaMessage;
 import tud.seemuh.nfcgate.reader.IsoDepReaderImpl;
 import tud.seemuh.nfcgate.reader.NFCTagReader;
@@ -16,7 +14,6 @@ import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
 import tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode;
 import tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode;
-import tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode;
 import tud.seemuh.nfcgate.hce.ApduService;
 
 
@@ -26,7 +23,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
     private ApduService apdu;
     private NFCTagReader mReader = null;
     private TextView debugView;
-    private NetHandler Handler = new NetHandler();
+    private NetHandler Handler = NetHandler.getInstance();
 
     private enum Status {
         NOT_CONNECTED,
@@ -92,96 +89,26 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
             }
             else {
                 Log.e(TAG, "onDataReceived: Message fits no known case! This is fucked up");
-                sendStatusMessage(StatusCode.UNKNOWN_MESSAGE);
+                Handler.notifyUnknownMessageType();
             }
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
             // We have received a message in an invalid format.
             // Send error message
             Log.e(TAG, "onDataReceived: Message was malformed, discarding and sending error message");
-            sendStatusMessage(StatusCode.INVALID_MSG_FMT);
+            Handler.notifyInvalidMsgFormat();
         }
-    }
-
-
-    /**
-     * Private helper function to send Status messages.
-     */
-    private void sendStatusMessage(StatusCode code) {
-        // Create error message
-        C2C.Status.Builder ErrorMsg = C2C.Status.newBuilder();
-        ErrorMsg.setCode(code);
-
-        // Send message
-        Handler.sendMessage(ErrorMsg.build(), MessageCase.STATUS);
-    }
-
-
-    /**
-     * Notify the other party that a reader has been detected in the proximity of the device
-     */
-    public void notifyReaderDetected() {
-        sendStatusMessage(StatusCode.READER_FOUND);
-    }
-
-
-    /**
-     * Notify the other party that a reader has left the proximity of the device
-     */
-    public void notifyReaderRemoved() {
-        sendStatusMessage(StatusCode.READER_REMOVED);
-    }
-
-
-    /**
-     * Notify the other party that a card has been detected in the proximity of the device
-     */
-    public void notifyCardDetected() {
-        sendStatusMessage(StatusCode.CARD_FOUND);
-    }
-
-
-    /**
-    Notify the other party that the card has left the proximity of the device
-     */
-    public void notifyCardRemoved() {
-        sendStatusMessage(StatusCode.CARD_REMOVED);
-    }
-
-
-    /**
-     * Join an existing session at the server.
-     * @param secret String with the session secret
-     */
-    public void joinSession(String secret) {
-        Log.d(TAG, "joinSession: Trying to join session with secret " + secret);
-        // Create a message builder and fill in the relevant data
-        C2S.Session.Builder sessionMessage = C2S.Session.newBuilder();
-        sessionMessage.setOpcode(SessionOpcode.SESSION_CREATE);
-        sessionMessage.setSessionSecret(secret);
-        sessionMessage.setErrcode(SessionErrorCode.ERROR_NOERROR);
-
-        // Send the message
-        Handler.sendMessage(sessionMessage.build(), MessageCase.SESSION);
-    }
-
-    /**
-     * Send a keepalive packet to the peer, who will respond with a keepalive response message.
-     */
-    public void sendKeepaliveMessage() {
-        Log.i(TAG, "sendKeepaliveMessage: Keepalive msg sent.");
-        sendStatusMessage(StatusCode.KEEPALIVE_REQ);
     }
 
 
     private void handleKex(C2C.Kex msg) {
         Log.e(TAG, "handleKex: Not implemented");
-        sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+        Handler.notifyNotImplemented(); // TODO Implement
     }
 
 
     private void handleAnticol(C2C.Anticol msg) {
         Log.e(TAG, "handleAnticol: Not implemented");
-        sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+        Handler.notifyNotImplemented(); // TODO Implement
     }
 
 
@@ -193,14 +120,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
                 // Extract NFC Bytes and send them to the card
                 byte[] bytesFromCard = mReader.sendCmd(msg.getDataBytes().toByteArray());
 
-                // Begin constructing reply
-                C2C.NFCData.Builder reply = C2C.NFCData.newBuilder();
-                ByteString replyBytes = ByteString.copyFrom(bytesFromCard);
-                reply.setDataBytes(replyBytes);
-                reply.setDataSource(C2C.NFCData.DataSource.CARD);
-
-                // Send reply
-                Handler.sendMessage(reply.build(), MessageCase.NFCDATA);
+                Handler.sendAPDUReply(bytesFromCard);
 
                 //Ugly way to send data to the GUI from an external thread
                 new UpdateUI(debugView).execute(Utils.bytesToHex(bytesFromCard) + "\n");
@@ -209,7 +129,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
             } else {
                 Log.e(TAG, "HandleNFCData: No NFC connection active");
                 // There is no connected NFC device
-                sendStatusMessage(StatusCode.NFC_NO_CONN);
+                Handler.notifyNFCNotConnected();
 
                 // Update UI
                 new UpdateUI(debugView).execute("HandleNFCData: Received NFC bytes, but we are not connected to any device.\n");
@@ -221,7 +141,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
                 apdu.sendResponseApdu(msg.getDataBytes().toByteArray());
             } else {
                 Log.e(TAG, "HandleNFCData: Received a message for a reader, but no APDU instance active.");
-                sendStatusMessage(StatusCode.NFC_NO_CONN);
+                Handler.notifyNFCNotConnected();
             }
         }
     }
@@ -231,7 +151,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
         if (msg.getCode() == StatusCode.KEEPALIVE_REQ) {
             // Received keepalive request, reply with response
             Log.i(TAG, "handleStatus: Got Keepalive request, replying");
-            sendStatusMessage(StatusCode.KEEPALIVE_REP);
+            Handler.sendKeepaliveReply();
         }
         else if (msg.getCode() == StatusCode.KEEPALIVE_REP) {
             // Got keepalive response, do nothing for now
@@ -267,14 +187,14 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
         else {
             // Not implemented
             Log.e(TAG, "handleStatus: Message case not implemented");
-            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+            Handler.notifyNotImplemented(); // TODO Implement
         }
     }
 
 
     private void handleData(C2S.Data msg) {
         Log.e(TAG, "handleData: Not implemented");
-        sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+        Handler.notifyNotImplemented(); // TODO Implement
     }
 
 
@@ -282,39 +202,39 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
         if (msg.getOpcode() == SessionOpcode.SESSION_CREATE_FAIL) {
             // TODO is it possible to display a popup notification to the user in this case?
             Log.e(TAG, "handleSession: SESSION_CREATE_FAIL: Not implemented");
-            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+            Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_CREATE_SUCCESS) {
             Log.e(TAG, "handleSession: SESSION_CREATE_SUCCESS: Not implemented");
-            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+            Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_JOIN_FAIL) {
             Log.e(TAG, "handleSession: SESSION_JOIN_FAIL: Not implemented");
-            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+            Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_JOIN_SUCCESS) {
             Log.e(TAG, "handleSession: SESSION_JOIN_SUCCESS: Not implemented");
-            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+            Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_LEAVE_FAIL) {
             Log.e(TAG, "handleSession: SESSION_LEAVE_FAIL: Not implemented");
-            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+            Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_LEAVE_SUCCESS) {
             Log.e(TAG, "handleSession: SESSION_LEAVE_SUCCESS: Not implemented");
-            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+            Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_PEER_JOINED) {
             Log.e(TAG, "handleSession: SESSION_PEER_JOINED: Not implemented");
-            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+            Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_PEER_LEFT) {
             Log.e(TAG, "handleSession: SESSION_PEER_LEFT: Not implemented");
-            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+            Handler.notifyNotImplemented(); // TODO Implement
         }
         else {
             Log.e(TAG, "handleSession: Unknown Opcode!");
-            sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+            Handler.notifyNotImplemented(); // TODO Implement
         }
     }
 

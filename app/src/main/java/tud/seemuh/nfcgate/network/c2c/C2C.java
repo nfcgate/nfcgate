@@ -725,25 +725,6 @@ public final class C2C {
      * </pre>
      */
     com.google.protobuf.ByteString getDataBytes();
-
-    /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
-     *
-     * <pre>
-     * Error Code
-     * Error code of the last received message operation
-     * </pre>
-     */
-    boolean hasErrcode();
-    /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
-     *
-     * <pre>
-     * Error Code
-     * Error code of the last received message operation
-     * </pre>
-     */
-    tud.seemuh.nfcgate.network.c2c.C2C.NFCData.NFCDataErrorCode getErrcode();
   }
   /**
    * Protobuf type {@code tud.seemuh.nfcgate.network.c2c.NFCData}
@@ -816,17 +797,6 @@ public final class C2C {
             case 18: {
               bitField0_ |= 0x00000002;
               dataBytes_ = input.readBytes();
-              break;
-            }
-            case 24: {
-              int rawValue = input.readEnum();
-              tud.seemuh.nfcgate.network.c2c.C2C.NFCData.NFCDataErrorCode value = tud.seemuh.nfcgate.network.c2c.C2C.NFCData.NFCDataErrorCode.valueOf(rawValue);
-              if (value == null) {
-                unknownFields.mergeVarintField(3, rawValue);
-              } else {
-                bitField0_ |= 0x00000004;
-                errcode_ = value;
-              }
               break;
             }
           }
@@ -950,97 +920,6 @@ public final class C2C {
       // @@protoc_insertion_point(enum_scope:tud.seemuh.nfcgate.network.c2c.NFCData.DataSource)
     }
 
-    /**
-     * Protobuf enum {@code tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode}
-     */
-    public enum NFCDataErrorCode
-        implements com.google.protobuf.ProtocolMessageEnum {
-      /**
-       * <code>ERROR_NOERROR = 0;</code>
-       */
-      ERROR_NOERROR(0, 0),
-      /**
-       * <code>ERROR_NO_NFC_CONN = 1;</code>
-       */
-      ERROR_NO_NFC_CONN(1, 1),
-      /**
-       * <code>ERROR_UNKNOWN = 3;</code>
-       */
-      ERROR_UNKNOWN(2, 3),
-      ;
-
-      /**
-       * <code>ERROR_NOERROR = 0;</code>
-       */
-      public static final int ERROR_NOERROR_VALUE = 0;
-      /**
-       * <code>ERROR_NO_NFC_CONN = 1;</code>
-       */
-      public static final int ERROR_NO_NFC_CONN_VALUE = 1;
-      /**
-       * <code>ERROR_UNKNOWN = 3;</code>
-       */
-      public static final int ERROR_UNKNOWN_VALUE = 3;
-
-
-      public final int getNumber() { return value; }
-
-      public static NFCDataErrorCode valueOf(int value) {
-        switch (value) {
-          case 0: return ERROR_NOERROR;
-          case 1: return ERROR_NO_NFC_CONN;
-          case 3: return ERROR_UNKNOWN;
-          default: return null;
-        }
-      }
-
-      public static com.google.protobuf.Internal.EnumLiteMap<NFCDataErrorCode>
-          internalGetValueMap() {
-        return internalValueMap;
-      }
-      private static com.google.protobuf.Internal.EnumLiteMap<NFCDataErrorCode>
-          internalValueMap =
-            new com.google.protobuf.Internal.EnumLiteMap<NFCDataErrorCode>() {
-              public NFCDataErrorCode findValueByNumber(int number) {
-                return NFCDataErrorCode.valueOf(number);
-              }
-            };
-
-      public final com.google.protobuf.Descriptors.EnumValueDescriptor
-          getValueDescriptor() {
-        return getDescriptor().getValues().get(index);
-      }
-      public final com.google.protobuf.Descriptors.EnumDescriptor
-          getDescriptorForType() {
-        return getDescriptor();
-      }
-      public static final com.google.protobuf.Descriptors.EnumDescriptor
-          getDescriptor() {
-        return tud.seemuh.nfcgate.network.c2c.C2C.NFCData.getDescriptor().getEnumTypes().get(1);
-      }
-
-      private static final NFCDataErrorCode[] VALUES = values();
-
-      public static NFCDataErrorCode valueOf(
-          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
-        if (desc.getType() != getDescriptor()) {
-          throw new java.lang.IllegalArgumentException(
-            "EnumValueDescriptor is not for this type.");
-        }
-        return VALUES[desc.getIndex()];
-      }
-
-      private final int index;
-      private final int value;
-
-      private NFCDataErrorCode(int index, int value) {
-        this.index = index;
-        this.value = value;
-      }
-
-      // @@protoc_insertion_point(enum_scope:tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode)
-    }
-
     private int bitField0_;
     public static final int DATA_SOURCE_FIELD_NUMBER = 1;
     private tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource dataSource_;
@@ -1094,35 +973,9 @@ public final class C2C {
       return dataBytes_;
     }
 
-    public static final int ERRCODE_FIELD_NUMBER = 3;
-    private tud.seemuh.nfcgate.network.c2c.C2C.NFCData.NFCDataErrorCode errcode_;
-    /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
-     *
-     * <pre>
-     * Error Code
-     * Error code of the last received message operation
-     * </pre>
-     */
-    public boolean hasErrcode() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
-     *
-     * <pre>
-     * Error Code
-     * Error code of the last received message operation
-     * </pre>
-     */
-    public tud.seemuh.nfcgate.network.c2c.C2C.NFCData.NFCDataErrorCode getErrcode() {
-      return errcode_;
-    }
-
     private void initFields() {
       dataSource_ = tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource.READER;
       dataBytes_ = com.google.protobuf.ByteString.EMPTY;
-      errcode_ = tud.seemuh.nfcgate.network.c2c.C2C.NFCData.NFCDataErrorCode.ERROR_NOERROR;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -1151,9 +1004,6 @@ public final class C2C {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeBytes(2, dataBytes_);
       }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeEnum(3, errcode_.getNumber());
-      }
       getUnknownFields().writeTo(output);
     }
 
@@ -1170,10 +1020,6 @@ public final class C2C {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(2, dataBytes_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(3, errcode_.getNumber());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1301,8 +1147,6 @@ public final class C2C {
         bitField0_ = (bitField0_ & ~0x00000001);
         dataBytes_ = com.google.protobuf.ByteString.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000002);
-        errcode_ = tud.seemuh.nfcgate.network.c2c.C2C.NFCData.NFCDataErrorCode.ERROR_NOERROR;
-        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -1339,10 +1183,6 @@ public final class C2C {
           to_bitField0_ |= 0x00000002;
         }
         result.dataBytes_ = dataBytes_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
-        result.errcode_ = errcode_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -1364,9 +1204,6 @@ public final class C2C {
         }
         if (other.hasDataBytes()) {
           setDataBytes(other.getDataBytes());
-        }
-        if (other.hasErrcode()) {
-          setErrcode(other.getErrcode());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -1513,61 +1350,6 @@ public final class C2C {
       public Builder clearDataBytes() {
         bitField0_ = (bitField0_ & ~0x00000002);
         dataBytes_ = getDefaultInstance().getDataBytes();
-        onChanged();
-        return this;
-      }
-
-      private tud.seemuh.nfcgate.network.c2c.C2C.NFCData.NFCDataErrorCode errcode_ = tud.seemuh.nfcgate.network.c2c.C2C.NFCData.NFCDataErrorCode.ERROR_NOERROR;
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
-       *
-       * <pre>
-       * Error Code
-       * Error code of the last received message operation
-       * </pre>
-       */
-      public boolean hasErrcode() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
-       *
-       * <pre>
-       * Error Code
-       * Error code of the last received message operation
-       * </pre>
-       */
-      public tud.seemuh.nfcgate.network.c2c.C2C.NFCData.NFCDataErrorCode getErrcode() {
-        return errcode_;
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
-       *
-       * <pre>
-       * Error Code
-       * Error code of the last received message operation
-       * </pre>
-       */
-      public Builder setErrcode(tud.seemuh.nfcgate.network.c2c.C2C.NFCData.NFCDataErrorCode value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        bitField0_ |= 0x00000004;
-        errcode_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData.NFCDataErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
-       *
-       * <pre>
-       * Error Code
-       * Error code of the last received message operation
-       * </pre>
-       */
-      public Builder clearErrcode() {
-        bitField0_ = (bitField0_ & ~0x00000004);
-        errcode_ = tud.seemuh.nfcgate.network.c2c.C2C.NFCData.NFCDataErrorCode.ERROR_NOERROR;
         onChanged();
         return this;
       }
@@ -2928,24 +2710,20 @@ public final class C2C {
       "c2c\"\214\001\n\003Kex\022F\n\talgorithm\030\001 \002(\01623.tud.see" +
       "muh.nfcgate.network.c2c.Kex.CryptoAlgori" +
       "thm\022\026\n\016crypto_message\030\002 \002(\014\"%\n\017CryptoAlg" +
-      "orithm\022\022\n\016DHE_RSA_AES256\020\000\"\265\002\n\007NFCData\022G" +
+      "orithm\022\022\n\016DHE_RSA_AES256\020\000\"\212\001\n\007NFCData\022G" +
       "\n\013data_source\030\001 \002(\01622.tud.seemuh.nfcgate" +
       ".network.c2c.NFCData.DataSource\022\022\n\ndata_" +
-      "bytes\030\002 \002(\014\022X\n\007errcode\030\003 \001(\01628.tud.seemu" +
-      "h.nfcgate.network.c2c.NFCData.NFCDataErr" +
-      "orCode:\rERROR_NOERROR\"\"\n\nDataSource\022\n\n\006R",
-      "EADER\020\000\022\010\n\004CARD\020\001\"O\n\020NFCDataErrorCode\022\021\n" +
-      "\rERROR_NOERROR\020\000\022\025\n\021ERROR_NO_NFC_CONN\020\001\022" +
-      "\021\n\rERROR_UNKNOWN\020\003\"J\n\007Anticol\022\013\n\003UID\030\001 \002" +
-      "(\014\022\027\n\017historical_byte\030\002 \002(\014\022\014\n\004ATQA\030\003 \002(" +
-      "\014\022\013\n\003SAK\030\004 \002(\014\"\251\002\n\006Status\022?\n\004code\030\001 \002(\0162" +
-      "1.tud.seemuh.nfcgate.network.c2c.Status." +
-      "StatusCode\"\335\001\n\nStatusCode\022\021\n\rKEEPALIVE_R" +
-      "EQ\020\000\022\021\n\rKEEPALIVE_REP\020\001\022\016\n\nCARD_FOUND\020\002\022" +
-      "\020\n\014CARD_REMOVED\020\003\022\020\n\014READER_FOUND\020\004\022\022\n\016R" +
-      "EADER_REMOVED\020\005\022\017\n\013NFC_NO_CONN\020\006\022\023\n\017INVA",
-      "LID_MSG_FMT\020\007\022\023\n\017NOT_IMPLEMENTED\020\010\022\023\n\017UN" +
-      "KNOWN_MESSAGE\020\t\022\021\n\rUNKNOWN_ERROR\020\n"
+      "bytes\030\002 \002(\014\"\"\n\nDataSource\022\n\n\006READER\020\000\022\010\n" +
+      "\004CARD\020\001\"J\n\007Anticol\022\013\n\003UID\030\001 \002(\014\022\027\n\017histo" +
+      "rical_byte\030\002 \002(\014\022\014\n\004ATQA\030\003 \002(\014\022\013\n\003SAK\030\004 ",
+      "\002(\014\"\251\002\n\006Status\022?\n\004code\030\001 \002(\01621.tud.seemu" +
+      "h.nfcgate.network.c2c.Status.StatusCode\"" +
+      "\335\001\n\nStatusCode\022\021\n\rKEEPALIVE_REQ\020\000\022\021\n\rKEE" +
+      "PALIVE_REP\020\001\022\016\n\nCARD_FOUND\020\002\022\020\n\014CARD_REM" +
+      "OVED\020\003\022\020\n\014READER_FOUND\020\004\022\022\n\016READER_REMOV" +
+      "ED\020\005\022\017\n\013NFC_NO_CONN\020\006\022\023\n\017INVALID_MSG_FMT" +
+      "\020\007\022\023\n\017NOT_IMPLEMENTED\020\010\022\023\n\017UNKNOWN_MESSA" +
+      "GE\020\t\022\021\n\rUNKNOWN_ERROR\020\n"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -2970,7 +2748,7 @@ public final class C2C {
     internal_static_tud_seemuh_nfcgate_network_c2c_NFCData_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_tud_seemuh_nfcgate_network_c2c_NFCData_descriptor,
-        new java.lang.String[] { "DataSource", "DataBytes", "Errcode", });
+        new java.lang.String[] { "DataSource", "DataBytes", });
     internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_fieldAccessorTable = new

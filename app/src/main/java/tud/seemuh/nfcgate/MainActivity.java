@@ -26,7 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import tud.seemuh.nfcgate.network.CallbackImpl;
-import tud.seemuh.nfcgate.network.SimpleLowLevelNetworkConnectionClientImpl;
+import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
+import tud.seemuh.nfcgate.network.NetHandler;
 import tud.seemuh.nfcgate.network.WiFiDirectBroadcastReceiver;
 
 
@@ -44,7 +45,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     private BroadcastReceiver mReceiver = null;
 
     //Connection Client
-    protected SimpleLowLevelNetworkConnectionClientImpl mConnectionClient;
+    protected HighLevelNetworkHandler mConnectionClient;
 
     // Defined name of the Shared Preferences Buffer
     public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
@@ -55,6 +56,8 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     // IP:Port combination saved for enhanced user comfort
     private String ip;
     private int port;
+
+    public String token = "000000";
 
     private CallbackImpl mNetCallback = new CallbackImpl();
 
@@ -253,7 +256,8 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             this.setTitle("You clicked connect");
             mConnStatus.setText("Server status: Connecting - (token: )");
             mPartnerDevice.setText("Partner status: waiting");
-            mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(host, port);
+            mConnectionClient = NetHandler.getInstance().connect(host, port);
+            mConnectionClient.createSession();
             // Todo notify user about the token the server assigned him -> will be displayed at mConnStatus
         }
         else
@@ -264,7 +268,9 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             mPartnerDevice.setText("Partner status: no device");
             mJoinSession.setEnabled(true);
             this.setTitle("You clicked disconnect");
-            // TODO -> implement server disconnect
+
+            // TODO Use actual secret
+            mConnectionClient.leaveSession(token);
         }
     }
 
@@ -276,7 +282,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             mJoinSession.setText("Leave Session"); // TODO Maybe refactor this to use constants?
             mConnecttoSession.setEnabled(false);
 
-            String host = mIP.getText().toString();
+            String host = mIP.getText().toString(); // TODO Redundant with the previous function. Maybe write utility function?
             int port;
             try {
                 port = Integer.parseInt(mPort.getText().toString().trim());
@@ -291,7 +297,10 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
             mConnStatus.setText("Server status: Connecting");
             mPartnerDevice.setText("Partner status: waiting");
-            mConnectionClient = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(host, port);
+            mConnectionClient = NetHandler.getInstance().connect(host, port);
+
+            // TODO get actual token
+            mConnectionClient.joinSession(token);
         }
         else
         {
@@ -301,7 +310,8 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             mPartnerDevice.setText("Partner status: no device");
             mConnecttoSession.setEnabled(true);
             this.setTitle("You clicked disconnect");
-            // TODO -> implement server disconnect
+
+            mConnectionClient.leaveSession(token);
         }
     }
 

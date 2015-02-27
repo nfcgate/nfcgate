@@ -58,12 +58,7 @@ public class ApduService extends HostApduService {
         }*/
 
         // Package the ADPU into a C2C message
-        C2C.NFCData.Builder apduMessage= C2C.NFCData.newBuilder();
-        apduMessage.setDataSource(C2C.NFCData.DataSource.READER);
-        apduMessage.setDataBytes(ByteString.copyFrom(apdu));
-
-        // Send the message
-        Handler.sendMessage(apduMessage.build(), MessageCase.NFCDATA);
+        Handler.sendAPDUMessage(apdu);
 
         Log.d(TAG, "nfc: " + Utils.bytesToHex(apdu));
 
