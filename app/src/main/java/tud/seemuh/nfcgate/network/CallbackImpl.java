@@ -62,35 +62,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
             // Parse incoming data as a MetaMessage
             MetaMessage.Wrapper Wrapper = MetaMessage.Wrapper.parseFrom(data);
 
-            // Determine which type of Message the MetaMessage contains
-            if (Wrapper.getMessageCase() == MessageCase.DATA) {
-                Log.i(TAG, "onDataReceived: MessageCase.DATA: Sending to handler");
-                handleData(Wrapper.getData());
-            }
-            else if (Wrapper.getMessageCase() == MessageCase.KEX) {
-                Log.i(TAG, "onDataReceived: MessageCase.KEX: Sending to handler");
-                handleKex(Wrapper.getKex());
-            }
-            else if (Wrapper.getMessageCase() == MessageCase.NFCDATA) {
-                Log.i(TAG, "onDataReceived: MessageCase:NFCDATA: Sending to handler");
-                handleNFCData(Wrapper.getNFCData());
-            }
-            else if (Wrapper.getMessageCase() == MessageCase.SESSION) {
-                Log.i(TAG, "onDataReceived: MessageCase.SESSION: Sending to handler");
-                handleSession(Wrapper.getSession());
-            }
-            else if (Wrapper.getMessageCase() == MessageCase.STATUS) {
-                Log.i(TAG, "onDataReceived: MessageCase.STATUS: Sending to handler");
-                handleStatus(Wrapper.getStatus());
-            }
-            else if (Wrapper.getMessageCase() == MessageCase.ANTICOL) {
-                Log.i(TAG, "onDataReceived: MessageCase.STATUS: Sending to handler");
-                handleAnticol(Wrapper.getAnticol());
-            }
-            else {
-                Log.e(TAG, "onDataReceived: Message fits no known case! This is fucked up");
-                Handler.notifyUnknownMessageType();
-            }
+            handleWrapperMessage(Wrapper);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
             // We have received a message in an invalid format.
             // Send error message
@@ -99,12 +71,70 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
         }
     }
 
-
-    private void handleKex(C2C.Kex msg) {
-        Log.e(TAG, "handleKex: Not implemented");
-        Handler.notifyNotImplemented(); // TODO Implement
+    private void handleWrapperMessage(MetaMessage.Wrapper Wrapper) {
+        // Determine which type of Message the MetaMessage contains
+        if (Wrapper.getMessageCase() == MessageCase.DATA) {
+            Log.i(TAG, "onDataReceived: MessageCase.DATA: Sending to handler");
+            handleData(Wrapper.getData());
+        }
+        else if (Wrapper.getMessageCase() == MessageCase.NFCDATA) {
+            Log.i(TAG, "onDataReceived: MessageCase:NFCDATA: Sending to handler");
+            handleNFCData(Wrapper.getNFCData());
+        }
+        else if (Wrapper.getMessageCase() == MessageCase.SESSION) {
+            Log.i(TAG, "onDataReceived: MessageCase.SESSION: Sending to handler");
+            handleSession(Wrapper.getSession());
+        }
+        else if (Wrapper.getMessageCase() == MessageCase.STATUS) {
+            Log.i(TAG, "onDataReceived: MessageCase.STATUS: Sending to handler");
+            handleStatus(Wrapper.getStatus());
+        }
+        else if (Wrapper.getMessageCase() == MessageCase.ANTICOL) {
+            Log.i(TAG, "onDataReceived: MessageCase.ANTICOL: Sending to handler");
+            handleAnticol(Wrapper.getAnticol());
+        }
+        else {
+            Log.e(TAG, "onDataReceived: Message fits no known case! This is fucked up");
+            Handler.notifyUnknownMessageType();
+        }
     }
 
+
+    private void handleData(C2S.Data msg) {
+        if (msg.hasBlob()) {
+            try {
+                // Decode binary blob into Wrapper message
+                MetaMessage.Wrapper Wrapper = MetaMessage.Wrapper.parseFrom(msg.getBlob().toByteArray());
+
+                // Now handle the wrapper Message
+                handleWrapperMessage(Wrapper);
+            } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                // We have received a message in an invalid format.
+                // Send error message
+                Log.e(TAG, "handleData: Message was malformed, discarding and sending error message");
+                Handler.notifyInvalidMsgFormat();
+            }
+        } else if (msg.hasErrcode()) {
+            if (msg.getErrcode() == C2S.Data.DataErrorCode.ERROR_NO_SESSION) {
+                Log.e(TAG, "Appearently, we sent a message without being in a session");
+                // TODO Implement
+            } else if (msg.getErrcode() == C2S.Data.DataErrorCode.ERROR_TRANSMISSION_FAILED) {
+                Log.e(TAG, "Appearently, our partner dropped (Transmission failed)");
+                // TODO Implement
+            } else if (msg.getErrcode() == C2S.Data.DataErrorCode.ERROR_UNKNOWN) {
+                Log.e(TAG, "An unknown error occured. Interesting.");
+                // TODO implement
+            } else if (msg.getErrcode() == C2S.Data.DataErrorCode.ERROR_NOERROR) {
+                Log.d(TAG, "Message was forwarded successfully by the server. Doing nothing.");
+            } else {
+                Log.e(TAG, "Data message with unknown error code detected.");
+                Handler.notifyInvalidMsgFormat();
+            }
+        } else {
+            Log.e(TAG, "Got message without blob and errorcode. What.");
+            Handler.notifyInvalidMsgFormat();
+        }
+    }
 
     private void handleAnticol(C2C.Anticol msg) {
         Log.e(TAG, "handleAnticol: Not implemented");
@@ -159,42 +189,45 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
         }
         else if (msg.getCode() == StatusCode.NOT_IMPLEMENTED) {
             Log.e(TAG, "handleStatus: Other party sent NOT_IMPLEMENTED. Doing nothing");
+            // TODO Implement
         }
         else if (msg.getCode() == StatusCode.UNKNOWN_ERROR) {
             Log.e(TAG, "handleStatus: Other party sent UNKNOWN_ERROR. Doing nothing");
+            // TODO Implement
         }
         else if (msg.getCode() == StatusCode.UNKNOWN_MESSAGE) {
             Log.e(TAG, "handleStatus: Other party sent UNKNOWN_MESSAGE. Doing nothing");
+            // TODO Implement
         }
         else if (msg.getCode() == StatusCode.READER_FOUND) {
             Log.e(TAG, "handleStatus: Other party sent READER_FOUND. Doing nothing");
+            // TODO Implement
         }
         else if (msg.getCode() == StatusCode.READER_REMOVED) {
             Log.e(TAG, "handleStatus: Other party sent READER_REMOVED. Doing nothing");
+            // TODO Implement
         }
         else if (msg.getCode() == StatusCode.CARD_FOUND) {
             Log.e(TAG, "handleStatus: Other party sent CARD_FOUND. Doing nothing");
+            // TODO Implement
         }
         else if (msg.getCode() == StatusCode.CARD_REMOVED) {
             Log.e(TAG, "handleStatus: Other party sent CARD_REMOVED. Doing nothing");
+            // TODO Implement
         }
         else if (msg.getCode() == StatusCode.NFC_NO_CONN) {
             Log.e(TAG, "handleStatus: Other party sent NFC_NO_CONN. Doing nothing");
+            // TODO Implement
         }
         else if (msg.getCode() == StatusCode.INVALID_MSG_FMT) {
             Log.e(TAG, "handleStatus: Other party sent INVALID_MSG_FMT. Doing nothing");
+            // TODO Implement
         }
         else {
             // Not implemented
             Log.e(TAG, "handleStatus: Message case not implemented");
-            Handler.notifyNotImplemented(); // TODO Implement
+            Handler.notifyNotImplemented();
         }
-    }
-
-
-    private void handleData(C2S.Data msg) {
-        Log.e(TAG, "handleData: Not implemented");
-        Handler.notifyNotImplemented(); // TODO Implement
     }
 
 

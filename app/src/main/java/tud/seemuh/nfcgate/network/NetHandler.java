@@ -32,23 +32,50 @@ public class NetHandler implements HighLevelNetworkHandler {
         sendMessage(ErrorMsg.build(), MessageCase.STATUS);
     }
 
+    private C2S.Data wrapAsDataMessage(byte[] msg) {
+        // Prepare Data Message
+        C2S.Data.Builder dataMsg = C2S.Data.newBuilder();
+
+        // Set the byte field
+        dataMsg.setBlob(ByteString.copyFrom(msg));
+
+        // Set error code to "no error"
+        dataMsg.setErrcode(C2S.Data.DataErrorCode.ERROR_NOERROR);
+
+        return dataMsg.build();
+    }
+
     private void sendMessage(Message msg, MessageCase mcase) {
         // Prepare a wrapper message
         Wrapper.Builder WrapperMsg = Wrapper.newBuilder();
 
         // Set the relevant message field
-        if (mcase == MessageCase.DATA) {
-            WrapperMsg.setData((C2S.Data) msg);
-        } else if (mcase == MessageCase.KEX) {
-            WrapperMsg.setKex((C2C.Kex) msg);
-        } else if (mcase == MessageCase.NFCDATA) {
-            WrapperMsg.setNFCData((C2C.NFCData) msg);
+        if (mcase == MessageCase.NFCDATA) {
+            // This is a C2C message, wrap as data message
+            // First, pack in a Wrapper message to indicate what type the inner message is
+            Wrapper.Builder innerWrapperMsg = Wrapper.newBuilder();
+            innerWrapperMsg.setNFCData((C2C.NFCData) msg);
+
+            // Now, pack the inner wrapper message in a data message
+            C2S.Data data = wrapAsDataMessage(innerWrapperMsg.build().toByteArray());
+
+            // Finally, pack the data message in an outer wrapper message
+            WrapperMsg.setData(data);
         } else if (mcase == MessageCase.SESSION) {
+            // This is a C2S data, no need to wrap as data message
             WrapperMsg.setSession((C2S.Session) msg);
         } else if (mcase == MessageCase.STATUS) {
-            WrapperMsg.setStatus((C2C.Status) msg);
+            // This is a C2C message, wrap as data message as before
+            Wrapper.Builder innerWrapperMsg = Wrapper.newBuilder();
+            innerWrapperMsg.setStatus((C2C.Status) msg);
+            C2S.Data data = wrapAsDataMessage(innerWrapperMsg.build().toByteArray());
+            WrapperMsg.setData(data);
         } else if (mcase == MessageCase.ANTICOL) {
-            WrapperMsg.setAnticol((C2C.Anticol) msg);
+            // This is a C2C message, wrap as data message as before
+            Wrapper.Builder innerWrapperMsg = Wrapper.newBuilder();
+            innerWrapperMsg.setAnticol((C2C.Anticol) msg);
+            C2S.Data data = wrapAsDataMessage(innerWrapperMsg.build().toByteArray());
+            WrapperMsg.setData(data);
         } else {
             Log.e(TAG, "Unknown Message type: " + mcase);
             // TODO This should never happen...

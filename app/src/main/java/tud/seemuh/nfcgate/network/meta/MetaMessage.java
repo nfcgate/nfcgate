@@ -13,19 +13,6 @@ public final class MetaMessage {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-     */
-    boolean hasKex();
-    /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-     */
-    tud.seemuh.nfcgate.network.c2c.C2C.Kex getKex();
-    /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-     */
-    tud.seemuh.nfcgate.network.c2c.C2C.KexOrBuilder getKexOrBuilder();
-
-    /**
      * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData NFCData = 2;</code>
      */
     boolean hasNFCData();
@@ -149,19 +136,6 @@ public final class MetaMessage {
               }
               break;
             }
-            case 10: {
-              tud.seemuh.nfcgate.network.c2c.C2C.Kex.Builder subBuilder = null;
-              if (messageCase_ == 1) {
-                subBuilder = ((tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_).toBuilder();
-              }
-              message_ = input.readMessage(tud.seemuh.nfcgate.network.c2c.C2C.Kex.PARSER, extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_);
-                message_ = subBuilder.buildPartial();
-              }
-              messageCase_ = 1;
-              break;
-            }
             case 18: {
               tud.seemuh.nfcgate.network.c2c.C2C.NFCData.Builder subBuilder = null;
               if (messageCase_ == 2) {
@@ -271,7 +245,6 @@ public final class MetaMessage {
     private java.lang.Object message_;
     public enum MessageCase
         implements com.google.protobuf.Internal.EnumLite {
-      KEX(1),
       NFCDATA(2),
       ANTICOL(3),
       STATUS(4),
@@ -284,7 +257,6 @@ public final class MetaMessage {
       }
       public static MessageCase valueOf(int value) {
         switch (value) {
-          case 1: return KEX;
           case 2: return NFCDATA;
           case 3: return ANTICOL;
           case 4: return STATUS;
@@ -304,32 +276,6 @@ public final class MetaMessage {
     getMessageCase() {
       return MessageCase.valueOf(
           messageCase_);
-    }
-
-    public static final int KEX_FIELD_NUMBER = 1;
-    /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-     */
-    public boolean hasKex() {
-      return messageCase_ == 1;
-    }
-    /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-     */
-    public tud.seemuh.nfcgate.network.c2c.C2C.Kex getKex() {
-      if (messageCase_ == 1) {
-         return (tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_;
-      }
-      return tud.seemuh.nfcgate.network.c2c.C2C.Kex.getDefaultInstance();
-    }
-    /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-     */
-    public tud.seemuh.nfcgate.network.c2c.C2C.KexOrBuilder getKexOrBuilder() {
-      if (messageCase_ == 1) {
-         return (tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_;
-      }
-      return tud.seemuh.nfcgate.network.c2c.C2C.Kex.getDefaultInstance();
     }
 
     public static final int NFCDATA_FIELD_NUMBER = 2;
@@ -470,12 +416,6 @@ public final class MetaMessage {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
-      if (hasKex()) {
-        if (!getKex().isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
       if (hasNFCData()) {
         if (!getNFCData().isInitialized()) {
           memoizedIsInitialized = 0;
@@ -513,9 +453,6 @@ public final class MetaMessage {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      if (messageCase_ == 1) {
-        output.writeMessage(1, (tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_);
-      }
       if (messageCase_ == 2) {
         output.writeMessage(2, (tud.seemuh.nfcgate.network.c2c.C2C.NFCData) message_);
       }
@@ -540,10 +477,6 @@ public final class MetaMessage {
       if (size != -1) return size;
 
       size = 0;
-      if (messageCase_ == 1) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(1, (tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_);
-      }
       if (messageCase_ == 2) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(2, (tud.seemuh.nfcgate.network.c2c.C2C.NFCData) message_);
@@ -718,13 +651,6 @@ public final class MetaMessage {
         tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper result = new tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper(this);
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
-        if (messageCase_ == 1) {
-          if (kexBuilder_ == null) {
-            result.message_ = message_;
-          } else {
-            result.message_ = kexBuilder_.build();
-          }
-        }
         if (messageCase_ == 2) {
           if (nFCDataBuilder_ == null) {
             result.message_ = message_;
@@ -778,10 +704,6 @@ public final class MetaMessage {
       public Builder mergeFrom(tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper other) {
         if (other == tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.getDefaultInstance()) return this;
         switch (other.getMessageCase()) {
-          case KEX: {
-            mergeKex(other.getKex());
-            break;
-          }
           case NFCDATA: {
             mergeNFCData(other.getNFCData());
             break;
@@ -811,12 +733,6 @@ public final class MetaMessage {
       }
 
       public final boolean isInitialized() {
-        if (hasKex()) {
-          if (!getKex().isInitialized()) {
-            
-            return false;
-          }
-        }
         if (hasNFCData()) {
           if (!getNFCData().isInitialized()) {
             
@@ -883,141 +799,6 @@ public final class MetaMessage {
       }
 
       private int bitField0_;
-
-      private com.google.protobuf.SingleFieldBuilder<
-          tud.seemuh.nfcgate.network.c2c.C2C.Kex, tud.seemuh.nfcgate.network.c2c.C2C.Kex.Builder, tud.seemuh.nfcgate.network.c2c.C2C.KexOrBuilder> kexBuilder_;
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      public boolean hasKex() {
-        return messageCase_ == 1;
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      public tud.seemuh.nfcgate.network.c2c.C2C.Kex getKex() {
-        if (kexBuilder_ == null) {
-          if (messageCase_ == 1) {
-            return (tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_;
-          }
-          return tud.seemuh.nfcgate.network.c2c.C2C.Kex.getDefaultInstance();
-        } else {
-          if (messageCase_ == 1) {
-            return kexBuilder_.getMessage();
-          }
-          return tud.seemuh.nfcgate.network.c2c.C2C.Kex.getDefaultInstance();
-        }
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      public Builder setKex(tud.seemuh.nfcgate.network.c2c.C2C.Kex value) {
-        if (kexBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          message_ = value;
-          onChanged();
-        } else {
-          kexBuilder_.setMessage(value);
-        }
-        messageCase_ = 1;
-        return this;
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      public Builder setKex(
-          tud.seemuh.nfcgate.network.c2c.C2C.Kex.Builder builderForValue) {
-        if (kexBuilder_ == null) {
-          message_ = builderForValue.build();
-          onChanged();
-        } else {
-          kexBuilder_.setMessage(builderForValue.build());
-        }
-        messageCase_ = 1;
-        return this;
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      public Builder mergeKex(tud.seemuh.nfcgate.network.c2c.C2C.Kex value) {
-        if (kexBuilder_ == null) {
-          if (messageCase_ == 1 &&
-              message_ != tud.seemuh.nfcgate.network.c2c.C2C.Kex.getDefaultInstance()) {
-            message_ = tud.seemuh.nfcgate.network.c2c.C2C.Kex.newBuilder((tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_)
-                .mergeFrom(value).buildPartial();
-          } else {
-            message_ = value;
-          }
-          onChanged();
-        } else {
-          if (messageCase_ == 1) {
-            kexBuilder_.mergeFrom(value);
-          }
-          kexBuilder_.setMessage(value);
-        }
-        messageCase_ = 1;
-        return this;
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      public Builder clearKex() {
-        if (kexBuilder_ == null) {
-          if (messageCase_ == 1) {
-            messageCase_ = 0;
-            message_ = null;
-            onChanged();
-          }
-        } else {
-          if (messageCase_ == 1) {
-            messageCase_ = 0;
-            message_ = null;
-          }
-          kexBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      public tud.seemuh.nfcgate.network.c2c.C2C.Kex.Builder getKexBuilder() {
-        return getKexFieldBuilder().getBuilder();
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      public tud.seemuh.nfcgate.network.c2c.C2C.KexOrBuilder getKexOrBuilder() {
-        if ((messageCase_ == 1) && (kexBuilder_ != null)) {
-          return kexBuilder_.getMessageOrBuilder();
-        } else {
-          if (messageCase_ == 1) {
-            return (tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_;
-          }
-          return tud.seemuh.nfcgate.network.c2c.C2C.Kex.getDefaultInstance();
-        }
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      private com.google.protobuf.SingleFieldBuilder<
-          tud.seemuh.nfcgate.network.c2c.C2C.Kex, tud.seemuh.nfcgate.network.c2c.C2C.Kex.Builder, tud.seemuh.nfcgate.network.c2c.C2C.KexOrBuilder> 
-          getKexFieldBuilder() {
-        if (kexBuilder_ == null) {
-          if (!(messageCase_ == 1)) {
-            message_ = tud.seemuh.nfcgate.network.c2c.C2C.Kex.getDefaultInstance();
-          }
-          kexBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              tud.seemuh.nfcgate.network.c2c.C2C.Kex, tud.seemuh.nfcgate.network.c2c.C2C.Kex.Builder, tud.seemuh.nfcgate.network.c2c.C2C.KexOrBuilder>(
-                  (tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_,
-                  getParentForChildren(),
-                  isClean());
-          message_ = null;
-        }
-        messageCase_ = 1;
-        return kexBuilder_;
-      }
 
       private com.google.protobuf.SingleFieldBuilder<
           tud.seemuh.nfcgate.network.c2c.C2C.NFCData, tud.seemuh.nfcgate.network.c2c.C2C.NFCData.Builder, tud.seemuh.nfcgate.network.c2c.C2C.NFCDataOrBuilder> nFCDataBuilder_;
@@ -1720,17 +1501,15 @@ public final class MetaMessage {
   static {
     java.lang.String[] descriptorData = {
       "\n\021metaMessage.proto\022\037tud.seemuh.nfcgate." +
-      "network.meta\032\tc2s.proto\032\tc2c.proto\"\354\002\n\007W" +
-      "rapper\0222\n\003Kex\030\001 \001(\0132#.tud.seemuh.nfcgate" +
-      ".network.c2c.KexH\000\022:\n\007NFCData\030\002 \001(\0132\'.tu" +
-      "d.seemuh.nfcgate.network.c2c.NFCDataH\000\022:" +
-      "\n\007Anticol\030\003 \001(\0132\'.tud.seemuh.nfcgate.net" +
-      "work.c2c.AnticolH\000\0228\n\006Status\030\004 \001(\0132&.tud" +
-      ".seemuh.nfcgate.network.c2c.StatusH\000\0224\n\004" +
-      "Data\030\005 \001(\0132$.tud.seemuh.nfcgate.network." +
-      "c2s.DataH\000\022:\n\007Session\030\006 \001(\0132\'.tud.seemuh",
-      ".nfcgate.network.c2s.SessionH\000B\t\n\007messag" +
-      "e"
+      "network.meta\032\tc2s.proto\032\tc2c.proto\"\270\002\n\007W" +
+      "rapper\022:\n\007NFCData\030\002 \001(\0132\'.tud.seemuh.nfc" +
+      "gate.network.c2c.NFCDataH\000\022:\n\007Anticol\030\003 " +
+      "\001(\0132\'.tud.seemuh.nfcgate.network.c2c.Ant" +
+      "icolH\000\0228\n\006Status\030\004 \001(\0132&.tud.seemuh.nfcg" +
+      "ate.network.c2c.StatusH\000\0224\n\004Data\030\005 \001(\0132$" +
+      ".tud.seemuh.nfcgate.network.c2s.DataH\000\022:" +
+      "\n\007Session\030\006 \001(\0132\'.tud.seemuh.nfcgate.net" +
+      "work.c2s.SessionH\000B\t\n\007message"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1751,7 +1530,7 @@ public final class MetaMessage {
     internal_static_tud_seemuh_nfcgate_network_meta_Wrapper_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_tud_seemuh_nfcgate_network_meta_Wrapper_descriptor,
-        new java.lang.String[] { "Kex", "NFCData", "Anticol", "Status", "Data", "Session", "Message", });
+        new java.lang.String[] { "NFCData", "Anticol", "Status", "Data", "Session", "Message", });
     tud.seemuh.nfcgate.network.c2s.C2S.getDescriptor();
     tud.seemuh.nfcgate.network.c2c.C2C.getDescriptor();
   }
