@@ -7,6 +7,8 @@ public interface HighLevelNetworkHandler {
     // Setup
     public HighLevelNetworkHandler connect(String addr, int port);
 
+    public void disconnect();
+
     // Session messages
     public void createSession();
 

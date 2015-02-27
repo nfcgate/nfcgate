@@ -73,6 +73,11 @@ public class NetHandler implements HighLevelNetworkHandler {
     }
 
     @Override
+    public void disconnect() {
+        // TODO Implement
+    }
+
+    @Override
     public void sendAPDUMessage(byte[] apdu) {
         // Prepare message
         C2C.NFCData.Builder apduMessage = C2C.NFCData.newBuilder();
