@@ -193,9 +193,9 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mDebuginfo.setText("Debugging Output: ");
         this.setTitle("You clicked reset");
 
-        mJoinSession.setText("Join Session");
+        mJoinSession.setText("Join Session"); // TODO Maybe refactor this to use constants?
         mJoinSession.setEnabled(true);
-        mConnecttoSession.setText("Create Session");
+        mConnecttoSession.setText("Create Session"); // TODO Maybe refactor this to use constants?
         mConnecttoSession.setEnabled(true);
 
         // Load values from the Shared Preferences Buffer
@@ -223,9 +223,9 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     public void ButtonAbortClicked(View view) {
         // Abort the current connection attempt
         // TODO Aboard the connection -> properly close network connection
-        mJoinSession.setText("Join Session");
+        mJoinSession.setText("Join Session"); // TODO Maybe refactor this to use constants?
         mJoinSession.setEnabled(true);
-        mConnecttoSession.setText("Create Session");
+        mConnecttoSession.setText("Create Session"); // TODO Maybe refactor this to use constants?
         mConnecttoSession.setEnabled(true);
 
         mConnStatus.setText("Server status: Disconnecting");
@@ -237,9 +237,9 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     /** Called when the user touches the button 'Create Session'  -- Code by Tom */
     public void ButtonCreateSessionClicked(View view) {
         // Create a new Session
-        if (!mConnecttoSession.getText().equals("Leave Session"))
+        if (!mConnecttoSession.getText().equals("Leave Session")) // TODO Maybe refactor this to use constants?
         {
-            mConnecttoSession.setText("Leave Session");
+            mConnecttoSession.setText("Leave Session"); // TODO Maybe refactor this to use constants?
             mJoinSession.setEnabled(false);
 
             String host = mIP.getText().toString();
@@ -259,7 +259,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         else
         {
             // the button was already clicked and we want to disconnect from the session
-            mConnecttoSession.setText("Create Session");
+            mConnecttoSession.setText("Create Session"); // TODO Maybe refactor this to use constants?
             mConnStatus.setText("Server status: Disconnecting");
             mPartnerDevice.setText("Partner status: no device");
             mJoinSession.setEnabled(true);
@@ -271,9 +271,9 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     /** Called when the user touches the button 'Join Session'  -- Code by Tom */
     public void ButtonJoinSessionClicked(View view) {
         // Join an existing session
-        if (!mJoinSession.getText().equals("Leave Session"))
+        if (!mJoinSession.getText().equals("Leave Session")) // TODO Maybe refactor this to use constants?
         {
-            mJoinSession.setText("Leave Session");
+            mJoinSession.setText("Leave Session"); // TODO Maybe refactor this to use constants?
             mConnecttoSession.setEnabled(false);
 
             String host = mIP.getText().toString();
@@ -296,7 +296,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         else
         {
             // the button was already clicked and we want to disconnect from the session
-            mJoinSession.setText("Join Session");
+            mJoinSession.setText("Join Session"); // TODO Maybe refactor this to use constants?
             mConnStatus.setText("Server status: Disconnecting");
             mPartnerDevice.setText("Partner status: no device");
             mConnecttoSession.setEnabled(true);
