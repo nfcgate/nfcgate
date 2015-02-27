@@ -138,7 +138,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
     private void handleAnticol(C2C.Anticol msg) {
         Log.e(TAG, "handleAnticol: Not implemented");
-        Handler.notifyNotImplemented(); // TODO Implement
+        Handler.notifyNotImplemented(); // TODO Implement (Waiting for code by Uwe)
     }
 
 
