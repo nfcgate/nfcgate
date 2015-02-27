@@ -28,6 +28,19 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
     private TextView debugView;
     private NetHandler Handler = new NetHandler();
 
+    private enum Status {
+        NOT_CONNECTED,
+        SESSION_CREATE_SENT,
+        SESSION_JOIN_SENT,
+        WAITING_FOR_PARTNER,
+        SESSION_READY,
+        SESSION_LEAVE_SENT,
+    }
+
+    Status status;
+
+    private String SessionToken;
+
     public void setUpdateButton(TextView ldebugView) {
         debugView = ldebugView;
     }
@@ -35,9 +48,12 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
     public CallbackImpl(ApduService as) {
         apdu = as;
+        status = Status.NOT_CONNECTED;
     }
 
-    public CallbackImpl() {}
+    public CallbackImpl() {
+        status = Status.NOT_CONNECTED;
+    }
 
     /**
      * Implementation of SimpleNetworkConnectionClientImpl.Callback
@@ -69,6 +85,10 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
             else if (Wrapper.getMessageCase() == MessageCase.STATUS) {
                 Log.i(TAG, "onDataReceived: MessageCase.STATUS: Sending to handler");
                 handleStatus(Wrapper.getStatus());
+            }
+            else if (Wrapper.getMessageCase() == MessageCase.ANTICOL) {
+                Log.i(TAG, "onDataReceived: MessageCase.STATUS: Sending to handler");
+                handleAnticol(Wrapper.getAnticol());
             }
             else {
                 Log.e(TAG, "onDataReceived: Message fits no known case! This is fucked up");
@@ -155,6 +175,12 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
     private void handleKex(C2C.Kex msg) {
         Log.e(TAG, "handleKex: Not implemented");
+        sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
+    }
+
+
+    private void handleAnticol(C2C.Anticol msg) {
+        Log.e(TAG, "handleAnticol: Not implemented");
         sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
     }
 
@@ -254,6 +280,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
     private void handleSession(C2S.Session msg) {
         if (msg.getOpcode() == SessionOpcode.SESSION_CREATE_FAIL) {
+            // TODO is it possible to display a popup notification to the user in this case?
             Log.e(TAG, "handleSession: SESSION_CREATE_FAIL: Not implemented");
             sendStatusMessage(StatusCode.NOT_IMPLEMENTED);
         }

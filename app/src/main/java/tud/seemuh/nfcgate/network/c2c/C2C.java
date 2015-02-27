@@ -1583,6 +1583,691 @@ public final class C2C {
     // @@protoc_insertion_point(class_scope:tud.seemuh.nfcgate.network.c2c.NFCData)
   }
 
+  public interface AnticolOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:tud.seemuh.nfcgate.network.c2c.Anticol)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>required bytes UID = 1;</code>
+     */
+    boolean hasUID();
+    /**
+     * <code>required bytes UID = 1;</code>
+     */
+    com.google.protobuf.ByteString getUID();
+
+    /**
+     * <code>required bytes historical_byte = 2;</code>
+     */
+    boolean hasHistoricalByte();
+    /**
+     * <code>required bytes historical_byte = 2;</code>
+     */
+    com.google.protobuf.ByteString getHistoricalByte();
+
+    /**
+     * <code>required bytes ATQA = 3;</code>
+     */
+    boolean hasATQA();
+    /**
+     * <code>required bytes ATQA = 3;</code>
+     */
+    com.google.protobuf.ByteString getATQA();
+
+    /**
+     * <code>required bytes SAK = 4;</code>
+     */
+    boolean hasSAK();
+    /**
+     * <code>required bytes SAK = 4;</code>
+     */
+    com.google.protobuf.ByteString getSAK();
+  }
+  /**
+   * Protobuf type {@code tud.seemuh.nfcgate.network.c2c.Anticol}
+   *
+   * <pre>
+   * Anticollision messages
+   * Message for transmitting UID, historical byte, atqa and sak
+   * </pre>
+   */
+  public static final class Anticol extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:tud.seemuh.nfcgate.network.c2c.Anticol)
+      AnticolOrBuilder {
+    // Use Anticol.newBuilder() to construct.
+    private Anticol(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private Anticol(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final Anticol defaultInstance;
+    public static Anticol getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public Anticol getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Anticol(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              bitField0_ |= 0x00000001;
+              uID_ = input.readBytes();
+              break;
+            }
+            case 18: {
+              bitField0_ |= 0x00000002;
+              historicalByte_ = input.readBytes();
+              break;
+            }
+            case 26: {
+              bitField0_ |= 0x00000004;
+              aTQA_ = input.readBytes();
+              break;
+            }
+            case 34: {
+              bitField0_ |= 0x00000008;
+              sAK_ = input.readBytes();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return tud.seemuh.nfcgate.network.c2c.C2C.internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return tud.seemuh.nfcgate.network.c2c.C2C.internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              tud.seemuh.nfcgate.network.c2c.C2C.Anticol.class, tud.seemuh.nfcgate.network.c2c.C2C.Anticol.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<Anticol> PARSER =
+        new com.google.protobuf.AbstractParser<Anticol>() {
+      public Anticol parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new Anticol(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Anticol> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    public static final int UID_FIELD_NUMBER = 1;
+    private com.google.protobuf.ByteString uID_;
+    /**
+     * <code>required bytes UID = 1;</code>
+     */
+    public boolean hasUID() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required bytes UID = 1;</code>
+     */
+    public com.google.protobuf.ByteString getUID() {
+      return uID_;
+    }
+
+    public static final int HISTORICAL_BYTE_FIELD_NUMBER = 2;
+    private com.google.protobuf.ByteString historicalByte_;
+    /**
+     * <code>required bytes historical_byte = 2;</code>
+     */
+    public boolean hasHistoricalByte() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>required bytes historical_byte = 2;</code>
+     */
+    public com.google.protobuf.ByteString getHistoricalByte() {
+      return historicalByte_;
+    }
+
+    public static final int ATQA_FIELD_NUMBER = 3;
+    private com.google.protobuf.ByteString aTQA_;
+    /**
+     * <code>required bytes ATQA = 3;</code>
+     */
+    public boolean hasATQA() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>required bytes ATQA = 3;</code>
+     */
+    public com.google.protobuf.ByteString getATQA() {
+      return aTQA_;
+    }
+
+    public static final int SAK_FIELD_NUMBER = 4;
+    private com.google.protobuf.ByteString sAK_;
+    /**
+     * <code>required bytes SAK = 4;</code>
+     */
+    public boolean hasSAK() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>required bytes SAK = 4;</code>
+     */
+    public com.google.protobuf.ByteString getSAK() {
+      return sAK_;
+    }
+
+    private void initFields() {
+      uID_ = com.google.protobuf.ByteString.EMPTY;
+      historicalByte_ = com.google.protobuf.ByteString.EMPTY;
+      aTQA_ = com.google.protobuf.ByteString.EMPTY;
+      sAK_ = com.google.protobuf.ByteString.EMPTY;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      if (!hasUID()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasHistoricalByte()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasATQA()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasSAK()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeBytes(1, uID_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeBytes(2, historicalByte_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeBytes(3, aTQA_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeBytes(4, sAK_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, uID_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(2, historicalByte_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(3, aTQA_);
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(4, sAK_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(tud.seemuh.nfcgate.network.c2c.C2C.Anticol prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code tud.seemuh.nfcgate.network.c2c.Anticol}
+     *
+     * <pre>
+     * Anticollision messages
+     * Message for transmitting UID, historical byte, atqa and sak
+     * </pre>
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:tud.seemuh.nfcgate.network.c2c.Anticol)
+        tud.seemuh.nfcgate.network.c2c.C2C.AnticolOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return tud.seemuh.nfcgate.network.c2c.C2C.internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return tud.seemuh.nfcgate.network.c2c.C2C.internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                tud.seemuh.nfcgate.network.c2c.C2C.Anticol.class, tud.seemuh.nfcgate.network.c2c.C2C.Anticol.Builder.class);
+      }
+
+      // Construct using tud.seemuh.nfcgate.network.c2c.C2C.Anticol.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        uID_ = com.google.protobuf.ByteString.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        historicalByte_ = com.google.protobuf.ByteString.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        aTQA_ = com.google.protobuf.ByteString.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000004);
+        sAK_ = com.google.protobuf.ByteString.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return tud.seemuh.nfcgate.network.c2c.C2C.internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_descriptor;
+      }
+
+      public tud.seemuh.nfcgate.network.c2c.C2C.Anticol getDefaultInstanceForType() {
+        return tud.seemuh.nfcgate.network.c2c.C2C.Anticol.getDefaultInstance();
+      }
+
+      public tud.seemuh.nfcgate.network.c2c.C2C.Anticol build() {
+        tud.seemuh.nfcgate.network.c2c.C2C.Anticol result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public tud.seemuh.nfcgate.network.c2c.C2C.Anticol buildPartial() {
+        tud.seemuh.nfcgate.network.c2c.C2C.Anticol result = new tud.seemuh.nfcgate.network.c2c.C2C.Anticol(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.uID_ = uID_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.historicalByte_ = historicalByte_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.aTQA_ = aTQA_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.sAK_ = sAK_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof tud.seemuh.nfcgate.network.c2c.C2C.Anticol) {
+          return mergeFrom((tud.seemuh.nfcgate.network.c2c.C2C.Anticol)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(tud.seemuh.nfcgate.network.c2c.C2C.Anticol other) {
+        if (other == tud.seemuh.nfcgate.network.c2c.C2C.Anticol.getDefaultInstance()) return this;
+        if (other.hasUID()) {
+          setUID(other.getUID());
+        }
+        if (other.hasHistoricalByte()) {
+          setHistoricalByte(other.getHistoricalByte());
+        }
+        if (other.hasATQA()) {
+          setATQA(other.getATQA());
+        }
+        if (other.hasSAK()) {
+          setSAK(other.getSAK());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasUID()) {
+          
+          return false;
+        }
+        if (!hasHistoricalByte()) {
+          
+          return false;
+        }
+        if (!hasATQA()) {
+          
+          return false;
+        }
+        if (!hasSAK()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        tud.seemuh.nfcgate.network.c2c.C2C.Anticol parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (tud.seemuh.nfcgate.network.c2c.C2C.Anticol) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private com.google.protobuf.ByteString uID_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>required bytes UID = 1;</code>
+       */
+      public boolean hasUID() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required bytes UID = 1;</code>
+       */
+      public com.google.protobuf.ByteString getUID() {
+        return uID_;
+      }
+      /**
+       * <code>required bytes UID = 1;</code>
+       */
+      public Builder setUID(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+        uID_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required bytes UID = 1;</code>
+       */
+      public Builder clearUID() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        uID_ = getDefaultInstance().getUID();
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString historicalByte_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>required bytes historical_byte = 2;</code>
+       */
+      public boolean hasHistoricalByte() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required bytes historical_byte = 2;</code>
+       */
+      public com.google.protobuf.ByteString getHistoricalByte() {
+        return historicalByte_;
+      }
+      /**
+       * <code>required bytes historical_byte = 2;</code>
+       */
+      public Builder setHistoricalByte(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
+        historicalByte_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required bytes historical_byte = 2;</code>
+       */
+      public Builder clearHistoricalByte() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        historicalByte_ = getDefaultInstance().getHistoricalByte();
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString aTQA_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>required bytes ATQA = 3;</code>
+       */
+      public boolean hasATQA() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>required bytes ATQA = 3;</code>
+       */
+      public com.google.protobuf.ByteString getATQA() {
+        return aTQA_;
+      }
+      /**
+       * <code>required bytes ATQA = 3;</code>
+       */
+      public Builder setATQA(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000004;
+        aTQA_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required bytes ATQA = 3;</code>
+       */
+      public Builder clearATQA() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        aTQA_ = getDefaultInstance().getATQA();
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.ByteString sAK_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>required bytes SAK = 4;</code>
+       */
+      public boolean hasSAK() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>required bytes SAK = 4;</code>
+       */
+      public com.google.protobuf.ByteString getSAK() {
+        return sAK_;
+      }
+      /**
+       * <code>required bytes SAK = 4;</code>
+       */
+      public Builder setSAK(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000008;
+        sAK_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required bytes SAK = 4;</code>
+       */
+      public Builder clearSAK() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        sAK_ = getDefaultInstance().getSAK();
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:tud.seemuh.nfcgate.network.c2c.Anticol)
+    }
+
+    static {
+      defaultInstance = new Anticol(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:tud.seemuh.nfcgate.network.c2c.Anticol)
+  }
+
   public interface StatusOrBuilder extends
       // @@protoc_insertion_point(interface_extends:tud.seemuh.nfcgate.network.c2c.Status)
       com.google.protobuf.MessageOrBuilder {
@@ -2221,6 +2906,11 @@ public final class C2C {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_tud_seemuh_nfcgate_network_c2c_NFCData_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_tud_seemuh_nfcgate_network_c2c_Status_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -2246,14 +2936,16 @@ public final class C2C {
       "orCode:\rERROR_NOERROR\"\"\n\nDataSource\022\n\n\006R",
       "EADER\020\000\022\010\n\004CARD\020\001\"O\n\020NFCDataErrorCode\022\021\n" +
       "\rERROR_NOERROR\020\000\022\025\n\021ERROR_NO_NFC_CONN\020\001\022" +
-      "\021\n\rERROR_UNKNOWN\020\003\"\251\002\n\006Status\022?\n\004code\030\001 " +
-      "\002(\01621.tud.seemuh.nfcgate.network.c2c.Sta" +
-      "tus.StatusCode\"\335\001\n\nStatusCode\022\021\n\rKEEPALI" +
-      "VE_REQ\020\000\022\021\n\rKEEPALIVE_REP\020\001\022\016\n\nCARD_FOUN" +
-      "D\020\002\022\020\n\014CARD_REMOVED\020\003\022\020\n\014READER_FOUND\020\004\022" +
-      "\022\n\016READER_REMOVED\020\005\022\017\n\013NFC_NO_CONN\020\006\022\023\n\017" +
-      "INVALID_MSG_FMT\020\007\022\023\n\017NOT_IMPLEMENTED\020\010\022\023" +
-      "\n\017UNKNOWN_MESSAGE\020\t\022\021\n\rUNKNOWN_ERROR\020\n"
+      "\021\n\rERROR_UNKNOWN\020\003\"J\n\007Anticol\022\013\n\003UID\030\001 \002" +
+      "(\014\022\027\n\017historical_byte\030\002 \002(\014\022\014\n\004ATQA\030\003 \002(" +
+      "\014\022\013\n\003SAK\030\004 \002(\014\"\251\002\n\006Status\022?\n\004code\030\001 \002(\0162" +
+      "1.tud.seemuh.nfcgate.network.c2c.Status." +
+      "StatusCode\"\335\001\n\nStatusCode\022\021\n\rKEEPALIVE_R" +
+      "EQ\020\000\022\021\n\rKEEPALIVE_REP\020\001\022\016\n\nCARD_FOUND\020\002\022" +
+      "\020\n\014CARD_REMOVED\020\003\022\020\n\014READER_FOUND\020\004\022\022\n\016R" +
+      "EADER_REMOVED\020\005\022\017\n\013NFC_NO_CONN\020\006\022\023\n\017INVA",
+      "LID_MSG_FMT\020\007\022\023\n\017NOT_IMPLEMENTED\020\010\022\023\n\017UN" +
+      "KNOWN_MESSAGE\020\t\022\021\n\rUNKNOWN_ERROR\020\n"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -2279,8 +2971,14 @@ public final class C2C {
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_tud_seemuh_nfcgate_network_c2c_NFCData_descriptor,
         new java.lang.String[] { "DataSource", "DataBytes", "Errcode", });
-    internal_static_tud_seemuh_nfcgate_network_c2c_Status_descriptor =
+    internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_descriptor =
       getDescriptor().getMessageTypes().get(2);
+    internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_descriptor,
+        new java.lang.String[] { "UID", "HistoricalByte", "ATQA", "SAK", });
+    internal_static_tud_seemuh_nfcgate_network_c2c_Status_descriptor =
+      getDescriptor().getMessageTypes().get(3);
     internal_static_tud_seemuh_nfcgate_network_c2c_Status_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_tud_seemuh_nfcgate_network_c2c_Status_descriptor,
