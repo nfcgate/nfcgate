@@ -56,7 +56,7 @@ public class NetHandler implements HighLevelNetworkHandler {
 
     private void sendMessage(Message msg, MessageCase mcase) {
         if (status == Status.NOT_CONNECTED) {
-            Log.e(TAG, "Trying to send message while not connected. Failed, doing nothing");
+            Log.e(TAG, "sendMessage: Trying to send message while not connected. Failed, doing nothing");
             return;
         }
 
@@ -95,7 +95,7 @@ public class NetHandler implements HighLevelNetworkHandler {
             WrapperMsg.setData(data);
 
         } else {
-            Log.e(TAG, "Unknown Message type: " + mcase);
+            Log.e(TAG, "sendMessage: Unknown Message type: " + mcase);
             // TODO This should never happen...
         }
 
@@ -106,7 +106,7 @@ public class NetHandler implements HighLevelNetworkHandler {
         if (handler != null) {
             handler.sendBytes(msgbytes);
         } else {
-            Log.e(TAG, "Trying to send message without connected handler.");
+            Log.e(TAG, "sendMessage: Trying to send message without connected handler.");
             // TODO Give indication to caller?
         }
     }
@@ -138,7 +138,7 @@ public class NetHandler implements HighLevelNetworkHandler {
     @Override
     public void createSession() {
         if (status != Status.CONNECTED_NO_SESSION) {
-            Log.e(TAG, "Trying to create session while not in CONNECTED_NO_SESSION state. Doing nothing");
+            Log.e(TAG, "createSession: Trying to create session while not in CONNECTED_NO_SESSION state. Doing nothing");
             return;
         }
         Log.d(TAG, "createSession: Trying to create session");
@@ -155,7 +155,7 @@ public class NetHandler implements HighLevelNetworkHandler {
     @Override
     public void joinSession(String secretToken) {
         if (status != Status.CONNECTED_NO_SESSION) {
-            Log.e(TAG, "Trying to join session while not in CONNECTED_NO_SESSION state. Doing nothing");
+            Log.e(TAG, "joinSession: Trying to join session while not in CONNECTED_NO_SESSION state. Doing nothing");
             return;
         }
         secret = secretToken;
@@ -178,7 +178,7 @@ public class NetHandler implements HighLevelNetworkHandler {
                 && status != Status.PARTNER_READER_MODE
                 && status != Status.SESSION_READY
                 && status != Status.WAITING_FOR_PARTNER) {
-            Log.e(TAG, "Trying to leave session while not in a session. Doing nothing");
+            Log.e(TAG, "leaveSession: Trying to leave session while not in a session. Doing nothing");
             return;
         }
         Log.d(TAG, "leaveSession: Trying to leave session with secret " + secret);
@@ -197,7 +197,7 @@ public class NetHandler implements HighLevelNetworkHandler {
     @Override
     public void sendAPDUMessage(byte[] apdu) {
         if (status != Status.PARTNER_READER_MODE) {
-            Log.e(TAG, "Trying to send APDU message to partner who is not in reader mode. Doing nothing.");
+            Log.e(TAG, "sendAPDUMessage: Trying to send APDU message to partner who is not in reader mode. Doing nothing.");
             return;
         }
         // Prepare message
@@ -209,13 +209,13 @@ public class NetHandler implements HighLevelNetworkHandler {
         sendMessage(apduMessage.build(), MessageCase.NFCDATA);
 
         // Log
-        Log.d(TAG, "sent APDU message");
+        Log.d(TAG, "sendAPDUMessage: sent APDU message");
     }
 
     @Override
     public void sendAPDUReply(byte[] nfcdata) {
         if (status != Status.PARTNER_APDU_MODE) {
-            Log.e(TAG, "Trying to send APDU reply to partner who is not in APDU mode. Doing nothing.");
+            Log.e(TAG, "sendAPDUReply: Trying to send APDU reply to partner who is not in APDU mode. Doing nothing.");
             return;
         }
         C2C.NFCData.Builder reply = C2C.NFCData.newBuilder();
@@ -230,6 +230,7 @@ public class NetHandler implements HighLevelNetworkHandler {
     // Session status management
     @Override
     public void confirmSessionCreation(String secretToken) {
+        Log.d(TAG, "confirmSessionCreation: Session created with token " + secretToken);
         secret = secretToken;
         status = Status.WAITING_FOR_PARTNER;
         notifyNotImplemented(); // TODO Implement
