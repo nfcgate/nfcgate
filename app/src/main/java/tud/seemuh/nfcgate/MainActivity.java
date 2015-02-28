@@ -262,7 +262,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             this.setTitle("You clicked connect");
             mConnStatus.setText("Server status: Connecting - (token: )");
             mPartnerDevice.setText("Partner status: waiting");
-            mConnectionClient = NetHandler.getInstance().connect(mIP.getText().toString(), port); // TODO is this correct?
+            mConnectionClient = NetHandler.getInstance().connect(mIP.getText().toString(), port);
             mConnectionClient.createSession();
             // Todo notify user about the token the server assigned him -> will be displayed at mConnStatus
         }
@@ -275,8 +275,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             mJoinSession.setEnabled(true);
             this.setTitle("You clicked disconnect");
 
-            // TODO Use actual secret
-            mConnectionClient.leaveSession(token);
+            mConnectionClient.leaveSession();
         }
     }
 
@@ -303,8 +302,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             mConnecttoSession.setEnabled(true);
             this.setTitle("You clicked disconnect");
 
-            mConnectionClient.leaveSession(token);
-            // TODO Make sure correct token is used here
+            mConnectionClient.leaveSession();
         }
     }
 

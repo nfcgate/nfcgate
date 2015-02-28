@@ -15,6 +15,7 @@ public class NetHandler implements HighLevelNetworkHandler {
 
     private LowLevelNetworkHandler handler;
     private static NetHandler mInstance = null;
+    private String secret;
 
 
     // Helper functions
@@ -43,6 +44,10 @@ public class NetHandler implements HighLevelNetworkHandler {
         dataMsg.setErrcode(C2S.Data.DataErrorCode.ERROR_NOERROR);
 
         return dataMsg.build();
+    }
+
+    public void setSecret(String secretToken) {
+        secret = secretToken;
     }
 
     private void sendMessage(Message msg, MessageCase mcase) {
@@ -142,7 +147,7 @@ public class NetHandler implements HighLevelNetworkHandler {
     }
 
     @Override
-    public void joinSession(String secret) {
+    public void joinSession(String secretToken) {
         Log.d(TAG, "joinSession: Trying to join session with secret " + secret);
         // Create a message builder and fill in the relevant data
         C2S.Session.Builder sessionMessage = C2S.Session.newBuilder();
@@ -152,10 +157,11 @@ public class NetHandler implements HighLevelNetworkHandler {
 
         // Send the message
         sendMessage(sessionMessage.build(), MessageCase.SESSION);
+        secret = secretToken;
     }
 
     @Override
-    public void leaveSession(String secret) {
+    public void leaveSession() {
         Log.d(TAG, "leaveSession: Trying to leave session with secret " + secret);
         // Create a message builder and fill in the relevant data
         C2S.Session.Builder sessionMessage = C2S.Session.newBuilder();

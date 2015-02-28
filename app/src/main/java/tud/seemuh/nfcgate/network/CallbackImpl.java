@@ -242,6 +242,8 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_CREATE_SUCCESS) {
             Log.e(TAG, "handleSession: SESSION_CREATE_SUCCESS: Not implemented");
+            // Notify handler about session secret
+            Handler.setSecret(msg.getSessionSecret());
             Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_JOIN_FAIL) {
