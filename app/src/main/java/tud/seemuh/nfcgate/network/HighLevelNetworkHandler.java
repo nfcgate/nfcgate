@@ -25,6 +25,16 @@ public interface HighLevelNetworkHandler {
 
     public void sessionPartnerLeft();
 
+    public void sessionPartnerAPDUModeOn();
+
+    public void sessionPartnerReaderModeOn();
+
+    public void sessionPartnerAPDUModeOff();
+
+    public void sessionPartnerReaderModeOff();
+
+    public void sessionPartnerNFCLost();
+
     public void sessionCreateFailed(C2S.Session.SessionErrorCode errcode);
 
     public void sessionJoinFailed(C2S.Session.SessionErrorCode errcode);

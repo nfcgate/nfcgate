@@ -189,29 +189,29 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
             Log.e(TAG, "handleStatus: Other party sent UNKNOWN_MESSAGE. Doing nothing");
             // TODO Implement
         }
-        else if (msg.getCode() == StatusCode.READER_FOUND) {
-            Log.e(TAG, "handleStatus: Other party sent READER_FOUND. Doing nothing");
-            // TODO Implement
-        }
-        else if (msg.getCode() == StatusCode.READER_REMOVED) {
-            Log.e(TAG, "handleStatus: Other party sent READER_REMOVED. Doing nothing");
-            // TODO Implement
-        }
-        else if (msg.getCode() == StatusCode.CARD_FOUND) {
-            Log.e(TAG, "handleStatus: Other party sent CARD_FOUND. Doing nothing");
-            // TODO Implement
-        }
-        else if (msg.getCode() == StatusCode.CARD_REMOVED) {
-            Log.e(TAG, "handleStatus: Other party sent CARD_REMOVED. Doing nothing");
-            // TODO Implement
-        }
-        else if (msg.getCode() == StatusCode.NFC_NO_CONN) {
-            Log.e(TAG, "handleStatus: Other party sent NFC_NO_CONN. Doing nothing");
-            // TODO Implement
-        }
         else if (msg.getCode() == StatusCode.INVALID_MSG_FMT) {
             Log.e(TAG, "handleStatus: Other party sent INVALID_MSG_FMT. Doing nothing");
             // TODO Implement
+        }
+        else if (msg.getCode() == StatusCode.READER_FOUND) {
+            Log.d(TAG, "handleStatus: Other party sent READER_FOUND. Delegating to NetHandler.");
+            Handler.sessionPartnerAPDUModeOn();
+        }
+        else if (msg.getCode() == StatusCode.READER_REMOVED) {
+            Log.d(TAG, "handleStatus: Other party sent READER_REMOVED. Delegating to NetHandler.");
+            Handler.sessionPartnerAPDUModeOff();
+        }
+        else if (msg.getCode() == StatusCode.CARD_FOUND) {
+            Log.d(TAG, "handleStatus: Other party sent CARD_FOUND. Delegating to NetHandler.");
+            Handler.sessionPartnerReaderModeOn();
+        }
+        else if (msg.getCode() == StatusCode.CARD_REMOVED) {
+            Log.d(TAG, "handleStatus: Other party sent CARD_REMOVED. Delegating to NetHandler.");
+            Handler.sessionPartnerReaderModeOff();
+        }
+        else if (msg.getCode() == StatusCode.NFC_NO_CONN) {
+            Log.d(TAG, "handleStatus: Other party sent NFC_NO_CONN. Delegating to NetHandler.");
+            Handler.sessionPartnerNFCLost();
         }
         else {
             // Not implemented
@@ -223,36 +223,36 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
     private void handleSession(C2S.Session msg) {
         if (msg.getOpcode() == SessionOpcode.SESSION_CREATE_FAIL) {
-            Log.e(TAG, "handleSession: SESSION_CREATE_FAIL: Delegating to Handler");
+            Log.d(TAG, "handleSession: SESSION_CREATE_FAIL: Delegating to Handler");
             Handler.sessionCreateFailed(msg.getErrcode());
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_CREATE_SUCCESS) {
-            Log.e(TAG, "handleSession: SESSION_CREATE_SUCCESS: Delegating to Handler");
+            Log.d(TAG, "handleSession: SESSION_CREATE_SUCCESS: Delegating to Handler");
             // Notify handler about session secret
             Handler.confirmSessionCreation(msg.getSessionSecret());
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_JOIN_FAIL) {
-            Log.e(TAG, "handleSession: SESSION_JOIN_FAIL: Delegating to Handler");
+            Log.d(TAG, "handleSession: SESSION_JOIN_FAIL: Delegating to Handler");
             Handler.sessionJoinFailed(msg.getErrcode());
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_JOIN_SUCCESS) {
-            Log.e(TAG, "handleSession: SESSION_JOIN_SUCCESS: Delegating to Handler");
+            Log.d(TAG, "handleSession: SESSION_JOIN_SUCCESS: Delegating to Handler");
             Handler.confirmSessionJoin();
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_LEAVE_FAIL) {
-            Log.e(TAG, "handleSession: SESSION_LEAVE_FAIL: Delegating to Handler");
+            Log.d(TAG, "handleSession: SESSION_LEAVE_FAIL: Delegating to Handler");
             Handler.sessionLeaveFailed(msg.getErrcode());
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_LEAVE_SUCCESS) {
-            Log.e(TAG, "handleSession: SESSION_LEAVE_SUCCESS: Delegating to Handler");
+            Log.d(TAG, "handleSession: SESSION_LEAVE_SUCCESS: Delegating to Handler");
             Handler.confirmSessionLeave();
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_PEER_JOINED) {
-            Log.e(TAG, "handleSession: SESSION_PEER_JOINED: Delegating to Handler");
+            Log.d(TAG, "handleSession: SESSION_PEER_JOINED: Delegating to Handler");
             Handler.sessionPartnerJoined();
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_PEER_LEFT) {
-            Log.e(TAG, "handleSession: SESSION_PEER_LEFT: Delegating to Handler");
+            Log.d(TAG, "handleSession: SESSION_PEER_LEFT: Delegating to Handler");
             Handler.sessionPartnerLeft();
         }
         else {

@@ -55,6 +55,11 @@ public class NetHandler implements HighLevelNetworkHandler {
     }
 
     private void sendMessage(Message msg, MessageCase mcase) {
+        if (status == Status.NOT_CONNECTED) {
+            Log.e(TAG, "Trying to send message while not connected. Failed, doing nothing");
+            return;
+        }
+
         // Prepare a wrapper message
         Wrapper.Builder WrapperMsg = Wrapper.newBuilder();
 
@@ -132,6 +137,10 @@ public class NetHandler implements HighLevelNetworkHandler {
     // Session management
     @Override
     public void createSession() {
+        if (status != Status.CONNECTED_NO_SESSION) {
+            Log.e(TAG, "Trying to create session while not in CONNECTED_NO_SESSION state. Doing nothing");
+            return;
+        }
         Log.d(TAG, "createSession: Trying to create session");
         // Create a message builder and fill in the relevant data
         C2S.Session.Builder sessionMessage = C2S.Session.newBuilder();
@@ -145,6 +154,10 @@ public class NetHandler implements HighLevelNetworkHandler {
 
     @Override
     public void joinSession(String secretToken) {
+        if (status != Status.CONNECTED_NO_SESSION) {
+            Log.e(TAG, "Trying to join session while not in CONNECTED_NO_SESSION state. Doing nothing");
+            return;
+        }
         Log.d(TAG, "joinSession: Trying to join session with secret " + secret);
         // Create a message builder and fill in the relevant data
         C2S.Session.Builder sessionMessage = C2S.Session.newBuilder();
@@ -160,6 +173,13 @@ public class NetHandler implements HighLevelNetworkHandler {
 
     @Override
     public void leaveSession() {
+        if (status != Status.PARTNER_APDU_MODE
+                && status != Status.PARTNER_READER_MODE
+                && status != Status.SESSION_READY
+                && status != Status.WAITING_FOR_PARTNER) {
+            Log.e(TAG, "Trying to leave session while not in a session. Doing nothing");
+            return;
+        }
         Log.d(TAG, "leaveSession: Trying to leave session with secret " + secret);
         // Create a message builder and fill in the relevant data
         C2S.Session.Builder sessionMessage = C2S.Session.newBuilder();
@@ -175,6 +195,10 @@ public class NetHandler implements HighLevelNetworkHandler {
     // NFC Message passing
     @Override
     public void sendAPDUMessage(byte[] apdu) {
+        if (status != Status.PARTNER_READER_MODE) {
+            Log.e(TAG, "Trying to send APDU message to partner who is not in reader mode. Doing nothing.");
+            return;
+        }
         // Prepare message
         C2C.NFCData.Builder apduMessage = C2C.NFCData.newBuilder();
         apduMessage.setDataSource(C2C.NFCData.DataSource.READER);
@@ -189,6 +213,10 @@ public class NetHandler implements HighLevelNetworkHandler {
 
     @Override
     public void sendAPDUReply(byte[] nfcdata) {
+        if (status != Status.PARTNER_APDU_MODE) {
+            Log.e(TAG, "Trying to send APDU reply to partner who is not in APDU mode. Doing nothing.");
+            return;
+        }
         C2C.NFCData.Builder reply = C2C.NFCData.newBuilder();
         ByteString replyBytes = ByteString.copyFrom(nfcdata);
         reply.setDataBytes(replyBytes);
@@ -227,6 +255,36 @@ public class NetHandler implements HighLevelNetworkHandler {
     @Override
     public void sessionPartnerLeft() {
         status = Status.WAITING_FOR_PARTNER;
+        notifyNotImplemented(); // TODO Implement
+    }
+
+    @Override
+    public void sessionPartnerReaderModeOn() {
+        status = Status.PARTNER_READER_MODE;
+        notifyNotImplemented(); // TODO Implement
+    }
+
+    @Override
+    public void sessionPartnerAPDUModeOn() {
+        status = Status.PARTNER_APDU_MODE;
+        notifyNotImplemented(); // TODO Implement
+    }
+
+    @Override
+    public void sessionPartnerReaderModeOff() {
+        status = Status.SESSION_READY;
+        notifyNotImplemented(); // TODO Implement
+    }
+
+    @Override
+    public void sessionPartnerAPDUModeOff() {
+        status = Status.SESSION_READY;
+        notifyNotImplemented(); // TODO Implement
+    }
+
+    @Override
+    public void sessionPartnerNFCLost() {
+        status = Status.SESSION_READY;
         notifyNotImplemented(); // TODO Implement
     }
 
