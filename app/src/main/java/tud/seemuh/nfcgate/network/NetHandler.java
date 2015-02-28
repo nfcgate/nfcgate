@@ -11,7 +11,7 @@ import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
 
 public class NetHandler implements HighLevelNetworkHandler {
-    private final static String TAG = "HighLevelNetworkHandler";
+    private final static String TAG = "NetHandler";
 
     private LowLevelNetworkHandler handler;
     private static NetHandler mInstance = null;
@@ -24,9 +24,11 @@ public class NetHandler implements HighLevelNetworkHandler {
         WAITING_FOR_PARTNER,
         SESSION_READY,
         SESSION_LEAVE_SENT,
+        PARTNER_APDU_MODE,
+        PARTNER_READER_MODE
     }
 
-    Status status;
+    private Status status;
 
     public NetHandler() {
         status = Status.NOT_CONNECTED;
@@ -37,15 +39,6 @@ public class NetHandler implements HighLevelNetworkHandler {
     public static NetHandler getInstance() {
         if(mInstance == null) mInstance = new NetHandler();
         return mInstance;
-    }
-
-    private void sendStatusMessage(C2C.Status.StatusCode code) {
-        // Create error message
-        C2C.Status.Builder ErrorMsg = C2C.Status.newBuilder();
-        ErrorMsg.setCode(code);
-
-        // Send message
-        sendMessage(ErrorMsg.build(), MessageCase.STATUS);
     }
 
     private C2S.Data wrapAsDataMessage(byte[] msg) {
@@ -77,21 +70,25 @@ public class NetHandler implements HighLevelNetworkHandler {
 
             // Finally, pack the data message in an outer wrapper message
             WrapperMsg.setData(data);
+
         } else if (mcase == MessageCase.SESSION) {
             // This is a C2S data, no need to wrap as data message
             WrapperMsg.setSession((C2S.Session) msg);
+
         } else if (mcase == MessageCase.STATUS) {
             // This is a C2C message, wrap as data message as before
             Wrapper.Builder innerWrapperMsg = Wrapper.newBuilder();
             innerWrapperMsg.setStatus((C2C.Status) msg);
             C2S.Data data = wrapAsDataMessage(innerWrapperMsg.build().toByteArray());
             WrapperMsg.setData(data);
+
         } else if (mcase == MessageCase.ANTICOL) {
             // This is a C2C message, wrap as data message as before
             Wrapper.Builder innerWrapperMsg = Wrapper.newBuilder();
             innerWrapperMsg.setAnticol((C2C.Anticol) msg);
             C2S.Data data = wrapAsDataMessage(innerWrapperMsg.build().toByteArray());
             WrapperMsg.setData(data);
+
         } else {
             Log.e(TAG, "Unknown Message type: " + mcase);
             // TODO This should never happen...
@@ -109,6 +106,16 @@ public class NetHandler implements HighLevelNetworkHandler {
         }
     }
 
+    private void sendStatusMessage(C2C.Status.StatusCode code) {
+        // Create error message
+        C2C.Status.Builder ErrorMsg = C2C.Status.newBuilder();
+        ErrorMsg.setCode(code);
+
+        // Send message
+        sendMessage(ErrorMsg.build(), MessageCase.STATUS);
+    }
+
+    // Connection management
     @Override
     public HighLevelNetworkHandler connect(String addr, int port) {
         handler = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(addr, port);
@@ -122,31 +129,7 @@ public class NetHandler implements HighLevelNetworkHandler {
         status = Status.NOT_CONNECTED;
     }
 
-    @Override
-    public void sendAPDUMessage(byte[] apdu) {
-        // Prepare message
-        C2C.NFCData.Builder apduMessage = C2C.NFCData.newBuilder();
-        apduMessage.setDataSource(C2C.NFCData.DataSource.READER);
-        apduMessage.setDataBytes(ByteString.copyFrom(apdu));
-
-        // Send prepared message
-        sendMessage(apduMessage.build(), MessageCase.NFCDATA);
-
-        // Log
-        Log.d(TAG, "sent APDU message");
-    }
-
-    @Override
-    public void sendAPDUReply(byte[] nfcdata) {
-        C2C.NFCData.Builder reply = C2C.NFCData.newBuilder();
-        ByteString replyBytes = ByteString.copyFrom(nfcdata);
-        reply.setDataBytes(replyBytes);
-        reply.setDataSource(C2C.NFCData.DataSource.CARD);
-
-        // Send reply
-        sendMessage(reply.build(), MessageCase.NFCDATA);
-    }
-
+    // Session management
     @Override
     public void createSession() {
         Log.d(TAG, "createSession: Trying to create session");
@@ -189,6 +172,33 @@ public class NetHandler implements HighLevelNetworkHandler {
         status = Status.SESSION_LEAVE_SENT;
     }
 
+    // NFC Message passing
+    @Override
+    public void sendAPDUMessage(byte[] apdu) {
+        // Prepare message
+        C2C.NFCData.Builder apduMessage = C2C.NFCData.newBuilder();
+        apduMessage.setDataSource(C2C.NFCData.DataSource.READER);
+        apduMessage.setDataBytes(ByteString.copyFrom(apdu));
+
+        // Send prepared message
+        sendMessage(apduMessage.build(), MessageCase.NFCDATA);
+
+        // Log
+        Log.d(TAG, "sent APDU message");
+    }
+
+    @Override
+    public void sendAPDUReply(byte[] nfcdata) {
+        C2C.NFCData.Builder reply = C2C.NFCData.newBuilder();
+        ByteString replyBytes = ByteString.copyFrom(nfcdata);
+        reply.setDataBytes(replyBytes);
+        reply.setDataSource(C2C.NFCData.DataSource.CARD);
+
+        // Send reply
+        sendMessage(reply.build(), MessageCase.NFCDATA);
+    }
+
+    // Session status management
     @Override
     public void confirmSessionCreation(String secretToken) {
         secret = secretToken;
@@ -238,6 +248,7 @@ public class NetHandler implements HighLevelNetworkHandler {
         notifyNotImplemented(); // TODO Implement
     }
 
+    // Notification Messages
     @Override
     public void notifyReaderFound() {
         sendStatusMessage(C2C.Status.StatusCode.READER_FOUND);
@@ -279,6 +290,11 @@ public class NetHandler implements HighLevelNetworkHandler {
     }
 
     @Override
+    public void notifyNFCNotConnected() {
+        sendStatusMessage(C2C.Status.StatusCode.NFC_NO_CONN);
+    }
+
+    @Override
     public void sendKeepaliveMessage() {
         sendStatusMessage(C2C.Status.StatusCode.KEEPALIVE_REQ);
     }
@@ -286,10 +302,5 @@ public class NetHandler implements HighLevelNetworkHandler {
     @Override
     public void sendKeepaliveReply() {
         sendStatusMessage(C2C.Status.StatusCode.KEEPALIVE_REP);
-    }
-
-    @Override
-    public void notifyNFCNotConnected() {
-        sendStatusMessage(C2C.Status.StatusCode.NFC_NO_CONN);
     }
 }
