@@ -62,6 +62,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
     private static String joinSessionMessage = "Join Session";
     private static String createSessionMessage = "Create Session";
+    private static String leaveSessionMessage = "Leave Session";
 
     // max. port possible
     private static int maxPort = 65535;
@@ -257,9 +258,9 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             return;
         }
 
-        if (!mConnecttoSession.getText().equals("Leave Session")) // TODO Maybe refactor this to use constants?
+        if (!mConnecttoSession.getText().equals(leaveSessionMessage))
         {
-            mConnecttoSession.setText("Leave Session"); // TODO Maybe refactor this to use constants?
+            mConnecttoSession.setText(leaveSessionMessage);
             mJoinSession.setEnabled(false);
             this.setTitle("You clicked connect");
             mConnStatus.setText("Server status: Connecting - (token: )");
@@ -289,11 +290,10 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             return;
         }
 
-        if (!mJoinSession.getText().equals("Leave Session"))
+        if (!mJoinSession.getText().equals(leaveSessionMessage))
         {
             // Display dialog to enter the token
-            showTokenDialog();
-            // all logic is implemented below in "onTokenDialogPositiveClick" method
+            showTokenDialog();   // all logic is implemented below in "onTokenDialogPositiveClick" method
         }
         else
         {
@@ -369,7 +369,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         // User touched the dialog's submit button
         Toast.makeText(this, "You clicked submit, server is now processing your token...", Toast.LENGTH_LONG).show();
 
-        mJoinSession.setText("Leave Session");
+        mJoinSession.setText(leaveSessionMessage);
         mConnecttoSession.setEnabled(false);
         this.setTitle("You clicked connect");
         mConnStatus.setText("Server status: Connecting");
