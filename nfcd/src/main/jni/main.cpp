@@ -3,6 +3,9 @@
 #include "nfcd.h"
 #include <dlfcn.h>
 #include <unistd.h>
+#include <stdio.h>
+
+bool patchEnabled = true;
 
 static void onHostEmulationLoad(JNIEnv *jni, jclass _class, void *data);
 static void hookNative();
@@ -24,6 +27,7 @@ static void onHostEmulationLoad(JNIEnv *jni, jclass _class, void *data) {
     // hooking into the java and native part of the nfcd
     hookJava(jni, _class);
     hookNative();
+    ipc_init();
 }
 
 
@@ -39,7 +43,7 @@ static void hookNative() {
     // find function pointer to NFC_SetStaticRfCback symbol and hook into it
     void *fptr = dlsym(handle, "NFC_SetStaticRfCback");
     if(fptr) {
-        MSHookFunction(fptr, (void*)&newSetRfCback, (void**)&oldSetRfCback);
+        MSHookFunction(fptr, (void*)&hook_SetRfCback, (void**)&nci_SetRfCback);
         LOGI("hooked: NFC_SetStaticRfCback");
     } else {
         LOGE("could NOT hook: NFC_SetStaticRfCback");
@@ -49,11 +53,21 @@ static void hookNative() {
     ce_cb = (tCE_CB*)dlsym(handle, "ce_cb");
 
     // find NFC_SetConfig
-    void *fptr2 = dlsym(handle, "NFC_SetConfig");
-    if(fptr2) {
-        MSHookFunction(fptr2, (void *) &newNfcSetConfig, (void **) &oldNfcSetConfig);
+    fptr = dlsym(handle, "NFC_SetConfig");
+    if(fptr) {
+        MSHookFunction(fptr, (void *) &hook_NfcSetConfig, (void **) &nci_NfcSetConfig);
         LOGI("hooked: NFC_SetConfig()");
     } else {
         LOGE("could NOT hook: NFC_SetConfig()");
     }
+}
+
+void loghex(const char *desc, uint8_t *data, int len) {
+    int strlen = len * 3 + 1;
+    char *msg = (char *) malloc((size_t) strlen);
+    for (uint8_t i = 0; i < len; i++) {
+        sprintf(msg + i * 3, " %02x", (unsigned int) *(data + i));
+    }
+    LOGI("%s%s",desc, msg);
+    free(msg);
 }

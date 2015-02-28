@@ -1,11 +1,18 @@
 
 #include "nfcd.h"
 
+
+static jstring (*oldfindSelectAid)(JNIEnv *, jobject, jbyteArray);
+
 /**
 * Hook Java Code to overwrite findSelectAid() behavior
 **/
 static jstring $HostEmulationManager$findSelectAid(JNIEnv *jni, jobject _this, jbyteArray byteArr) {
-    return jni->NewStringUTF("F0010203040506");
+    if(patchEnabled) {
+        // F0010203040506 is a aid registered by the nfcgate hce service
+        return jni->NewStringUTF("F0010203040506");
+    }
+    return oldfindSelectAid(jni, _this, byteArr);
 }
 
 
@@ -14,9 +21,8 @@ void hookJava(JNIEnv *jni, jclass _class) {
     jmethodID method = jni->GetMethodID(_class, "findSelectAid", "([B)Ljava/lang/String;");
     if (method != NULL) {
         LOGI("captain hook");
-        MSJavaHookMethod(jni, _class, method, (void *) &$HostEmulationManager$findSelectAid, NULL);
+        MSJavaHookMethod(jni, _class, method, (void *) &$HostEmulationManager$findSelectAid, (void**)&oldfindSelectAid);
     } else {
-        LOGE("nope");
         LOGI("Exception");
         jni->ExceptionDescribe();
         jni->ExceptionClear();
