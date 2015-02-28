@@ -14,7 +14,9 @@ public interface HighLevelNetworkHandler {
 
     public void joinSession(String secret);
 
-    public void leaveSession(String secret);
+    public void leaveSession();
+
+    public void setSecret(String secret);
 
     // NFC messages
     public void sendAPDUMessage(byte[] apdu);
