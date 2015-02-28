@@ -193,41 +193,49 @@ public class NetHandler implements HighLevelNetworkHandler {
     public void confirmSessionCreation(String secretToken) {
         secret = secretToken;
         status = Status.WAITING_FOR_PARTNER;
+        notifyNotImplemented(); // TODO Implement
     }
 
     @Override
     public void confirmSessionJoin() {
         status = Status.SESSION_READY;
+        notifyNotImplemented(); // TODO Implement
     }
 
     @Override
     public void confirmSessionLeave() {
         status = Status.CONNECTED_NO_SESSION;
+        notifyNotImplemented(); // TODO Implement
     }
 
     @Override
     public void sessionPartnerJoined() {
         status = Status.SESSION_READY;
+        notifyNotImplemented(); // TODO Implement
     }
 
     @Override
     public void sessionPartnerLeft() {
         status = Status.WAITING_FOR_PARTNER;
+        notifyNotImplemented(); // TODO Implement
     }
 
     @Override
     public void sessionCreateFailed(C2S.Session.SessionErrorCode errcode) {
         status = Status.CONNECTED_NO_SESSION;
+        notifyNotImplemented(); // TODO Implement
     }
 
     @Override
     public void sessionJoinFailed(C2S.Session.SessionErrorCode errcode) {
         status = Status.CONNECTED_NO_SESSION;
+        notifyNotImplemented(); // TODO Implement
     }
 
     @Override
     public void sessionLeaveFailed(C2S.Session.SessionErrorCode errcode) {
         status = Status.WAITING_FOR_PARTNER; // TODO This may result in an inconsistent state. Handle that better
+        notifyNotImplemented(); // TODO Implement
     }
 
     @Override

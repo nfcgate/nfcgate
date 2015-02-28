@@ -223,50 +223,41 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
     private void handleSession(C2S.Session msg) {
         if (msg.getOpcode() == SessionOpcode.SESSION_CREATE_FAIL) {
-            // TODO is it possible to display a popup notification to the user in this case?
-            Log.e(TAG, "handleSession: SESSION_CREATE_FAIL: Not implemented");
+            Log.e(TAG, "handleSession: SESSION_CREATE_FAIL: Delegating to Handler");
             Handler.sessionCreateFailed(msg.getErrcode());
-            Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_CREATE_SUCCESS) {
-            Log.e(TAG, "handleSession: SESSION_CREATE_SUCCESS: Not implemented");
+            Log.e(TAG, "handleSession: SESSION_CREATE_SUCCESS: Delegating to Handler");
             // Notify handler about session secret
             Handler.confirmSessionCreation(msg.getSessionSecret());
-            Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_JOIN_FAIL) {
-            Log.e(TAG, "handleSession: SESSION_JOIN_FAIL: Not implemented");
+            Log.e(TAG, "handleSession: SESSION_JOIN_FAIL: Delegating to Handler");
             Handler.sessionJoinFailed(msg.getErrcode());
-            Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_JOIN_SUCCESS) {
-            Log.e(TAG, "handleSession: SESSION_JOIN_SUCCESS: Not implemented");
+            Log.e(TAG, "handleSession: SESSION_JOIN_SUCCESS: Delegating to Handler");
             Handler.confirmSessionJoin();
-            Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_LEAVE_FAIL) {
-            Log.e(TAG, "handleSession: SESSION_LEAVE_FAIL: Not implemented");
+            Log.e(TAG, "handleSession: SESSION_LEAVE_FAIL: Delegating to Handler");
             Handler.sessionLeaveFailed(msg.getErrcode());
-            Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_LEAVE_SUCCESS) {
-            Log.e(TAG, "handleSession: SESSION_LEAVE_SUCCESS: Not implemented");
+            Log.e(TAG, "handleSession: SESSION_LEAVE_SUCCESS: Delegating to Handler");
             Handler.confirmSessionLeave();
-            Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_PEER_JOINED) {
-            Log.e(TAG, "handleSession: SESSION_PEER_JOINED: Not implemented");
+            Log.e(TAG, "handleSession: SESSION_PEER_JOINED: Delegating to Handler");
             Handler.sessionPartnerJoined();
-            Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_PEER_LEFT) {
-            Log.e(TAG, "handleSession: SESSION_PEER_LEFT: Not implemented");
+            Log.e(TAG, "handleSession: SESSION_PEER_LEFT: Delegating to Handler");
             Handler.sessionPartnerLeft();
-            Handler.notifyNotImplemented(); // TODO Implement
         }
         else {
             Log.e(TAG, "handleSession: Unknown Opcode!");
-            Handler.notifyNotImplemented(); // TODO Implement
+            Handler.notifyInvalidMsgFormat();
         }
     }
 
