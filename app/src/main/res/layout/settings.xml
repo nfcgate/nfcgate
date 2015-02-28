@@ -76,7 +76,7 @@
             android:layout_gravity="left|center"
             android:layout_columnSpan="2"
             android:gravity="right"
-            android:inputType="number" />
+            android:inputType="text" />
 
         <TextView
             android:layout_width="wrap_content"
