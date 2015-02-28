@@ -3,13 +3,11 @@ package tud.seemuh.nfcgate;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.nfc.NfcAdapter;
+import android.nfc.NfcAdapter.ReaderCallback;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
 import android.nfc.tech.Ndef;
@@ -25,24 +23,20 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import tud.seemuh.nfcgate.network.CallbackImpl;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.network.NetHandler;
-import tud.seemuh.nfcgate.network.WiFiDirectBroadcastReceiver;
 
-
-public class MainActivity extends Activity implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener{
+public class MainActivity extends Activity implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener, ReaderCallback{
 
     private NfcAdapter mAdapter;
     private IntentFilter mIntentFilter = new IntentFilter();
     private PendingIntent mPendingIntent;
     private IntentFilter[] mFilters;
     private String[][] mTechLists;
-
-    //WiFi Direct
-    private WifiP2pManager.Channel mChannel;
-    private WifiP2pManager mManager;
-    private BroadcastReceiver mReceiver = null;
 
     //Connection Client
     protected HighLevelNetworkHandler mConnectionClient;
@@ -65,12 +59,20 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     private Button mReset, mConnecttoSession, mAbort, mJoinSession;
     private TextView mConnStatus, mInfo, mDebuginfo, mIP, mPort, mPartnerDevice;
 
+    // regex for IP checking
+    private static final String regexIPpattern ="^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+
+    // max. port possible
+    private static int maxPort = 65535;
+    int globalPort = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mAdapter = NfcAdapter.getDefaultAdapter(this);
+
         mIntentFilter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
 
         if (!mAdapter.isEnabled())
@@ -78,11 +80,6 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             // NFC is not enabled -> "Tell the user to enable NFC"
             showEnableNFCDialog();
         }
-
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         // Create a generic PendingIntent that will be delivered to this activity.
         // The NFC stack will fill in the intent with the details of the discovered tag before
@@ -101,10 +98,6 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
                 new String[] {IsoDep.class.getName()}
                 //we could add all of the Types from the tech.xml here
         };
-
-        //WiFi Direct
-        mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        mChannel = mManager.initialize(this, getMainLooper(), null);
 
         // Create Buttons & TextViews
         mReset = (Button) findViewById(R.id.resetstatus);
@@ -130,6 +123,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
         if (mAdapter != null && mAdapter.isEnabled()) {
             mAdapter.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
+
             if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
                 Log.i("NFCGATE_DEBUG", "onResume(): starting onNewIntent()...");
                 onNewIntent(getIntent());
@@ -143,16 +137,22 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             SharedPreferences.Editor editor = preferences.edit();
             ip = preferences.getString("ip", "192.168.178.31");
             port = preferences.getInt("port",5566);
+            globalPort = preferences.getInt("port",5566);
             mIP.setText(ip);
             mPort.setText(String.valueOf(port));
+
+            //ReaderMode
+            boolean lReaderMode = preferences.getBoolean("mReaderModeEnabled", false);
+            if(lReaderMode) {
+                mAdapter.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
+            } else {
+                mAdapter.disableReaderMode(this);
+            }
+
             chgsett = false;
             editor.putBoolean("changed_settings", chgsett);
             editor.commit();
         }
-
-        //WiFi Direct
-        mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
-        registerReceiver(mReceiver, mIntentFilter);
 
         mConnecttoSession.requestFocus();
     }
@@ -160,11 +160,24 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     @Override
     public void onPause() {
         super.onPause();
-        //WiFi Direct
-        unregisterReceiver(mReceiver);
 
-        //TODO
-        //kill our threads here?
+        mAdapter.disableForegroundDispatch(this);
+        //TODO -> kill our threads here?
+    }
+
+    /**
+     * Function to get tag when readerMode is enabled
+     * @param tag
+     */
+    @Override
+    public void onTagDiscovered(Tag tag) {
+
+        Log.i("NFCGATE_DEBUG","Discovered tag in ReaderMode");
+        mNetCallback.setTag(tag);
+        //Set the view to update the GUI from another thread
+        mNetCallback.setUpdateView(mDebuginfo);
+
+        //Toast here is not possible -> exception...
     }
 
     @Override
@@ -174,24 +187,21 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             Log.i("NFCGATE_DEBUG","Discovered tag with intent: " + intent);
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
-            String tagId = "";
-
             mNetCallback.setTag(tag);
-            mNetCallback.setUpdateButton(mDebuginfo);
+            //Set the view to update the GUI from another thread
+            mNetCallback.setUpdateView(mDebuginfo);
 
-            mDebuginfo.setText(mDebuginfo + "\n Identified a new Tag: " + tagId);
-            Toast.makeText(this, "Found Tag: " + tagId, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Found Tag", Toast.LENGTH_SHORT).show();
         }
     }
 
-    /** Called when the user touches the button 'ButtonResetClicked application'  -- Code by Tom */
     public void ButtonResetClicked(View view) {
         // reset the entire application by pressing this button
 
         mConnStatus.setText("Server status: Resetting");
-        // ToDo -> really reset network connection
+        // ToDo -> really reset network connection by calling the required method
         mPartnerDevice.setText("Partner status: no device");
-        // Todo -> notify partner on reset method called
+        // Todo -> notify partner on reset method called by calling the required method
         mInfo.setText("Please hold your device next to an NFC tag / reader");
         mDebuginfo.setText("Debugging Output: ");
         this.setTitle("You clicked reset");
@@ -218,14 +228,14 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
         ip = preferences.getString("ip", "192.168.178.31");
         port = preferences.getInt("port",5566);
+        globalPort = preferences.getInt("port",5566);
         mIP.setText(ip);
         mPort.setText(String.valueOf(port));
     }
 
-    /** Called when the user touches the button 'Abort'  -- Code by Tom */
     public void ButtonAbortClicked(View view) {
         // Abort the current connection attempt
-        // TODO Aboard the connection -> properly close network connection
+        // TODO Abort the connection -> properly close network connection by calling the required method
         mJoinSession.setText("Join Session"); // TODO Maybe refactor this to use constants?
         mJoinSession.setEnabled(true);
         mConnecttoSession.setText("Create Session"); // TODO Maybe refactor this to use constants?
@@ -233,30 +243,26 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
         mConnStatus.setText("Server status: Disconnecting");
         mPartnerDevice.setText("Partner status: no device");
-        // Todo -> notify Partner about abort
+        // Todo -> notify Partner about abort by calling the required method
         this.setTitle("You clicked abort");
     }
 
-    /** Called when the user touches the button 'Create Session'  -- Code by Tom */
     public void ButtonCreateSessionClicked(View view) {
         // Create a new Session
+        if (!checkIpPort(mIP.getText().toString(), mPort.getText().toString()))
+        {
+            Toast.makeText(this, "Please enter a valid ip & port", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         if (!mConnecttoSession.getText().equals("Leave Session")) // TODO Maybe refactor this to use constants?
         {
             mConnecttoSession.setText("Leave Session"); // TODO Maybe refactor this to use constants?
             mJoinSession.setEnabled(false);
-
-            String host = mIP.getText().toString();
-            int port;
-            try {
-                port = Integer.parseInt(mPort.getText().toString().trim());
-            } catch (NumberFormatException e) {
-                Toast.makeText(this, "Please enter a valid port", Toast.LENGTH_SHORT).show();
-                return;
-            }
             this.setTitle("You clicked connect");
             mConnStatus.setText("Server status: Connecting - (token: )");
             mPartnerDevice.setText("Partner status: waiting");
-            mConnectionClient = NetHandler.getInstance().connect(host, port);
+            mConnectionClient = NetHandler.getInstance().connect(mIP.getText().toString(), port); // TODO is this correct?
             mConnectionClient.createSession();
             // Todo notify user about the token the server assigned him -> will be displayed at mConnStatus
         }
@@ -274,33 +280,19 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         }
     }
 
-    /** Called when the user touches the button 'Join Session'  -- Code by Tom */
     public void ButtonJoinSessionClicked(View view) {
         // Join an existing session
-        if (!mJoinSession.getText().equals("Leave Session")) // TODO Maybe refactor this to use constants?
+        if (!checkIpPort(mIP.getText().toString(), mPort.getText().toString()))
         {
-            mJoinSession.setText("Leave Session"); // TODO Maybe refactor this to use constants?
-            mConnecttoSession.setEnabled(false);
+            Toast.makeText(this, "Please enter a valid ip & port", Toast.LENGTH_LONG).show();
+            return;
+        }
 
-            String host = mIP.getText().toString(); // TODO Redundant with the previous function. Maybe write utility function?
-            int port;
-            try {
-                port = Integer.parseInt(mPort.getText().toString().trim());
-            } catch (NumberFormatException e) {
-                Toast.makeText(this, "Please enter a valid port", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            this.setTitle("You clicked connect");
-
+        if (!mJoinSession.getText().equals("Leave Session"))
+        {
             // Display dialog to enter the token
             showTokenDialog();
-
-            mConnStatus.setText("Server status: Connecting");
-            mPartnerDevice.setText("Partner status: waiting");
-            mConnectionClient = NetHandler.getInstance().connect(host, port);
-
-            // TODO get actual token
-            mConnectionClient.joinSession(token);
+            // all logic is implemented below in "onTokenDialogPositiveClick" method
         }
         else
         {
@@ -312,7 +304,29 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             this.setTitle("You clicked disconnect");
 
             mConnectionClient.leaveSession(token);
+            // TODO Make sure correct token is used here
         }
+    }
+
+    public boolean checkIpPort(String ip, String port)
+    {
+        boolean validPort = false;
+        boolean gotException = false;
+        boolean validIp = false;
+        Pattern pattern = Pattern.compile(regexIPpattern);
+        Matcher matcher = pattern.matcher(ip);
+        int int_port = 0;
+        try {
+            int_port = Integer.parseInt(port.trim());
+        } catch (NumberFormatException e) {
+            gotException = true;
+        }
+        if (!gotException) {
+            if ((int_port > 0) && (int_port <= maxPort)) validPort = true;
+        }
+        validIp = matcher.matches();
+        if (validPort) globalPort = int_port;
+        return validPort && validIp;
     }
 
     @Override
@@ -328,7 +342,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case  R.id.action_settings:
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                startActivityForResult(new Intent(MainActivity.this, SettingsActivity.class), 0);
                 return true;
             case R.id.action_about:
                 startActivity(new Intent(MainActivity.this, AboutActivity.class));
@@ -350,54 +364,39 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         dialog.show(this.getFragmentManager(), "Enter token: ");
     }
 
-    // The dialog fragment receives a reference to this Activity through the
-    // Fragment.onAttach() callback, which it uses to call the following methods
-    // defined by the token_dialog.NoticeDialogListener interface
     @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        // User touched the dialog's positive button
-        // todo user typed token into field & pressed submit
+    public void onTokenDialogPositiveClick(DialogFragment dialog) {
+        // User touched the dialog's submit button
+        Toast.makeText(this, "You clicked submit, server is now processing your token...", Toast.LENGTH_LONG).show();
+
+        mJoinSession.setText("Leave Session");
+        mConnecttoSession.setEnabled(false);
+        this.setTitle("You clicked connect");
+        mConnStatus.setText("Server status: Connecting");
+        mPartnerDevice.setText("Partner status: waiting");
+        mConnectionClient = NetHandler.getInstance().connect(mIP.getText().toString(), globalPort);
+
+        // TODO Before this point, the token should be saved in the variable "token" (which is defined above)
+        mConnectionClient.joinSession(token);
+
     }
 
     @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
-        // User touched the dialog's negative button
-        Toast.makeText(this, "To abort the connection press the Abort button above", Toast.LENGTH_LONG).show();
+    public void onTokenDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's cancel button
+        Toast.makeText(this, "You clicked cancel, no connection was established...", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onNFCDialogPositiveClick(DialogFragment dialog) {
-        // User touched the dialog's positive button
+        // User touched the dialog's goto settings button
         Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
         startActivity(intent);
 }
 
     @Override
     public void onNFCDialogNegativeClick(DialogFragment dialog) {
-        // User touched the dialog's negative button
-        // Tell the user he is stupid -> the app wont work without NFC enabled...
-        Toast.makeText(this, "Caution! The app won't work without NFC enabled -> please enable NFC in your phone settings", Toast.LENGTH_LONG).show();
+        // User touched the dialog's cancel button
+        Toast.makeText(this, "Caution! The app can't do something useful without NFC enabled -> please enable NFC in your phone settings", Toast.LENGTH_LONG).show();
     }
-
-    /*
-    TODO
-    manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
-
-        @Override
-        public void onSuccess() {
-            Toast.makeText(WiFiDirectActivity.this, "Discovery Initiated",
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onFailure(int reasonCode) {
-            Toast.makeText(WiFiDirectActivity.this, "Discovery Failed : " + reasonCode,
-                    Toast.LENGTH_SHORT).show();
-        }
-    });
-     */
-
-    //TODO
-    //onStop()
-    //destory all threads
 }

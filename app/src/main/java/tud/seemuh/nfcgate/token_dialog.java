@@ -16,8 +16,8 @@ public class token_dialog extends DialogFragment {
  * implement this interface in order to receive event callbacks.
  * Each method passes the DialogFragment in case the host needs to query it. */
     public interface NoticeDialogListener {
-        public void onDialogPositiveClick(DialogFragment dialog);
-        public void onDialogNegativeClick(DialogFragment dialog);
+        public void onTokenDialogPositiveClick(DialogFragment dialog);
+        public void onTokenDialogNegativeClick(DialogFragment dialog);
     }
 
     // Use this instance of the interface to deliver action events
@@ -50,13 +50,13 @@ public class token_dialog extends DialogFragment {
                 .setPositiveButton("Submit Token", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Send the positive button event back to the host activity
-                        mListener.onDialogPositiveClick(token_dialog.this);
+                        mListener.onTokenDialogPositiveClick(token_dialog.this);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Send the negative button event back to the host activity
-                        mListener.onDialogNegativeClick(token_dialog.this);
+                        mListener.onTokenDialogNegativeClick(token_dialog.this);
                     }
                 });
         return builder.create();

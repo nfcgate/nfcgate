@@ -44,18 +44,6 @@ public class ApduService extends HostApduService {
         // when a reader wants to talk to us
 
         SimpleLowLevelNetworkConnectionClientImpl.getInstance().setCallback(mCallback);
-        /*
-        if (apdu.length >= 2 && apdu[0] == (byte)0 && apdu[1] == (byte)0xa4) {
-            // FIXME This is our terrible workaround, which we should remove.
-
-            Log.i(TAG, "App selected");
-
-            // new nfc interaction, so set the network callback to us
-            SimpleLowLevelNetworkConnectionClientImpl.getInstance().setCallback(mCallback);
-            // for the moment, we do not relay the select. This is only for the reader board
-            // to select our app. The second apdu is the conversation with the card
-            return new byte[]{0};
-        }*/
 
         // Package the ADPU into a C2C message
         Handler.sendAPDUMessage(apdu);

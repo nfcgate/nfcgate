@@ -38,7 +38,10 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
     private String SessionToken;
 
-    public void setUpdateButton(TextView ldebugView) {
+    /**
+     * Setter for View, that should be updated from another thread
+     */
+    public void setUpdateView(TextView ldebugView) {
         debugView = ldebugView;
     }
 
