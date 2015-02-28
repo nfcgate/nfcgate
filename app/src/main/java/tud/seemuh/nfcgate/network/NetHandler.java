@@ -158,6 +158,7 @@ public class NetHandler implements HighLevelNetworkHandler {
             Log.e(TAG, "Trying to join session while not in CONNECTED_NO_SESSION state. Doing nothing");
             return;
         }
+        secret = secretToken;
         Log.d(TAG, "joinSession: Trying to join session with secret " + secret);
         // Create a message builder and fill in the relevant data
         C2S.Session.Builder sessionMessage = C2S.Session.newBuilder();
