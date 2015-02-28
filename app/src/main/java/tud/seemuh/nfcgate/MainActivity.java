@@ -51,13 +51,11 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     private String ip;
     private int port;
 
-    public String token = "000000";
-
     private CallbackImpl mNetCallback = new CallbackImpl();
 
     // declares main functionality
     private Button mReset, mConnecttoSession, mAbort, mJoinSession;
-    private TextView mConnStatus, mInfo, mDebuginfo, mIP, mPort, mPartnerDevice;
+    private TextView mConnStatus, mInfo, mDebuginfo, mIP, mPort, mPartnerDevice, mtoken;
 
     // regex for IP checking
     private static final String regexIPpattern ="^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
@@ -114,6 +112,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mPort = (TextView) findViewById(R.id.editPort);
         mPartnerDevice = (TextView) findViewById(R.id.editOtherDevice);
         mConnecttoSession.requestFocus();
+        mtoken = (TextView) findViewById(R.id.token);
     }
 
     @Override
@@ -377,7 +376,10 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mPartnerDevice.setText("Partner status: waiting");
         mConnectionClient = NetHandler.getInstance().connect(mIP.getText().toString(), globalPort);
 
-        // TODO Before this point, the token should be saved in the global variable "token" (which is defined above)
+        // Load token from the Shared Preferences Buffer
+        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        String token = preferences.getString("token", "000000");
+
         mConnectionClient.joinSession(token);
 
     }
