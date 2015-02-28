@@ -15,12 +15,12 @@
 
     <EditText
         android:id="@+id/token"
-        android:inputType="textEmailAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
-        android:hint="Enter token here " />
+        android:hint="Enter token here "
+        android:inputType="number" />
 </LinearLayout>

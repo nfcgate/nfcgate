@@ -4,21 +4,26 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 /**
  * Created by Tom on 14.02.2015.
  */
 public class token_dialog extends DialogFragment {
-    /* The activity that creates an instance of this dialog fragment must
+/* The activity that creates an instance of this dialog fragment must
  * implement this interface in order to receive event callbacks.
  * Each method passes the DialogFragment in case the host needs to query it. */
     public interface NoticeDialogListener {
         public void onTokenDialogPositiveClick(DialogFragment dialog);
         public void onTokenDialogNegativeClick(DialogFragment dialog);
     }
+
+    public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
 
     // Use this instance of the interface to deliver action events
     NoticeDialogListener mListener;
@@ -41,15 +46,22 @@ public class token_dialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Build the dialog and set up the button click handlers
+        final View view = getActivity().getLayoutInflater().inflate(R.layout.token, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
-        builder.setView(inflater.inflate(R.layout.token, null))
+        builder.setView(view)
                 .setMessage("Enter Token")
                 .setPositiveButton("Submit Token", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // Send the positive button event back to the host activity
+                        // get user input (e.g. token) from the textview
+                        TextView tempToken = (TextView) view.findViewById(R.id.token);
+                        String token = tempToken.getText().toString();
+
+                        // create Shared Preferences Buffer in private mode
+                        SharedPreferences preferences = getActivity().getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
+                        // Store the token in the preferences buffer for later usage
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("token", token);
+                        editor.commit();
                         mListener.onTokenDialogPositiveClick(token_dialog.this);
                     }
                 })
