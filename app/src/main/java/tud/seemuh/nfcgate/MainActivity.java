@@ -69,7 +69,6 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         setContentView(R.layout.activity_main);
 
         mAdapter = NfcAdapter.getDefaultAdapter(this);
-        //mAdapter.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
 
         mIntentFilter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
 
@@ -121,6 +120,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
         if (mAdapter != null && mAdapter.isEnabled()) {
             mAdapter.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
+
             if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
                 Log.i("NFCGATE_DEBUG", "onResume(): starting onNewIntent()...");
                 onNewIntent(getIntent());
@@ -158,9 +158,14 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     public void onPause() {
         super.onPause();
 
+        mAdapter.disableForegroundDispatch(this);
         //TODO -> kill our threads here?
     }
 
+    /**
+     * Function to get tag when readerMode is enabled
+     * @param tag
+     */
     @Override
     public void onTagDiscovered(Tag tag) {
 
