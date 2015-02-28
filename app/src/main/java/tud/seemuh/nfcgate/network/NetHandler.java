@@ -16,6 +16,21 @@ public class NetHandler implements HighLevelNetworkHandler {
     private LowLevelNetworkHandler handler;
     private static NetHandler mInstance = null;
     private String secret;
+    private enum Status {
+        NOT_CONNECTED,
+        CONNECTED_NO_SESSION,
+        SESSION_CREATE_SENT,
+        SESSION_JOIN_SENT,
+        WAITING_FOR_PARTNER,
+        SESSION_READY,
+        SESSION_LEAVE_SENT,
+    }
+
+    Status status;
+
+    public NetHandler() {
+        status = Status.NOT_CONNECTED;
+    }
 
 
     // Helper functions
@@ -44,10 +59,6 @@ public class NetHandler implements HighLevelNetworkHandler {
         dataMsg.setErrcode(C2S.Data.DataErrorCode.ERROR_NOERROR);
 
         return dataMsg.build();
-    }
-
-    public void setSecret(String secretToken) {
-        secret = secretToken;
     }
 
     private void sendMessage(Message msg, MessageCase mcase) {
@@ -101,12 +112,14 @@ public class NetHandler implements HighLevelNetworkHandler {
     @Override
     public HighLevelNetworkHandler connect(String addr, int port) {
         handler = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(addr, port);
+        status = Status.CONNECTED_NO_SESSION;
         return this;
     }
 
     @Override
     public void disconnect() {
         // TODO Implement
+        status = Status.NOT_CONNECTED;
     }
 
     @Override
@@ -144,6 +157,7 @@ public class NetHandler implements HighLevelNetworkHandler {
 
         // Send the message
         sendMessage(sessionMessage.build(), MessageCase.SESSION);
+        status = Status.SESSION_CREATE_SENT;
     }
 
     @Override
@@ -158,6 +172,7 @@ public class NetHandler implements HighLevelNetworkHandler {
         // Send the message
         sendMessage(sessionMessage.build(), MessageCase.SESSION);
         secret = secretToken;
+        status = Status.SESSION_JOIN_SENT;
     }
 
     @Override
@@ -171,6 +186,48 @@ public class NetHandler implements HighLevelNetworkHandler {
 
         // Send the message
         sendMessage(sessionMessage.build(), MessageCase.SESSION);
+        status = Status.SESSION_LEAVE_SENT;
+    }
+
+    @Override
+    public void confirmSessionCreation(String secretToken) {
+        secret = secretToken;
+        status = Status.WAITING_FOR_PARTNER;
+    }
+
+    @Override
+    public void confirmSessionJoin() {
+        status = Status.SESSION_READY;
+    }
+
+    @Override
+    public void confirmSessionLeave() {
+        status = Status.CONNECTED_NO_SESSION;
+    }
+
+    @Override
+    public void sessionPartnerJoined() {
+        status = Status.SESSION_READY;
+    }
+
+    @Override
+    public void sessionPartnerLeft() {
+        status = Status.WAITING_FOR_PARTNER;
+    }
+
+    @Override
+    public void sessionCreateFailed(C2S.Session.SessionErrorCode errcode) {
+        status = Status.CONNECTED_NO_SESSION;
+    }
+
+    @Override
+    public void sessionJoinFailed(C2S.Session.SessionErrorCode errcode) {
+        status = Status.CONNECTED_NO_SESSION;
+    }
+
+    @Override
+    public void sessionLeaveFailed(C2S.Session.SessionErrorCode errcode) {
+        status = Status.WAITING_FOR_PARTNER; // TODO This may result in an inconsistent state. Handle that better
     }
 
     @Override

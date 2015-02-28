@@ -25,17 +25,6 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
     private TextView debugView;
     private NetHandler Handler = NetHandler.getInstance();
 
-    private enum Status {
-        NOT_CONNECTED,
-        SESSION_CREATE_SENT,
-        SESSION_JOIN_SENT,
-        WAITING_FOR_PARTNER,
-        SESSION_READY,
-        SESSION_LEAVE_SENT,
-    }
-
-    Status status;
-
     private String SessionToken;
 
     /**
@@ -48,12 +37,9 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
     public CallbackImpl(ApduService as) {
         apdu = as;
-        status = Status.NOT_CONNECTED;
     }
 
-    public CallbackImpl() {
-        status = Status.NOT_CONNECTED;
-    }
+    public CallbackImpl() {}
 
     /**
      * Implementation of SimpleNetworkConnectionClientImpl.Callback
@@ -153,6 +139,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
                 // Extract NFC Bytes and send them to the card
                 byte[] bytesFromCard = mReader.sendCmd(msg.getDataBytes().toByteArray());
 
+                // Send the reply from the card to the partner
                 Handler.sendAPDUReply(bytesFromCard);
 
                 //Ugly way to send data to the GUI from an external thread
@@ -238,36 +225,43 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
         if (msg.getOpcode() == SessionOpcode.SESSION_CREATE_FAIL) {
             // TODO is it possible to display a popup notification to the user in this case?
             Log.e(TAG, "handleSession: SESSION_CREATE_FAIL: Not implemented");
+            Handler.sessionCreateFailed(msg.getErrcode());
             Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_CREATE_SUCCESS) {
             Log.e(TAG, "handleSession: SESSION_CREATE_SUCCESS: Not implemented");
             // Notify handler about session secret
-            Handler.setSecret(msg.getSessionSecret());
+            Handler.confirmSessionCreation(msg.getSessionSecret());
             Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_JOIN_FAIL) {
             Log.e(TAG, "handleSession: SESSION_JOIN_FAIL: Not implemented");
+            Handler.sessionJoinFailed(msg.getErrcode());
             Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_JOIN_SUCCESS) {
             Log.e(TAG, "handleSession: SESSION_JOIN_SUCCESS: Not implemented");
+            Handler.confirmSessionJoin();
             Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_LEAVE_FAIL) {
             Log.e(TAG, "handleSession: SESSION_LEAVE_FAIL: Not implemented");
+            Handler.sessionLeaveFailed(msg.getErrcode());
             Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_LEAVE_SUCCESS) {
             Log.e(TAG, "handleSession: SESSION_LEAVE_SUCCESS: Not implemented");
+            Handler.confirmSessionLeave();
             Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_PEER_JOINED) {
             Log.e(TAG, "handleSession: SESSION_PEER_JOINED: Not implemented");
+            Handler.sessionPartnerJoined();
             Handler.notifyNotImplemented(); // TODO Implement
         }
         else if (msg.getOpcode() == SessionOpcode.SESSION_PEER_LEFT) {
             Log.e(TAG, "handleSession: SESSION_PEER_LEFT: Not implemented");
+            Handler.sessionPartnerLeft();
             Handler.notifyNotImplemented(); // TODO Implement
         }
         else {

@@ -1,7 +1,6 @@
 package tud.seemuh.nfcgate.network;
 
-import com.google.protobuf.Message;
-import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
+import tud.seemuh.nfcgate.network.c2s.C2S;
 
 public interface HighLevelNetworkHandler {
     // Setup
@@ -16,7 +15,21 @@ public interface HighLevelNetworkHandler {
 
     public void leaveSession();
 
-    public void setSecret(String secret);
+    public void confirmSessionCreation(String secret);
+
+    public void confirmSessionJoin();
+
+    public void confirmSessionLeave();
+
+    public void sessionPartnerJoined();
+
+    public void sessionPartnerLeft();
+
+    public void sessionCreateFailed(C2S.Session.SessionErrorCode errcode);
+
+    public void sessionJoinFailed(C2S.Session.SessionErrorCode errcode);
+
+    public void sessionLeaveFailed(C2S.Session.SessionErrorCode errcode);
 
     // NFC messages
     public void sendAPDUMessage(byte[] apdu);
