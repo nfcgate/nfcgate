@@ -62,6 +62,9 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     // regex for IP checking
     private static final String regexIPpattern ="^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
 
+    private static String joinSessionMessage = "Join Session";
+    private static String createSessionMessage = "Create Session";
+
     // max. port possible
     private static int maxPort = 65535;
     int globalPort = 0;
@@ -206,9 +209,9 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mDebuginfo.setText("Debugging Output: ");
         this.setTitle("You clicked reset");
 
-        mJoinSession.setText("Join Session"); // TODO Maybe refactor this to use constants?
+        mJoinSession.setText(joinSessionMessage);
         mJoinSession.setEnabled(true);
-        mConnecttoSession.setText("Create Session"); // TODO Maybe refactor this to use constants?
+        mConnecttoSession.setText(createSessionMessage);
         mConnecttoSession.setEnabled(true);
 
         // Load values from the Shared Preferences Buffer
@@ -236,9 +239,9 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     public void ButtonAbortClicked(View view) {
         // Abort the current connection attempt
         // TODO Abort the connection -> properly close network connection by calling the required method
-        mJoinSession.setText("Join Session"); // TODO Maybe refactor this to use constants?
+        mJoinSession.setText(joinSessionMessage);
         mJoinSession.setEnabled(true);
-        mConnecttoSession.setText("Create Session"); // TODO Maybe refactor this to use constants?
+        mConnecttoSession.setText(createSessionMessage);
         mConnecttoSession.setEnabled(true);
 
         mConnStatus.setText("Server status: Disconnecting");
@@ -262,14 +265,14 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             this.setTitle("You clicked connect");
             mConnStatus.setText("Server status: Connecting - (token: )");
             mPartnerDevice.setText("Partner status: waiting");
-            mConnectionClient = NetHandler.getInstance().connect(mIP.getText().toString(), port); // TODO is this correct?
+            mConnectionClient = NetHandler.getInstance().connect(mIP.getText().toString(), port); // TODO is this correct? -> use local var & do this only once
             mConnectionClient.createSession();
             // Todo notify user about the token the server assigned him -> will be displayed at mConnStatus
         }
         else
         {
             // the button was already clicked and we want to disconnect from the session
-            mConnecttoSession.setText("Create Session"); // TODO Maybe refactor this to use constants?
+            mConnecttoSession.setText(createSessionMessage);
             mConnStatus.setText("Server status: Disconnecting");
             mPartnerDevice.setText("Partner status: no device");
             mJoinSession.setEnabled(true);
@@ -297,7 +300,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         else
         {
             // the button was already clicked and we want to disconnect from the session
-            mJoinSession.setText("Join Session"); // TODO Maybe refactor this to use constants?
+            mJoinSession.setText(joinSessionMessage);
             mConnStatus.setText("Server status: Disconnecting");
             mPartnerDevice.setText("Partner status: no device");
             mConnecttoSession.setEnabled(true);
@@ -376,7 +379,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mPartnerDevice.setText("Partner status: waiting");
         mConnectionClient = NetHandler.getInstance().connect(mIP.getText().toString(), globalPort);
 
-        // TODO Before this point, the token should be saved in the variable "token" (which is defined above)
+        // TODO Before this point, the token should be saved in the global variable "token" (which is defined above)
         mConnectionClient.joinSession(token);
 
     }
