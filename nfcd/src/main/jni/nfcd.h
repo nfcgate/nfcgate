@@ -22,7 +22,7 @@ struct s_chip_config {
 
 // main.cpp
 extern bool patchEnabled;
-void loghex(const char *desc, uint8_t *data, int len);
+void loghex(const char *desc, const uint8_t *data, const int len);
 
 // java.cpp
 void hookJava(JNIEnv *jni, jclass _class);
@@ -39,4 +39,5 @@ extern tCE_CB *ce_cb;
 extern struct s_chip_config patchValues;
 
 // ipc.cpp
+void ipc_prepare();
 void ipc_init();

@@ -30,7 +30,7 @@ void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
 
 tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
 
-    loghex("NfcSetConfig", tlv, size);
+    //loghex("NfcSetConfig", tlv, size);
     uint8_t i = 0;
     bool needUpload = false;
     // read the configuration bytestream and extract the values that we indent to override
@@ -51,17 +51,17 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
                 needUpload = true;
                 origValues.atqa = firstval;
                 LOGD("NfcSetConfig Read: ATQA 0x%02x", firstval);
-                break;
+            break;
             case CFG_TYPE_SAK:
                 needUpload = true;
                 origValues.sak = firstval;
                 LOGD("NfcSetConfig Read: SAK  0x%02x", firstval);
-                break;
+            break;
             case CFG_TYPE_HIST:
                 needUpload = true;
                 origValues.hist = firstval;
                 LOGD("NfcSetConfig Read: HIST 0x%02x", firstval);
-                break;
+            break;
             case CFG_TYPE_UID:
                 needUpload = true;
                 if(len > sizeof(origValues.uid)) {
@@ -71,7 +71,7 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
                     origValues.uid_len = len;
                     loghex("NfcSetConfig Read: UID", valbp, len);
                 }
-                break;
+            break;
         }
     }
     tNFC_STATUS r = nci_NfcSetConfig(size, tlv);
