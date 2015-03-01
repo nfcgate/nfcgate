@@ -8,6 +8,8 @@ public interface HighLevelNetworkHandler {
 
     public void disconnect();
 
+    public Callback getCallback();
+
     // Session messages
     public void createSession();
 

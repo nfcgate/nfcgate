@@ -4,21 +4,16 @@ import android.nfc.cardemulation.HostApduService;
 import android.os.Bundle;
 import android.util.Log;
 
-
-import com.google.protobuf.ByteString;
-
+import tud.seemuh.nfcgate.network.Callback;
 import tud.seemuh.nfcgate.network.CallbackImpl;
 import tud.seemuh.nfcgate.network.NetHandler;
 import tud.seemuh.nfcgate.network.SimpleLowLevelNetworkConnectionClientImpl;
-import tud.seemuh.nfcgate.network.Callback;
 import tud.seemuh.nfcgate.util.Utils;
-import tud.seemuh.nfcgate.network.c2c.C2C;
-import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
 
 public class ApduService extends HostApduService {
     private final static String TAG = "ApduService";
 
-    private NetHandler Handler = new NetHandler();
+    private NetHandler Handler = NetHandler.getInstance();
 
     /**
      * empty apdu byte array
@@ -28,9 +23,9 @@ public class ApduService extends HostApduService {
     private final byte[] DONT_RESPOND = new byte[]{};
 
     /**
-     * Callback from the network threa whenever we get data from it
+     * Callback from the network thread whenever we get data from it
      */
-    private Callback mCallback = new CallbackImpl(this);
+    private Callback mCallback = Handler.getCallback().setAPDUService(this);
 
     /**
      * callback from the hce service when a apdu from a reader is received

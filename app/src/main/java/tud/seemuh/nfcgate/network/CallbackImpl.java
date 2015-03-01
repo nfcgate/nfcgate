@@ -24,20 +24,30 @@ public class CallbackImpl implements Callback {
     private ApduService apdu;
     private NFCTagReader mReader = null;
     private TextView debugView;
+    private TextView connectionStatusView;
+    private TextView peerStatusView;
     private NetHandler Handler = NetHandler.getInstance();
 
     private String SessionToken;
 
     /**
-     * Setter for View, that should be updated from another thread
+     * Setter for DebugView, that should be updated from another thread
      */
-    public void setUpdateView(TextView ldebugView) {
+    public void setDebugView(TextView ldebugView) {
         debugView = ldebugView;
     }
 
+    public void setConnectionStatusView(TextView connStatusView) {
+        connectionStatusView = connStatusView;
+    }
 
-    public CallbackImpl(ApduService as) {
+    public void setPeerStatusView(TextView view) {
+        peerStatusView = view;
+    }
+
+    public Callback setAPDUService(ApduService as) {
         apdu = as;
+        return this;
     }
 
     public CallbackImpl() {}

@@ -5,6 +5,9 @@ import android.util.Log;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper;
@@ -30,6 +33,17 @@ public class NetHandler implements HighLevelNetworkHandler {
 
     private Status status;
 
+    private Callback callbackInstance;
+
+    // This queue contains messages that are to be sent as soon as the connection to the server
+    // has been established. This does NOT mean that a complete SESSION has been established.
+    // For that, use the sendOnSessionReady queue instead.
+    private Queue<Message> sendOnConnectionReady = new LinkedList<Message>();
+
+    // This queue contains messages that are to be sent as soon as a session has been established.
+    // A session counts as established as soon as two clients have joined it.
+    private Queue<Message> sendOnSessionReady = new LinkedList<Message>();
+
     public NetHandler() {
         status = Status.NOT_CONNECTED;
     }
@@ -39,6 +53,10 @@ public class NetHandler implements HighLevelNetworkHandler {
     public static NetHandler getInstance() {
         if(mInstance == null) mInstance = new NetHandler();
         return mInstance;
+    }
+
+    public Callback getCallback() {
+        return callbackInstance;
     }
 
     private C2S.Data wrapAsDataMessage(byte[] msg) {
@@ -125,6 +143,7 @@ public class NetHandler implements HighLevelNetworkHandler {
     public HighLevelNetworkHandler connect(String addr, int port, Callback mNetCallback) {
         handler = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(addr, port);
         handler.setCallback(mNetCallback);
+        callbackInstance = mNetCallback;
         status = Status.CONNECTED_NO_SESSION;
         return this;
     }
@@ -244,32 +263,27 @@ public class NetHandler implements HighLevelNetworkHandler {
     public void confirmSessionCreation(String secretToken) {
         Log.d(TAG, "confirmSessionCreation: Session created with token " + secretToken);
         secret = secretToken;
-        status = Status.WAITING_FOR_PARTNER;
-        notifyNotImplemented(); // TODO Implement
+        status = Status.WAITING_FOR_PARTNER; // TODO Implement further
     }
 
     @Override
     public void confirmSessionJoin() {
-        status = Status.SESSION_READY;
-        notifyNotImplemented(); // TODO Implement
+        status = Status.SESSION_READY; // TODO Implement further
     }
 
     @Override
     public void confirmSessionLeave() {
-        status = Status.CONNECTED_NO_SESSION;
-        notifyNotImplemented(); // TODO Implement
+        status = Status.CONNECTED_NO_SESSION; // TODO Implement further
     }
 
     @Override
     public void sessionPartnerJoined() {
-        status = Status.SESSION_READY;
-        notifyNotImplemented(); // TODO Implement
+        status = Status.SESSION_READY; // TODO Implement further
     }
 
     @Override
     public void sessionPartnerLeft() {
-        status = Status.WAITING_FOR_PARTNER;
-        notifyNotImplemented(); // TODO Implement
+        status = Status.WAITING_FOR_PARTNER; // TODO Implement further
     }
 
     @Override
