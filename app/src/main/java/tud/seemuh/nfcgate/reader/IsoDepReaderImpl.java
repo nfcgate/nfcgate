@@ -26,9 +26,6 @@ public class IsoDepReaderImpl implements NFCTagReader {
         Log.d(TAG, "IsoDep constructor called");
         // Create NFC Adapter to use
         mAdapter = IsoDep.get(tag);
-        NfcA t = NfcA.get(tag);
-        Log.d(TAG, "sak: " + Utils.bytesToHex((byte)t.getSak()));
-        Log.d(TAG, "hist: " + Utils.bytesToHex(mAdapter.getHistoricalBytes()));
         try {
             // Connect to the NFC card
             mAdapter.connect();
