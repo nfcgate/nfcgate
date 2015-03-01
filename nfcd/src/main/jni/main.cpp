@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <stdio.h>
 
-bool patchEnabled = true;
+bool patchEnabled = false;
 
 static void onHostEmulationLoad(JNIEnv *jni, jclass _class, void *data);
 static void hookNative();
@@ -18,7 +18,7 @@ MSInitialize {
     // this is our signal that we reached the nfd daemon process
     const char *classname = "com/android/nfc/cardemulation/HostEmulationManager";
     MSJavaHookClassLoad(NULL, classname, &onHostEmulationLoad);
-
+    ipc_prepare();
 }
 
 
@@ -33,7 +33,7 @@ static void onHostEmulationLoad(JNIEnv *jni, jclass _class, void *data) {
 
 static void hookNative() {
     const char *libfile = "/system/lib/libnfc-nci.so";
-    if( access(libfile, F_OK) == -1 ) {
+    if(access(libfile, F_OK) == -1) {
         LOGE("could not access %s to load symbols", libfile);
         return;
     }
@@ -62,7 +62,7 @@ static void hookNative() {
     }
 }
 
-void loghex(const char *desc, uint8_t *data, int len) {
+void loghex(const char *desc, const uint8_t *data, const int len) {
     int strlen = len * 3 + 1;
     char *msg = (char *) malloc((size_t) strlen);
     for (uint8_t i = 0; i < len; i++) {

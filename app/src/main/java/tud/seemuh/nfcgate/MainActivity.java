@@ -26,6 +26,7 @@ import android.widget.Toast;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import tud.seemuh.nfcgate.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.network.CallbackImpl;
 import tud.seemuh.nfcgate.network.SimpleLowLevelNetworkConnectionClientImpl;
 
@@ -108,6 +109,12 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mPort = (TextView) findViewById(R.id.editPort);
         mPartnerDevice = (TextView) findViewById(R.id.editOtherDevice);
         mConnecttoSession.requestFocus();
+
+        // call example:
+        DaemonConfiguration c = new DaemonConfiguration();
+        c.uploadConfiguration((byte)0x03, (byte)0x20, (byte)0x80, new byte[] {(byte)0xde, (byte)0xad, (byte)0xbe, (byte)0xef });
+        c.enablePatch();
+        //c.disablePatch();
     }
 
     @Override

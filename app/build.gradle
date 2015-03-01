@@ -10,6 +10,12 @@ android {
         targetSdkVersion 20
         versionCode 1
         versionName "1.0"
+        ndk {
+            moduleName "nfcipc"
+            cFlags "-std=c++11 -fexceptions"
+            ldLibs "log"
+            abiFilters "armeabi"
+        }
     }
     buildTypes {
         release {
