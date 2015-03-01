@@ -201,6 +201,10 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
         //set callback when data is received
         if(found_supported_tag){
             SimpleLowLevelNetworkConnectionClientImpl.getInstance().setCallback(this);
+            Log.i("NFCGATE_TAG", "UID:  " + Utils.bytesToHex(mReader.getUID()));
+            Log.i("NFCGATE_TAG", "ATQA: " + Utils.bytesToHex(mReader.getAtqa()));
+            Log.i("NFCGATE_TAG", "SAK:  " + Utils.bytesToHex(mReader.getSak()));
+            Log.i("NFCGATE_TAG", "HIST: " + Utils.bytesToHex(mReader.getHistoricalBytes()));
         }
 
         return found_supported_tag;
