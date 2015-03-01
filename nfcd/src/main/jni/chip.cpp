@@ -77,13 +77,7 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
     tNFC_STATUS r = nci_NfcSetConfig(size, tlv);
 
     if(needUpload && patchEnabled) {
-        patchValues.atqa = 0x03;
-        patchValues.sak = 0x20;
-        patchValues.hist = 0x80;
-        patchValues.uid_len = 3;
-        patchValues.uid[0] = 0xaa;
-        patchValues.uid[1] = 0xbb;
-        patchValues.uid[2] = 0xcc;
+        // any of our values got modified and we are active -> reupload
         uploadPatchConfig();
     }
     return r;

@@ -2,15 +2,19 @@ package tud.seemuh.nfcgate.reader;
 
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
+import android.nfc.tech.NfcA;
 import android.util.Log;
 
 import java.io.IOException;
+
+import tud.seemuh.nfcgate.util.Utils;
 
 /**
  * Implements an NFCTagReader using the IsoDep technology
  *
  */
 public class IsoDepReaderImpl implements NFCTagReader {
+    private final static String TAG = "NFC_READER_ISODEP";
     private IsoDep mAdapter = null;
 
     /**
@@ -19,15 +23,18 @@ public class IsoDepReaderImpl implements NFCTagReader {
      * @param tag: A tag using the NfcA technology.
      */
     public IsoDepReaderImpl(Tag tag) {
-        Log.d("NFC_READER_ISODEP", "IsoDep constructor called");
+        Log.d(TAG, "IsoDep constructor called");
         // Create NFC Adapter to use
         mAdapter = IsoDep.get(tag);
+        NfcA t = NfcA.get(tag);
+        Log.d(TAG, "sak: " + Utils.bytesToHex((byte)t.getSak()));
+        Log.d(TAG, "hist: " + Utils.bytesToHex(mAdapter.getHistoricalBytes()));
         try {
             // Connect to the NFC card
             mAdapter.connect();
         } catch (Exception e) {
             //TODO
-            Log.e("NFC_READER_ISODEP", "Encountered error in constructor: " + e);
+            Log.e(TAG, "Encountered error in constructor: " + e);
         }
     }
 
@@ -42,16 +49,16 @@ public class IsoDepReaderImpl implements NFCTagReader {
             // Transceive command and store reply
             byte[] retval = mAdapter.transceive(command);
 
-            Log.i("NFC_READER_ISODEP", "Transceived succesfully");
+            Log.i(TAG, "Transceived succesfully");
 
             return retval;
         } catch(IOException e) {
             // TODO: Handle Exception properly
-            Log.e("NFC_READER_ISODEP", "Encountered IOException in sendCmd: " + e);
+            Log.e(TAG, "Encountered IOException in sendCmd: " + e);
             return null;
         } catch(Exception e) {
             //TODO
-            Log.e("NFC_READER_ISODEP", "Encountered Exception in sendCmd: " + e);
+            Log.e(TAG, "Encountered Exception in sendCmd: " + e);
             return null;
         }
     }
@@ -65,7 +72,7 @@ public class IsoDepReaderImpl implements NFCTagReader {
         try{
             mAdapter.close();
         } catch(IOException e) {
-            Log.e("NFC_READER_ISODEP", "Encountered IOException in closeConnection: " + e);
+            Log.e(TAG, "Encountered IOException in closeConnection: " + e);
         }
     }
 
@@ -80,5 +87,21 @@ public class IsoDepReaderImpl implements NFCTagReader {
     }
 
     public boolean isConnected() { return mAdapter.isConnected(); }
+
+    public byte[] getAtqa() {
+        return NfcA.get(mAdapter.getTag()).getAtqa();
+    }
+
+    public byte getSak() {
+        return (byte)NfcA.get(mAdapter.getTag()).getSak();
+    }
+
+    public byte[] getUID() {
+        return mAdapter.getTag().getId();
+    }
+
+    public byte[] getHistoricalBytes() {
+        return mAdapter.getHistoricalBytes();
+    }
 
 }
