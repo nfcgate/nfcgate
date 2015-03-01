@@ -154,7 +154,7 @@ public class CallbackImpl implements Callback {
                 Handler.sendAPDUReply(bytesFromCard);
 
                 //Ugly way to send data to the GUI from an external thread
-                new UpdateUI(debugView).execute(Utils.bytesToHex(bytesFromCard) + "\n");
+                new UpdateUI(debugView, UpdateUI.TextUpdates.append).execute(Utils.bytesToHex(bytesFromCard) + "\n");
                 Log.i(TAG, "HandleNFCData: Received and forwarded reply from card");
                 Log.i(TAG, "HandleNFCData: BytesFromCard: " + Utils.bytesToHex(bytesFromCard));
             } else {
@@ -163,7 +163,7 @@ public class CallbackImpl implements Callback {
                 Handler.notifyNFCNotConnected();
 
                 // Update UI
-                new UpdateUI(debugView).execute("HandleNFCData: Received NFC bytes, but we are not connected to any device.\n");
+                new UpdateUI(debugView, UpdateUI.TextUpdates.append).execute("HandleNFCData: Received NFC bytes, but we are not connected to any device.\n");
             }
         } else {
             if (apdu != null) {
