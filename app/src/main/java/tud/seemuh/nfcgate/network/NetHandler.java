@@ -227,6 +227,17 @@ public class NetHandler implements HighLevelNetworkHandler {
         sendMessage(reply.build(), MessageCase.NFCDATA);
     }
 
+    @Override
+    public void sendAnticol(byte[] atqa, byte sak, byte[] hist, byte[] uid) {
+        C2C.Anticol.Builder b = C2C.Anticol.newBuilder();
+        b.setATQA(ByteString.copyFrom(atqa));
+        b.setSAK(ByteString.copyFrom(new byte[]{sak}));
+        b.setHistoricalByte(ByteString.copyFrom(hist));
+        b.setUID(ByteString.copyFrom(uid));
+
+        sendMessage(b.build(), MessageCase.ANTICOL);
+    }
+
     // Session status management
     @Override
     public void confirmSessionCreation(String secretToken) {

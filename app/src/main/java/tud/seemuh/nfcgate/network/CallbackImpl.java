@@ -4,6 +4,7 @@ import android.nfc.Tag;
 import android.util.Log;
 import android.widget.TextView;
 
+import tud.seemuh.nfcgate.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.network.meta.MetaMessage;
 import tud.seemuh.nfcgate.reader.IsoDepReaderImpl;
 import tud.seemuh.nfcgate.reader.NFCTagReader;
@@ -126,8 +127,18 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
     }
 
     private void handleAnticol(C2C.Anticol msg) {
-        Log.e(TAG, "handleAnticol: Not implemented");
-        Handler.notifyNotImplemented(); // TODO Implement (Waiting for code by Uwe)
+        Log.i(TAG, "handleAnticol: got anticol values");
+
+        byte[] a_atqa = msg.getATQA().toByteArray();
+        byte atqa = a_atqa.length > 0 ? a_atqa[a_atqa.length-1] : 0;
+
+        byte[] a_hist = msg.getHistoricalByte().toByteArray();
+        byte hist = a_hist.length > 0 ? a_atqa[0] : 0;
+
+        byte[] a_sak = msg.getSAK().toByteArray();
+        byte sak = a_sak.length > 0 ? a_sak[0] : 0;
+
+        DaemonConfiguration.getInstance().uploadConfiguration(atqa, sak, hist, msg.getUID().toByteArray());
     }
 
 
@@ -299,6 +310,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
             Log.i("NFCGATE_TAG", "ATQA: " + Utils.bytesToHex(mReader.getAtqa()));
             Log.i("NFCGATE_TAG", "SAK:  " + Utils.bytesToHex(mReader.getSak()));
             Log.i("NFCGATE_TAG", "HIST: " + Utils.bytesToHex(mReader.getHistoricalBytes()));
+            Handler.sendAnticol(mReader.getAtqa(), mReader.getSak(), mReader.getHistoricalBytes(), mReader.getUID());
         }
 
         return found_supported_tag;

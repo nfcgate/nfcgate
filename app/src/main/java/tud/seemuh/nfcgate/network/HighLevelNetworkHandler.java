@@ -46,6 +46,8 @@ public interface HighLevelNetworkHandler {
 
     public void sendAPDUReply(byte[] reply);
 
+    public void sendAnticol(byte[] atqa, byte sak, byte[] hist, byte[] uid);
+
     // Notification messages
     public void notifyReaderFound();
 
