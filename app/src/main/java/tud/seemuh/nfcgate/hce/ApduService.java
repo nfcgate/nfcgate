@@ -50,6 +50,6 @@ public class ApduService extends HostApduService {
 
     @Override
     public void onDeactivated(int reason) {
-        Log.i("HceTest", "Deactivated: " + reason);
+        Log.i(TAG, "Deactivated: " + reason);
     }
 }

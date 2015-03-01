@@ -10,18 +10,26 @@ bool patchEnabled = false;
 static void onHostEmulationLoad(JNIEnv *jni, jclass _class, void *data);
 static void hookNative();
 
-// configure substrate to hook into the app_process process (zygote)
+/**
+ * configure substrate to hook into the app_process process (zygote)
+ */
 MSConfig(MSFilterExecutable, "/system/bin/app_process")
 
+/**
+ * intialize call of substrate
+ */
 MSInitialize {
     // when in zygote, register for a callback when the HostEmulationManager gets loaded.
-    // this is our signal that we reached the nfd daemon process
+    // this is our signal that we reached the nfc daemon process
     const char *classname = "com/android/nfc/cardemulation/HostEmulationManager";
     MSJavaHookClassLoad(NULL, classname, &onHostEmulationLoad);
     ipc_prepare();
 }
 
-
+/**
+ * callback when HostEmulationManager gets loaded.
+ * => we are now in the nfc daemon process
+ */
 static void onHostEmulationLoad(JNIEnv *jni, jclass _class, void *data) {
     LOGI("onHostEmulationLoad, loading hooks");
     // hooking into the java and native part of the nfcd
@@ -30,7 +38,9 @@ static void onHostEmulationLoad(JNIEnv *jni, jclass _class, void *data) {
     ipc_init();
 }
 
-
+/**
+ * hook into native functions of the libnfc-nci broadcom nfc driver
+ */
 static void hookNative() {
     const char *libfile = "/system/lib/libnfc-nci.so";
     if(access(libfile, F_OK) == -1) {
@@ -62,6 +72,9 @@ static void hookNative() {
     }
 }
 
+/**
+ * simple logging function for byte buffers
+ */
 void loghex(const char *desc, const uint8_t *data, const int len) {
     int strlen = len * 3 + 1;
     char *msg = (char *) malloc((size_t) strlen);

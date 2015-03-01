@@ -18,7 +18,9 @@
 pthread_t thread;
 void *ipc_run(void *n);
 
-// handle a connected client and process commands
+/**
+ * handle a connected client and process commands
+ */
 static void handleClient(int sock) {
     while(1) {
         ipcpacket p;
@@ -58,17 +60,12 @@ static void handleClient(int sock) {
         patchEnabled = false;
         uploadOriginalConfig();
     }
-/*
-    if (send(sock, str, n, 0) < 0) {
-        LOGIPC("E send");
-    }
-    */
 }
-
-// this is called in root-context inside the cygote process.
-// to allow the nfc daemon to set up the socket, create an directory with write access for this user
+/**
+ * this is called in root-context inside the cygote process.
+ * to allow the nfc daemon to set up the socket, create an directory with write access for this user
+ */
 void ipc_prepare() {
-    //LOGIPC("ipc_prepare");
     if(access(IPC_SOCK_DIR, F_OK) == -1) {
         mkdir(IPC_SOCK_DIR, 0777); // TODO permissions
         struct passwd usr = *getpwnam("nfc");
@@ -77,12 +74,17 @@ void ipc_prepare() {
     }
 }
 
+/**
+ * init the ipc: create a thread in whitch we can create a socket server
+ */
 void ipc_init() {
-    //LOGIPC("ipc_init");
     pthread_create(&thread, NULL, ipc_run, NULL);
 }
 
-
+/**
+ * new thread for out socket server.
+ * set up an unix domain socket and handle every client to handleClient()
+ */
 void *ipc_run(void *n) {
     LOGIPC("ipc_run");
 

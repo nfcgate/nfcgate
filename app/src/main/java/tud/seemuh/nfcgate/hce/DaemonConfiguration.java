@@ -1,5 +1,9 @@
 package tud.seemuh.nfcgate.hce;
 
+/**
+ * Interface to the nfc daemon patches
+ * The native part of this class connects to the unix domain socket ipc created the patch
+ */
 public class DaemonConfiguration {
     static {
         System.loadLibrary("nfcipc");

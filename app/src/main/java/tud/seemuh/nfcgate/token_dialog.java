@@ -11,9 +11,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-/**
- * Created by Tom on 14.02.2015.
- */
 public class token_dialog extends DialogFragment {
 /* The activity that creates an instance of this dialog fragment must
  * implement this interface in order to receive event callbacks.

@@ -1,7 +1,9 @@
 
 
 #include "nfcd.h"
-
+/**
+ * Commands of the broadcom configuration interface
+ */
 #define CFG_TYPE_ATQA  0x31
 #define CFG_TYPE_SAK   0x32
 #define CFG_TYPE_UID   0x33
@@ -16,6 +18,10 @@ NFC_SetStaticRfCback *nci_SetRfCback;
 NFC_SetConfig *nci_NfcSetConfig;
 tCE_CB *ce_cb;
 
+/**
+ * hooked SetRfCback implementation.
+ * call the original function, but modify the control structure if the patch is enabled
+ */
 void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
     nci_SetRfCback(p_cback);
     if(p_cback != NULL && patchEnabled) {
@@ -28,6 +34,9 @@ void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
     }
 }
 
+/**
+ * hooked NfcSetConfig implementation
+ */
 tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
 
     //loghex("NfcSetConfig", tlv, size);
@@ -83,7 +92,10 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
     return r;
 }
 
-
+/**
+ * write a single config value into a new configuration stream.
+ * see uploadConfig()
+ */
 static void pushcfg(uint8_t *cfg, uint8_t &i, uint8_t type, uint8_t value) {
     cfg[i++] = type;
     if(value) {
@@ -94,6 +106,9 @@ static void pushcfg(uint8_t *cfg, uint8_t &i, uint8_t type, uint8_t value) {
     }
 }
 
+/**
+ * build a new configuration stream and upload it into the broadcom nfc controller
+ */
 static void uploadConfig(const struct s_chip_config config) {
     // cfg: type1, paramlen1, param1, type2, paramlen2....
     uint8_t cfg[80];
@@ -111,10 +126,16 @@ static void uploadConfig(const struct s_chip_config config) {
     loghex("Upload:", cfg, i+config.uid_len);
 }
 
+/**
+ * upload the values we got from the ipc
+ */
 void uploadPatchConfig() {
     uploadConfig(patchValues);
 }
 
+/**
+ * upload the values we collected in  NfcSetConfig
+ */
 void uploadOriginalConfig() {
     uploadConfig(origValues);
 }

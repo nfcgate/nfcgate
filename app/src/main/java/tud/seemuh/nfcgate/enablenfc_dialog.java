@@ -8,9 +8,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 
-/**
- * Created by Tom on 15.02.2015.
- */
 public class enablenfc_dialog extends DialogFragment {
     /* The activity that creates an instance of this dialog fragment must
  * implement this interface in order to receive event callbacks.

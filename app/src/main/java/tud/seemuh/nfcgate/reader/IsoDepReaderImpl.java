@@ -7,8 +7,6 @@ import android.util.Log;
 
 import java.io.IOException;
 
-import tud.seemuh.nfcgate.util.Utils;
-
 /**
  * Implements an NFCTagReader using the IsoDep technology
  *

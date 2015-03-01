@@ -4,9 +4,6 @@ import android.widget.TextView;
 
 import tud.seemuh.nfcgate.hce.ApduService;
 
-/**
- * Created by max on 01.03.15.
- */
 public interface Callback {
     public void onDataReceived(byte[] data);
 
