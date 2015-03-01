@@ -2,6 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
     <item android:id="@+id/action_settings" android:title="Settings"
         android:orderInCategory="100" android:showAsAction="never" />
+    <item android:id="@+id/action_getpatchstate" android:title="Patch status"
+        android:orderInCategory="100" android:showAsAction="never" />
+    <item android:id="@+id/action_disablepatch" android:title="Disable patch"
+        android:orderInCategory="100" android:showAsAction="never" />
     <item android:id="@+id/action_about" android:title="About"
         android:orderInCategory="100" android:showAsAction="never" />
 </menu>

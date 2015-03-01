@@ -149,6 +149,7 @@ public class CallbackImpl implements Callback {
         byte sak = a_sak.length > 0 ? a_sak[0] : 0;
 
         DaemonConfiguration.getInstance().uploadConfiguration(atqa, sak, hist, msg.getUID().toByteArray());
+        DaemonConfiguration.getInstance().enablePatch();
     }
 
 

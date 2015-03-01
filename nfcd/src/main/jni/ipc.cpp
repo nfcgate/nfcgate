@@ -36,6 +36,10 @@ static void handleClient(int sock) {
                 patchEnabled = false;
                 uploadOriginalConfig();
             break;
+            case ipctype::STATUS:
+                p.type = patchEnabled ? ipctype::ENABLE : ipctype::DISABLE;
+                send(sock, &p, sizeof(ipcpacket), 0);
+            break;
             case ipctype::CONFIGURE:
                 LOGIPC("CONFIGURE");
                 patchValues.atqa = p.atqa;

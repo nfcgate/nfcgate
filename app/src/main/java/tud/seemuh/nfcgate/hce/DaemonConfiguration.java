@@ -9,5 +9,6 @@ public class DaemonConfiguration {
     public static DaemonConfiguration getInstance() { return mInstance; }
     public native void enablePatch();
     public native void disablePatch();
+    public native boolean isPatchEnabled();
     public native void uploadConfiguration(byte atqa, byte sak, byte hist, byte[] uid);
 }

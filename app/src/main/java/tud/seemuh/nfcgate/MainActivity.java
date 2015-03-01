@@ -115,13 +115,6 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mPartnerDevice = (TextView) findViewById(R.id.editOtherDevice);
         mConnecttoSession.requestFocus();
         mtoken = (TextView) findViewById(R.id.token);
-
-        // TODO Native code patch IPC usage example. Transfer to proper class
-        // call example:
-        DaemonConfiguration c = new DaemonConfiguration();
-        c.uploadConfiguration((byte)0x03, (byte)0x20, (byte)0x80, new byte[] {(byte)0xde, (byte)0xad, (byte)0xbe, (byte)0xef });
-        c.enablePatch();
-        //c.disablePatch();
     }
 
     @Override
@@ -359,6 +352,12 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             case R.id.action_about:
                 startActivity(new Intent(MainActivity.this, AboutActivity.class));
                 return true;
+            case R.id.action_getpatchstate:
+                Toast.makeText(this, "Patch state: " + (DaemonConfiguration.getInstance().isPatchEnabled() ? "Active" : "Inactive"), Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.action_disablepatch:
+                DaemonConfiguration.getInstance().disablePatch();
+                Toast.makeText(this, "Patch disabled", Toast.LENGTH_LONG).show();
             default:
                 return super.onOptionsItemSelected(item);
         }

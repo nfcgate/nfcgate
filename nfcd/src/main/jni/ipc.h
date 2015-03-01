@@ -2,7 +2,8 @@
 enum ipctype {
     ENABLE,
     DISABLE,
-    CONFIGURE
+    CONFIGURE,
+    STATUS
 };
 typedef struct {
     ipctype type;

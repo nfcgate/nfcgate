@@ -16,9 +16,11 @@
 extern "C" {
     JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_enablePatch(JNIEnv* env, jobject javaThis);
     JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_disablePatch(JNIEnv* env, jobject javaThis);
+    JNIEXPORT jboolean JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_isPatchEnabled(JNIEnv* env, jobject javaThis);
     JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_uploadConfiguration(JNIEnv* env, jobject javaThis, jbyte atqa, jbyte sak, jbyte hist, jbyteArray uid);
 }
 void sendPacket(const ipcpacket p);
+void recvPacket(ipcpacket *p);
 int sock = 0;
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
@@ -37,6 +39,15 @@ JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_disablePa
     ipcpacket p;
     p.type = ipctype::DISABLE;
     sendPacket(p);
+}
+
+JNIEXPORT jboolean JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_isPatchEnabled(JNIEnv* env, jobject javaThis) {
+    ipcpacket p;
+    p.type = ipctype::STATUS;
+    // request state and receive response
+    sendPacket(p);
+    recvPacket(&p);
+    return p.type == ipctype::ENABLE;
 }
 
 JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_uploadConfiguration(JNIEnv* env, jobject javaThis, jbyte atqa, jbyte sak, jbyte hist, jbyteArray _uid) {
@@ -83,4 +94,8 @@ void sendPacket(const ipcpacket p) {
     if (send(sock, &p, sizeof(ipcpacket), 0) == -1) {
         LOGE("E send: %s", strerror(errno));
     }
+}
+
+void recvPacket(ipcpacket *p) {
+    recv(sock, p, sizeof(ipcpacket), 0);
 }
