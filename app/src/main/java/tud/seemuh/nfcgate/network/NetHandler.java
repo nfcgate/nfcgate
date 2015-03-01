@@ -122,8 +122,9 @@ public class NetHandler implements HighLevelNetworkHandler {
 
     // Connection management
     @Override
-    public HighLevelNetworkHandler connect(String addr, int port) {
+    public HighLevelNetworkHandler connect(String addr, int port, Callback mNetCallback) {
         handler = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(addr, port);
+        handler.setCallback(mNetCallback);
         status = Status.CONNECTED_NO_SESSION;
         return this;
     }

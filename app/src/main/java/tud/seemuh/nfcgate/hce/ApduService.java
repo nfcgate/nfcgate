@@ -10,7 +10,7 @@ import com.google.protobuf.ByteString;
 import tud.seemuh.nfcgate.network.CallbackImpl;
 import tud.seemuh.nfcgate.network.NetHandler;
 import tud.seemuh.nfcgate.network.SimpleLowLevelNetworkConnectionClientImpl;
-import tud.seemuh.nfcgate.network.SimpleLowLevelNetworkConnectionClientImpl.Callback;
+import tud.seemuh.nfcgate.network.Callback;
 import tud.seemuh.nfcgate.util.Utils;
 import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;

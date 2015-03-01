@@ -18,7 +18,7 @@ import tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode;
 import tud.seemuh.nfcgate.hce.ApduService;
 
 
-public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.Callback {
+public class CallbackImpl implements Callback {
     private final static String TAG = "CallbackImpl";
 
     private ApduService apdu;

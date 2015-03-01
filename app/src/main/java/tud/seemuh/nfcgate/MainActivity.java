@@ -273,7 +273,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             this.setTitle("You clicked connect");
             mConnStatus.setText("Server status: Connecting - (token: )");
             mPartnerDevice.setText("Partner status: waiting");
-            mConnectionClient = NetHandler.getInstance().connect(mIP.getText().toString(), port);
+            mConnectionClient = NetHandler.getInstance().connect(mIP.getText().toString(), port, mNetCallback);
             mConnectionClient.createSession();
             // Todo notify user about the token the server assigned him -> will be displayed at mConnStatus
         }
@@ -382,7 +382,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         this.setTitle("You clicked connect");
         mConnStatus.setText("Server status: Connecting");
         mPartnerDevice.setText("Partner status: waiting");
-        mConnectionClient = NetHandler.getInstance().connect(mIP.getText().toString(), globalPort);
+        mConnectionClient = NetHandler.getInstance().connect(mIP.getText().toString(), globalPort, mNetCallback);
 
         // Load token from the Shared Preferences Buffer
         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);

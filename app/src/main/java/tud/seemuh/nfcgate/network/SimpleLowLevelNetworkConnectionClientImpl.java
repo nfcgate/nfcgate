@@ -169,10 +169,15 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
                         readBytes = new byte[len];
                         dis.readFully(readBytes);
                         Log.d(CommunicationThread.class.getName(), "Read data: " + Utils.bytesToHex(readBytes));
-                        if(mCallback != null)
+                        if(mCallback != null) {
+                            Log.d(CommunicationThread.class.getName(), "Delegating to Callback.");
                             mCallback.onDataReceived(readBytes);
-                        else
+                            Log.d(CommunicationThread.class.getName(), "Callback finished execution.");
+                        }
+                        else {
+                            Log.i(CommunicationThread.class.getName(), "No callback set, saving for later");
                             getSome = true;
+                        }
                     } else {
                         Log.e(CommunicationThread.class.getName(), "Error no postive number of bytes: " + len);
                     }
@@ -184,8 +189,5 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
             }
         }
 
-    }
-    public interface Callback {
-        public void onDataReceived(byte[] data);
     }
 }

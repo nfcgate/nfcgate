@@ -4,7 +4,7 @@ import tud.seemuh.nfcgate.network.c2s.C2S;
 
 public interface HighLevelNetworkHandler {
     // Setup
-    public HighLevelNetworkHandler connect(String addr, int port);
+    public HighLevelNetworkHandler connect(String addr, int port, Callback callback);
 
     public void disconnect();
 
