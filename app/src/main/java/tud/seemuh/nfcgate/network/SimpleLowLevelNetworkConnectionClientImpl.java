@@ -138,8 +138,10 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
             try {
                 OutputStream out = mSocket.getOutputStream();
                 byte[] len = ByteBuffer.allocate(4).putInt(msg.length).array();
-                out.write(len);
-                out.write(msg);
+                byte[] full = new byte[4 + msg.length];
+                System.arraycopy(len, 0, full, 0, len.length);
+                System.arraycopy(msg, 0, full, len.length, msg.length);
+                out.write(full);
                 out.flush();
             } catch (UnknownHostException e) {
                 e.printStackTrace();
