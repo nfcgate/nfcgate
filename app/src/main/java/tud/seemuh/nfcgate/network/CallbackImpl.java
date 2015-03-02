@@ -33,6 +33,11 @@ public class CallbackImpl implements Callback {
 
     public CallbackImpl() {}
 
+    @Override
+    public void notifyBrokenPipe() {
+        Handler.disconnectBrokenPipe();
+    }
+
     /**
      * Implementation of SimpleNetworkConnectionClientImpl.Callback
      * @param data: received bytes

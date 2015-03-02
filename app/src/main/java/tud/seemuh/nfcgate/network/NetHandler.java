@@ -22,6 +22,7 @@ public class NetHandler implements HighLevelNetworkHandler {
     private final static String CONN_LEAVING_SESSION = "Leaving Session";
     private final static String CONN_SESSION_JOIN_FAILED = "Session join failed";
     private final static String CONN_SESSION_CREATION_FAILED = "Session creation failed";
+    private final static String CONN_DIED = "Connection died";
 
     private final static String PEER_NO_SESSION = "No session";
     private final static String PEER_NOT_CONNECTED = "Not connected to server";
@@ -30,6 +31,7 @@ public class NetHandler implements HighLevelNetworkHandler {
     private final static String PEER_CONNECTED_CARD = "Connected to Card";
     private final static String PEER_CONNECTED_APDU = "Connected to Reader";
     private final static String PEER_UNKNOWN = "Unknown";
+    private final static String PEER_CONN_DIED = "Connection broke down";
 
     private LowLevelNetworkHandler handler;
     private static NetHandler mInstance = null;
@@ -206,6 +208,14 @@ public class NetHandler implements HighLevelNetworkHandler {
         status = Status.NOT_CONNECTED;
         setConnectionStatusOutput(CONN_DISCONNECTED);
         setPeerStatusOutput(PEER_NOT_CONNECTED);
+    }
+
+    @Override
+    public void disconnectBrokenPipe() {
+        handler.disconnect();
+        status = Status.NOT_CONNECTED;
+        setConnectionStatusOutput(CONN_DIED);
+        setPeerStatusOutput(PEER_CONN_DIED);
     }
 
     // Session management

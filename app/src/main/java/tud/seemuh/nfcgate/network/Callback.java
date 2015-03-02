@@ -8,4 +8,6 @@ public interface Callback {
     public void onDataReceived(byte[] data);
 
     public Callback setAPDUService(ApduService as);
+
+    public void notifyBrokenPipe();
 }

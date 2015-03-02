@@ -10,6 +10,8 @@ public interface HighLevelNetworkHandler {
 
     public void disconnect();
 
+    public void disconnectBrokenPipe();
+
     public void setDebugView(TextView ldebugView);
 
     public void setConnectionStatusView(TextView connStatusView);

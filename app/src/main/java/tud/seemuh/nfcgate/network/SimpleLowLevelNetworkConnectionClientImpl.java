@@ -209,6 +209,10 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
 
                 } catch (IOException e) {
                     //TODO
+                    if (mCallback != null) {
+                        mCallback.notifyBrokenPipe();
+                        return;
+                    }
                 }
             }
         }
