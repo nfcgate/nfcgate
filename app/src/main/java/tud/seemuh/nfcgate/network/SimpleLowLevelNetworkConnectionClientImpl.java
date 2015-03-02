@@ -148,7 +148,7 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
         }
 
         public void exitThread() {
-            mRunnableComThread.exitThread();
+            commThread.interrupt();
         }
 
 
@@ -160,8 +160,6 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
         protected volatile byte[] readBytes = null;
         protected volatile boolean getSome = false;
 
-        private boolean stop = false;
-
         public CommunicationThread(Socket clientSocket) {
             mClientSocket = clientSocket;
         }
@@ -172,16 +170,6 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
             Log.d(TAG, "started new CommunicationThread");
 
             while (!Thread.currentThread().isInterrupted()) {
-                if (stop) {
-                    try {
-                        mClientSocket.close();
-                    } catch (IOException e) {
-                        // e.printStackTrace();
-                    }
-                    Log.i(TAG, "Shutting down");
-                    return;
-                }
-
                 try {
                     DataInputStream dis = new DataInputStream(mClientSocket.getInputStream());
                     //read length of data from socket (should be 4 bytes long)
@@ -214,10 +202,13 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
                     }
                 }
             }
-        }
-
-        public void exitThread() {
-            stop = true;
+            try {
+                mClientSocket.close();
+            } catch (IOException e) {
+                // e.printStackTrace();
+            }
+            Log.i(TAG, "Shutting down");
+            return;
         }
 
     }
