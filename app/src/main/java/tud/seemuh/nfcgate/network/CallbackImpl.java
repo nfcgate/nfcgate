@@ -139,6 +139,7 @@ public class CallbackImpl implements Callback {
             // We received a signal FROM a reader device and are required to talk TO a card.
             if (mReader.isConnected()) {
                 Log.i(TAG, "HandleNFCData: Received message for a card, forwarding...");
+                Log.d(TAG, "HandleNFCData: " + Utils.bytesToHex(msg.getDataBytes().toByteArray()));
                 // Extract NFC Bytes and send them to the card
                 byte[] bytesFromCard = mReader.sendCmd(msg.getDataBytes().toByteArray());
 
