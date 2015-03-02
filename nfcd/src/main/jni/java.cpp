@@ -15,7 +15,9 @@ static jstring $HostEmulationManager$findSelectAid(JNIEnv *jni, jobject _this, j
     return oldfindSelectAid(jni, _this, byteArr);
 }
 
-
+/**
+ * hook the java part: find the findSelectAid() method and replace the implementation with our own
+ */
 void hookJava(JNIEnv *jni, jclass _class) {
     // hook into the findSelectAid method in the HostEmulationManager
     jmethodID method = jni->GetMethodID(_class, "findSelectAid", "([B)Ljava/lang/String;");

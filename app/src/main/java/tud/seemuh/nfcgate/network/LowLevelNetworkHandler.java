@@ -5,4 +5,8 @@ public interface LowLevelNetworkHandler {
 
     public void sendBytes(byte[] msg);
 
+    public SimpleLowLevelNetworkConnectionClientImpl setCallback(Callback callback);
+
+    public void disconnect();
+
 }

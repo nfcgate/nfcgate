@@ -43,7 +43,8 @@
             android:layout_gravity="center"
             android:hint="Enter &lt;IP>  "
             android:freezesText="true"
-            android:text="" />
+            android:text=""
+            android:inputType="text" />
 
         <EditText
             android:layout_width="wrap_content"
@@ -54,7 +55,8 @@
             android:freezesText="true"
             android:hint="Enter &lt;Port>"
             android:text=""
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:inputType="number" />
 
         <Button
             android:layout_width="140dp"

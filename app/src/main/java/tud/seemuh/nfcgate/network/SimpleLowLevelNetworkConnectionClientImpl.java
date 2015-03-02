@@ -63,11 +63,20 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
     }
 
     public synchronized byte[] getBytes() {
-        return mRunnableClientThread.getBytesFromNW();
+        if (mRunnableClientThread != null)
+            return mRunnableClientThread.getBytesFromNW();
+        else return null;
     }
 
     public void sendBytes(byte[] msg) {
-        mRunnableClientThread.sendBytes(msg);
+        if (mRunnableClientThread != null) mRunnableClientThread.sendBytes(msg);
+    }
+
+    public void disconnect() {
+        if (mRunnableClientThread != null) mRunnableClientThread.exitThread();
+        mRunnableClientThread = null;
+        mClientThread = null;
+        mSocket = null;
     }
 
     private class ClientThread implements Runnable {
@@ -138,6 +147,10 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
 
         }
 
+        public void exitThread() {
+            mRunnableComThread.exitThread();
+        }
+
 
     }
 
@@ -147,45 +160,65 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
         protected volatile byte[] readBytes = null;
         protected volatile boolean getSome = false;
 
+        private boolean stop = false;
+
         public CommunicationThread(Socket clientSocket) {
             mClientSocket = clientSocket;
         }
 
         public void run() {
+            String TAG = CommunicationThread.class.getName();
 
-            Log.d(CommunicationThread.class.getName(), "started new CommunicationThread");
+            Log.d(TAG, "started new CommunicationThread");
 
             while (!Thread.currentThread().isInterrupted()) {
+                if (stop) {
+                    try {
+                        mClientSocket.close();
+                    } catch (IOException e) {
+                        // e.printStackTrace();
+                    }
+                    Log.i(TAG, "Shutting down");
+                    return;
+                }
 
                 try {
                     DataInputStream dis = new DataInputStream(mClientSocket.getInputStream());
                     //read length of data from socket (should be 4 bytes long)
                     int len = dis.readInt();
 
-                    Log.i(CommunicationThread.class.getName(), "Reading bytes of length:" + len);
+                    Log.i(TAG, "Reading bytes of length:" + len);
 
                     // read the message data
                     if (len > 0) {
                         readBytes = new byte[len];
                         dis.readFully(readBytes);
-                        Log.d(CommunicationThread.class.getName(), "Read data: " + Utils.bytesToHex(readBytes));
-                        if(mCallback != null)
+                        Log.d(TAG, "Read data: " + Utils.bytesToHex(readBytes));
+                        if(mCallback != null) {
+                            Log.d(TAG, "Delegating to Callback.");
                             mCallback.onDataReceived(readBytes);
-                        else
+                            Log.d(TAG, "Callback finished execution.");
+                        }
+                        else {
+                            Log.i(TAG, "No callback set, saving for later");
                             getSome = true;
+                        }
                     } else {
-                        Log.e(CommunicationThread.class.getName(), "Error no postive number of bytes: " + len);
+                        Log.e(TAG, "Error no postive number of bytes: " + len);
                     }
 
                 } catch (IOException e) {
-                    //TODO
-                    e.printStackTrace();
+                    if (mCallback != null) {
+                        mCallback.notifyBrokenPipe();
+                        return;
+                    }
                 }
             }
         }
 
-    }
-    public interface Callback {
-        public void onDataReceived(byte[] data);
+        public void exitThread() {
+            stop = true;
+        }
+
     }
 }

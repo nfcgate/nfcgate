@@ -28,7 +28,6 @@ public class NfcAReaderImpl implements NFCTagReader {
             mAdapter.connect();
         } catch(IOException e) {
             // Something went wrong. For the moment, we will only log this
-            //TODO
             Log.e(TAG, "Encountered IOException in constructor: " + e);
         }
     }
@@ -47,7 +46,6 @@ public class NfcAReaderImpl implements NFCTagReader {
             Log.i(TAG, "Transceived succesfully");
             return retval;
         } catch(IOException e) {
-            // TODO: Handle Exception properly
             Log.e(TAG, "Encountered IOException in sendCmd: " + e);
             return null;
         }

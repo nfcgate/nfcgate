@@ -2,10 +2,8 @@ package tud.seemuh.nfcgate.network;
 
 import android.nfc.Tag;
 import android.util.Log;
-import android.widget.TextView;
 
-import com.google.protobuf.ByteString;
-
+import tud.seemuh.nfcgate.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.network.meta.MetaMessage;
 import tud.seemuh.nfcgate.reader.IsoDepReaderImpl;
 import tud.seemuh.nfcgate.reader.NFCTagReader;
@@ -14,30 +12,31 @@ import tud.seemuh.nfcgate.util.Utils;
 import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
+import tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode;
+import tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode;
 import tud.seemuh.nfcgate.hce.ApduService;
 
 
-public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.Callback {
-    private final static String TAG = "ApduService";
+public class CallbackImpl implements Callback {
+    private final static String TAG = "CallbackImpl";
 
     private ApduService apdu;
     private NFCTagReader mReader = null;
-    private TextView debugView;
-    private NetHandler Handler = new NetHandler();
+    private HighLevelNetworkHandler Handler = NetHandler.getInstance();
 
-    /**
-     * Setter for View, that should be updated from another thread
-     */
-    public void setUpdateView(TextView ldebugView) {
-        debugView = ldebugView;
-    }
+    private String SessionToken;
 
-
-    public CallbackImpl(ApduService as) {
+    public Callback setAPDUService(ApduService as) {
         apdu = as;
+        return this;
     }
 
     public CallbackImpl() {}
+
+    @Override
+    public void notifyBrokenPipe() {
+        Handler.disconnectBrokenPipe();
+    }
 
     /**
      * Implementation of SimpleNetworkConnectionClientImpl.Callback
@@ -49,53 +48,92 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
             // Parse incoming data as a MetaMessage
             MetaMessage.Wrapper Wrapper = MetaMessage.Wrapper.parseFrom(data);
 
-            // Determine which type of Message the MetaMessage contains
-            if (Wrapper.getMessageCase() == MessageCase.DATA) {
-                Log.i(TAG, "MessageCase.DATA: Sending to handler");
-                handleData(Wrapper.getData());
-            }
-            else if (Wrapper.getMessageCase() == MessageCase.KEX) {
-                Log.i(TAG, "MessageCase.KEX: Sending to handler");
-                handleKex(Wrapper.getKex());
-            }
-            else if (Wrapper.getMessageCase() == MessageCase.NFCDATA) {
-                Log.i(TAG, "MessageCase:NFCDATA: Sending to handler");
-                handleNFCData(Wrapper.getNFCData());
-            }
-            else if (Wrapper.getMessageCase() == MessageCase.SESSION) {
-                Log.i(TAG, "MessageCase.SESSION: Sending to handler");
-                handleSession(Wrapper.getSession());
-            }
-            else if (Wrapper.getMessageCase() == MessageCase.STATUS) {
-                Log.i(TAG, "MessageCase.STATUS: Sending to handler");
-                handleStatus(Wrapper.getStatus());
-            }
-            else {
-                Log.e(TAG, "Message fits no known case! This is fucked up");
-                sendErrorMessage(C2C.Status.StatusCode.UNKNOWN_MESSAGE);
-            }
+            handleWrapperMessage(Wrapper);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
             // We have received a message in an invalid format.
             // Send error message
-            Log.e(TAG, "Message was malformed, discarding and sending error message");
-            sendErrorMessage(C2C.Status.StatusCode.INVALID_MSG_FMT);
+            Log.e(TAG, "onDataReceived: Message was malformed, discarding and sending error message");
+            Handler.notifyInvalidMsgFormat();
+        }
+    }
+
+    private void handleWrapperMessage(MetaMessage.Wrapper Wrapper) {
+        // Determine which type of Message the MetaMessage contains
+        if (Wrapper.getMessageCase() == MessageCase.DATA) {
+            Log.i(TAG, "onDataReceived: MessageCase.DATA: Sending to handler");
+            handleData(Wrapper.getData());
+        }
+        else if (Wrapper.getMessageCase() == MessageCase.NFCDATA) {
+            Log.i(TAG, "onDataReceived: MessageCase:NFCDATA: Sending to handler");
+            handleNFCData(Wrapper.getNFCData());
+        }
+        else if (Wrapper.getMessageCase() == MessageCase.SESSION) {
+            Log.i(TAG, "onDataReceived: MessageCase.SESSION: Sending to handler");
+            handleSession(Wrapper.getSession());
+        }
+        else if (Wrapper.getMessageCase() == MessageCase.STATUS) {
+            Log.i(TAG, "onDataReceived: MessageCase.STATUS: Sending to handler");
+            handleStatus(Wrapper.getStatus());
+        }
+        else if (Wrapper.getMessageCase() == MessageCase.ANTICOL) {
+            Log.i(TAG, "onDataReceived: MessageCase.ANTICOL: Sending to handler");
+            handleAnticol(Wrapper.getAnticol());
+        }
+        else {
+            Log.e(TAG, "onDataReceived: Message fits no known case! This is fucked up");
+            Handler.notifyUnknownMessageType();
         }
     }
 
 
-    private void sendErrorMessage(C2C.Status.StatusCode code) {
-        // Create error message
-        C2C.Status.Builder ErrorMsg = C2C.Status.newBuilder();
-        ErrorMsg.setCode(code);
+    private void handleData(C2S.Data msg) {
+        if (msg.hasBlob()) {
+            try {
+                // Decode binary blob into Wrapper message
+                MetaMessage.Wrapper Wrapper = MetaMessage.Wrapper.parseFrom(msg.getBlob().toByteArray());
 
-        // Send message
-        Handler.sendMessage(ErrorMsg.build(), MessageCase.STATUS);
+                // Now handle the wrapper Message
+                handleWrapperMessage(Wrapper);
+            } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                // We have received a message in an invalid format.
+                // Send error message
+                Log.e(TAG, "handleData: Message was malformed, discarding and sending error message");
+                Handler.notifyInvalidMsgFormat();
+            }
+        } else if (msg.hasErrcode()) {
+            if (msg.getErrcode() == C2S.Data.DataErrorCode.ERROR_NO_SESSION) {
+                Log.e(TAG, "Appearently, we sent a message without being in a session");
+            } else if (msg.getErrcode() == C2S.Data.DataErrorCode.ERROR_TRANSMISSION_FAILED) {
+                Log.e(TAG, "Appearently, our partner dropped (Transmission failed)");
+                // TODO Implement
+            } else if (msg.getErrcode() == C2S.Data.DataErrorCode.ERROR_UNKNOWN) {
+                Log.e(TAG, "An unknown error occured. Interesting.");
+            } else if (msg.getErrcode() == C2S.Data.DataErrorCode.ERROR_NOERROR) {
+                Log.d(TAG, "Message was forwarded successfully by the server. Doing nothing.");
+            } else {
+                Log.e(TAG, "Data message with unknown error code detected.");
+                Handler.notifyInvalidMsgFormat();
+            }
+        } else {
+            Log.e(TAG, "Got message without blob and errorcode. What.");
+            Handler.notifyInvalidMsgFormat();
+        }
     }
 
+    private void handleAnticol(C2C.Anticol msg) {
+        Log.i(TAG, "handleAnticol: got anticol values");
 
-    private void handleKex(C2C.Kex msg) {
-        Log.e(TAG, "MessageCase.KEX: Not implemented");
-        sendErrorMessage(C2C.Status.StatusCode.NOT_IMPLEMENTED);
+        byte[] a_atqa = msg.getATQA().toByteArray();
+        byte atqa = a_atqa.length > 0 ? a_atqa[a_atqa.length-1] : 0;
+
+        byte[] a_hist = msg.getHistoricalByte().toByteArray();
+        byte hist = a_hist.length > 0 ? a_atqa[0] : 0;
+
+        byte[] a_sak = msg.getSAK().toByteArray();
+        byte sak = a_sak.length > 0 ? a_sak[0] : 0;
+
+        DaemonConfiguration.getInstance().uploadConfiguration(atqa, sak, hist, msg.getUID().toByteArray());
+        DaemonConfiguration.getInstance().enablePatch();
     }
 
 
@@ -103,72 +141,125 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
         if (msg.getDataSource() == C2C.NFCData.DataSource.READER) {
             // We received a signal FROM a reader device and are required to talk TO a card.
             if (mReader.isConnected()) {
-                Log.i(TAG, "Received message for a card, forwarding...");
+                Log.i(TAG, "HandleNFCData: Received message for a card, forwarding...");
+                Log.d(TAG, "HandleNFCData: " + Utils.bytesToHex(msg.getDataBytes().toByteArray()));
                 // Extract NFC Bytes and send them to the card
                 byte[] bytesFromCard = mReader.sendCmd(msg.getDataBytes().toByteArray());
 
-                // Begin constructing reply
-                C2C.NFCData.Builder reply = C2C.NFCData.newBuilder();
-                ByteString replyBytes = ByteString.copyFrom(bytesFromCard);
-                reply.setDataBytes(replyBytes);
-                reply.setDataSource(C2C.NFCData.DataSource.CARD);
+                // Send the reply from the card to the partner
+                Handler.sendAPDUReply(bytesFromCard);
 
-                // Send reply
-                Handler.sendMessage(reply.build(), MessageCase.NFCDATA);
-
-                //Ugly way to send data to the GUI from an external thread
-                new UpdateUI(debugView).execute(Utils.bytesToHex(bytesFromCard) + "\n");
-                Log.i(TAG, "Received and forwarded reply from card");
+                Log.i(TAG, "HandleNFCData: Received and forwarded reply from card");
+                Log.i(TAG, "HandleNFCData: BytesFromCard: " + Utils.bytesToHex(bytesFromCard));
             } else {
-                Log.e(TAG, "No NFC connection active");
+                Log.e(TAG, "HandleNFCData: No NFC connection active");
                 // There is no connected NFC device
-                sendErrorMessage(C2C.Status.StatusCode.NFC_NO_CONN);
-
-                // Update UI
-                new UpdateUI(debugView).execute("Received NFC bytes, but we are not connected to any device.\n");
+                Handler.notifyNFCNotConnected();
             }
         } else {
             if (apdu != null) {
-                Log.i(TAG, "Received a message for a reader, forwarding...");
+                Log.i(TAG, "HandleNFCData: Received a message for a reader, forwarding...");
                 // We received a signal FROM a card and are required to talk TO a reader.
-                apdu.sendResponseApdu(msg.getDataBytes().toByteArray());
+                apdu.sendResponse(msg.getDataBytes().toByteArray());
             } else {
-                Log.e(TAG, "Received a message for a reader, but no APDU instance active.");
-                sendErrorMessage(C2C.Status.StatusCode.NFC_NO_CONN);
+                Log.e(TAG, "HandleNFCData: Received a message for a reader, but no APDU instance active.");
+                Handler.notifyNFCNotConnected();
             }
         }
     }
 
 
     private void handleStatus(C2C.Status msg) {
-        if (msg.getCode() == C2C.Status.StatusCode.KEEPALIVE_REQ) {
+        if (msg.getCode() == StatusCode.KEEPALIVE_REQ) {
             // Received keepalive request, reply with response
-            Log.i(TAG, "Got Keepalive request, replying");
-            sendErrorMessage(C2C.Status.StatusCode.KEEPALIVE_REP);
-        } else if (msg.getCode() == C2C.Status.StatusCode.KEEPALIVE_REP) {
+            Log.i(TAG, "handleStatus: Got Keepalive request, replying");
+            Handler.sendKeepaliveReply();
+        }
+        else if (msg.getCode() == StatusCode.KEEPALIVE_REP) {
             // Got keepalive response, do nothing for now
-            Log.i(TAG, "Got Keepalive response. Doing nothing");
-        } else {
+            Log.i(TAG, "handleStatus: Got Keepalive response. Doing nothing");
+        }
+        else if (msg.getCode() == StatusCode.NOT_IMPLEMENTED) {
+            Log.e(TAG, "handleStatus: Other party sent NOT_IMPLEMENTED. Doing nothing");
+        }
+        else if (msg.getCode() == StatusCode.UNKNOWN_ERROR) {
+            Log.e(TAG, "handleStatus: Other party sent UNKNOWN_ERROR. Doing nothing");
+        }
+        else if (msg.getCode() == StatusCode.UNKNOWN_MESSAGE) {
+            Log.e(TAG, "handleStatus: Other party sent UNKNOWN_MESSAGE. Doing nothing");
+        }
+        else if (msg.getCode() == StatusCode.INVALID_MSG_FMT) {
+            Log.e(TAG, "handleStatus: Other party sent INVALID_MSG_FMT. Doing nothing");
+        }
+        else if (msg.getCode() == StatusCode.READER_FOUND) {
+            Log.d(TAG, "handleStatus: Other party sent READER_FOUND. Delegating to NetHandler.");
+            Handler.sessionPartnerAPDUModeOn();
+        }
+        else if (msg.getCode() == StatusCode.READER_REMOVED) {
+            Log.d(TAG, "handleStatus: Other party sent READER_REMOVED. Delegating to NetHandler.");
+            Handler.sessionPartnerAPDUModeOff();
+        }
+        else if (msg.getCode() == StatusCode.CARD_FOUND) {
+            Log.d(TAG, "handleStatus: Other party sent CARD_FOUND. Delegating to NetHandler.");
+            Handler.sessionPartnerReaderModeOn();
+        }
+        else if (msg.getCode() == StatusCode.CARD_REMOVED) {
+            Log.d(TAG, "handleStatus: Other party sent CARD_REMOVED. Delegating to NetHandler.");
+            Handler.sessionPartnerReaderModeOff();
+        }
+        else if (msg.getCode() == StatusCode.NFC_NO_CONN) {
+            Log.d(TAG, "handleStatus: Other party sent NFC_NO_CONN. Delegating to NetHandler.");
+            Handler.sessionPartnerNFCLost();
+        }
+        else {
             // Not implemented
-            Log.e(TAG, "MessageCase.STATUS: Not implemented");
-            sendErrorMessage(C2C.Status.StatusCode.NOT_IMPLEMENTED);
+            Log.e(TAG, "handleStatus: Message case not implemented");
+            Handler.notifyNotImplemented();
         }
     }
 
 
-    private void handleData(C2S.Data msg) {
-        Log.e(TAG, "MessageCase.DATA: Not implemented");
-        sendErrorMessage(C2C.Status.StatusCode.NOT_IMPLEMENTED);
-    }
-
-
     private void handleSession(C2S.Session msg) {
-        Log.e(TAG, "MessageCase.SESSION: Not implemented");
-        sendErrorMessage(C2C.Status.StatusCode.NOT_IMPLEMENTED);
+        if (msg.getOpcode() == SessionOpcode.SESSION_CREATE_FAIL) {
+            Log.d(TAG, "handleSession: SESSION_CREATE_FAIL: Delegating to Handler");
+            Handler.sessionCreateFailed(msg.getErrcode());
+        }
+        else if (msg.getOpcode() == SessionOpcode.SESSION_CREATE_SUCCESS) {
+            Log.d(TAG, "handleSession: SESSION_CREATE_SUCCESS: Delegating to Handler");
+            // Notify handler about session secret
+            Handler.confirmSessionCreation(msg.getSessionSecret());
+        }
+        else if (msg.getOpcode() == SessionOpcode.SESSION_JOIN_FAIL) {
+            Log.d(TAG, "handleSession: SESSION_JOIN_FAIL: Delegating to Handler");
+            Handler.sessionJoinFailed(msg.getErrcode());
+        }
+        else if (msg.getOpcode() == SessionOpcode.SESSION_JOIN_SUCCESS) {
+            Log.d(TAG, "handleSession: SESSION_JOIN_SUCCESS: Delegating to Handler");
+            Handler.confirmSessionJoin();
+        }
+        else if (msg.getOpcode() == SessionOpcode.SESSION_LEAVE_FAIL) {
+            Log.d(TAG, "handleSession: SESSION_LEAVE_FAIL: Delegating to Handler");
+            Handler.sessionLeaveFailed(msg.getErrcode());
+        }
+        else if (msg.getOpcode() == SessionOpcode.SESSION_LEAVE_SUCCESS) {
+            Log.d(TAG, "handleSession: SESSION_LEAVE_SUCCESS: Delegating to Handler");
+            Handler.confirmSessionLeave();
+        }
+        else if (msg.getOpcode() == SessionOpcode.SESSION_PEER_JOINED) {
+            Log.d(TAG, "handleSession: SESSION_PEER_JOINED: Delegating to Handler");
+            Handler.sessionPartnerJoined();
+        }
+        else if (msg.getOpcode() == SessionOpcode.SESSION_PEER_LEFT) {
+            Log.d(TAG, "handleSession: SESSION_PEER_LEFT: Delegating to Handler");
+            Handler.sessionPartnerLeft();
+        }
+        else {
+            Log.e(TAG, "handleSession: Unknown Opcode!");
+            Handler.notifyInvalidMsgFormat();
+        }
     }
 
 
-    // TODO Refactor this part into another class
     /**
      * Called on nfc tag intent
      * @param tag nfc tag
@@ -180,20 +271,18 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
 
         //identify tag type
         for(String type: tag.getTechList()) {
-            // TODO: Refactor this into something much nicer to avoid redundant work betw.
-            //       this code and the worker thread, which also does this check.
-            Log.i("NFCGATE_DEBUG", "Tag TechList: " + type);
+            Log.i(TAG, "setTag: Tag TechList: " + type);
             if("android.nfc.tech.IsoDep".equals(type)) {
                 found_supported_tag = true;
 
                 mReader = new IsoDepReaderImpl(tag);
-                Log.d("NFCGATE_DEBUG", "Chose IsoDep technology.");
+                Log.d(TAG, "setTag: Chose IsoDep technology.");
                 break;
             } else if("android.nfc.tech.NfcA".equals(type)) {
                 found_supported_tag = true;
 
                 mReader = new NfcAReaderImpl(tag);
-                Log.d("NFCGATE_DEBUG", "Chose NfcA technology.");
+                Log.d(TAG, "setTag: Chose NfcA technology.");
                 break;
             }
         }
@@ -205,6 +294,7 @@ public class CallbackImpl implements SimpleLowLevelNetworkConnectionClientImpl.C
             Log.i("NFCGATE_TAG", "ATQA: " + Utils.bytesToHex(mReader.getAtqa()));
             Log.i("NFCGATE_TAG", "SAK:  " + Utils.bytesToHex(mReader.getSak()));
             Log.i("NFCGATE_TAG", "HIST: " + Utils.bytesToHex(mReader.getHistoricalBytes()));
+            Handler.sendAnticol(mReader.getAtqa(), mReader.getSak(), mReader.getHistoricalBytes(), mReader.getUID());
         }
 
         return found_supported_tag;
