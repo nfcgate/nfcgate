@@ -39,6 +39,18 @@ static void onHostEmulationLoad(JNIEnv *jni, jclass _class, void *data) {
 }
 
 /**
+ * find a native symbol and hook it
+ */
+static void findAndHook(void *handle, const char *symbol, void* hook, void **original) {
+    void *fptr = dlsym(handle, symbol);
+    if(fptr) {
+        MSHookFunction(fptr, hook, original);
+        LOGI("hooked: %s", symbol);
+    } else {
+        LOGE("could NOT hook: %s", symbol);
+    }
+}
+/**
  * hook into native functions of the libnfc-nci broadcom nfc driver
  */
 static void hookNative() {
@@ -49,27 +61,11 @@ static void hookNative() {
     }
 
     void *handle = dlopen(libfile, 0);
-
-    // find function pointer to NFC_SetStaticRfCback symbol and hook into it
-    void *fptr = dlsym(handle, "NFC_SetStaticRfCback");
-    if(fptr) {
-        MSHookFunction(fptr, (void*)&hook_SetRfCback, (void**)&nci_SetRfCback);
-        LOGI("hooked: NFC_SetStaticRfCback");
-    } else {
-        LOGE("could NOT hook: NFC_SetStaticRfCback");
-    }
+    findAndHook(handle, "NFC_SetStaticRfCback", (void*)&hook_SetRfCback, (void**)&nci_SetRfCback);
+    findAndHook(handle, "NFC_SetConfig", (void*)&hook_NfcSetConfig, (void**)&nci_NfcSetConfig);
 
     // find pointer to ce_t4t control structure
     ce_cb = (tCE_CB*)dlsym(handle, "ce_cb");
-
-    // find NFC_SetConfig
-    fptr = dlsym(handle, "NFC_SetConfig");
-    if(fptr) {
-        MSHookFunction(fptr, (void *) &hook_NfcSetConfig, (void **) &nci_NfcSetConfig);
-        LOGI("hooked: NFC_SetConfig()");
-    } else {
-        LOGE("could NOT hook: NFC_SetConfig()");
-    }
 }
 
 /**
