@@ -15,6 +15,22 @@ import tud.seemuh.nfcgate.util.Utils;
 public class NetHandler implements HighLevelNetworkHandler {
     private final static String TAG = "NetHandler";
 
+    private final static String CONN_CONNECTED = "Connected";
+    private final static String CONN_DISCONNECTED = "Disconnected";
+    private final static String CONN_SESSION = "In Session - Token ";
+    private final static String CONN_WAITING_SESSION = "Waiting for Session";
+    private final static String CONN_LEAVING_SESSION = "Leaving Session";
+    private final static String CONN_SESSION_JOIN_FAILED = "Session join failed";
+    private final static String CONN_SESSION_CREATION_FAILED = "Session creation failed";
+
+    private final static String PEER_NO_SESSION = "No session";
+    private final static String PEER_NOT_CONNECTED = "Not connected to server";
+    private final static String PEER_WAITING_FOR_PARTNER = "Waiting for partner";
+    private final static String PEER_CONNECTED = "Connected";
+    private final static String PEER_CONNECTED_CARD = "Connected to Card";
+    private final static String PEER_CONNECTED_APDU = "Connected to Reader";
+    private final static String PEER_UNKNOWN = "Unknown";
+
     private LowLevelNetworkHandler handler;
     private static NetHandler mInstance = null;
     private String secret;
@@ -37,18 +53,6 @@ public class NetHandler implements HighLevelNetworkHandler {
     private TextView debugView;
     private TextView connectionStatusView;
     private TextView peerStatusView;
-
-    public void setDebugView(TextView ldebugView) {
-        debugView = ldebugView;
-    }
-
-    public void setConnectionStatusView(TextView connStatusView) {
-        connectionStatusView = connStatusView;
-    }
-
-    public void setPeerStatusView(TextView view) {
-        peerStatusView = view;
-    }
 
     /*
     // This queue contains messages that are to be sent as soon as the connection to the server
@@ -74,6 +78,30 @@ public class NetHandler implements HighLevelNetworkHandler {
 
     public Callback getCallback() {
         return callbackInstance;
+    }
+
+    public void setDebugView(TextView ldebugView) {
+        debugView = ldebugView;
+    }
+
+    public void setConnectionStatusView(TextView connStatusView) {
+        connectionStatusView = connStatusView;
+    }
+
+    public void setPeerStatusView(TextView view) {
+        peerStatusView = view;
+    }
+
+    private void appendDebugOutput(String output) {
+        new UpdateUI(debugView, UpdateUI.TextUpdates.append).execute(output + "\n");
+    }
+
+    private void setConnectionStatusOutput(String output) {
+        new UpdateUI(connectionStatusView, UpdateUI.TextUpdates.setText).execute("Server Status: " + output);
+    }
+
+    private void setPeerStatusOutput(String output) {
+        new UpdateUI(peerStatusView, UpdateUI.TextUpdates.setText).execute("Partner Status: " + output);
     }
 
     private C2S.Data wrapAsDataMessage(byte[] msg) {
@@ -163,13 +191,18 @@ public class NetHandler implements HighLevelNetworkHandler {
         handler.setCallback(mNetCallback);
         callbackInstance = mNetCallback;
         status = Status.CONNECTED_NO_SESSION;
+        setConnectionStatusOutput(CONN_CONNECTED);
+        setPeerStatusOutput(PEER_NO_SESSION);
         return this;
     }
 
     @Override
     public void disconnect() {
+        leaveSession(); // Ensure we are no longer in a session
         // TODO Implement
         status = Status.NOT_CONNECTED;
+        setConnectionStatusOutput(CONN_DISCONNECTED);
+        setPeerStatusOutput(PEER_NOT_CONNECTED);
     }
 
     // Session management
@@ -188,6 +221,7 @@ public class NetHandler implements HighLevelNetworkHandler {
         // Send the message
         sendMessage(sessionMessage.build(), MessageCase.SESSION);
         status = Status.SESSION_CREATE_SENT;
+        setConnectionStatusOutput(CONN_WAITING_SESSION);
     }
 
     @Override
@@ -208,6 +242,7 @@ public class NetHandler implements HighLevelNetworkHandler {
         sendMessage(sessionMessage.build(), MessageCase.SESSION);
         secret = secretToken;
         status = Status.SESSION_JOIN_SENT;
+        setConnectionStatusOutput(CONN_WAITING_SESSION);
     }
 
     @Override
@@ -216,7 +251,7 @@ public class NetHandler implements HighLevelNetworkHandler {
                 && status != Status.PARTNER_READER_MODE
                 && status != Status.SESSION_READY
                 && status != Status.WAITING_FOR_PARTNER) {
-            Log.e(TAG, "leaveSession: Trying to leave session while not in a session. Doing nothing");
+            Log.w(TAG, "leaveSession: Trying to leave session while not in a session. Doing nothing");
             return;
         }
         Log.d(TAG, "leaveSession: Trying to leave session with secret " + secret);
@@ -229,6 +264,7 @@ public class NetHandler implements HighLevelNetworkHandler {
         // Send the message
         sendMessage(sessionMessage.build(), MessageCase.SESSION);
         status = Status.SESSION_LEAVE_SENT;
+        setConnectionStatusOutput(CONN_LEAVING_SESSION);
     }
 
     // NFC Message passing
@@ -248,6 +284,7 @@ public class NetHandler implements HighLevelNetworkHandler {
 
         // Log
         Log.d(TAG, "sendAPDUMessage: sent APDU message");
+        appendDebugOutput(Utils.bytesToHex(apdu));
     }
 
     @Override
@@ -263,7 +300,7 @@ public class NetHandler implements HighLevelNetworkHandler {
 
         // Send reply
         sendMessage(reply.build(), MessageCase.NFCDATA);
-        new UpdateUI(debugView, UpdateUI.TextUpdates.append).execute(Utils.bytesToHex(nfcdata) + "\n");
+        appendDebugOutput(Utils.bytesToHex(nfcdata));
     }
 
     @Override
@@ -282,75 +319,115 @@ public class NetHandler implements HighLevelNetworkHandler {
     public void confirmSessionCreation(String secretToken) {
         Log.d(TAG, "confirmSessionCreation: Session created with token " + secretToken);
         secret = secretToken;
-        status = Status.WAITING_FOR_PARTNER; // TODO Implement further
+        status = Status.WAITING_FOR_PARTNER;
+        setConnectionStatusOutput(CONN_SESSION + secretToken);
+        setPeerStatusOutput(PEER_WAITING_FOR_PARTNER);
     }
 
     @Override
     public void confirmSessionJoin() {
-        status = Status.SESSION_READY; // TODO Implement further
+        Log.d(TAG, "confirmSessionJoin: Session joined.");
+        status = Status.SESSION_READY;
+        setConnectionStatusOutput(CONN_SESSION + secret);
+        setPeerStatusOutput(PEER_CONNECTED);
     }
 
     @Override
     public void confirmSessionLeave() {
-        status = Status.CONNECTED_NO_SESSION; // TODO Implement further
+        status = Status.CONNECTED_NO_SESSION;
+        setConnectionStatusOutput(CONN_CONNECTED);
+        setPeerStatusOutput(PEER_NO_SESSION);
     }
 
     @Override
     public void sessionPartnerJoined() {
-        status = Status.SESSION_READY; // TODO Implement further
+        status = Status.SESSION_READY;
+        setPeerStatusOutput(PEER_CONNECTED);
     }
 
     @Override
     public void sessionPartnerLeft() {
-        status = Status.WAITING_FOR_PARTNER; // TODO Implement further
+        status = Status.WAITING_FOR_PARTNER;
+        setPeerStatusOutput(PEER_WAITING_FOR_PARTNER);
     }
 
     @Override
     public void sessionPartnerReaderModeOn() {
         status = Status.PARTNER_READER_MODE;
-        notifyNotImplemented(); // TODO Implement
+        setPeerStatusOutput(PEER_CONNECTED_CARD);
     }
 
     @Override
     public void sessionPartnerAPDUModeOn() {
         status = Status.PARTNER_APDU_MODE;
-        notifyNotImplemented(); // TODO Implement
+        setPeerStatusOutput(PEER_CONNECTED_APDU);
     }
 
     @Override
     public void sessionPartnerReaderModeOff() {
         status = Status.SESSION_READY;
-        notifyNotImplemented(); // TODO Implement
+        setPeerStatusOutput(PEER_CONNECTED);
     }
 
     @Override
     public void sessionPartnerAPDUModeOff() {
         status = Status.SESSION_READY;
-        notifyNotImplemented(); // TODO Implement
+        setPeerStatusOutput(PEER_CONNECTED);
     }
 
     @Override
     public void sessionPartnerNFCLost() {
         status = Status.SESSION_READY;
-        notifyNotImplemented(); // TODO Implement
+        setPeerStatusOutput(PEER_CONNECTED);
+        appendDebugOutput("Partner lost NFC connection");
     }
 
     @Override
     public void sessionCreateFailed(C2S.Session.SessionErrorCode errcode) {
         status = Status.CONNECTED_NO_SESSION;
-        notifyNotImplemented(); // TODO Implement
+        setConnectionStatusOutput(CONN_SESSION_CREATION_FAILED);
+        if (errcode == C2S.Session.SessionErrorCode.ERROR_CREATE_ALREADY_HAS_SESSION) {
+            appendDebugOutput("Session creation failed: Already in a session");
+        } else if (errcode == C2S.Session.SessionErrorCode.ERROR_CREATE_UNKOWN) {
+            appendDebugOutput("Session creation failed: Unknown server error");
+        } else {
+            appendDebugOutput("Session creation failed, unknown error code sent");
+        }
     }
 
     @Override
     public void sessionJoinFailed(C2S.Session.SessionErrorCode errcode) {
         status = Status.CONNECTED_NO_SESSION;
-        notifyNotImplemented(); // TODO Implement
+        setConnectionStatusOutput(CONN_SESSION_JOIN_FAILED);
+        if (errcode == C2S.Session.SessionErrorCode.ERROR_JOIN_ALREADY_HAS_SESSION) {
+            appendDebugOutput("Session join failed: Already in a session");
+        } else if (errcode == C2S.Session.SessionErrorCode.ERROR_JOIN_UNKNOWN) {
+            appendDebugOutput("Session join failed: Unknown server error");
+        } else if (errcode == C2S.Session.SessionErrorCode.ERROR_JOIN_UNKNOWN_SECRET) {
+            appendDebugOutput("Session join failed: Unknown secret (Session does not exist)");
+        } else {
+            appendDebugOutput("Session join failed, unknown error code sent");
+        }
     }
 
     @Override
     public void sessionLeaveFailed(C2S.Session.SessionErrorCode errcode) {
         status = Status.WAITING_FOR_PARTNER; // TODO This may result in an inconsistent state. Handle that better
-        notifyNotImplemented(); // TODO Implement
+        if (errcode == C2S.Session.SessionErrorCode.ERROR_LEAVE_NOT_JOINED) {
+            appendDebugOutput("Session leave failed: Not in a session");
+            setConnectionStatusOutput(CONN_CONNECTED);
+            setPeerStatusOutput(PEER_NO_SESSION);
+        } else if (errcode == C2S.Session.SessionErrorCode.ERROR_LEAVE_UNKNOWN_SECRET) {
+            appendDebugOutput("Session leave failed: Unknown secret");
+            setConnectionStatusOutput(CONN_CONNECTED);
+            setPeerStatusOutput(PEER_NO_SESSION);
+        } else if (errcode == C2S.Session.SessionErrorCode.ERROR_LEAVE_UNKNOWN) {
+            appendDebugOutput("Session leave failed: Unknown server error");
+            setConnectionStatusOutput(CONN_CONNECTED);
+            setPeerStatusOutput(PEER_UNKNOWN);
+        } else {
+            appendDebugOutput("Session leave failed, unknown error code sent");
+        }
     }
 
     // Notification Messages

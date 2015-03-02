@@ -268,7 +268,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             mConnecttoSession.setText(leaveSessionMessage);
             mJoinSession.setEnabled(false);
             this.setTitle("You clicked connect");
-            mConnStatus.setText("Server status: Connecting - (token: )");
+            mConnStatus.setText("Server status: Connecting");
             mPartnerDevice.setText("Partner status: waiting");
             mConnectionClient = NetHandler.getInstance().connect(mIP.getText().toString(), port, mNetCallback);
             mConnectionClient.createSession();
