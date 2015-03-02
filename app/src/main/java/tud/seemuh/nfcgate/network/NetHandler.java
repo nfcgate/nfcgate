@@ -47,6 +47,7 @@ public class NetHandler implements HighLevelNetworkHandler {
     }
 
     private Status status;
+    private boolean leaving = false;
 
     private Callback callbackInstance;
 
@@ -193,13 +194,15 @@ public class NetHandler implements HighLevelNetworkHandler {
         status = Status.CONNECTED_NO_SESSION;
         setConnectionStatusOutput(CONN_CONNECTED);
         setPeerStatusOutput(PEER_NO_SESSION);
+        leaving = false;
         return this;
     }
 
     @Override
     public void disconnect() {
         leaveSession(); // Ensure we are no longer in a session
-        // TODO Implement
+        leaving = true;
+        handler.disconnect();
         status = Status.NOT_CONNECTED;
         setConnectionStatusOutput(CONN_DISCONNECTED);
         setPeerStatusOutput(PEER_NOT_CONNECTED);
@@ -335,6 +338,10 @@ public class NetHandler implements HighLevelNetworkHandler {
 
     @Override
     public void confirmSessionLeave() {
+        if (leaving) {
+            leaving = false;
+            return; // Do nothing if we are closing the connection
+        }
         status = Status.CONNECTED_NO_SESSION;
         setConnectionStatusOutput(CONN_CONNECTED);
         setPeerStatusOutput(PEER_NO_SESSION);

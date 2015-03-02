@@ -7,4 +7,6 @@ public interface LowLevelNetworkHandler {
 
     public SimpleLowLevelNetworkConnectionClientImpl setCallback(Callback callback);
 
+    public void disconnect();
+
 }
