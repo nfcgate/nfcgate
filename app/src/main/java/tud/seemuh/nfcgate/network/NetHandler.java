@@ -312,6 +312,7 @@ public class NetHandler implements HighLevelNetworkHandler {
         b.setUID(ByteString.copyFrom(uid));
 
         sendMessage(b.build(), MessageCase.ANTICOL);
+        Log.d(TAG, "sendAnticol: Sent Anticol message");
     }
 
     // Session status management
