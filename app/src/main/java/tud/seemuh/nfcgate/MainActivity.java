@@ -181,7 +181,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
         //Toast here is not possible -> exception...
         // TODO This may lead to weird results if we are not already in a session
-        mConnectionClient.notifyCardFound();
+        if (mConnectionClient != null) mConnectionClient.notifyCardFound();
     }
 
     @Override
@@ -194,7 +194,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             mNetCallback.setTag(tag);
 
             // TODO This may lead to weird results if we are not already in a session
-            mConnectionClient.notifyCardFound();
+            if (mConnectionClient != null) mConnectionClient.notifyCardFound();
 
             Toast.makeText(this, "Found Tag", Toast.LENGTH_SHORT).show();
         }
