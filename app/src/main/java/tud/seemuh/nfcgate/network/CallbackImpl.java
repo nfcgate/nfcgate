@@ -2,7 +2,6 @@ package tud.seemuh.nfcgate.network;
 
 import android.nfc.Tag;
 import android.util.Log;
-import android.widget.TextView;
 
 import tud.seemuh.nfcgate.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.network.meta.MetaMessage;
@@ -23,27 +22,9 @@ public class CallbackImpl implements Callback {
 
     private ApduService apdu;
     private NFCTagReader mReader = null;
-    private TextView debugView;
-    private TextView connectionStatusView;
-    private TextView peerStatusView;
     private NetHandler Handler = NetHandler.getInstance();
 
     private String SessionToken;
-
-    /**
-     * Setter for DebugView, that should be updated from another thread
-     */
-    public void setDebugView(TextView ldebugView) {
-        debugView = ldebugView;
-    }
-
-    public void setConnectionStatusView(TextView connStatusView) {
-        connectionStatusView = connStatusView;
-    }
-
-    public void setPeerStatusView(TextView view) {
-        peerStatusView = view;
-    }
 
     public Callback setAPDUService(ApduService as) {
         apdu = as;
@@ -164,17 +145,12 @@ public class CallbackImpl implements Callback {
                 // Send the reply from the card to the partner
                 Handler.sendAPDUReply(bytesFromCard);
 
-                //Ugly way to send data to the GUI from an external thread
-                new UpdateUI(debugView, UpdateUI.TextUpdates.append).execute(Utils.bytesToHex(bytesFromCard) + "\n");
                 Log.i(TAG, "HandleNFCData: Received and forwarded reply from card");
                 Log.i(TAG, "HandleNFCData: BytesFromCard: " + Utils.bytesToHex(bytesFromCard));
             } else {
                 Log.e(TAG, "HandleNFCData: No NFC connection active");
                 // There is no connected NFC device
                 Handler.notifyNFCNotConnected();
-
-                // Update UI
-                new UpdateUI(debugView, UpdateUI.TextUpdates.append).execute("HandleNFCData: Received NFC bytes, but we are not connected to any device.\n");
             }
         } else {
             if (apdu != null) {

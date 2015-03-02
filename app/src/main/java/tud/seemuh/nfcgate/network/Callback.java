@@ -8,10 +8,4 @@ public interface Callback {
     public void onDataReceived(byte[] data);
 
     public Callback setAPDUService(ApduService as);
-
-    public void setDebugView(TextView ldebugView);
-
-    public void setConnectionStatusView(TextView connStatusView);
-
-    public void setPeerStatusView(TextView view);
 }

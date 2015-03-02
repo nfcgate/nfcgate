@@ -1,6 +1,7 @@
 package tud.seemuh.nfcgate.network;
 
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
@@ -9,6 +10,7 @@ import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
+import tud.seemuh.nfcgate.util.Utils;
 
 public class NetHandler implements HighLevelNetworkHandler {
     private final static String TAG = "NetHandler";
@@ -31,6 +33,22 @@ public class NetHandler implements HighLevelNetworkHandler {
     private Status status;
 
     private Callback callbackInstance;
+
+    private TextView debugView;
+    private TextView connectionStatusView;
+    private TextView peerStatusView;
+
+    public void setDebugView(TextView ldebugView) {
+        debugView = ldebugView;
+    }
+
+    public void setConnectionStatusView(TextView connStatusView) {
+        connectionStatusView = connStatusView;
+    }
+
+    public void setPeerStatusView(TextView view) {
+        peerStatusView = view;
+    }
 
     /*
     // This queue contains messages that are to be sent as soon as the connection to the server
@@ -245,6 +263,7 @@ public class NetHandler implements HighLevelNetworkHandler {
 
         // Send reply
         sendMessage(reply.build(), MessageCase.NFCDATA);
+        new UpdateUI(debugView, UpdateUI.TextUpdates.append).execute(Utils.bytesToHex(nfcdata) + "\n");
     }
 
     @Override

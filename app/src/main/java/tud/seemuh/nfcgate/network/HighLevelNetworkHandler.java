@@ -1,5 +1,7 @@
 package tud.seemuh.nfcgate.network;
 
+import android.widget.TextView;
+
 import tud.seemuh.nfcgate.network.c2s.C2S;
 
 public interface HighLevelNetworkHandler {
@@ -8,7 +10,11 @@ public interface HighLevelNetworkHandler {
 
     public void disconnect();
 
-    public Callback getCallback();
+    public void setDebugView(TextView ldebugView);
+
+    public void setConnectionStatusView(TextView connStatusView);
+
+    public void setPeerStatusView(TextView view);
 
     // Session messages
     public void createSession();

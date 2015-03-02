@@ -179,9 +179,9 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         Log.i("NFCGATE_DEBUG","Discovered tag in ReaderMode");
         mNetCallback.setTag(tag);
         //Set the view to update the GUI from another thread
-        mNetCallback.setDebugView(mDebuginfo);
-        mNetCallback.setConnectionStatusView(mConnStatus);
-        mNetCallback.setPeerStatusView(mPartnerDevice);
+        mConnectionClient.setDebugView(mDebuginfo);
+        mConnectionClient.setConnectionStatusView(mConnStatus);
+        mConnectionClient.setPeerStatusView(mPartnerDevice);
 
         //Toast here is not possible -> exception...
     }
@@ -195,9 +195,9 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
             mNetCallback.setTag(tag);
             //Set the view to update the GUI from another thread
-            mNetCallback.setDebugView(mDebuginfo);
-            mNetCallback.setConnectionStatusView(mConnStatus);
-            mNetCallback.setPeerStatusView(mPartnerDevice);
+            mConnectionClient.setDebugView(mDebuginfo);
+            mConnectionClient.setConnectionStatusView(mConnStatus);
+            mConnectionClient.setPeerStatusView(mPartnerDevice);
 
             Toast.makeText(this, "Found Tag", Toast.LENGTH_SHORT).show();
         }
