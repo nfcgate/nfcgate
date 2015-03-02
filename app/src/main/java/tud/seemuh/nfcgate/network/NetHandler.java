@@ -122,12 +122,14 @@ public class NetHandler implements HighLevelNetworkHandler {
     }
 
     private void reactivateButtons() {
-
+        // We need to pass a parameter, even though it isn't used. Otherwise, the app will crash.
+        new UpdateUI(connectButton, UpdateUI.UpdateMethod.enableButton).execute("Unfug");
+        new UpdateUI(joinButton, UpdateUI.UpdateMethod.enableButton).execute("Unfug");
     }
 
     private void setButtonTexts() {
-        new UpdateUI(connectButton, UpdateUI.TextUpdates.setText).execute(MainActivity.createSessionMessage);
-        new UpdateUI(joinButton, UpdateUI.TextUpdates.setText).execute(MainActivity.joinSessionMessage);
+        new UpdateUI(connectButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.createSessionMessage);
+        new UpdateUI(joinButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.joinSessionMessage);
     }
 
     private C2S.Data wrapAsDataMessage(byte[] msg) {
@@ -239,6 +241,8 @@ public class NetHandler implements HighLevelNetworkHandler {
         status = Status.NOT_CONNECTED;
         setConnectionStatusOutput(CONN_DIED);
         setPeerStatusOutput(PEER_CONN_DIED);
+        setButtonTexts();
+        reactivateButtons();
     }
 
     // Session management
