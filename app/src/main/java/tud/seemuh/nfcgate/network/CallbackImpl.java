@@ -160,7 +160,7 @@ public class CallbackImpl implements Callback {
             if (apdu != null) {
                 Log.i(TAG, "HandleNFCData: Received a message for a reader, forwarding...");
                 // We received a signal FROM a card and are required to talk TO a reader.
-                apdu.sendResponseApdu(msg.getDataBytes().toByteArray());
+                apdu.sendResponse(msg.getDataBytes().toByteArray());
             } else {
                 Log.e(TAG, "HandleNFCData: Received a message for a reader, but no APDU instance active.");
                 Handler.notifyNFCNotConnected();

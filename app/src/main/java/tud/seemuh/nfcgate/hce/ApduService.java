@@ -42,10 +42,11 @@ public class ApduService extends HostApduService {
         // the byte sequence 0x00a4 is a SELECT command. this is always the first command we get
         // when a reader wants to talk to us
 
+        Log.d(TAG, "APDU-IN: " + Utils.bytesToHex(apdu));
+
         // Package the ADPU into a C2C message
         Handler.sendAPDUMessage(apdu);
 
-        Log.d(TAG, "nfc: " + Utils.bytesToHex(apdu));
 
         return DONT_RESPOND;
     }
@@ -54,5 +55,10 @@ public class ApduService extends HostApduService {
     public void onDeactivated(int reason) {
         Log.i(TAG, "Deactivated: " + reason);
         Handler.notifyReaderRemoved();
+    }
+
+    public void sendResponse(byte[] apdu) {
+        Log.d(TAG, "APDU-OUT: " + Utils.bytesToHex(apdu));
+        sendResponseApdu(apdu);
     }
 }
