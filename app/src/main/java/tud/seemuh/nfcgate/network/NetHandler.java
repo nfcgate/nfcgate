@@ -96,15 +96,15 @@ public class NetHandler implements HighLevelNetworkHandler {
     }
 
     private void appendDebugOutput(String output) {
-        new UpdateUI(debugView, UpdateUI.TextUpdates.append).execute(output + "\n");
+        new UpdateUI(debugView, UpdateUI.UpdateMethod.appendTextView).execute(output + "\n");
     }
 
     private void setConnectionStatusOutput(String output) {
-        new UpdateUI(connectionStatusView, UpdateUI.TextUpdates.setText).execute("Server Status: " + output);
+        new UpdateUI(connectionStatusView, UpdateUI.UpdateMethod.setTextTextView).execute("Server Status: " + output);
     }
 
     private void setPeerStatusOutput(String output) {
-        new UpdateUI(peerStatusView, UpdateUI.TextUpdates.setText).execute("Partner Status: " + output);
+        new UpdateUI(peerStatusView, UpdateUI.UpdateMethod.setTextTextView).execute("Partner Status: " + output);
     }
 
     private C2S.Data wrapAsDataMessage(byte[] msg) {
