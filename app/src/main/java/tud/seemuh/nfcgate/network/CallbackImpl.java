@@ -103,13 +103,11 @@ public class CallbackImpl implements Callback {
         } else if (msg.hasErrcode()) {
             if (msg.getErrcode() == C2S.Data.DataErrorCode.ERROR_NO_SESSION) {
                 Log.e(TAG, "Appearently, we sent a message without being in a session");
-                // TODO Implement
             } else if (msg.getErrcode() == C2S.Data.DataErrorCode.ERROR_TRANSMISSION_FAILED) {
                 Log.e(TAG, "Appearently, our partner dropped (Transmission failed)");
                 // TODO Implement
             } else if (msg.getErrcode() == C2S.Data.DataErrorCode.ERROR_UNKNOWN) {
                 Log.e(TAG, "An unknown error occured. Interesting.");
-                // TODO implement
             } else if (msg.getErrcode() == C2S.Data.DataErrorCode.ERROR_NOERROR) {
                 Log.d(TAG, "Message was forwarded successfully by the server. Doing nothing.");
             } else {
@@ -183,19 +181,15 @@ public class CallbackImpl implements Callback {
         }
         else if (msg.getCode() == StatusCode.NOT_IMPLEMENTED) {
             Log.e(TAG, "handleStatus: Other party sent NOT_IMPLEMENTED. Doing nothing");
-            // TODO Implement
         }
         else if (msg.getCode() == StatusCode.UNKNOWN_ERROR) {
             Log.e(TAG, "handleStatus: Other party sent UNKNOWN_ERROR. Doing nothing");
-            // TODO Implement
         }
         else if (msg.getCode() == StatusCode.UNKNOWN_MESSAGE) {
             Log.e(TAG, "handleStatus: Other party sent UNKNOWN_MESSAGE. Doing nothing");
-            // TODO Implement
         }
         else if (msg.getCode() == StatusCode.INVALID_MSG_FMT) {
             Log.e(TAG, "handleStatus: Other party sent INVALID_MSG_FMT. Doing nothing");
-            // TODO Implement
         }
         else if (msg.getCode() == StatusCode.READER_FOUND) {
             Log.d(TAG, "handleStatus: Other party sent READER_FOUND. Delegating to NetHandler.");
@@ -266,7 +260,6 @@ public class CallbackImpl implements Callback {
     }
 
 
-    // TODO Refactor this part into another class
     /**
      * Called on nfc tag intent
      * @param tag nfc tag
@@ -278,8 +271,6 @@ public class CallbackImpl implements Callback {
 
         //identify tag type
         for(String type: tag.getTechList()) {
-            // TODO: Refactor this into something much nicer to avoid redundant work betw.
-            //       this code and the worker thread, which also does this check.
             Log.i(TAG, "setTag: Tag TechList: " + type);
             if("android.nfc.tech.IsoDep".equals(type)) {
                 found_supported_tag = true;

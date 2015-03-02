@@ -28,7 +28,6 @@ public class IsoDepReaderImpl implements NFCTagReader {
             // Connect to the NFC card
             mAdapter.connect();
         } catch (Exception e) {
-            //TODO
             Log.e(TAG, "Encountered error in constructor: " + e);
         }
     }
@@ -48,11 +47,9 @@ public class IsoDepReaderImpl implements NFCTagReader {
 
             return retval;
         } catch(IOException e) {
-            // TODO: Handle Exception properly
             Log.e(TAG, "Encountered IOException in sendCmd: " + e);
             return null;
         } catch(Exception e) {
-            //TODO
             Log.e(TAG, "Encountered Exception in sendCmd: " + e);
             return null;
         }
