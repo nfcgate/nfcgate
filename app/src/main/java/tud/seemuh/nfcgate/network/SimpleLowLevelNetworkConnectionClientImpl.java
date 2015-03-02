@@ -2,12 +2,16 @@ package tud.seemuh.nfcgate.network;
 
 import android.util.Log;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
@@ -131,10 +135,10 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
         }
 
         private void reallySendBytes(byte[] msg) {
-            DataOutputStream out;
             try {
-                out = new DataOutputStream(mSocket.getOutputStream());
-                out.writeInt(msg.length);
+                OutputStream out = mSocket.getOutputStream();
+                byte[] len = ByteBuffer.allocate(4).putInt(msg.length).array();
+                out.write(len);
                 out.write(msg);
                 out.flush();
             } catch (UnknownHostException e) {
@@ -171,16 +175,18 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
 
             while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    DataInputStream dis = new DataInputStream(mClientSocket.getInputStream());
+                    BufferedInputStream dis = new BufferedInputStream(mClientSocket.getInputStream());
                     //read length of data from socket (should be 4 bytes long)
-                    int len = dis.readInt();
+                    byte[] lenbytes = new byte[4];
+                    dis.read(lenbytes);
+                    int len = ByteBuffer.wrap(lenbytes).getInt();;
 
                     Log.i(TAG, "Reading bytes of length:" + len);
 
                     // read the message data
                     if (len > 0) {
                         readBytes = new byte[len];
-                        dis.readFully(readBytes);
+                        dis.read(readBytes);
                         Log.d(TAG, "Read data: " + Utils.bytesToHex(readBytes));
                         if(mCallback != null) {
                             Log.d(TAG, "Delegating to Callback.");
