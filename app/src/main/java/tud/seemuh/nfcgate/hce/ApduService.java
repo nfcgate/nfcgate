@@ -39,8 +39,6 @@ public class ApduService extends HostApduService {
      */
     @Override
     public byte[] processCommandApdu(byte[] apdu, Bundle extras) {
-        // the byte sequence 0x00a4 is a SELECT command. this is always the first command we get
-        // when a reader wants to talk to us
 
         Log.d(TAG, "APDU-IN: " + Utils.bytesToHex(apdu));
 
