@@ -27,6 +27,10 @@ public class ApduService extends HostApduService {
      */
     private Callback mCallback = Handler.getCallback().setAPDUService(this);
 
+    public ApduService() {
+        Handler.notifyReaderFound();
+    }
+
     /**
      * callback from the hce service when a apdu from a reader is received
      * @param apdu apdu data received from hce service
@@ -35,10 +39,8 @@ public class ApduService extends HostApduService {
      */
     @Override
     public byte[] processCommandApdu(byte[] apdu, Bundle extras) {
-        // the byte sequence 0x00a4 is a SELECT command. this is ever the first command we get
+        // the byte sequence 0x00a4 is a SELECT command. this is always the first command we get
         // when a reader wants to talk to us
-
-        SimpleLowLevelNetworkConnectionClientImpl.getInstance().setCallback(mCallback);
 
         // Package the ADPU into a C2C message
         Handler.sendAPDUMessage(apdu);
@@ -51,5 +53,6 @@ public class ApduService extends HostApduService {
     @Override
     public void onDeactivated(int reason) {
         Log.i(TAG, "Deactivated: " + reason);
+        Handler.notifyReaderRemoved();
     }
 }

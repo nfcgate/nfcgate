@@ -178,12 +178,10 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
         Log.i("NFCGATE_DEBUG","Discovered tag in ReaderMode");
         mNetCallback.setTag(tag);
-        //Set the view to update the GUI from another thread
-        mConnectionClient.setDebugView(mDebuginfo);
-        mConnectionClient.setConnectionStatusView(mConnStatus);
-        mConnectionClient.setPeerStatusView(mPartnerDevice);
 
         //Toast here is not possible -> exception...
+        // TODO This may lead to weird results if we are not already in a session
+        mConnectionClient.notifyCardFound();
     }
 
     @Override
@@ -194,10 +192,9 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
             mNetCallback.setTag(tag);
-            //Set the view to update the GUI from another thread
-            mConnectionClient.setDebugView(mDebuginfo);
-            mConnectionClient.setConnectionStatusView(mConnStatus);
-            mConnectionClient.setPeerStatusView(mPartnerDevice);
+
+            // TODO This may lead to weird results if we are not already in a session
+            mConnectionClient.notifyCardFound();
 
             Toast.makeText(this, "Found Tag", Toast.LENGTH_SHORT).show();
         }
@@ -206,14 +203,13 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     public void ButtonResetClicked(View view) {
         // reset the entire application by pressing this button
 
-        mConnStatus.setText("Server status: Resetting");
-        // ToDo -> really reset network connection by calling the required method
-        mPartnerDevice.setText("Partner status: no device");
-        // Todo -> notify partner on reset method called by calling the required method
+        // mConnStatus.setText("Server status: Resetting");
+        // mPartnerDevice.setText("Partner status: no device");
         mInfo.setText("Please hold your device next to an NFC tag / reader");
         mDebuginfo.setText("Debugging Output: ");
-        this.setTitle("You clicked reset");
+        // this.setTitle("You clicked reset");
 
+        if (mConnectionClient != null) mConnectionClient.disconnect();
         mJoinSession.setText(joinSessionMessage);
         mJoinSession.setEnabled(true);
         mConnecttoSession.setText(createSessionMessage);
@@ -243,16 +239,15 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
     public void ButtonAbortClicked(View view) {
         // Abort the current connection attempt
-        // TODO Abort the connection -> properly close network connection by calling the required method
         mJoinSession.setText(joinSessionMessage);
         mJoinSession.setEnabled(true);
         mConnecttoSession.setText(createSessionMessage);
         mConnecttoSession.setEnabled(true);
 
-        mConnStatus.setText("Server status: Disconnecting");
-        mPartnerDevice.setText("Partner status: no device");
-        // Todo -> notify Partner about abort by calling the required method
-        this.setTitle("You clicked abort");
+        // mConnStatus.setText("Server status: Disconnecting");
+        // mPartnerDevice.setText("Partner status: no device");
+        if (mConnectionClient != null) mConnectionClient.disconnect();
+        //this.setTitle("You clicked abort");
     }
 
     public void ButtonCreateSessionClicked(View view) {
@@ -267,21 +262,27 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         {
             mConnecttoSession.setText(leaveSessionMessage);
             mJoinSession.setEnabled(false);
-            this.setTitle("You clicked connect");
-            mConnStatus.setText("Server status: Connecting");
-            mPartnerDevice.setText("Partner status: waiting");
-            mConnectionClient = NetHandler.getInstance().connect(mIP.getText().toString(), port, mNetCallback);
+//            this.setTitle("You clicked connect");
+//            mConnStatus.setText("Server status: Connecting");
+//            mPartnerDevice.setText("Partner status: waiting");
+            mConnectionClient = NetHandler.getInstance();
+
+            //Set the view to update the GUI from another thread
+            mConnectionClient.setDebugView(mDebuginfo);
+            mConnectionClient.setConnectionStatusView(mConnStatus);
+            mConnectionClient.setPeerStatusView(mPartnerDevice);
+
+            mConnectionClient.connect(mIP.getText().toString(), port, mNetCallback);
             mConnectionClient.createSession();
-            // Todo notify user about the token the server assigned him -> will be displayed at mConnStatus
         }
         else
         {
             // the button was already clicked and we want to disconnect from the session
             mConnecttoSession.setText(createSessionMessage);
-            mConnStatus.setText("Server status: Disconnecting");
-            mPartnerDevice.setText("Partner status: no device");
+//            mConnStatus.setText("Server status: Disconnecting");
+//            mPartnerDevice.setText("Partner status: no device");
             mJoinSession.setEnabled(true);
-            this.setTitle("You clicked disconnect");
+            // this.setTitle("You clicked disconnect");
 
             mConnectionClient.leaveSession();
         }
@@ -304,10 +305,10 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         {
             // the button was already clicked and we want to disconnect from the session
             mJoinSession.setText(joinSessionMessage);
-            mConnStatus.setText("Server status: Disconnecting");
-            mPartnerDevice.setText("Partner status: no device");
+            //mConnStatus.setText("Server status: Disconnecting");
+            //mPartnerDevice.setText("Partner status: no device");
             mConnecttoSession.setEnabled(true);
-            this.setTitle("You clicked disconnect");
+            //this.setTitle("You clicked disconnect");
 
             mConnectionClient.leaveSession();
         }
@@ -382,10 +383,17 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
         mJoinSession.setText(leaveSessionMessage);
         mConnecttoSession.setEnabled(false);
-        this.setTitle("You clicked connect");
-        mConnStatus.setText("Server status: Connecting");
-        mPartnerDevice.setText("Partner status: waiting");
-        mConnectionClient = NetHandler.getInstance().connect(mIP.getText().toString(), globalPort, mNetCallback);
+        //this.setTitle("You clicked connect");
+        //mConnStatus.setText("Server status: Connecting");
+        //mPartnerDevice.setText("Partner status: waiting");
+        mConnectionClient = NetHandler.getInstance();
+
+        //Set the view to update the GUI from another thread
+        mConnectionClient.setDebugView(mDebuginfo);
+        mConnectionClient.setConnectionStatusView(mConnStatus);
+        mConnectionClient.setPeerStatusView(mPartnerDevice);
+
+        mConnectionClient.connect(mIP.getText().toString(), globalPort, mNetCallback);
 
         // Load token from the Shared Preferences Buffer
         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);

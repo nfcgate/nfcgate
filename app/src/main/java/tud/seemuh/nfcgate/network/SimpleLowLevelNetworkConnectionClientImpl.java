@@ -184,7 +184,7 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
 
                 } catch (IOException e) {
                     //TODO
-                    e.printStackTrace();
+                    // e.printStackTrace();
                 }
             }
         }

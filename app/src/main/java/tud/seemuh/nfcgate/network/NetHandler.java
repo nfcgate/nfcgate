@@ -160,7 +160,7 @@ public class NetHandler implements HighLevelNetworkHandler {
         } else {
             Log.e(TAG, "sendMessage: Unknown Message type: " + mcase);
             return;
-            // TODO This should never happen...
+            // This should never happen...
         }
 
         // Build and serialize the message
