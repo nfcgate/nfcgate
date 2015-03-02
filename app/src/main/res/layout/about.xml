@@ -26,7 +26,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Here you can read all version details, disclaimers and legal stuff about the NFC Wormhole Android App v0.8 \n \n ALL YOUR credits ARE BELONG TO US :)"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:text="DISCLAIMER \n \n \nThis application was build solely for research purposes. Do NOT misuse this application for malicious activities. \n \nAll rights remain reserved \nWe take no responsibility for, and will not be liable for, the application behaving silly due to technical issues beyond our control. \n \n \n \n NFCgate v1.0 "
             android:id="@+id/textView_settings"
             android:layout_column="0"
             android:layout_row="2" />
