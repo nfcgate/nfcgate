@@ -5,9 +5,6 @@ import android.util.Log;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper;
@@ -35,6 +32,7 @@ public class NetHandler implements HighLevelNetworkHandler {
 
     private Callback callbackInstance;
 
+    /*
     // This queue contains messages that are to be sent as soon as the connection to the server
     // has been established. This does NOT mean that a complete SESSION has been established.
     // For that, use the sendOnSessionReady queue instead.
@@ -43,6 +41,7 @@ public class NetHandler implements HighLevelNetworkHandler {
     // This queue contains messages that are to be sent as soon as a session has been established.
     // A session counts as established as soon as two clients have joined it.
     private Queue<Message> sendOnSessionReady = new LinkedList<Message>();
+    */
 
     public NetHandler() {
         status = Status.NOT_CONNECTED;
@@ -114,6 +113,7 @@ public class NetHandler implements HighLevelNetworkHandler {
 
         } else {
             Log.e(TAG, "sendMessage: Unknown Message type: " + mcase);
+            return;
             // TODO This should never happen...
         }
 
