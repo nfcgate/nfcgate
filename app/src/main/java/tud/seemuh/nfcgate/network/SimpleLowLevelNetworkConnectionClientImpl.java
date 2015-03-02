@@ -148,7 +148,7 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
         }
 
         public void exitThread() {
-            commThread.interrupt();
+            if (commThread != null) commThread.interrupt();
         }
 
 
