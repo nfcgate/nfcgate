@@ -166,7 +166,6 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         super.onPause();
 
         mAdapter.disableForegroundDispatch(this);
-        //TODO -> kill our threads here?
     }
 
     /**
