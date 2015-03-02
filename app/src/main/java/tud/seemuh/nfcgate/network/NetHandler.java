@@ -1,11 +1,13 @@
 package tud.seemuh.nfcgate.network;
 
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 
+import tud.seemuh.nfcgate.MainActivity;
 import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper;
@@ -57,6 +59,11 @@ public class NetHandler implements HighLevelNetworkHandler {
     private TextView connectionStatusView;
     private TextView peerStatusView;
 
+    private Button resetButton;
+    private Button connectButton;
+    private Button joinButton;
+    private Button abortButton;
+
     /*
     // This queue contains messages that are to be sent as soon as the connection to the server
     // has been established. This does NOT mean that a complete SESSION has been established.
@@ -95,6 +102,13 @@ public class NetHandler implements HighLevelNetworkHandler {
         peerStatusView = view;
     }
 
+    public void setButtons(Button Reset, Button ConnectTo, Button Abort, Button Join) {
+        resetButton = Reset;
+        connectButton = ConnectTo;
+        abortButton = Abort;
+        joinButton = Join;
+    }
+
     private void appendDebugOutput(String output) {
         new UpdateUI(debugView, UpdateUI.TextUpdates.append).execute(output + "\n");
     }
@@ -105,6 +119,15 @@ public class NetHandler implements HighLevelNetworkHandler {
 
     private void setPeerStatusOutput(String output) {
         new UpdateUI(peerStatusView, UpdateUI.TextUpdates.setText).execute("Partner Status: " + output);
+    }
+
+    private void reactivateButtons() {
+
+    }
+
+    private void setButtonTexts() {
+        new UpdateUI(connectButton, UpdateUI.TextUpdates.setText).execute(MainActivity.createSessionMessage);
+        new UpdateUI(joinButton, UpdateUI.TextUpdates.setText).execute(MainActivity.joinSessionMessage);
     }
 
     private C2S.Data wrapAsDataMessage(byte[] msg) {
@@ -411,6 +434,8 @@ public class NetHandler implements HighLevelNetworkHandler {
         } else {
             appendDebugOutput("Session creation failed, unknown error code sent");
         }
+        setButtonTexts();
+        reactivateButtons();
     }
 
     @Override
@@ -426,6 +451,8 @@ public class NetHandler implements HighLevelNetworkHandler {
         } else {
             appendDebugOutput("Session join failed, unknown error code sent");
         }
+        setButtonTexts();
+        reactivateButtons();
     }
 
     @Override

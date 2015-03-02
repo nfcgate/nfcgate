@@ -61,9 +61,9 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     // regex for IP checking
     private static final String regexIPpattern ="^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
 
-    private static String joinSessionMessage = "Join Session";
-    private static String createSessionMessage = "Create Session";
-    private static String leaveSessionMessage = "Leave Session";
+    public static String joinSessionMessage = "Join Session";
+    public static String createSessionMessage = "Create Session";
+    public static String leaveSessionMessage = "Leave Session";
 
     // max. port possible
     private static int maxPort = 65535;
@@ -271,6 +271,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             mConnectionClient.setDebugView(mDebuginfo);
             mConnectionClient.setConnectionStatusView(mConnStatus);
             mConnectionClient.setPeerStatusView(mPartnerDevice);
+            mConnectionClient.setButtons(mReset, mConnecttoSession, mAbort, mJoinSession);
 
             mConnectionClient.connect(mIP.getText().toString(), port, mNetCallback);
             mConnectionClient.createSession();
@@ -392,6 +393,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mConnectionClient.setDebugView(mDebuginfo);
         mConnectionClient.setConnectionStatusView(mConnStatus);
         mConnectionClient.setPeerStatusView(mPartnerDevice);
+        mConnectionClient.setButtons(mReset, mConnecttoSession, mAbort, mJoinSession);
 
         mConnectionClient.connect(mIP.getText().toString(), globalPort, mNetCallback);
 

@@ -22,7 +22,7 @@ public class CallbackImpl implements Callback {
 
     private ApduService apdu;
     private NFCTagReader mReader = null;
-    private NetHandler Handler = NetHandler.getInstance();
+    private HighLevelNetworkHandler Handler = NetHandler.getInstance();
 
     private String SessionToken;
 
