@@ -41,6 +41,7 @@ public class IsoDepReaderImpl implements NFCTagReader {
         try {
             // Transceive command and store reply
             byte[] retval = mAdapter.transceive(command);
+            Log.d(TAG, "sendCmd: Transceived successfully");
 
             return retval;
         } catch(IOException e) {
