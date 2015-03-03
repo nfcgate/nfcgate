@@ -11,6 +11,9 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  *
  * This activity creates the view for our settings section using the settings.xml file
@@ -39,6 +42,13 @@ public class SettingsActivity extends Activity{
     // Defined name of the Shared Preferences Buffer
     public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
 
+    // regex for IP checking
+    private static final String regexIPpattern ="^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+
+    // max. port possible
+    private static int maxPort = 65535;
+    int globalPort = 0;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
@@ -59,7 +69,8 @@ public class SettingsActivity extends Activity{
         // reload saved values & if not found set to default IP:Port (192.168.178.31:5566)
         ip = preferences.getString("ip", "192.168.178.31");
         port = preferences.getInt("port",5566);
-        // give the loaded (or default) values to the textviews
+        globalPort = port;
+        // give the loaded (or default) values to the views
         mIP.setText(ip);
         mPort.setText(String.valueOf(port));
         mDevMode.setChecked(mDevModeEnabled);
@@ -93,13 +104,33 @@ public class SettingsActivity extends Activity{
 
     }
 
+    public boolean checkIpPort(String ip, String port)
+    {
+        boolean validPort = false;
+        boolean gotException = false;
+        boolean validIp = false;
+        Pattern pattern = Pattern.compile(regexIPpattern);
+        Matcher matcher = pattern.matcher(ip);
+        int int_port = 0;
+        try {
+            int_port = Integer.parseInt(port.trim());
+        } catch (NumberFormatException e) {
+            gotException = true;
+        }
+        if (!gotException) {
+            if ((int_port > 0) && (int_port <= maxPort)) validPort = true;
+        }
+        validIp = matcher.matches();
+        if (validPort) globalPort = int_port;
+        return validPort && validIp;
+    }
+
     public void btnSaveSettingsClicked(View view)
     {
-        ip = mIP.getText().toString();
-        try {
-            port = Integer.parseInt(mPort.getText().toString().trim());
-        } catch (NumberFormatException e) {
-            // Toast.makeText(this, "Please enter a valid port", Toast.LENGTH_SHORT).show();
+        if (!checkIpPort(mIP.getText().toString(), mPort.getText().toString()))
+        {
+            Toast.makeText(this, "Please enter a valid ip & port", Toast.LENGTH_LONG).show();
+            return;
         }
 
         mDevModeEnabled = (((CheckBox) findViewById(R.id.checkBoxDevMode)).isChecked());
@@ -115,9 +146,9 @@ public class SettingsActivity extends Activity{
         // save mReaderModeEnabled...
         editor.putBoolean("mReaderModeEnabled", mReaderModeEnabled);
         // save ip into the to the preferences buffer
-        editor.putString("ip", ip);
+        editor.putString("ip", mIP.getText().toString());
         // save port into the to the preferences buffer
-        editor.putInt("port", port);
+        editor.putInt("port", globalPort);
         boolean chgsett = true;
         editor.putBoolean("changed_settings", chgsett);
         editor.commit();
@@ -135,10 +166,12 @@ public class SettingsActivity extends Activity{
         SharedPreferences.Editor editor = preferences.edit();
         // save mDevModeEnabled into the to the preferences buffer
         editor.putBoolean("mDevModeEnabled", mDevModeEnabled);
+        boolean chgsett = true;
+        editor.putBoolean("changed_settings", chgsett);
         editor.commit();
     }
 
-    public void ReaderModeCkeckboxClicked(View view) {
+    public void ReaderModeCheckboxClicked(View view) {
         mReaderModeEnabled = (((CheckBox) findViewById(R.id.checkReaderMode)).isChecked());
 
         // store some of the application settings in the preferences buffer
@@ -146,6 +179,8 @@ public class SettingsActivity extends Activity{
         SharedPreferences.Editor editor = preferences.edit();
         // save mDevModeEnabled into the to the preferences buffer
         editor.putBoolean("mReaderModeEnabled", mReaderModeEnabled);
+        boolean chgsett = true;
+        editor.putBoolean("changed_settings", chgsett);
         editor.commit();
     }
 
