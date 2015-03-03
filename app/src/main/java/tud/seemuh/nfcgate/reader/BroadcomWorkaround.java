@@ -5,7 +5,6 @@ import android.util.Log;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Objects;
 
 /**
  * Broadcom chips have a problem with DESFire cards: They set them into a specific mode with their
@@ -14,6 +13,13 @@ import java.util.Objects;
  * prevent Android from sending the destructive keepalive messages, as per
  * http://www.dematte.org/2014/08/15/AndroidNFCServiceAndThinClientOneProblemAndOneHack.aspx
  * This may or may not work, but it is at least worth a try.
+ *
+ * We are basically reproducing the code from this function call:
+ * http://grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/4.4.4_r1/android/nfc/tech/BasicTagTechnology.java#73
+ *
+ * We are using reflection to gain access to the methods and classes we need.
+ * The way we use them, the only effect should be that the Keepalive-Timer is reset every time we
+ * call the connect()-Function in the loop below.
  */
 public class BroadcomWorkaround implements Runnable {
     private String TAG = "BroadcomWorkaround";

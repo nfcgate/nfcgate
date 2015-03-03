@@ -42,7 +42,7 @@ public class NfcAReaderImpl implements NFCTagReader {
             // Transceive command (transmit command and receive answer)
             byte[] retval = mAdapter.transceive(command);
             Log.d(TAG, "sendCmd: Transceived succesfully");
-            
+
             return retval;
         } catch(IOException e) {
             Log.e(TAG, "sendCmd: Encountered IOException in sendCmd: ", e);
