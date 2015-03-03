@@ -20,7 +20,6 @@ public class NfcAReaderImpl implements NFCTagReader {
      * @param tag: A tag using the NfcA technology.
      */
     public NfcAReaderImpl(Tag tag) {
-        Log.d(TAG, "NfcA constructor called");
         // Create NFC Adapter to use
         mAdapter = NfcA.get(tag);
         try{
@@ -28,7 +27,7 @@ public class NfcAReaderImpl implements NFCTagReader {
             mAdapter.connect();
         } catch(IOException e) {
             // Something went wrong. For the moment, we will only log this
-            Log.e(TAG, "Encountered IOException in constructor: " + e);
+            Log.e(TAG, "Constructor: Encountered IOException in constructor: " + e);
         }
     }
 
@@ -43,10 +42,10 @@ public class NfcAReaderImpl implements NFCTagReader {
             // Transceive command (transmit command and receive answer)
             byte[] retval = mAdapter.transceive(command);
 
-            Log.i(TAG, "Transceived succesfully");
+            Log.i(TAG, "sendCmd: Transceived succesfully");
             return retval;
         } catch(IOException e) {
-            Log.e(TAG, "Encountered IOException in sendCmd: ", e);
+            Log.e(TAG, "sendCmd: Encountered IOException in sendCmd: ", e);
             return null;
         }
     }
@@ -60,7 +59,7 @@ public class NfcAReaderImpl implements NFCTagReader {
         try{
             mAdapter.close();
         } catch(IOException e) {
-            Log.e(TAG, "Encountered IOException in closeConnection: ", e);
+            Log.e(TAG, "closeConnection: Encountered IOException: ", e);
         }
     }
 
