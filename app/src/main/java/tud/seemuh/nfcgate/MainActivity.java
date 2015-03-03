@@ -379,7 +379,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     @Override
     public void onTokenDialogPositiveClick(DialogFragment dialog) {
         // User touched the dialog's submit button
-        Toast.makeText(this, "You clicked submit, server is now processing your token...", Toast.LENGTH_LONG).show();
+        // Toast.makeText(this, "You clicked submit, server is now processing your token...", Toast.LENGTH_LONG).show();
 
         mJoinSession.setText(leaveSessionMessage);
         mConnecttoSession.setEnabled(false);
@@ -407,7 +407,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     @Override
     public void onTokenDialogNegativeClick(DialogFragment dialog) {
         // User touched the dialog's cancel button
-        Toast.makeText(this, "You clicked cancel, no connection was established...", Toast.LENGTH_LONG).show();
+        // Toast.makeText(this, "You clicked cancel, no connection was established...", Toast.LENGTH_LONG).show();
     }
 
     @Override
