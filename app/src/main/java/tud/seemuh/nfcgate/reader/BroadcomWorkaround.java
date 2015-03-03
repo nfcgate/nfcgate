@@ -52,9 +52,12 @@ public class BroadcomWorkaround implements Runnable {
             Method connectMethod = tagService.getClass().getDeclaredMethod("connect", new Class[] {int.class, int.class});
             connectMethod.setAccessible(true);
             Log.d(TAG, "run: Got connect method object");
-            // Call connect method
-            connectMethod.invoke(tagService, serviceHandle, connectedTechnology);
-            Log.d(TAG, "run: Test successful");
+
+            while (!Thread.currentThread().isInterrupted()) {
+                connectMethod.invoke(tagService, serviceHandle, connectedTechnology);
+                Log.d(TAG, "run: Ping");
+                Thread.sleep(100);
+            }
 
         } catch (NoSuchMethodException e) {
             Log.e(TAG, "run: Method not found", e);
@@ -62,7 +65,8 @@ public class BroadcomWorkaround implements Runnable {
             Log.e(TAG, "run: InvocationTargetException: ", e);
         } catch (IllegalAccessException e) {
             Log.e(TAG, "run: IllegalAccessException: ", e);
+        } catch (InterruptedException e) {
+            Log.e(TAG, "run: Rudely awoken from sleep. Exiting out of spite.");
         }
-
     }
 }
