@@ -155,11 +155,15 @@ public class CallbackImpl implements Callback {
                 // Extract NFC Bytes and send them to the card
                 byte[] bytesFromCard = mReader.sendCmd(msg.getDataBytes().toByteArray());
 
-                // Send the reply from the card to the partner
-                Handler.sendAPDUReply(bytesFromCard);
-
-                Log.i(TAG, "HandleNFCData: Received and forwarded reply from card");
-                Log.i(TAG, "HandleNFCData: BytesFromCard: " + Utils.bytesToHex(bytesFromCard));
+                // If the reply is null, the connection has been lost. Shut down Tag connection
+                if (bytesFromCard == null) {
+                    shutdown();
+                } else {
+                    // Reply is not null, forward it.
+                    Handler.sendAPDUReply(bytesFromCard);
+                    Log.i(TAG, "HandleNFCData: Received and forwarded reply from card");
+                    Log.i(TAG, "HandleNFCData: BytesFromCard: " + Utils.bytesToHex(bytesFromCard));
+                }
             } else {
                 Log.e(TAG, "HandleNFCData: No NFC connection active");
                 // There is no connected NFC device
