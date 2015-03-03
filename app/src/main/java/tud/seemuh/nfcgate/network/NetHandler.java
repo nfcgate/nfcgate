@@ -229,20 +229,24 @@ public class NetHandler implements HighLevelNetworkHandler {
     public void disconnect() {
         leaveSession(); // Ensure we are no longer in a session
         leaving = true;
-        handler.disconnect();
-        status = Status.NOT_CONNECTED;
         setConnectionStatusOutput(CONN_DISCONNECTED);
         setPeerStatusOutput(PEER_NOT_CONNECTED);
+        disconnectCommon();
     }
 
     @Override
     public void disconnectBrokenPipe() {
-        handler.disconnect();
-        status = Status.NOT_CONNECTED;
         setConnectionStatusOutput(CONN_DIED);
         setPeerStatusOutput(PEER_CONN_DIED);
         setButtonTexts();
         reactivateButtons();
+        disconnectCommon();
+    }
+
+    private void disconnectCommon() {
+        handler.disconnect();
+        status = Status.NOT_CONNECTED;
+        callbackInstance.shutdown();
     }
 
     // Session management

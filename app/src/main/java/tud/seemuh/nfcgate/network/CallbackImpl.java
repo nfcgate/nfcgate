@@ -5,6 +5,7 @@ import android.util.Log;
 
 import tud.seemuh.nfcgate.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.network.meta.MetaMessage;
+import tud.seemuh.nfcgate.reader.BroadcomWorkaround;
 import tud.seemuh.nfcgate.reader.IsoDepReaderImpl;
 import tud.seemuh.nfcgate.reader.NFCTagReader;
 import tud.seemuh.nfcgate.reader.NfcAReaderImpl;
@@ -23,8 +24,8 @@ public class CallbackImpl implements Callback {
     private ApduService apdu;
     private NFCTagReader mReader = null;
     private HighLevelNetworkHandler Handler = NetHandler.getInstance();
-
-    private String SessionToken;
+    private BroadcomWorkaround mBroadcomWorkaroundRunnable;
+    private Thread mBroadcomWorkaroundThread;
 
     public Callback setAPDUService(ApduService as) {
         apdu = as;
@@ -36,6 +37,14 @@ public class CallbackImpl implements Callback {
     @Override
     public void notifyBrokenPipe() {
         Handler.disconnectBrokenPipe();
+    }
+
+    public void shutdown() {
+        if (mBroadcomWorkaroundThread != null) mBroadcomWorkaroundThread.interrupt();
+        mBroadcomWorkaroundThread = null;
+        mBroadcomWorkaroundRunnable = null;
+        if (mReader != null) mReader.closeConnection();
+        mReader = null;
     }
 
     /**
@@ -296,6 +305,17 @@ public class CallbackImpl implements Callback {
             Log.i("NFCGATE_TAG", "HIST: " + Utils.bytesToHex(mReader.getHistoricalBytes()));
             Handler.sendAnticol(mReader.getAtqa(), mReader.getSak(), mReader.getHistoricalBytes(), mReader.getUID());
         }
+
+
+        // TODO Only run workaround on broadcom devices.
+        // They contain a file /dev/bcm* which others do not contain
+        // This can be used to distinguish them
+
+        // Initialize a runnable object
+        mBroadcomWorkaroundRunnable = new BroadcomWorkaround(tag);
+        // Start up a new thread
+        mBroadcomWorkaroundThread = new Thread(mBroadcomWorkaroundRunnable);
+        mBroadcomWorkaroundThread.start();
 
         return found_supported_tag;
     }

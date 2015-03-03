@@ -55,7 +55,6 @@ public class BroadcomWorkaround implements Runnable {
 
             while (!Thread.currentThread().isInterrupted()) {
                 connectMethod.invoke(tagService, serviceHandle, connectedTechnology);
-                Log.d(TAG, "run: Ping");
                 Thread.sleep(100);
             }
 
@@ -67,6 +66,9 @@ public class BroadcomWorkaround implements Runnable {
             Log.e(TAG, "run: IllegalAccessException: ", e);
         } catch (InterruptedException e) {
             Log.e(TAG, "run: Rudely awoken from sleep. Exiting out of spite.");
+        } catch (Exception e) {
+            Log.e(TAG, "run: Encountered unspecified Exception: ", e);
         }
+        Log.i(TAG, "run: Thread stopping");
     }
 }

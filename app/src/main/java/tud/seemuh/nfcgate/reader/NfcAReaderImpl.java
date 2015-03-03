@@ -46,7 +46,7 @@ public class NfcAReaderImpl implements NFCTagReader {
             Log.i(TAG, "Transceived succesfully");
             return retval;
         } catch(IOException e) {
-            Log.e(TAG, "Encountered IOException in sendCmd: " + e);
+            Log.e(TAG, "Encountered IOException in sendCmd: ", e);
             return null;
         }
     }
@@ -60,7 +60,7 @@ public class NfcAReaderImpl implements NFCTagReader {
         try{
             mAdapter.close();
         } catch(IOException e) {
-            Log.e(TAG, "Encountered IOException in sendCmd: " + e);
+            Log.e(TAG, "Encountered IOException in closeConnection: ", e);
         }
     }
 
