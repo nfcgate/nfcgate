@@ -134,21 +134,11 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             }
         }
 
-        // check if settings were changed -> if no reload default values
-        boolean chgsett;
-        if (preferences.getBoolean("changed_settings", false))
-        {
-            SharedPreferences.Editor editor = preferences.edit();
-            ip = preferences.getString("ip", "192.168.178.31");
-            port = preferences.getInt("port",5566);
-            globalPort = preferences.getInt("port",5566);
-            mIP.setText(ip);
-            mPort.setText(String.valueOf(port));
-
-            chgsett = false;
-            editor.putBoolean("changed_settings", chgsett);
-            editor.commit();
-        }
+        ip = preferences.getString("ip", "192.168.178.31");
+        port = preferences.getInt("port",5566);
+        globalPort = preferences.getInt("port",5566);
+        mIP.setText(ip);
+        mPort.setText(String.valueOf(port));
 
         //ReaderMode
         boolean isReaderModeEnabled = preferences.getBoolean("mReaderModeEnabled", false);
@@ -156,6 +146,16 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             mAdapter.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
         } else {
             mAdapter.disableReaderMode(this);
+        }
+
+        // De- or Enables Debug Window
+        mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
+        mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
+        if (mDevModeEnabled) {
+            mDebuginfo.setVisibility(View.VISIBLE);
+            mDebuginfo.requestFocus();
+        } else {
+            mDebuginfo.setVisibility(View.GONE);  // View.invisible results in an error
         }
 
         mConnecttoSession.requestFocus();
@@ -202,11 +202,8 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     public void ButtonResetClicked(View view) {
         // reset the entire application by pressing this button
 
-        // mConnStatus.setText("Server status: Resetting");
-        // mPartnerDevice.setText("Partner status: no device");
         mInfo.setText("Please hold your device next to an NFC tag / reader");
         mDebuginfo.setText("Debugging Output: ");
-        // this.setTitle("You clicked reset");
 
         if (mConnectionClient != null) mConnectionClient.disconnect();
         mJoinSession.setText(joinSessionMessage);
@@ -216,18 +213,6 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
         // Load values from the Shared Preferences Buffer
         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-        mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
-        // De- or Enables Debug Window
-        mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
-        if (mDevModeEnabled)
-        {
-            mDebuginfo.setVisibility(View.VISIBLE);
-            mDebuginfo.requestFocus();
-        }
-        else
-        {
-            mDebuginfo.setVisibility(View.GONE);  // View.invisible results in an error
-        }
 
         ip = preferences.getString("ip", "192.168.178.31");
         port = preferences.getInt("port",5566);

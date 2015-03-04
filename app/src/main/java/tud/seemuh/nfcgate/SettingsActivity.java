@@ -149,8 +149,6 @@ public class SettingsActivity extends Activity{
         editor.putString("ip", mIP.getText().toString());
         // save port into the to the preferences buffer
         editor.putInt("port", globalPort);
-        boolean chgsett = true;
-        editor.putBoolean("changed_settings", chgsett);
         editor.commit();
 
         // sent the user back to the main activity
@@ -166,8 +164,6 @@ public class SettingsActivity extends Activity{
         SharedPreferences.Editor editor = preferences.edit();
         // save mDevModeEnabled into the to the preferences buffer
         editor.putBoolean("mDevModeEnabled", mDevModeEnabled);
-        boolean chgsett = true;
-        editor.putBoolean("changed_settings", chgsett);
         editor.commit();
     }
 
@@ -179,8 +175,6 @@ public class SettingsActivity extends Activity{
         SharedPreferences.Editor editor = preferences.edit();
         // save mDevModeEnabled into the to the preferences buffer
         editor.putBoolean("mReaderModeEnabled", mReaderModeEnabled);
-        boolean chgsett = true;
-        editor.putBoolean("changed_settings", chgsett);
         editor.commit();
     }
 
