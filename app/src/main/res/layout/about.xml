@@ -30,7 +30,7 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:paddingTop="5dp"
-            android:text="DISCLAIMER \n \n \nThis application was build solely for research purposes. Do NOT misuse this application for malicious activities. \n \nAll rights remain reserved \nWe take no responsibility for, and will not be liable for, the application behaving silly due to technical issues beyond our control. \n \n \n \n NFCgate v1.0 "
+            android:text="@string/aboutpage"
             android:id="@+id/textView_settings"
             android:layout_column="0"
             android:layout_row="2" />

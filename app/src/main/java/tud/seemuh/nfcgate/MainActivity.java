@@ -157,8 +157,8 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             mPort.setText(String.valueOf(port));
 
             //ReaderMode
-            boolean lReaderMode = preferences.getBoolean("mReaderModeEnabled", false);
-            if(lReaderMode) {
+            boolean isReaderModeEnabled = preferences.getBoolean("mReaderModeEnabled", false);
+            if(isReaderModeEnabled) {
                 mAdapter.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
             } else {
                 mAdapter.disableReaderMode(this);
