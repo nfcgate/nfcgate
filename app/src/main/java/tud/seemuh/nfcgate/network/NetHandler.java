@@ -109,6 +109,11 @@ public class NetHandler implements HighLevelNetworkHandler {
         joinButton = Join;
     }
 
+    @Override
+    public void setCallback(Callback mCallback) {
+        callbackInstance = mCallback;
+    }
+
     private void appendDebugOutput(String output) {
         new UpdateUI(debugView, UpdateUI.UpdateMethod.appendTextView).execute(output + "\n");
     }
@@ -216,10 +221,9 @@ public class NetHandler implements HighLevelNetworkHandler {
 
     // Connection management
     @Override
-    public HighLevelNetworkHandler connect(String addr, int port, Callback mNetCallback) {
+    public HighLevelNetworkHandler connect(String addr, int port) {
         handler = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(addr, port);
-        handler.setCallback(mNetCallback);
-        callbackInstance = mNetCallback;
+        handler.setCallback(callbackInstance);
         status = Status.CONNECTED_NO_SESSION;
         setConnectionStatusOutput(CONN_CONNECTED);
         setPeerStatusOutput(PEER_NO_SESSION);
@@ -255,7 +259,7 @@ public class NetHandler implements HighLevelNetworkHandler {
     }
 
     private void disconnectCommon() {
-        handler.disconnect();
+        if (handler != null) handler.disconnect();
         status = Status.NOT_CONNECTED;
         callbackInstance.shutdown();
         setButtonTexts();

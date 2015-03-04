@@ -117,6 +117,15 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mPartnerDevice = (TextView) findViewById(R.id.editOtherDevice);
         mConnecttoSession.requestFocus();
         mtoken = (TextView) findViewById(R.id.token);
+
+        mConnectionClient = NetHandler.getInstance();
+
+        //Set the view to update the GUI from another thread
+        mConnectionClient.setDebugView(mDebuginfo);
+        mConnectionClient.setConnectionStatusView(mConnStatus);
+        mConnectionClient.setPeerStatusView(mPartnerDevice);
+        mConnectionClient.setButtons(mReset, mConnecttoSession, mAbort, mJoinSession);
+        mConnectionClient.setCallback(mNetCallback);
     }
 
     @Override
@@ -271,15 +280,8 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 //            this.setTitle("You clicked connect");
 //            mConnStatus.setText("Server status: Connecting");
 //            mPartnerDevice.setText("Partner status: waiting");
-            mConnectionClient = NetHandler.getInstance();
 
-            //Set the view to update the GUI from another thread
-            mConnectionClient.setDebugView(mDebuginfo);
-            mConnectionClient.setConnectionStatusView(mConnStatus);
-            mConnectionClient.setPeerStatusView(mPartnerDevice);
-            mConnectionClient.setButtons(mReset, mConnecttoSession, mAbort, mJoinSession);
-
-            mConnectionClient.connect(mIP.getText().toString(), port, mNetCallback);
+            mConnectionClient.connect(mIP.getText().toString(), port);
             mConnectionClient.createSession();
         }
         else
@@ -394,15 +396,8 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         //this.setTitle("You clicked connect");
         //mConnStatus.setText("Server status: Connecting");
         //mPartnerDevice.setText("Partner status: waiting");
-        mConnectionClient = NetHandler.getInstance();
 
-        //Set the view to update the GUI from another thread
-        mConnectionClient.setDebugView(mDebuginfo);
-        mConnectionClient.setConnectionStatusView(mConnStatus);
-        mConnectionClient.setPeerStatusView(mPartnerDevice);
-        mConnectionClient.setButtons(mReset, mConnecttoSession, mAbort, mJoinSession);
-
-        mConnectionClient.connect(mIP.getText().toString(), globalPort, mNetCallback);
+        mConnectionClient.connect(mIP.getText().toString(), globalPort);
 
         // Load token from the Shared Preferences Buffer
         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
