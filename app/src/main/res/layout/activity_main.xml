@@ -109,7 +109,7 @@
         <Button
             android:layout_width="140dp"
             android:layout_height="wrap_content"
-            android:text="Abort"
+            android:text="Disconnect"
             android:id="@+id/abortbutton"
             android:layout_row="8"
             android:layout_column="1"
@@ -120,7 +120,8 @@
             android:paddingRight="5dp"
             android:paddingTop="5dp"
             android:background="@drawable/color_selector2"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:enabled="false" />
 
         <TextView
             android:layout_width="match_parent"

@@ -242,6 +242,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mJoinSession.setEnabled(true);
         mConnecttoSession.setText(createSessionMessage);
         mConnecttoSession.setEnabled(true);
+        mAbort.setEnabled(false);
 
         // mConnStatus.setText("Server status: Disconnecting");
         // mPartnerDevice.setText("Partner status: no device");
@@ -261,6 +262,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         {
             mConnecttoSession.setText(leaveSessionMessage);
             mJoinSession.setEnabled(false);
+            mAbort.setEnabled(true);
 //            this.setTitle("You clicked connect");
 //            mConnStatus.setText("Server status: Connecting");
 //            mPartnerDevice.setText("Partner status: waiting");
@@ -383,6 +385,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
         mJoinSession.setText(leaveSessionMessage);
         mConnecttoSession.setEnabled(false);
+        mAbort.setEnabled(true);
         //this.setTitle("You clicked connect");
         //mConnStatus.setText("Server status: Connecting");
         //mPartnerDevice.setText("Partner status: waiting");

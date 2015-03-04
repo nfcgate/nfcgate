@@ -125,6 +125,7 @@ public class NetHandler implements HighLevelNetworkHandler {
         // We need to pass a parameter, even though it isn't used. Otherwise, the app will crash.
         new UpdateUI(connectButton, UpdateUI.UpdateMethod.enableButton).execute("Unfug");
         new UpdateUI(joinButton, UpdateUI.UpdateMethod.enableButton).execute("Unfug");
+        new UpdateUI(abortButton, UpdateUI.UpdateMethod.disableButton).execute("Unfug");
     }
 
     private void setButtonTexts() {
