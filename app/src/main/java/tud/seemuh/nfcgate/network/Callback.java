@@ -12,4 +12,6 @@ public interface Callback {
     public void notifyBrokenPipe();
 
     public void shutdown();
+
+    public void disconnectCardWorkaround();
 }

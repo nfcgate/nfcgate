@@ -71,7 +71,7 @@ public class BroadcomWorkaround implements Runnable {
         } catch (IllegalAccessException e) {
             Log.e(TAG, "run: IllegalAccessException: ", e);
         } catch (InterruptedException e) {
-            Log.e(TAG, "run: Rudely awoken from sleep. Exiting out of spite.");
+            Log.i(TAG, "run: Rudely awoken from sleep. Exiting out of spite.");
         } catch (Exception e) {
             Log.e(TAG, "run: Encountered unspecified Exception: ", e);
         }

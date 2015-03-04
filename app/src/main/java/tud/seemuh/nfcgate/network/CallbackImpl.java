@@ -42,11 +42,15 @@ public class CallbackImpl implements Callback {
     }
 
     public void shutdown() {
+        disconnectCardWorkaround();
+        if (mReader != null) mReader.closeConnection();
+        mReader = null;
+    }
+
+    public void disconnectCardWorkaround() {
         if (mBroadcomWorkaroundThread != null) mBroadcomWorkaroundThread.interrupt();
         mBroadcomWorkaroundThread = null;
         mBroadcomWorkaroundRunnable = null;
-        if (mReader != null) mReader.closeConnection();
-        mReader = null;
     }
 
     /**
@@ -326,6 +330,7 @@ public class CallbackImpl implements Callback {
             // Start up a new thread
             mBroadcomWorkaroundThread = new Thread(mBroadcomWorkaroundRunnable);
             mBroadcomWorkaroundThread.start();
+            Handler.notifyCardWorkaroundConnected();
         } else {
             Log.i(TAG, "setTag: No problematic broadcom chipset found, leaving workaround inactive");
         }

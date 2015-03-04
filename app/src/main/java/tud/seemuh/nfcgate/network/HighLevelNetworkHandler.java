@@ -13,6 +13,10 @@ public interface HighLevelNetworkHandler {
 
     public void disconnectBrokenPipe();
 
+    public void disconnectCardWorkaround();
+
+    public void notifyCardWorkaroundConnected();
+
     public void setDebugView(TextView ldebugView);
 
     public void setConnectionStatusView(TextView connStatusView);

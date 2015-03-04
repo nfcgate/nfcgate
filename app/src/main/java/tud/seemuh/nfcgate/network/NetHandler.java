@@ -131,6 +131,7 @@ public class NetHandler implements HighLevelNetworkHandler {
     private void setButtonTexts() {
         new UpdateUI(connectButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.createSessionMessage);
         new UpdateUI(joinButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.joinSessionMessage);
+        new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetMessage);
     }
 
     private C2S.Data wrapAsDataMessage(byte[] msg) {
@@ -239,15 +240,26 @@ public class NetHandler implements HighLevelNetworkHandler {
     public void disconnectBrokenPipe() {
         setConnectionStatusOutput(CONN_DIED);
         setPeerStatusOutput(PEER_CONN_DIED);
-        setButtonTexts();
-        reactivateButtons();
         disconnectCommon();
+    }
+
+    @Override
+    public void disconnectCardWorkaround() {
+        callbackInstance.disconnectCardWorkaround();
+        new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetMessage);
+    }
+
+    @Override
+    public void notifyCardWorkaroundConnected() {
+        new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetCardMessage);
     }
 
     private void disconnectCommon() {
         handler.disconnect();
         status = Status.NOT_CONNECTED;
         callbackInstance.shutdown();
+        setButtonTexts();
+        reactivateButtons();
     }
 
     // Session management

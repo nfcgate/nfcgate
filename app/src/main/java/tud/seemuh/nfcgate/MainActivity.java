@@ -64,6 +64,8 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     public static String joinSessionMessage = "Join Session";
     public static String createSessionMessage = "Create Session";
     public static String leaveSessionMessage = "Leave Session";
+    public static String resetMessage = "Reset";
+    public static String resetCardMessage = "Forget Card";
 
     // max. port possible
     private static int maxPort = 65535;
@@ -202,38 +204,41 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     public void ButtonResetClicked(View view) {
         // reset the entire application by pressing this button
 
-        // mConnStatus.setText("Server status: Resetting");
-        // mPartnerDevice.setText("Partner status: no device");
-        mInfo.setText("Please hold your device next to an NFC tag / reader");
-        mDebuginfo.setText("Debugging Output: ");
-        // this.setTitle("You clicked reset");
+        if (mReset.getText().equals(resetMessage)) {
+            // mConnStatus.setText("Server status: Resetting");
+            // mPartnerDevice.setText("Partner status: no device");
+            // mInfo.setText("Please hold your device next to an NFC tag / reader");
+            mDebuginfo.setText("Debugging Output: ");
+            // this.setTitle("You clicked reset");
 
-        if (mConnectionClient != null) mConnectionClient.disconnect();
-        mJoinSession.setText(joinSessionMessage);
-        mJoinSession.setEnabled(true);
-        mConnecttoSession.setText(createSessionMessage);
-        mConnecttoSession.setEnabled(true);
+            if (mConnectionClient != null) mConnectionClient.disconnect();
+            mJoinSession.setText(joinSessionMessage);
+            mJoinSession.setEnabled(true);
+            mConnecttoSession.setText(createSessionMessage);
+            mConnecttoSession.setEnabled(true);
 
-        // Load values from the Shared Preferences Buffer
-        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-        mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
-        // De- or Enables Debug Window
-        mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
-        if (mDevModeEnabled)
-        {
-            mDebuginfo.setVisibility(View.VISIBLE);
-            mDebuginfo.requestFocus();
+            // Load values from the Shared Preferences Buffer
+            SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+            mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
+            // De- or Enables Debug Window
+            mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
+            if (mDevModeEnabled) {
+                mDebuginfo.setVisibility(View.VISIBLE);
+                mDebuginfo.requestFocus();
+            } else {
+                mDebuginfo.setVisibility(View.GONE);  // View.invisible results in an error
+            }
+
+            ip = preferences.getString("ip", "192.168.178.31");
+            port = preferences.getInt("port", 5566);
+            globalPort = preferences.getInt("port", 5566);
+            mIP.setText(ip);
+            mPort.setText(String.valueOf(port));
+        } else if (mReset.getText().equals(resetCardMessage)) {
+            mConnectionClient.disconnectCardWorkaround();
+        } else {
+            Log.e("MainActivity", "resetButtonClicked: Unknown message");
         }
-        else
-        {
-            mDebuginfo.setVisibility(View.GONE);  // View.invisible results in an error
-        }
-
-        ip = preferences.getString("ip", "192.168.178.31");
-        port = preferences.getInt("port",5566);
-        globalPort = preferences.getInt("port",5566);
-        mIP.setText(ip);
-        mPort.setText(String.valueOf(port));
     }
 
     public void ButtonAbortClicked(View view) {
