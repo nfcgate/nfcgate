@@ -194,28 +194,28 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             }
         }
 
-        // check if settings were changed -> if no reload default values
-        boolean chgsett;
-        if (preferences.getBoolean("changed_settings", false))
-        {
-            SharedPreferences.Editor editor = preferences.edit();
-            ip = preferences.getString("ip", "192.168.178.31");
-            port = preferences.getInt("port",5566);
-            globalPort = preferences.getInt("port",5566);
-            mIP.setText(ip);
-            mPort.setText(String.valueOf(port));
+        ip = preferences.getString("ip", "192.168.178.31");
+        port = preferences.getInt("port",5566);
+        globalPort = preferences.getInt("port",5566);
+        mIP.setText(ip);
+        mPort.setText(String.valueOf(port));
 
-            //ReaderMode
-            boolean isReaderModeEnabled = preferences.getBoolean("mReaderModeEnabled", false);
-            if(isReaderModeEnabled) {
-                mAdapter.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
-            } else {
-                mAdapter.disableReaderMode(this);
-            }
+        //ReaderMode
+        boolean isReaderModeEnabled = preferences.getBoolean("mReaderModeEnabled", false);
+        if(isReaderModeEnabled) {
+            mAdapter.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
+        } else {
+            mAdapter.disableReaderMode(this);
+        }
 
-            chgsett = false;
-            editor.putBoolean("changed_settings", chgsett);
-            editor.commit();
+        // De- or Enables Debug Window
+        mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
+        mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
+        if (mDevModeEnabled) {
+            mDebuginfo.setVisibility(View.VISIBLE);
+            mDebuginfo.requestFocus();
+        } else {
+            mDebuginfo.setVisibility(View.GONE);  // View.invisible results in an error
         }
 
         mConnecttoSession.requestFocus();

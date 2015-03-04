@@ -149,39 +149,11 @@ public class SettingsActivity extends Activity{
         editor.putString("ip", mIP.getText().toString());
         // save port into the to the preferences buffer
         editor.putInt("port", globalPort);
-        boolean chgsett = true;
-        editor.putBoolean("changed_settings", chgsett);
         editor.commit();
 
         // sent the user back to the main activity
         Toast.makeText(this, "Settings saved!", Toast.LENGTH_SHORT).show();
         finish();
-    }
-
-    public void DevCheckboxClicked(View view) {
-        mDevModeEnabled = (((CheckBox) findViewById(R.id.checkBoxDevMode)).isChecked());
-
-        // store some of the application settings in the preferences buffer
-        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        // save mDevModeEnabled into the to the preferences buffer
-        editor.putBoolean("mDevModeEnabled", mDevModeEnabled);
-        boolean chgsett = true;
-        editor.putBoolean("changed_settings", chgsett);
-        editor.commit();
-    }
-
-    public void ReaderModeCheckboxClicked(View view) {
-        mReaderModeEnabled = (((CheckBox) findViewById(R.id.checkReaderMode)).isChecked());
-
-        // store some of the application settings in the preferences buffer
-        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        // save mDevModeEnabled into the to the preferences buffer
-        editor.putBoolean("mReaderModeEnabled", mReaderModeEnabled);
-        boolean chgsett = true;
-        editor.putBoolean("changed_settings", chgsett);
-        editor.commit();
     }
 
     protected void onPause()
