@@ -156,28 +156,6 @@ public class SettingsActivity extends Activity{
         finish();
     }
 
-    public void DevCheckboxClicked(View view) {
-        mDevModeEnabled = (((CheckBox) findViewById(R.id.checkBoxDevMode)).isChecked());
-
-        // store some of the application settings in the preferences buffer
-        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        // save mDevModeEnabled into the to the preferences buffer
-        editor.putBoolean("mDevModeEnabled", mDevModeEnabled);
-        editor.commit();
-    }
-
-    public void ReaderModeCheckboxClicked(View view) {
-        mReaderModeEnabled = (((CheckBox) findViewById(R.id.checkReaderMode)).isChecked());
-
-        // store some of the application settings in the preferences buffer
-        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        // save mDevModeEnabled into the to the preferences buffer
-        editor.putBoolean("mReaderModeEnabled", mReaderModeEnabled);
-        editor.commit();
-    }
-
     protected void onPause()
     {
         super.onPause();
