@@ -140,7 +140,6 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             new AlertDialog.Builder(this)
                     .setTitle(R.string.BCMWarnHeader)
                     .setView(checkboxView)
-                    //.setMessage(R.string.BCMWarn)
                     .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             CheckBox dontShowAgain = (CheckBox) checkboxView.findViewById(R.id.neverAgain);
@@ -152,6 +151,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
                                 editor.apply();
                             }
+                            startActivity(new Intent(MainActivity.this, AboutWorkaroundActivity.class));
                         }
                     })
                     .setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
@@ -168,10 +168,6 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
                         }
                     })
                     .show();
-            CheckBox dontShowAgain = (CheckBox) checkboxView.findViewById(R.id.neverAgain);
-            if (dontShowAgain.isChecked()) {
-
-            }
         }
     }
 

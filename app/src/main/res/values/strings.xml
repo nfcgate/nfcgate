@@ -17,4 +17,7 @@
     <string name="BCMWarnHeader">Device requires workaround</string>
     <string name="nevershowagain">Don\'t show this again</string>
     <string name="nevershowwarningsettings">Do not show workaround warning</string>
+
+    <string name="title_activity_about_workaround">NFCGate - Workaround Information</string>
+    <string name="title_activity_about">About NFCGate</string>
 </resources>
