@@ -3,6 +3,8 @@ package tud.seemuh.nfcgate.network;
 import android.nfc.Tag;
 import android.util.Log;
 
+import java.io.File;
+
 import tud.seemuh.nfcgate.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.network.meta.MetaMessage;
 import tud.seemuh.nfcgate.reader.BroadcomWorkaround;
@@ -310,16 +312,23 @@ public class CallbackImpl implements Callback {
             Handler.sendAnticol(mReader.getAtqa(), mReader.getSak(), mReader.getHistoricalBytes(), mReader.getUID());
         }
 
-
-        // TODO Only run workaround on broadcom devices.
-        // They contain a file /dev/bcm* which others do not contain
-        // This can be used to distinguish them
-
-        // Initialize a runnable object
-        mBroadcomWorkaroundRunnable = new BroadcomWorkaround(tag);
-        // Start up a new thread
-        mBroadcomWorkaroundThread = new Thread(mBroadcomWorkaroundRunnable);
-        mBroadcomWorkaroundThread.start();
+        // Check if the device is running a specific Broadcom chipset (used in the Nexus 4, for example)
+        // The drivers for this chipset contain a bug which lead to DESFire cards being set into a specific mode
+        // We want to avoid that, so we use a workaround. This starts another thread that prevents
+        // the keepalive function from running and thus prevents it from setting the mode of the card
+        // Other devices work fine without this workaround, so we only activate it on bugged chipsets
+        // TODO Only activate for DESFire cards
+        File bcmdevice = new File("/dev/bcm2079x-i2c");
+        if (bcmdevice.exists()) {
+            Log.i(TAG, "setTag: Problematic broadcom chip found, activate workaround");
+            // Initialize a runnable object
+            mBroadcomWorkaroundRunnable = new BroadcomWorkaround(tag);
+            // Start up a new thread
+            mBroadcomWorkaroundThread = new Thread(mBroadcomWorkaroundRunnable);
+            mBroadcomWorkaroundThread.start();
+        } else {
+            Log.i(TAG, "setTag: No problematic broadcom chipset found, leaving workaround inactive");
+        }
 
         return found_supported_tag;
     }
