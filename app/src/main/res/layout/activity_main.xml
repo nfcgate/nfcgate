@@ -138,7 +138,6 @@
             android:id="@+id/DisplayMsg"
             android:layout_row="12"
             android:layout_column="0"
-            android:text="Please hold an NFC tag or reader \nnext to your device"
             android:layout_rowSpan="2"
             android:editable="false"
             android:layout_columnSpan="2"

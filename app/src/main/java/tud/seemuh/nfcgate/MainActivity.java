@@ -1,8 +1,10 @@
 package tud.seemuh.nfcgate;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -15,14 +17,17 @@ import android.nfc.tech.NfcA;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -120,12 +125,56 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
         mConnectionClient = NetHandler.getInstance();
 
-        //Set the view to update the GUI from another thread
+        //Set the views to update the GUI from another thread
         mConnectionClient.setDebugView(mDebuginfo);
         mConnectionClient.setConnectionStatusView(mConnStatus);
         mConnectionClient.setPeerStatusView(mPartnerDevice);
         mConnectionClient.setButtons(mReset, mConnecttoSession, mAbort, mJoinSession);
         mConnectionClient.setCallback(mNetCallback);
+
+        File bcmdevice = new File("/dev/bcm2079x-i2c");
+        // TODO Add an option to "never show this again"
+        final SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        boolean neverShowAgain = preferences.getBoolean("mNeverWarnWorkarounds", false);
+        if (bcmdevice.exists() && !neverShowAgain) {
+            LayoutInflater checkboxInflater = this.getLayoutInflater();
+            final View checkboxView = checkboxInflater.inflate(R.layout.workaroundwarning, null);
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.BCMWarnHeader)
+                    .setView(checkboxView)
+                    //.setMessage(R.string.BCMWarn)
+                    .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            CheckBox dontShowAgain = (CheckBox) checkboxView.findViewById(R.id.neverAgain);
+                            if (dontShowAgain.isChecked()) {
+                                Log.i("MainActivity", "onCreate: Don't show this again is checked");
+                                SharedPreferences.Editor editor = preferences.edit();
+
+                                editor.putBoolean("mNeverWarnWorkaround", true);
+
+                                editor.apply();
+                            }
+                        }
+                    })
+                    .setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            CheckBox dontShowAgain = (CheckBox) checkboxView.findViewById(R.id.neverAgain);
+                            if (dontShowAgain.isChecked()) {
+                                Log.i("MainActivity", "onCreate: Don't show this again is checked");
+                                SharedPreferences.Editor editor = preferences.edit();
+
+                                editor.putBoolean("mNeverWarnWorkaround", true);
+
+                                editor.apply();
+                            }
+                        }
+                    })
+                    .show();
+            CheckBox dontShowAgain = (CheckBox) checkboxView.findViewById(R.id.neverAgain);
+            if (dontShowAgain.isChecked()) {
+
+            }
+        }
     }
 
     @Override

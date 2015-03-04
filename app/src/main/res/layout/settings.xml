@@ -11,7 +11,7 @@
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:rowCount="14"
+        android:rowCount="15"
         android:columnCount="3">
 
         <TextView
@@ -54,12 +54,20 @@
             android:checked="false"
             android:layout_columnSpan="1" />
 
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nevershowwarningsettings"
+            android:id="@+id/checkBoxWorkaroundWarning"
+            android:layout_row="4"
+            android:layout_column="0" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Enter default IP address"
             android:id="@+id/textViewDefaultIp"
-            android:layout_row="4"
+            android:layout_row="5"
             android:layout_column="0"
             android:editable="false"
             android:layout_gravity="left|center"
@@ -69,7 +77,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/editIP"
-            android:layout_row="4"
+            android:layout_row="5"
             android:layout_column="0"
             android:hint="&lt;IP&gt;  "
             android:text=""
@@ -83,7 +91,7 @@
             android:layout_height="wrap_content"
             android:text="Enter default Port"
             android:id="@+id/textViewDefaultPort"
-            android:layout_row="5"
+            android:layout_row="6"
             android:layout_column="0"
             android:editable="false"
             android:layout_gravity="left|center"
@@ -93,7 +101,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/editPort"
-            android:layout_row="5"
+            android:layout_row="7"
             android:layout_column="0"
             android:hint="&lt;Port&gt;"
             android:text=""
@@ -108,7 +116,7 @@
             android:text="                          "
             android:id="@+id/textView_blankspace3"
             android:layout_column="0"
-            android:layout_row="7"
+            android:layout_row="9"
             android:layout_columnSpan="1" />
 
         <Button
@@ -117,7 +125,7 @@
             android:text="Save settings"
             android:onClick="btnSaveSettingsClicked"
             android:id="@+id/btnSaveSettings"
-            android:layout_row="9"
+            android:layout_row="11"
             android:layout_column="0"
             android:layout_margin="3dp"
             android:paddingBottom="5dp"
@@ -133,7 +141,7 @@
             android:text="                          "
             android:id="@+id/textView_blankspace2"
             android:layout_column="0"
-            android:layout_row="11"
+            android:layout_row="13"
             android:layout_columnSpan="1" />
 
         <TextView
@@ -141,10 +149,21 @@
             android:layout_height="wrap_content"
             android:text="Supported features by your smartphone"
             android:id="@+id/textViewSupportedFeatures"
-            android:layout_row="12"
+            android:layout_row="14"
             android:layout_column="0"
             android:layout_columnSpan="1" />
 
     </GridLayout>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enable ReaderMode only (disable HCE)"
+        android:id="@+id/checkBox"
+        android:layout_row="4"
+        android:layout_column="0"
+        android:onClick="ReaderModeCheckboxClicked"
+        android:checked="false"
+        android:layout_columnSpan="1" />
 
 </LinearLayout>

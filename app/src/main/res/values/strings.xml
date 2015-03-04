@@ -7,4 +7,14 @@
     <string name="aiddescription">HostApdu Service</string>
 
     <string name="aboutpage">DISCLAIMER \n \n \nThis application was built solely for research purposes. Do NOT misuse this application for malicious activities. \n \nThis application is licensed under the TBD license.\nIt uses the following libraries:\n - Cydia Substrate (Licensed under the LGPLv3)\n - LibNFC (Licensed under the Apache License, v2.0)\n - Protobuf (Licensed under the BSD 3-Clause license) \n \nWe take no responsibility for, and will not be liable for, the application behaving silly due to technical issues beyond our control. \n \n \n \n NFCgate v1.0 </string>
+
+    <string name="Yes">Yes</string>
+    <string name="No">No</string>
+    <string name="BCMWarn"><![CDATA[
+    You are using a Broadcom BCM20793 chip, which has some known problems.
+    We are using a workaround to avoid these, but this has some side effects. Do you want to read more?
+    ]]></string>
+    <string name="BCMWarnHeader">Device requires workaround</string>
+    <string name="nevershowagain">Don\'t show this again</string>
+    <string name="nevershowwarningsettings">Do not show workaround warning</string>
 </resources>
