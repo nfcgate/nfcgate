@@ -206,7 +206,6 @@ public class NetHandler implements HighLevelNetworkHandler {
             handler.sendBytes(msgbytes);
         } else {
             Log.e(TAG, "sendMessage: Trying to send message without connected handler.");
-            // TODO Give indication to caller?
         }
     }
 
@@ -372,6 +371,8 @@ public class NetHandler implements HighLevelNetworkHandler {
         b.setHistoricalByte(ByteString.copyFrom(hist));
         b.setUID(ByteString.copyFrom(uid));
 
+        // TODO If we aren't in a session, cache this and send it as soon as a session is established?
+        // (And delete it if the card is removed in the meantime)
         sendMessage(b.build(), MessageCase.ANTICOL);
         Log.d(TAG, "sendAnticol: Sent Anticol message");
     }
@@ -482,7 +483,9 @@ public class NetHandler implements HighLevelNetworkHandler {
 
     @Override
     public void sessionLeaveFailed(C2S.Session.SessionErrorCode errcode) {
-        status = Status.WAITING_FOR_PARTNER; // TODO This may result in an inconsistent state. Handle that better
+        status = Status.WAITING_FOR_PARTNER;
+        // TODO This may result in an inconsistent state
+        // But as "Session leave failed" is a very rare message, that's probably fine for now.
         if (errcode == C2S.Session.SessionErrorCode.ERROR_LEAVE_NOT_JOINED) {
             appendDebugOutput("Session leave failed: Not in a session");
             setConnectionStatusOutput(CONN_CONNECTED);
@@ -510,6 +513,8 @@ public class NetHandler implements HighLevelNetworkHandler {
     public void notifyCardFound() {
         sendStatusMessage(C2C.Status.StatusCode.CARD_FOUND);
     }
+    // TODO If we aren't in a session, cache this and send it as soon as a session is established?
+    // (And delete it if the card is removed in the meantime)
 
     @Override
     public void notifyReaderRemoved() {
