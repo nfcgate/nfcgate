@@ -132,9 +132,8 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mConnectionClient.setCallback(mNetCallback);
 
         File bcmdevice = new File("/dev/bcm2079x-i2c");
-        // TODO Add an option to "never show this again"
         final SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-        boolean neverShowAgain = preferences.getBoolean("mNeverWarnWorkarounds", false);
+        boolean neverShowAgain = preferences.getBoolean("mNeverWarnWorkaround", false);
         if (bcmdevice.exists() && !neverShowAgain) {
             LayoutInflater checkboxInflater = this.getLayoutInflater();
             final View checkboxView = checkboxInflater.inflate(R.layout.workaroundwarning, null);
