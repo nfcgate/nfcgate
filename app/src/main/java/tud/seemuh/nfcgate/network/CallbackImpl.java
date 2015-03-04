@@ -305,10 +305,10 @@ public class CallbackImpl implements Callback {
         //set callback when data is received
         if(found_supported_tag){
             SimpleLowLevelNetworkConnectionClientImpl.getInstance().setCallback(this);
-            Log.i("NFCGATE_TAG", "UID:  " + Utils.bytesToHex(mReader.getUID()));
-            Log.i("NFCGATE_TAG", "ATQA: " + Utils.bytesToHex(mReader.getAtqa()));
-            Log.i("NFCGATE_TAG", "SAK:  " + Utils.bytesToHex(mReader.getSak()));
-            Log.i("NFCGATE_TAG", "HIST: " + Utils.bytesToHex(mReader.getHistoricalBytes()));
+            Log.d(TAG, "setTag: UID:  " + Utils.bytesToHex(mReader.getUID()));
+            Log.d(TAG, "setTag: ATQA: " + Utils.bytesToHex(mReader.getAtqa()));
+            Log.d(TAG, "setTag: SAK:  " + Utils.bytesToHex(mReader.getSak()));
+            Log.d(TAG, "setTag: HIST: " + Utils.bytesToHex(mReader.getHistoricalBytes()));
             Handler.sendAnticol(mReader.getAtqa(), mReader.getSak(), mReader.getHistoricalBytes(), mReader.getUID());
         }
 
