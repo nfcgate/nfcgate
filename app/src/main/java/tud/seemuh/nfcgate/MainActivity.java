@@ -115,7 +115,6 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mJoinSession = (Button) findViewById(R.id.btnJoinSession);
         mAbort = (Button) findViewById(R.id.abortbutton);
         mConnStatus = (TextView) findViewById(R.id.editConnectionStatus);
-        mInfo = (TextView) findViewById(R.id.DisplayMsg);
         mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
         mIP = (TextView) findViewById(R.id.editIP);
         mPort = (TextView) findViewById(R.id.editPort);
@@ -265,7 +264,6 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         if (mReset.getText().equals(resetMessage)) {
             // mConnStatus.setText("Server status: Resetting");
             // mPartnerDevice.setText("Partner status: no device");
-            // mInfo.setText("Please hold your device next to an NFC tag / reader");
             mDebuginfo.setText("Debugging Output: ");
             // this.setTitle("You clicked reset");
 
