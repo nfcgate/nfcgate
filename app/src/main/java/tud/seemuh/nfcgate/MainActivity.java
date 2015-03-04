@@ -145,17 +145,17 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             mIP.setText(ip);
             mPort.setText(String.valueOf(port));
 
-            //ReaderMode
-            boolean isReaderModeEnabled = preferences.getBoolean("mReaderModeEnabled", false);
-            if(isReaderModeEnabled) {
-                mAdapter.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
-            } else {
-                mAdapter.disableReaderMode(this);
-            }
-
             chgsett = false;
             editor.putBoolean("changed_settings", chgsett);
             editor.commit();
+        }
+
+        //ReaderMode
+        boolean isReaderModeEnabled = preferences.getBoolean("mReaderModeEnabled", false);
+        if(isReaderModeEnabled) {
+            mAdapter.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
+        } else {
+            mAdapter.disableReaderMode(this);
         }
 
         mConnecttoSession.requestFocus();
