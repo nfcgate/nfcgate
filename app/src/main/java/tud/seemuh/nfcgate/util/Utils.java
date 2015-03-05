@@ -19,4 +19,7 @@ public class Utils {
         }
         return new String(hexChars);
     }
+    public static String bytesToHex(byte b) {
+        return bytesToHex(new byte[]{ b });
+    }
 }

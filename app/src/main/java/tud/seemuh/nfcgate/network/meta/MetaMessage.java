@@ -13,19 +13,6 @@ public final class MetaMessage {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-     */
-    boolean hasKex();
-    /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-     */
-    tud.seemuh.nfcgate.network.c2c.C2C.Kex getKex();
-    /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-     */
-    tud.seemuh.nfcgate.network.c2c.C2C.KexOrBuilder getKexOrBuilder();
-
-    /**
      * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData NFCData = 2;</code>
      */
     boolean hasNFCData();
@@ -39,41 +26,54 @@ public final class MetaMessage {
     tud.seemuh.nfcgate.network.c2c.C2C.NFCDataOrBuilder getNFCDataOrBuilder();
 
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 3;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2c.Anticol Anticol = 3;</code>
+     */
+    boolean hasAnticol();
+    /**
+     * <code>optional .tud.seemuh.nfcgate.network.c2c.Anticol Anticol = 3;</code>
+     */
+    tud.seemuh.nfcgate.network.c2c.C2C.Anticol getAnticol();
+    /**
+     * <code>optional .tud.seemuh.nfcgate.network.c2c.Anticol Anticol = 3;</code>
+     */
+    tud.seemuh.nfcgate.network.c2c.C2C.AnticolOrBuilder getAnticolOrBuilder();
+
+    /**
+     * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 4;</code>
      */
     boolean hasStatus();
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 3;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 4;</code>
      */
     tud.seemuh.nfcgate.network.c2c.C2C.Status getStatus();
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 3;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 4;</code>
      */
     tud.seemuh.nfcgate.network.c2c.C2C.StatusOrBuilder getStatusOrBuilder();
 
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 4;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 5;</code>
      */
     boolean hasData();
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 4;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 5;</code>
      */
     tud.seemuh.nfcgate.network.c2s.C2S.Data getData();
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 4;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 5;</code>
      */
     tud.seemuh.nfcgate.network.c2s.C2S.DataOrBuilder getDataOrBuilder();
 
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 5;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
      */
     boolean hasSession();
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 5;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
      */
     tud.seemuh.nfcgate.network.c2s.C2S.Session getSession();
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 5;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
      */
     tud.seemuh.nfcgate.network.c2s.C2S.SessionOrBuilder getSessionOrBuilder();
   }
@@ -136,19 +136,6 @@ public final class MetaMessage {
               }
               break;
             }
-            case 10: {
-              tud.seemuh.nfcgate.network.c2c.C2C.Kex.Builder subBuilder = null;
-              if (messageCase_ == 1) {
-                subBuilder = ((tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_).toBuilder();
-              }
-              message_ = input.readMessage(tud.seemuh.nfcgate.network.c2c.C2C.Kex.PARSER, extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_);
-                message_ = subBuilder.buildPartial();
-              }
-              messageCase_ = 1;
-              break;
-            }
             case 18: {
               tud.seemuh.nfcgate.network.c2c.C2C.NFCData.Builder subBuilder = null;
               if (messageCase_ == 2) {
@@ -163,8 +150,21 @@ public final class MetaMessage {
               break;
             }
             case 26: {
-              tud.seemuh.nfcgate.network.c2c.C2C.Status.Builder subBuilder = null;
+              tud.seemuh.nfcgate.network.c2c.C2C.Anticol.Builder subBuilder = null;
               if (messageCase_ == 3) {
+                subBuilder = ((tud.seemuh.nfcgate.network.c2c.C2C.Anticol) message_).toBuilder();
+              }
+              message_ = input.readMessage(tud.seemuh.nfcgate.network.c2c.C2C.Anticol.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((tud.seemuh.nfcgate.network.c2c.C2C.Anticol) message_);
+                message_ = subBuilder.buildPartial();
+              }
+              messageCase_ = 3;
+              break;
+            }
+            case 34: {
+              tud.seemuh.nfcgate.network.c2c.C2C.Status.Builder subBuilder = null;
+              if (messageCase_ == 4) {
                 subBuilder = ((tud.seemuh.nfcgate.network.c2c.C2C.Status) message_).toBuilder();
               }
               message_ = input.readMessage(tud.seemuh.nfcgate.network.c2c.C2C.Status.PARSER, extensionRegistry);
@@ -172,12 +172,12 @@ public final class MetaMessage {
                 subBuilder.mergeFrom((tud.seemuh.nfcgate.network.c2c.C2C.Status) message_);
                 message_ = subBuilder.buildPartial();
               }
-              messageCase_ = 3;
+              messageCase_ = 4;
               break;
             }
-            case 34: {
+            case 42: {
               tud.seemuh.nfcgate.network.c2s.C2S.Data.Builder subBuilder = null;
-              if (messageCase_ == 4) {
+              if (messageCase_ == 5) {
                 subBuilder = ((tud.seemuh.nfcgate.network.c2s.C2S.Data) message_).toBuilder();
               }
               message_ = input.readMessage(tud.seemuh.nfcgate.network.c2s.C2S.Data.PARSER, extensionRegistry);
@@ -185,12 +185,12 @@ public final class MetaMessage {
                 subBuilder.mergeFrom((tud.seemuh.nfcgate.network.c2s.C2S.Data) message_);
                 message_ = subBuilder.buildPartial();
               }
-              messageCase_ = 4;
+              messageCase_ = 5;
               break;
             }
-            case 42: {
+            case 50: {
               tud.seemuh.nfcgate.network.c2s.C2S.Session.Builder subBuilder = null;
-              if (messageCase_ == 5) {
+              if (messageCase_ == 6) {
                 subBuilder = ((tud.seemuh.nfcgate.network.c2s.C2S.Session) message_).toBuilder();
               }
               message_ = input.readMessage(tud.seemuh.nfcgate.network.c2s.C2S.Session.PARSER, extensionRegistry);
@@ -198,7 +198,7 @@ public final class MetaMessage {
                 subBuilder.mergeFrom((tud.seemuh.nfcgate.network.c2s.C2S.Session) message_);
                 message_ = subBuilder.buildPartial();
               }
-              messageCase_ = 5;
+              messageCase_ = 6;
               break;
             }
           }
@@ -245,11 +245,11 @@ public final class MetaMessage {
     private java.lang.Object message_;
     public enum MessageCase
         implements com.google.protobuf.Internal.EnumLite {
-      KEX(1),
       NFCDATA(2),
-      STATUS(3),
-      DATA(4),
-      SESSION(5),
+      ANTICOL(3),
+      STATUS(4),
+      DATA(5),
+      SESSION(6),
       MESSAGE_NOT_SET(0);
       private int value = 0;
       private MessageCase(int value) {
@@ -257,11 +257,11 @@ public final class MetaMessage {
       }
       public static MessageCase valueOf(int value) {
         switch (value) {
-          case 1: return KEX;
           case 2: return NFCDATA;
-          case 3: return STATUS;
-          case 4: return DATA;
-          case 5: return SESSION;
+          case 3: return ANTICOL;
+          case 4: return STATUS;
+          case 5: return DATA;
+          case 6: return SESSION;
           case 0: return MESSAGE_NOT_SET;
           default: throw new java.lang.IllegalArgumentException(
             "Value is undefined for this oneof enum.");
@@ -276,32 +276,6 @@ public final class MetaMessage {
     getMessageCase() {
       return MessageCase.valueOf(
           messageCase_);
-    }
-
-    public static final int KEX_FIELD_NUMBER = 1;
-    /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-     */
-    public boolean hasKex() {
-      return messageCase_ == 1;
-    }
-    /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-     */
-    public tud.seemuh.nfcgate.network.c2c.C2C.Kex getKex() {
-      if (messageCase_ == 1) {
-         return (tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_;
-      }
-      return tud.seemuh.nfcgate.network.c2c.C2C.Kex.getDefaultInstance();
-    }
-    /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-     */
-    public tud.seemuh.nfcgate.network.c2c.C2C.KexOrBuilder getKexOrBuilder() {
-      if (messageCase_ == 1) {
-         return (tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_;
-      }
-      return tud.seemuh.nfcgate.network.c2c.C2C.Kex.getDefaultInstance();
     }
 
     public static final int NFCDATA_FIELD_NUMBER = 2;
@@ -330,79 +304,105 @@ public final class MetaMessage {
       return tud.seemuh.nfcgate.network.c2c.C2C.NFCData.getDefaultInstance();
     }
 
-    public static final int STATUS_FIELD_NUMBER = 3;
+    public static final int ANTICOL_FIELD_NUMBER = 3;
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 3;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2c.Anticol Anticol = 3;</code>
      */
-    public boolean hasStatus() {
+    public boolean hasAnticol() {
       return messageCase_ == 3;
     }
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 3;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2c.Anticol Anticol = 3;</code>
      */
-    public tud.seemuh.nfcgate.network.c2c.C2C.Status getStatus() {
+    public tud.seemuh.nfcgate.network.c2c.C2C.Anticol getAnticol() {
       if (messageCase_ == 3) {
-         return (tud.seemuh.nfcgate.network.c2c.C2C.Status) message_;
+         return (tud.seemuh.nfcgate.network.c2c.C2C.Anticol) message_;
       }
-      return tud.seemuh.nfcgate.network.c2c.C2C.Status.getDefaultInstance();
+      return tud.seemuh.nfcgate.network.c2c.C2C.Anticol.getDefaultInstance();
     }
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 3;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2c.Anticol Anticol = 3;</code>
      */
-    public tud.seemuh.nfcgate.network.c2c.C2C.StatusOrBuilder getStatusOrBuilder() {
+    public tud.seemuh.nfcgate.network.c2c.C2C.AnticolOrBuilder getAnticolOrBuilder() {
       if (messageCase_ == 3) {
-         return (tud.seemuh.nfcgate.network.c2c.C2C.Status) message_;
+         return (tud.seemuh.nfcgate.network.c2c.C2C.Anticol) message_;
       }
-      return tud.seemuh.nfcgate.network.c2c.C2C.Status.getDefaultInstance();
+      return tud.seemuh.nfcgate.network.c2c.C2C.Anticol.getDefaultInstance();
     }
 
-    public static final int DATA_FIELD_NUMBER = 4;
+    public static final int STATUS_FIELD_NUMBER = 4;
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 4;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 4;</code>
      */
-    public boolean hasData() {
+    public boolean hasStatus() {
       return messageCase_ == 4;
     }
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 4;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 4;</code>
+     */
+    public tud.seemuh.nfcgate.network.c2c.C2C.Status getStatus() {
+      if (messageCase_ == 4) {
+         return (tud.seemuh.nfcgate.network.c2c.C2C.Status) message_;
+      }
+      return tud.seemuh.nfcgate.network.c2c.C2C.Status.getDefaultInstance();
+    }
+    /**
+     * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 4;</code>
+     */
+    public tud.seemuh.nfcgate.network.c2c.C2C.StatusOrBuilder getStatusOrBuilder() {
+      if (messageCase_ == 4) {
+         return (tud.seemuh.nfcgate.network.c2c.C2C.Status) message_;
+      }
+      return tud.seemuh.nfcgate.network.c2c.C2C.Status.getDefaultInstance();
+    }
+
+    public static final int DATA_FIELD_NUMBER = 5;
+    /**
+     * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 5;</code>
+     */
+    public boolean hasData() {
+      return messageCase_ == 5;
+    }
+    /**
+     * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 5;</code>
      */
     public tud.seemuh.nfcgate.network.c2s.C2S.Data getData() {
-      if (messageCase_ == 4) {
+      if (messageCase_ == 5) {
          return (tud.seemuh.nfcgate.network.c2s.C2S.Data) message_;
       }
       return tud.seemuh.nfcgate.network.c2s.C2S.Data.getDefaultInstance();
     }
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 4;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 5;</code>
      */
     public tud.seemuh.nfcgate.network.c2s.C2S.DataOrBuilder getDataOrBuilder() {
-      if (messageCase_ == 4) {
+      if (messageCase_ == 5) {
          return (tud.seemuh.nfcgate.network.c2s.C2S.Data) message_;
       }
       return tud.seemuh.nfcgate.network.c2s.C2S.Data.getDefaultInstance();
     }
 
-    public static final int SESSION_FIELD_NUMBER = 5;
+    public static final int SESSION_FIELD_NUMBER = 6;
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 5;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
      */
     public boolean hasSession() {
-      return messageCase_ == 5;
+      return messageCase_ == 6;
     }
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 5;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
      */
     public tud.seemuh.nfcgate.network.c2s.C2S.Session getSession() {
-      if (messageCase_ == 5) {
+      if (messageCase_ == 6) {
          return (tud.seemuh.nfcgate.network.c2s.C2S.Session) message_;
       }
       return tud.seemuh.nfcgate.network.c2s.C2S.Session.getDefaultInstance();
     }
     /**
-     * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 5;</code>
+     * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
      */
     public tud.seemuh.nfcgate.network.c2s.C2S.SessionOrBuilder getSessionOrBuilder() {
-      if (messageCase_ == 5) {
+      if (messageCase_ == 6) {
          return (tud.seemuh.nfcgate.network.c2s.C2S.Session) message_;
       }
       return tud.seemuh.nfcgate.network.c2s.C2S.Session.getDefaultInstance();
@@ -416,14 +416,14 @@ public final class MetaMessage {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
-      if (hasKex()) {
-        if (!getKex().isInitialized()) {
+      if (hasNFCData()) {
+        if (!getNFCData().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
       }
-      if (hasNFCData()) {
-        if (!getNFCData().isInitialized()) {
+      if (hasAnticol()) {
+        if (!getAnticol().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -453,20 +453,20 @@ public final class MetaMessage {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      if (messageCase_ == 1) {
-        output.writeMessage(1, (tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_);
-      }
       if (messageCase_ == 2) {
         output.writeMessage(2, (tud.seemuh.nfcgate.network.c2c.C2C.NFCData) message_);
       }
       if (messageCase_ == 3) {
-        output.writeMessage(3, (tud.seemuh.nfcgate.network.c2c.C2C.Status) message_);
+        output.writeMessage(3, (tud.seemuh.nfcgate.network.c2c.C2C.Anticol) message_);
       }
       if (messageCase_ == 4) {
-        output.writeMessage(4, (tud.seemuh.nfcgate.network.c2s.C2S.Data) message_);
+        output.writeMessage(4, (tud.seemuh.nfcgate.network.c2c.C2C.Status) message_);
       }
       if (messageCase_ == 5) {
-        output.writeMessage(5, (tud.seemuh.nfcgate.network.c2s.C2S.Session) message_);
+        output.writeMessage(5, (tud.seemuh.nfcgate.network.c2s.C2S.Data) message_);
+      }
+      if (messageCase_ == 6) {
+        output.writeMessage(6, (tud.seemuh.nfcgate.network.c2s.C2S.Session) message_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -477,25 +477,25 @@ public final class MetaMessage {
       if (size != -1) return size;
 
       size = 0;
-      if (messageCase_ == 1) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(1, (tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_);
-      }
       if (messageCase_ == 2) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(2, (tud.seemuh.nfcgate.network.c2c.C2C.NFCData) message_);
       }
       if (messageCase_ == 3) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(3, (tud.seemuh.nfcgate.network.c2c.C2C.Status) message_);
+          .computeMessageSize(3, (tud.seemuh.nfcgate.network.c2c.C2C.Anticol) message_);
       }
       if (messageCase_ == 4) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(4, (tud.seemuh.nfcgate.network.c2s.C2S.Data) message_);
+          .computeMessageSize(4, (tud.seemuh.nfcgate.network.c2c.C2C.Status) message_);
       }
       if (messageCase_ == 5) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(5, (tud.seemuh.nfcgate.network.c2s.C2S.Session) message_);
+          .computeMessageSize(5, (tud.seemuh.nfcgate.network.c2s.C2S.Data) message_);
+      }
+      if (messageCase_ == 6) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(6, (tud.seemuh.nfcgate.network.c2s.C2S.Session) message_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -651,13 +651,6 @@ public final class MetaMessage {
         tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper result = new tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper(this);
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
-        if (messageCase_ == 1) {
-          if (kexBuilder_ == null) {
-            result.message_ = message_;
-          } else {
-            result.message_ = kexBuilder_.build();
-          }
-        }
         if (messageCase_ == 2) {
           if (nFCDataBuilder_ == null) {
             result.message_ = message_;
@@ -666,20 +659,27 @@ public final class MetaMessage {
           }
         }
         if (messageCase_ == 3) {
+          if (anticolBuilder_ == null) {
+            result.message_ = message_;
+          } else {
+            result.message_ = anticolBuilder_.build();
+          }
+        }
+        if (messageCase_ == 4) {
           if (statusBuilder_ == null) {
             result.message_ = message_;
           } else {
             result.message_ = statusBuilder_.build();
           }
         }
-        if (messageCase_ == 4) {
+        if (messageCase_ == 5) {
           if (dataBuilder_ == null) {
             result.message_ = message_;
           } else {
             result.message_ = dataBuilder_.build();
           }
         }
-        if (messageCase_ == 5) {
+        if (messageCase_ == 6) {
           if (sessionBuilder_ == null) {
             result.message_ = message_;
           } else {
@@ -704,12 +704,12 @@ public final class MetaMessage {
       public Builder mergeFrom(tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper other) {
         if (other == tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.getDefaultInstance()) return this;
         switch (other.getMessageCase()) {
-          case KEX: {
-            mergeKex(other.getKex());
-            break;
-          }
           case NFCDATA: {
             mergeNFCData(other.getNFCData());
+            break;
+          }
+          case ANTICOL: {
+            mergeAnticol(other.getAnticol());
             break;
           }
           case STATUS: {
@@ -733,14 +733,14 @@ public final class MetaMessage {
       }
 
       public final boolean isInitialized() {
-        if (hasKex()) {
-          if (!getKex().isInitialized()) {
+        if (hasNFCData()) {
+          if (!getNFCData().isInitialized()) {
             
             return false;
           }
         }
-        if (hasNFCData()) {
-          if (!getNFCData().isInitialized()) {
+        if (hasAnticol()) {
+          if (!getAnticol().isInitialized()) {
             
             return false;
           }
@@ -799,141 +799,6 @@ public final class MetaMessage {
       }
 
       private int bitField0_;
-
-      private com.google.protobuf.SingleFieldBuilder<
-          tud.seemuh.nfcgate.network.c2c.C2C.Kex, tud.seemuh.nfcgate.network.c2c.C2C.Kex.Builder, tud.seemuh.nfcgate.network.c2c.C2C.KexOrBuilder> kexBuilder_;
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      public boolean hasKex() {
-        return messageCase_ == 1;
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      public tud.seemuh.nfcgate.network.c2c.C2C.Kex getKex() {
-        if (kexBuilder_ == null) {
-          if (messageCase_ == 1) {
-            return (tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_;
-          }
-          return tud.seemuh.nfcgate.network.c2c.C2C.Kex.getDefaultInstance();
-        } else {
-          if (messageCase_ == 1) {
-            return kexBuilder_.getMessage();
-          }
-          return tud.seemuh.nfcgate.network.c2c.C2C.Kex.getDefaultInstance();
-        }
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      public Builder setKex(tud.seemuh.nfcgate.network.c2c.C2C.Kex value) {
-        if (kexBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          message_ = value;
-          onChanged();
-        } else {
-          kexBuilder_.setMessage(value);
-        }
-        messageCase_ = 1;
-        return this;
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      public Builder setKex(
-          tud.seemuh.nfcgate.network.c2c.C2C.Kex.Builder builderForValue) {
-        if (kexBuilder_ == null) {
-          message_ = builderForValue.build();
-          onChanged();
-        } else {
-          kexBuilder_.setMessage(builderForValue.build());
-        }
-        messageCase_ = 1;
-        return this;
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      public Builder mergeKex(tud.seemuh.nfcgate.network.c2c.C2C.Kex value) {
-        if (kexBuilder_ == null) {
-          if (messageCase_ == 1 &&
-              message_ != tud.seemuh.nfcgate.network.c2c.C2C.Kex.getDefaultInstance()) {
-            message_ = tud.seemuh.nfcgate.network.c2c.C2C.Kex.newBuilder((tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_)
-                .mergeFrom(value).buildPartial();
-          } else {
-            message_ = value;
-          }
-          onChanged();
-        } else {
-          if (messageCase_ == 1) {
-            kexBuilder_.mergeFrom(value);
-          }
-          kexBuilder_.setMessage(value);
-        }
-        messageCase_ = 1;
-        return this;
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      public Builder clearKex() {
-        if (kexBuilder_ == null) {
-          if (messageCase_ == 1) {
-            messageCase_ = 0;
-            message_ = null;
-            onChanged();
-          }
-        } else {
-          if (messageCase_ == 1) {
-            messageCase_ = 0;
-            message_ = null;
-          }
-          kexBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      public tud.seemuh.nfcgate.network.c2c.C2C.Kex.Builder getKexBuilder() {
-        return getKexFieldBuilder().getBuilder();
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      public tud.seemuh.nfcgate.network.c2c.C2C.KexOrBuilder getKexOrBuilder() {
-        if ((messageCase_ == 1) && (kexBuilder_ != null)) {
-          return kexBuilder_.getMessageOrBuilder();
-        } else {
-          if (messageCase_ == 1) {
-            return (tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_;
-          }
-          return tud.seemuh.nfcgate.network.c2c.C2C.Kex.getDefaultInstance();
-        }
-      }
-      /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Kex Kex = 1;</code>
-       */
-      private com.google.protobuf.SingleFieldBuilder<
-          tud.seemuh.nfcgate.network.c2c.C2C.Kex, tud.seemuh.nfcgate.network.c2c.C2C.Kex.Builder, tud.seemuh.nfcgate.network.c2c.C2C.KexOrBuilder> 
-          getKexFieldBuilder() {
-        if (kexBuilder_ == null) {
-          if (!(messageCase_ == 1)) {
-            message_ = tud.seemuh.nfcgate.network.c2c.C2C.Kex.getDefaultInstance();
-          }
-          kexBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              tud.seemuh.nfcgate.network.c2c.C2C.Kex, tud.seemuh.nfcgate.network.c2c.C2C.Kex.Builder, tud.seemuh.nfcgate.network.c2c.C2C.KexOrBuilder>(
-                  (tud.seemuh.nfcgate.network.c2c.C2C.Kex) message_,
-                  getParentForChildren(),
-                  isClean());
-          message_ = null;
-        }
-        messageCase_ = 1;
-        return kexBuilder_;
-      }
 
       private com.google.protobuf.SingleFieldBuilder<
           tud.seemuh.nfcgate.network.c2c.C2C.NFCData, tud.seemuh.nfcgate.network.c2c.C2C.NFCData.Builder, tud.seemuh.nfcgate.network.c2c.C2C.NFCDataOrBuilder> nFCDataBuilder_;
@@ -1071,31 +936,166 @@ public final class MetaMessage {
       }
 
       private com.google.protobuf.SingleFieldBuilder<
-          tud.seemuh.nfcgate.network.c2c.C2C.Status, tud.seemuh.nfcgate.network.c2c.C2C.Status.Builder, tud.seemuh.nfcgate.network.c2c.C2C.StatusOrBuilder> statusBuilder_;
+          tud.seemuh.nfcgate.network.c2c.C2C.Anticol, tud.seemuh.nfcgate.network.c2c.C2C.Anticol.Builder, tud.seemuh.nfcgate.network.c2c.C2C.AnticolOrBuilder> anticolBuilder_;
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 3;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Anticol Anticol = 3;</code>
        */
-      public boolean hasStatus() {
+      public boolean hasAnticol() {
         return messageCase_ == 3;
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 3;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Anticol Anticol = 3;</code>
+       */
+      public tud.seemuh.nfcgate.network.c2c.C2C.Anticol getAnticol() {
+        if (anticolBuilder_ == null) {
+          if (messageCase_ == 3) {
+            return (tud.seemuh.nfcgate.network.c2c.C2C.Anticol) message_;
+          }
+          return tud.seemuh.nfcgate.network.c2c.C2C.Anticol.getDefaultInstance();
+        } else {
+          if (messageCase_ == 3) {
+            return anticolBuilder_.getMessage();
+          }
+          return tud.seemuh.nfcgate.network.c2c.C2C.Anticol.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Anticol Anticol = 3;</code>
+       */
+      public Builder setAnticol(tud.seemuh.nfcgate.network.c2c.C2C.Anticol value) {
+        if (anticolBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          message_ = value;
+          onChanged();
+        } else {
+          anticolBuilder_.setMessage(value);
+        }
+        messageCase_ = 3;
+        return this;
+      }
+      /**
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Anticol Anticol = 3;</code>
+       */
+      public Builder setAnticol(
+          tud.seemuh.nfcgate.network.c2c.C2C.Anticol.Builder builderForValue) {
+        if (anticolBuilder_ == null) {
+          message_ = builderForValue.build();
+          onChanged();
+        } else {
+          anticolBuilder_.setMessage(builderForValue.build());
+        }
+        messageCase_ = 3;
+        return this;
+      }
+      /**
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Anticol Anticol = 3;</code>
+       */
+      public Builder mergeAnticol(tud.seemuh.nfcgate.network.c2c.C2C.Anticol value) {
+        if (anticolBuilder_ == null) {
+          if (messageCase_ == 3 &&
+              message_ != tud.seemuh.nfcgate.network.c2c.C2C.Anticol.getDefaultInstance()) {
+            message_ = tud.seemuh.nfcgate.network.c2c.C2C.Anticol.newBuilder((tud.seemuh.nfcgate.network.c2c.C2C.Anticol) message_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            message_ = value;
+          }
+          onChanged();
+        } else {
+          if (messageCase_ == 3) {
+            anticolBuilder_.mergeFrom(value);
+          }
+          anticolBuilder_.setMessage(value);
+        }
+        messageCase_ = 3;
+        return this;
+      }
+      /**
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Anticol Anticol = 3;</code>
+       */
+      public Builder clearAnticol() {
+        if (anticolBuilder_ == null) {
+          if (messageCase_ == 3) {
+            messageCase_ = 0;
+            message_ = null;
+            onChanged();
+          }
+        } else {
+          if (messageCase_ == 3) {
+            messageCase_ = 0;
+            message_ = null;
+          }
+          anticolBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Anticol Anticol = 3;</code>
+       */
+      public tud.seemuh.nfcgate.network.c2c.C2C.Anticol.Builder getAnticolBuilder() {
+        return getAnticolFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Anticol Anticol = 3;</code>
+       */
+      public tud.seemuh.nfcgate.network.c2c.C2C.AnticolOrBuilder getAnticolOrBuilder() {
+        if ((messageCase_ == 3) && (anticolBuilder_ != null)) {
+          return anticolBuilder_.getMessageOrBuilder();
+        } else {
+          if (messageCase_ == 3) {
+            return (tud.seemuh.nfcgate.network.c2c.C2C.Anticol) message_;
+          }
+          return tud.seemuh.nfcgate.network.c2c.C2C.Anticol.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Anticol Anticol = 3;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          tud.seemuh.nfcgate.network.c2c.C2C.Anticol, tud.seemuh.nfcgate.network.c2c.C2C.Anticol.Builder, tud.seemuh.nfcgate.network.c2c.C2C.AnticolOrBuilder> 
+          getAnticolFieldBuilder() {
+        if (anticolBuilder_ == null) {
+          if (!(messageCase_ == 3)) {
+            message_ = tud.seemuh.nfcgate.network.c2c.C2C.Anticol.getDefaultInstance();
+          }
+          anticolBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              tud.seemuh.nfcgate.network.c2c.C2C.Anticol, tud.seemuh.nfcgate.network.c2c.C2C.Anticol.Builder, tud.seemuh.nfcgate.network.c2c.C2C.AnticolOrBuilder>(
+                  (tud.seemuh.nfcgate.network.c2c.C2C.Anticol) message_,
+                  getParentForChildren(),
+                  isClean());
+          message_ = null;
+        }
+        messageCase_ = 3;
+        return anticolBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilder<
+          tud.seemuh.nfcgate.network.c2c.C2C.Status, tud.seemuh.nfcgate.network.c2c.C2C.Status.Builder, tud.seemuh.nfcgate.network.c2c.C2C.StatusOrBuilder> statusBuilder_;
+      /**
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 4;</code>
+       */
+      public boolean hasStatus() {
+        return messageCase_ == 4;
+      }
+      /**
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 4;</code>
        */
       public tud.seemuh.nfcgate.network.c2c.C2C.Status getStatus() {
         if (statusBuilder_ == null) {
-          if (messageCase_ == 3) {
+          if (messageCase_ == 4) {
             return (tud.seemuh.nfcgate.network.c2c.C2C.Status) message_;
           }
           return tud.seemuh.nfcgate.network.c2c.C2C.Status.getDefaultInstance();
         } else {
-          if (messageCase_ == 3) {
+          if (messageCase_ == 4) {
             return statusBuilder_.getMessage();
           }
           return tud.seemuh.nfcgate.network.c2c.C2C.Status.getDefaultInstance();
         }
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 3;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 4;</code>
        */
       public Builder setStatus(tud.seemuh.nfcgate.network.c2c.C2C.Status value) {
         if (statusBuilder_ == null) {
@@ -1107,11 +1107,11 @@ public final class MetaMessage {
         } else {
           statusBuilder_.setMessage(value);
         }
-        messageCase_ = 3;
+        messageCase_ = 4;
         return this;
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 3;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 4;</code>
        */
       public Builder setStatus(
           tud.seemuh.nfcgate.network.c2c.C2C.Status.Builder builderForValue) {
@@ -1121,15 +1121,15 @@ public final class MetaMessage {
         } else {
           statusBuilder_.setMessage(builderForValue.build());
         }
-        messageCase_ = 3;
+        messageCase_ = 4;
         return this;
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 3;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 4;</code>
        */
       public Builder mergeStatus(tud.seemuh.nfcgate.network.c2c.C2C.Status value) {
         if (statusBuilder_ == null) {
-          if (messageCase_ == 3 &&
+          if (messageCase_ == 4 &&
               message_ != tud.seemuh.nfcgate.network.c2c.C2C.Status.getDefaultInstance()) {
             message_ = tud.seemuh.nfcgate.network.c2c.C2C.Status.newBuilder((tud.seemuh.nfcgate.network.c2c.C2C.Status) message_)
                 .mergeFrom(value).buildPartial();
@@ -1138,26 +1138,26 @@ public final class MetaMessage {
           }
           onChanged();
         } else {
-          if (messageCase_ == 3) {
+          if (messageCase_ == 4) {
             statusBuilder_.mergeFrom(value);
           }
           statusBuilder_.setMessage(value);
         }
-        messageCase_ = 3;
+        messageCase_ = 4;
         return this;
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 3;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 4;</code>
        */
       public Builder clearStatus() {
         if (statusBuilder_ == null) {
-          if (messageCase_ == 3) {
+          if (messageCase_ == 4) {
             messageCase_ = 0;
             message_ = null;
             onChanged();
           }
         } else {
-          if (messageCase_ == 3) {
+          if (messageCase_ == 4) {
             messageCase_ = 0;
             message_ = null;
           }
@@ -1166,32 +1166,32 @@ public final class MetaMessage {
         return this;
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 3;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 4;</code>
        */
       public tud.seemuh.nfcgate.network.c2c.C2C.Status.Builder getStatusBuilder() {
         return getStatusFieldBuilder().getBuilder();
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 3;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 4;</code>
        */
       public tud.seemuh.nfcgate.network.c2c.C2C.StatusOrBuilder getStatusOrBuilder() {
-        if ((messageCase_ == 3) && (statusBuilder_ != null)) {
+        if ((messageCase_ == 4) && (statusBuilder_ != null)) {
           return statusBuilder_.getMessageOrBuilder();
         } else {
-          if (messageCase_ == 3) {
+          if (messageCase_ == 4) {
             return (tud.seemuh.nfcgate.network.c2c.C2C.Status) message_;
           }
           return tud.seemuh.nfcgate.network.c2c.C2C.Status.getDefaultInstance();
         }
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 3;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 4;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
           tud.seemuh.nfcgate.network.c2c.C2C.Status, tud.seemuh.nfcgate.network.c2c.C2C.Status.Builder, tud.seemuh.nfcgate.network.c2c.C2C.StatusOrBuilder> 
           getStatusFieldBuilder() {
         if (statusBuilder_ == null) {
-          if (!(messageCase_ == 3)) {
+          if (!(messageCase_ == 4)) {
             message_ = tud.seemuh.nfcgate.network.c2c.C2C.Status.getDefaultInstance();
           }
           statusBuilder_ = new com.google.protobuf.SingleFieldBuilder<
@@ -1201,36 +1201,36 @@ public final class MetaMessage {
                   isClean());
           message_ = null;
         }
-        messageCase_ = 3;
+        messageCase_ = 4;
         return statusBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilder<
           tud.seemuh.nfcgate.network.c2s.C2S.Data, tud.seemuh.nfcgate.network.c2s.C2S.Data.Builder, tud.seemuh.nfcgate.network.c2s.C2S.DataOrBuilder> dataBuilder_;
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 4;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 5;</code>
        */
       public boolean hasData() {
-        return messageCase_ == 4;
+        return messageCase_ == 5;
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 4;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 5;</code>
        */
       public tud.seemuh.nfcgate.network.c2s.C2S.Data getData() {
         if (dataBuilder_ == null) {
-          if (messageCase_ == 4) {
+          if (messageCase_ == 5) {
             return (tud.seemuh.nfcgate.network.c2s.C2S.Data) message_;
           }
           return tud.seemuh.nfcgate.network.c2s.C2S.Data.getDefaultInstance();
         } else {
-          if (messageCase_ == 4) {
+          if (messageCase_ == 5) {
             return dataBuilder_.getMessage();
           }
           return tud.seemuh.nfcgate.network.c2s.C2S.Data.getDefaultInstance();
         }
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 4;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 5;</code>
        */
       public Builder setData(tud.seemuh.nfcgate.network.c2s.C2S.Data value) {
         if (dataBuilder_ == null) {
@@ -1242,11 +1242,11 @@ public final class MetaMessage {
         } else {
           dataBuilder_.setMessage(value);
         }
-        messageCase_ = 4;
+        messageCase_ = 5;
         return this;
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 4;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 5;</code>
        */
       public Builder setData(
           tud.seemuh.nfcgate.network.c2s.C2S.Data.Builder builderForValue) {
@@ -1256,15 +1256,15 @@ public final class MetaMessage {
         } else {
           dataBuilder_.setMessage(builderForValue.build());
         }
-        messageCase_ = 4;
+        messageCase_ = 5;
         return this;
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 4;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 5;</code>
        */
       public Builder mergeData(tud.seemuh.nfcgate.network.c2s.C2S.Data value) {
         if (dataBuilder_ == null) {
-          if (messageCase_ == 4 &&
+          if (messageCase_ == 5 &&
               message_ != tud.seemuh.nfcgate.network.c2s.C2S.Data.getDefaultInstance()) {
             message_ = tud.seemuh.nfcgate.network.c2s.C2S.Data.newBuilder((tud.seemuh.nfcgate.network.c2s.C2S.Data) message_)
                 .mergeFrom(value).buildPartial();
@@ -1273,26 +1273,26 @@ public final class MetaMessage {
           }
           onChanged();
         } else {
-          if (messageCase_ == 4) {
+          if (messageCase_ == 5) {
             dataBuilder_.mergeFrom(value);
           }
           dataBuilder_.setMessage(value);
         }
-        messageCase_ = 4;
+        messageCase_ = 5;
         return this;
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 4;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 5;</code>
        */
       public Builder clearData() {
         if (dataBuilder_ == null) {
-          if (messageCase_ == 4) {
+          if (messageCase_ == 5) {
             messageCase_ = 0;
             message_ = null;
             onChanged();
           }
         } else {
-          if (messageCase_ == 4) {
+          if (messageCase_ == 5) {
             messageCase_ = 0;
             message_ = null;
           }
@@ -1301,32 +1301,32 @@ public final class MetaMessage {
         return this;
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 4;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 5;</code>
        */
       public tud.seemuh.nfcgate.network.c2s.C2S.Data.Builder getDataBuilder() {
         return getDataFieldBuilder().getBuilder();
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 4;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 5;</code>
        */
       public tud.seemuh.nfcgate.network.c2s.C2S.DataOrBuilder getDataOrBuilder() {
-        if ((messageCase_ == 4) && (dataBuilder_ != null)) {
+        if ((messageCase_ == 5) && (dataBuilder_ != null)) {
           return dataBuilder_.getMessageOrBuilder();
         } else {
-          if (messageCase_ == 4) {
+          if (messageCase_ == 5) {
             return (tud.seemuh.nfcgate.network.c2s.C2S.Data) message_;
           }
           return tud.seemuh.nfcgate.network.c2s.C2S.Data.getDefaultInstance();
         }
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 4;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 5;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
           tud.seemuh.nfcgate.network.c2s.C2S.Data, tud.seemuh.nfcgate.network.c2s.C2S.Data.Builder, tud.seemuh.nfcgate.network.c2s.C2S.DataOrBuilder> 
           getDataFieldBuilder() {
         if (dataBuilder_ == null) {
-          if (!(messageCase_ == 4)) {
+          if (!(messageCase_ == 5)) {
             message_ = tud.seemuh.nfcgate.network.c2s.C2S.Data.getDefaultInstance();
           }
           dataBuilder_ = new com.google.protobuf.SingleFieldBuilder<
@@ -1336,36 +1336,36 @@ public final class MetaMessage {
                   isClean());
           message_ = null;
         }
-        messageCase_ = 4;
+        messageCase_ = 5;
         return dataBuilder_;
       }
 
       private com.google.protobuf.SingleFieldBuilder<
           tud.seemuh.nfcgate.network.c2s.C2S.Session, tud.seemuh.nfcgate.network.c2s.C2S.Session.Builder, tud.seemuh.nfcgate.network.c2s.C2S.SessionOrBuilder> sessionBuilder_;
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 5;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
        */
       public boolean hasSession() {
-        return messageCase_ == 5;
+        return messageCase_ == 6;
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 5;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
        */
       public tud.seemuh.nfcgate.network.c2s.C2S.Session getSession() {
         if (sessionBuilder_ == null) {
-          if (messageCase_ == 5) {
+          if (messageCase_ == 6) {
             return (tud.seemuh.nfcgate.network.c2s.C2S.Session) message_;
           }
           return tud.seemuh.nfcgate.network.c2s.C2S.Session.getDefaultInstance();
         } else {
-          if (messageCase_ == 5) {
+          if (messageCase_ == 6) {
             return sessionBuilder_.getMessage();
           }
           return tud.seemuh.nfcgate.network.c2s.C2S.Session.getDefaultInstance();
         }
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 5;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
        */
       public Builder setSession(tud.seemuh.nfcgate.network.c2s.C2S.Session value) {
         if (sessionBuilder_ == null) {
@@ -1377,11 +1377,11 @@ public final class MetaMessage {
         } else {
           sessionBuilder_.setMessage(value);
         }
-        messageCase_ = 5;
+        messageCase_ = 6;
         return this;
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 5;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
        */
       public Builder setSession(
           tud.seemuh.nfcgate.network.c2s.C2S.Session.Builder builderForValue) {
@@ -1391,15 +1391,15 @@ public final class MetaMessage {
         } else {
           sessionBuilder_.setMessage(builderForValue.build());
         }
-        messageCase_ = 5;
+        messageCase_ = 6;
         return this;
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 5;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
        */
       public Builder mergeSession(tud.seemuh.nfcgate.network.c2s.C2S.Session value) {
         if (sessionBuilder_ == null) {
-          if (messageCase_ == 5 &&
+          if (messageCase_ == 6 &&
               message_ != tud.seemuh.nfcgate.network.c2s.C2S.Session.getDefaultInstance()) {
             message_ = tud.seemuh.nfcgate.network.c2s.C2S.Session.newBuilder((tud.seemuh.nfcgate.network.c2s.C2S.Session) message_)
                 .mergeFrom(value).buildPartial();
@@ -1408,26 +1408,26 @@ public final class MetaMessage {
           }
           onChanged();
         } else {
-          if (messageCase_ == 5) {
+          if (messageCase_ == 6) {
             sessionBuilder_.mergeFrom(value);
           }
           sessionBuilder_.setMessage(value);
         }
-        messageCase_ = 5;
+        messageCase_ = 6;
         return this;
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 5;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
        */
       public Builder clearSession() {
         if (sessionBuilder_ == null) {
-          if (messageCase_ == 5) {
+          if (messageCase_ == 6) {
             messageCase_ = 0;
             message_ = null;
             onChanged();
           }
         } else {
-          if (messageCase_ == 5) {
+          if (messageCase_ == 6) {
             messageCase_ = 0;
             message_ = null;
           }
@@ -1436,32 +1436,32 @@ public final class MetaMessage {
         return this;
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 5;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
        */
       public tud.seemuh.nfcgate.network.c2s.C2S.Session.Builder getSessionBuilder() {
         return getSessionFieldBuilder().getBuilder();
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 5;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
        */
       public tud.seemuh.nfcgate.network.c2s.C2S.SessionOrBuilder getSessionOrBuilder() {
-        if ((messageCase_ == 5) && (sessionBuilder_ != null)) {
+        if ((messageCase_ == 6) && (sessionBuilder_ != null)) {
           return sessionBuilder_.getMessageOrBuilder();
         } else {
-          if (messageCase_ == 5) {
+          if (messageCase_ == 6) {
             return (tud.seemuh.nfcgate.network.c2s.C2S.Session) message_;
           }
           return tud.seemuh.nfcgate.network.c2s.C2S.Session.getDefaultInstance();
         }
       }
       /**
-       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 5;</code>
+       * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
           tud.seemuh.nfcgate.network.c2s.C2S.Session, tud.seemuh.nfcgate.network.c2s.C2S.Session.Builder, tud.seemuh.nfcgate.network.c2s.C2S.SessionOrBuilder> 
           getSessionFieldBuilder() {
         if (sessionBuilder_ == null) {
-          if (!(messageCase_ == 5)) {
+          if (!(messageCase_ == 6)) {
             message_ = tud.seemuh.nfcgate.network.c2s.C2S.Session.getDefaultInstance();
           }
           sessionBuilder_ = new com.google.protobuf.SingleFieldBuilder<
@@ -1471,7 +1471,7 @@ public final class MetaMessage {
                   isClean());
           message_ = null;
         }
-        messageCase_ = 5;
+        messageCase_ = 6;
         return sessionBuilder_;
       }
 
@@ -1501,15 +1501,15 @@ public final class MetaMessage {
   static {
     java.lang.String[] descriptorData = {
       "\n\021metaMessage.proto\022\037tud.seemuh.nfcgate." +
-      "network.meta\032\tc2s.proto\032\tc2c.proto\"\260\002\n\007W" +
-      "rapper\0222\n\003Kex\030\001 \001(\0132#.tud.seemuh.nfcgate" +
-      ".network.c2c.KexH\000\022:\n\007NFCData\030\002 \001(\0132\'.tu" +
-      "d.seemuh.nfcgate.network.c2c.NFCDataH\000\0228" +
-      "\n\006Status\030\003 \001(\0132&.tud.seemuh.nfcgate.netw" +
-      "ork.c2c.StatusH\000\0224\n\004Data\030\004 \001(\0132$.tud.see" +
-      "muh.nfcgate.network.c2s.DataH\000\022:\n\007Sessio" +
-      "n\030\005 \001(\0132\'.tud.seemuh.nfcgate.network.c2s" +
-      ".SessionH\000B\t\n\007message"
+      "network.meta\032\tc2s.proto\032\tc2c.proto\"\270\002\n\007W" +
+      "rapper\022:\n\007NFCData\030\002 \001(\0132\'.tud.seemuh.nfc" +
+      "gate.network.c2c.NFCDataH\000\022:\n\007Anticol\030\003 " +
+      "\001(\0132\'.tud.seemuh.nfcgate.network.c2c.Ant" +
+      "icolH\000\0228\n\006Status\030\004 \001(\0132&.tud.seemuh.nfcg" +
+      "ate.network.c2c.StatusH\000\0224\n\004Data\030\005 \001(\0132$" +
+      ".tud.seemuh.nfcgate.network.c2s.DataH\000\022:" +
+      "\n\007Session\030\006 \001(\0132\'.tud.seemuh.nfcgate.net" +
+      "work.c2s.SessionH\000B\t\n\007message"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1530,7 +1530,7 @@ public final class MetaMessage {
     internal_static_tud_seemuh_nfcgate_network_meta_Wrapper_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_tud_seemuh_nfcgate_network_meta_Wrapper_descriptor,
-        new java.lang.String[] { "Kex", "NFCData", "Status", "Data", "Session", "Message", });
+        new java.lang.String[] { "NFCData", "Anticol", "Status", "Data", "Session", "Message", });
     tud.seemuh.nfcgate.network.c2s.C2S.getDescriptor();
     tud.seemuh.nfcgate.network.c2c.C2C.getDescriptor();
   }

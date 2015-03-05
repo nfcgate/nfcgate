@@ -476,37 +476,45 @@ public final class C2S {
        */
       ERROR_CREATE_UNKOWN(1, 1),
       /**
-       * <code>ERROR_JOIN_UNKNOWN = 2;</code>
+       * <code>ERROR_CREATE_ALREADY_HAS_SESSION = 2;</code>
        */
-      ERROR_JOIN_UNKNOWN(2, 2),
+      ERROR_CREATE_ALREADY_HAS_SESSION(2, 2),
       /**
-       * <code>ERROR_JOIN_UNKNOWN_SECRET = 3;</code>
+       * <code>ERROR_JOIN_UNKNOWN = 3;</code>
        */
-      ERROR_JOIN_UNKNOWN_SECRET(3, 3),
+      ERROR_JOIN_UNKNOWN(3, 3),
       /**
-       * <code>ERROR_JOIN_SESSION_FULL = 4;</code>
+       * <code>ERROR_JOIN_UNKNOWN_SECRET = 4;</code>
+       */
+      ERROR_JOIN_UNKNOWN_SECRET(4, 4),
+      /**
+       * <code>ERROR_JOIN_SESSION_FULL = 5;</code>
        *
        * <pre>
        * Session already has max # of participants
        * </pre>
        */
-      ERROR_JOIN_SESSION_FULL(4, 4),
+      ERROR_JOIN_SESSION_FULL(5, 5),
       /**
-       * <code>ERROR_LEAVE_UNKNOWN = 5;</code>
+       * <code>ERROR_JOIN_ALREADY_HAS_SESSION = 6;</code>
        */
-      ERROR_LEAVE_UNKNOWN(5, 5),
+      ERROR_JOIN_ALREADY_HAS_SESSION(6, 6),
       /**
-       * <code>ERROR_LEAVE_UNKNOWN_SECRET = 6;</code>
+       * <code>ERROR_LEAVE_UNKNOWN = 7;</code>
        */
-      ERROR_LEAVE_UNKNOWN_SECRET(6, 6),
+      ERROR_LEAVE_UNKNOWN(7, 7),
       /**
-       * <code>ERROR_LEAVE_NOT_JOINED = 7;</code>
+       * <code>ERROR_LEAVE_UNKNOWN_SECRET = 8;</code>
+       */
+      ERROR_LEAVE_UNKNOWN_SECRET(8, 8),
+      /**
+       * <code>ERROR_LEAVE_NOT_JOINED = 9;</code>
        *
        * <pre>
        * Trying to leave a session you never joined
        * </pre>
        */
-      ERROR_LEAVE_NOT_JOINED(7, 7),
+      ERROR_LEAVE_NOT_JOINED(9, 9),
       ;
 
       /**
@@ -518,37 +526,45 @@ public final class C2S {
        */
       public static final int ERROR_CREATE_UNKOWN_VALUE = 1;
       /**
-       * <code>ERROR_JOIN_UNKNOWN = 2;</code>
+       * <code>ERROR_CREATE_ALREADY_HAS_SESSION = 2;</code>
        */
-      public static final int ERROR_JOIN_UNKNOWN_VALUE = 2;
+      public static final int ERROR_CREATE_ALREADY_HAS_SESSION_VALUE = 2;
       /**
-       * <code>ERROR_JOIN_UNKNOWN_SECRET = 3;</code>
+       * <code>ERROR_JOIN_UNKNOWN = 3;</code>
        */
-      public static final int ERROR_JOIN_UNKNOWN_SECRET_VALUE = 3;
+      public static final int ERROR_JOIN_UNKNOWN_VALUE = 3;
       /**
-       * <code>ERROR_JOIN_SESSION_FULL = 4;</code>
+       * <code>ERROR_JOIN_UNKNOWN_SECRET = 4;</code>
+       */
+      public static final int ERROR_JOIN_UNKNOWN_SECRET_VALUE = 4;
+      /**
+       * <code>ERROR_JOIN_SESSION_FULL = 5;</code>
        *
        * <pre>
        * Session already has max # of participants
        * </pre>
        */
-      public static final int ERROR_JOIN_SESSION_FULL_VALUE = 4;
+      public static final int ERROR_JOIN_SESSION_FULL_VALUE = 5;
       /**
-       * <code>ERROR_LEAVE_UNKNOWN = 5;</code>
+       * <code>ERROR_JOIN_ALREADY_HAS_SESSION = 6;</code>
        */
-      public static final int ERROR_LEAVE_UNKNOWN_VALUE = 5;
+      public static final int ERROR_JOIN_ALREADY_HAS_SESSION_VALUE = 6;
       /**
-       * <code>ERROR_LEAVE_UNKNOWN_SECRET = 6;</code>
+       * <code>ERROR_LEAVE_UNKNOWN = 7;</code>
        */
-      public static final int ERROR_LEAVE_UNKNOWN_SECRET_VALUE = 6;
+      public static final int ERROR_LEAVE_UNKNOWN_VALUE = 7;
       /**
-       * <code>ERROR_LEAVE_NOT_JOINED = 7;</code>
+       * <code>ERROR_LEAVE_UNKNOWN_SECRET = 8;</code>
+       */
+      public static final int ERROR_LEAVE_UNKNOWN_SECRET_VALUE = 8;
+      /**
+       * <code>ERROR_LEAVE_NOT_JOINED = 9;</code>
        *
        * <pre>
        * Trying to leave a session you never joined
        * </pre>
        */
-      public static final int ERROR_LEAVE_NOT_JOINED_VALUE = 7;
+      public static final int ERROR_LEAVE_NOT_JOINED_VALUE = 9;
 
 
       public final int getNumber() { return value; }
@@ -557,12 +573,14 @@ public final class C2S {
         switch (value) {
           case 0: return ERROR_NOERROR;
           case 1: return ERROR_CREATE_UNKOWN;
-          case 2: return ERROR_JOIN_UNKNOWN;
-          case 3: return ERROR_JOIN_UNKNOWN_SECRET;
-          case 4: return ERROR_JOIN_SESSION_FULL;
-          case 5: return ERROR_LEAVE_UNKNOWN;
-          case 6: return ERROR_LEAVE_UNKNOWN_SECRET;
-          case 7: return ERROR_LEAVE_NOT_JOINED;
+          case 2: return ERROR_CREATE_ALREADY_HAS_SESSION;
+          case 3: return ERROR_JOIN_UNKNOWN;
+          case 4: return ERROR_JOIN_UNKNOWN_SECRET;
+          case 5: return ERROR_JOIN_SESSION_FULL;
+          case 6: return ERROR_JOIN_ALREADY_HAS_SESSION;
+          case 7: return ERROR_LEAVE_UNKNOWN;
+          case 8: return ERROR_LEAVE_UNKNOWN_SECRET;
+          case 9: return ERROR_LEAVE_NOT_JOINED;
           default: return null;
         }
       }
@@ -1978,7 +1996,7 @@ public final class C2S {
   static {
     java.lang.String[] descriptorData = {
       "\n\tc2s.proto\022\036tud.seemuh.nfcgate.network." +
-      "c2s\"\300\005\n\007Session\022E\n\006opcode\030\001 \002(\01625.tud.se" +
+      "c2s\"\212\006\n\007Session\022E\n\006opcode\030\001 \002(\01625.tud.se" +
       "emuh.nfcgate.network.c2s.Session.Session" +
       "Opcode\022\026\n\016session_secret\030\002 \001(\t\022X\n\007errcod" +
       "e\030\003 \002(\01628.tud.seemuh.nfcgate.network.c2s" +
@@ -1989,19 +2007,20 @@ public final class C2S {
       "_JOIN_SUCCESS\020\004\022\025\n\021SESSION_JOIN_FAIL\020\005\022\021",
       "\n\rSESSION_LEAVE\020\006\022\031\n\025SESSION_LEAVE_SUCCE" +
       "SS\020\007\022\026\n\022SESSION_LEAVE_FAIL\020\010\022\027\n\023SESSION_" +
-      "PEER_JOINED\020\t\022\025\n\021SESSION_PEER_LEFT\020\n\"\347\001\n" +
+      "PEER_JOINED\020\t\022\025\n\021SESSION_PEER_LEFT\020\n\"\261\002\n" +
       "\020SessionErrorCode\022\021\n\rERROR_NOERROR\020\000\022\027\n\023" +
-      "ERROR_CREATE_UNKOWN\020\001\022\026\n\022ERROR_JOIN_UNKN" +
-      "OWN\020\002\022\035\n\031ERROR_JOIN_UNKNOWN_SECRET\020\003\022\033\n\027" +
-      "ERROR_JOIN_SESSION_FULL\020\004\022\027\n\023ERROR_LEAVE" +
-      "_UNKNOWN\020\005\022\036\n\032ERROR_LEAVE_UNKNOWN_SECRET" +
-      "\020\006\022\032\n\026ERROR_LEAVE_NOT_JOINED\020\007\"\324\001\n\004Data\022" +
-      "R\n\007errcode\030\001 \002(\01622.tud.seemuh.nfcgate.ne",
-      "twork.c2s.Data.DataErrorCode:\rERROR_NOER" +
-      "ROR\022\014\n\004blob\030\002 \001(\014\"j\n\rDataErrorCode\022\021\n\rER" +
-      "ROR_NOERROR\020\000\022\021\n\rERROR_UNKNOWN\020\001\022\024\n\020ERRO" +
-      "R_NO_SESSION\020\002\022\035\n\031ERROR_TRANSMISSION_FAI" +
-      "LED\020\003"
+      "ERROR_CREATE_UNKOWN\020\001\022$\n ERROR_CREATE_AL" +
+      "READY_HAS_SESSION\020\002\022\026\n\022ERROR_JOIN_UNKNOW" +
+      "N\020\003\022\035\n\031ERROR_JOIN_UNKNOWN_SECRET\020\004\022\033\n\027ER" +
+      "ROR_JOIN_SESSION_FULL\020\005\022\"\n\036ERROR_JOIN_AL" +
+      "READY_HAS_SESSION\020\006\022\027\n\023ERROR_LEAVE_UNKNO" +
+      "WN\020\007\022\036\n\032ERROR_LEAVE_UNKNOWN_SECRET\020\010\022\032\n\026",
+      "ERROR_LEAVE_NOT_JOINED\020\t\"\324\001\n\004Data\022R\n\007err" +
+      "code\030\001 \002(\01622.tud.seemuh.nfcgate.network." +
+      "c2s.Data.DataErrorCode:\rERROR_NOERROR\022\014\n" +
+      "\004blob\030\002 \001(\014\"j\n\rDataErrorCode\022\021\n\rERROR_NO" +
+      "ERROR\020\000\022\021\n\rERROR_UNKNOWN\020\001\022\024\n\020ERROR_NO_S" +
+      "ESSION\020\002\022\035\n\031ERROR_TRANSMISSION_FAILED\020\003"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

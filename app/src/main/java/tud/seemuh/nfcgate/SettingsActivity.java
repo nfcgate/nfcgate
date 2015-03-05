@@ -1,13 +1,19 @@
 package tud.seemuh.nfcgate;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -17,8 +23,14 @@ public class SettingsActivity extends Activity{
 
     // Define whether Debugging Mode is enabled or not
     private CheckBox mDevMode;
+    // Define ReaderMode (disables HCE)
+    private CheckBox mReaderMode;
+    // Workaround warning checkbox
+    private CheckBox mWorkaroundWarning;
     private TextView supportedFeatures;
     private boolean mDevModeEnabled;
+    private boolean mReaderModeEnabled;
+    private boolean mWorkaroundWarningEnabled;
     private Button mbtnSaveSettings;
 
     // Define IP:Port Settings
@@ -26,7 +38,7 @@ public class SettingsActivity extends Activity{
     private String ip;
     private int port;
 
-    // Heardware features of the current smartphone
+    // Hardware features of the current smartphone
     private NfcAdapter mAdapter;
     private boolean nfcisActive;
     private boolean hce;
@@ -34,10 +46,19 @@ public class SettingsActivity extends Activity{
     // Defined name of the Shared Preferences Buffer
     public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
 
+    // regex for IP checking
+    private static final String regexIPpattern ="^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+
+    // max. port possible
+    private static int maxPort = 65535;
+    int globalPort = 0;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
         mDevMode = (CheckBox) findViewById(R.id.checkBoxDevMode);
+        mReaderMode = (CheckBox) findViewById(R.id.checkReaderMode);
+        mWorkaroundWarning = (CheckBox) findViewById(R.id.checkBoxWorkaroundWarning);
         mIP = (TextView) findViewById(R.id.editIP);
         mPort = (TextView) findViewById(R.id.editPort);
         supportedFeatures = (TextView) findViewById(R.id.textViewSupportedFeatures);
@@ -48,13 +69,20 @@ public class SettingsActivity extends Activity{
 
         // retrieve mDevModeEnabled from the preferences buffer, if not found set to false
         mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
+        // retrieve mReaderModeEnabled
+        mReaderModeEnabled = preferences.getBoolean("mReaderModeEnabled", false);
+        // Retrieve workaround warning setting
+        mWorkaroundWarningEnabled = preferences.getBoolean("mNeverWarnWorkaround", false);
         // reload saved values & if not found set to default IP:Port (192.168.178.31:5566)
         ip = preferences.getString("ip", "192.168.178.31");
         port = preferences.getInt("port",5566);
-        // give the loaded (or default) values to the textviews
+        globalPort = port;
+        // give the loaded (or default) values to the views
         mIP.setText(ip);
         mPort.setText(String.valueOf(port));
         mDevMode.setChecked(mDevModeEnabled);
+        mReaderMode.setChecked(mReaderModeEnabled);
+        mWorkaroundWarning.setChecked(mWorkaroundWarningEnabled);
 
         nfcisActive = false;
         hce = getPackageManager().hasSystemFeature("android.hardware.nfc.hce");
@@ -74,27 +102,48 @@ public class SettingsActivity extends Activity{
         values = values + "\n HCE: ";
         if (hce)
         {
-            values = values + "is enabled";
+            values = values + "is available";
         }
         else
         {
-            values = values + "is not enabled";
+            values = values + "is not available";
         }
         supportedFeatures.setText("\n Supported features by your smartphone: \n" + values);
 
     }
 
-    /** Called when the user touches the button 'btnSaveSettingsClicked'  -- Code by Tom */
+    public boolean checkIpPort(String ip, String port)
+    {
+        boolean validPort = false;
+        boolean gotException = false;
+        boolean validIp = false;
+        Pattern pattern = Pattern.compile(regexIPpattern);
+        Matcher matcher = pattern.matcher(ip);
+        int int_port = 0;
+        try {
+            int_port = Integer.parseInt(port.trim());
+        } catch (NumberFormatException e) {
+            gotException = true;
+        }
+        if (!gotException) {
+            if ((int_port > 0) && (int_port <= maxPort)) validPort = true;
+        }
+        validIp = matcher.matches();
+        if (validPort) globalPort = int_port;
+        return validPort && validIp;
+    }
+
     public void btnSaveSettingsClicked(View view)
     {
-        ip = mIP.getText().toString();
-        try {
-            port = Integer.parseInt(mPort.getText().toString().trim());
-        } catch (NumberFormatException e) {
-            // Toast.makeText(this, "Please enter a valid port", Toast.LENGTH_SHORT).show();
+        if (!checkIpPort(mIP.getText().toString(), mPort.getText().toString()))
+        {
+            Toast.makeText(this, "Please enter a valid ip & port", Toast.LENGTH_LONG).show();
+            return;
         }
 
         mDevModeEnabled = (((CheckBox) findViewById(R.id.checkBoxDevMode)).isChecked());
+        mReaderModeEnabled = (((CheckBox) findViewById(R.id.checkReaderMode)).isChecked());
+        mWorkaroundWarningEnabled = (((CheckBox) findViewById(R.id.checkBoxWorkaroundWarning)).isChecked());
 
         // create Shared Preferences Buffer in private mode
         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
@@ -103,24 +152,24 @@ public class SettingsActivity extends Activity{
         SharedPreferences.Editor editor = preferences.edit();
         // save mDevModeEnabled into the to the preferences buffer
         editor.putBoolean("mDevModeEnabled", mDevModeEnabled);
+        // save mReaderModeEnabled...
+        editor.putBoolean("mReaderModeEnabled", mReaderModeEnabled);
+        // save mWorkaroundWarning
+        editor.putBoolean("mNeverWarnWorkaround", mWorkaroundWarningEnabled);
         // save ip into the to the preferences buffer
-        editor.putString("ip", ip);
+        editor.putString("ip", mIP.getText().toString());
         // save port into the to the preferences buffer
-        editor.putInt("port", port);
-        boolean chgsett = true;
-        editor.putBoolean("changed_settings", chgsett);
-        editor.commit();
-    }
+        editor.putInt("port", globalPort);
 
-    public void DevCheckboxClicked(View view) {
-        mDevModeEnabled = (((CheckBox) findViewById(R.id.checkBoxDevMode)).isChecked());
+        // the config has changed, save that
+        Log.i("SettingsActivity", "set 'changed_settings' to 'true'");
+        editor.putBoolean("changed_settings", true);
 
-        // store some of the application settings in the preferences buffer
-        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        // save mDevModeEnabled into the to the preferences buffer
-        editor.putBoolean("mDevModeEnabled", mDevModeEnabled);
         editor.commit();
+
+        // sent the user back to the main activity
+        Toast.makeText(this, "Settings saved!", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     protected void onPause()

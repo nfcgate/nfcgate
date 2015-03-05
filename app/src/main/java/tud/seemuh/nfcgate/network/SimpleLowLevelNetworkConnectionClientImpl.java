@@ -2,19 +2,32 @@ package tud.seemuh.nfcgate.network;
 
 import android.util.Log;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 
 import tud.seemuh.nfcgate.util.Utils;
 
-
+/**
+ * This class contains the logic for a low-level network connection with the server.
+ * The class only sends and receives raw bytes, all the protocol logic and parsing happen in a
+ * HighLevelNetworkHandler or Callback instance, respectively.
+ *
+ * This class contains two nested classes which implement the actual threads used for the network
+ * communication.
+ */
 public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetworkHandler {
 
     private int mServerPort = 15000;
@@ -35,7 +48,12 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
 
     public SimpleLowLevelNetworkConnectionClientImpl connect(String serverAddress, int serverPort) {
         try {
-            mServerAddress = InetAddress.getByName(serverAddress);
+            // TODO: Properly support Domain Names & IP Addresses as input --> I just included a catch for the exception
+            // Resolve domain name to IP address as string
+            InetAddress addr;
+            addr = InetAddress.getByName(serverAddress);
+
+            mServerAddress = (InetAddress.getByName(addr.getHostAddress()));
 
             if(mClientThread == null) {
                 mRunnableClientThread = new ClientThread();
@@ -45,7 +63,7 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
                 Log.d(SimpleLowLevelNetworkConnectionClientImpl.class.getName(), "Client thread already started");
             }
 
-        } catch (UnknownHostException e1){
+        } catch (Exception e1){
             Log.e(SimpleLowLevelNetworkConnectionClientImpl.class.getName(), "Unknown Host: "+serverAddress);
         }
         mServerPort = serverPort;
@@ -58,11 +76,20 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
     }
 
     public synchronized byte[] getBytes() {
-        return mRunnableClientThread.getBytesFromNW();
+        if (mRunnableClientThread != null)
+            return mRunnableClientThread.getBytesFromNW();
+        else return null;
     }
 
     public void sendBytes(byte[] msg) {
-        mRunnableClientThread.sendBytes(msg);
+        if (mRunnableClientThread != null) mRunnableClientThread.sendBytes(msg);
+    }
+
+    public void disconnect() {
+        if (mRunnableClientThread != null) mRunnableClientThread.exitThread();
+        mRunnableClientThread = null;
+        mClientThread = null;
+        mSocket = null;
     }
 
     private class ClientThread implements Runnable {
@@ -89,6 +116,9 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
                     mSendQueue.clear();
                 }
 
+            } catch (ConnectException e1) {
+                mCallback.notifyBrokenPipe();
+                // TODO This is not very elegant but will do for now
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -108,6 +138,7 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
 
         public void sendBytes(byte[] msg) {
             synchronized (mSendQueueSync) {
+                // If the communication Thread has not started up yet, save the message for later.
                 if(commThread == null) {
                     mSendQueue.add(msg);
                     return;
@@ -117,11 +148,16 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
         }
 
         private void reallySendBytes(byte[] msg) {
-            DataOutputStream out;
             try {
-                out = new DataOutputStream(mSocket.getOutputStream());
-                out.writeInt(msg.length);
-                out.write(msg);
+                // The raw bytes sent are a 4-byte representation of the length of the following
+                // data, followed by the actual data. Hence, we determine the length of the message,
+                // append the message itself, and then send everything through the network socket.
+                OutputStream out = mSocket.getOutputStream();
+                byte[] len = ByteBuffer.allocate(4).putInt(msg.length).array();
+                byte[] full = new byte[4 + msg.length];
+                System.arraycopy(len, 0, full, 0, len.length);
+                System.arraycopy(msg, 0, full, len.length, msg.length);
+                out.write(full);
                 out.flush();
             } catch (UnknownHostException e) {
                 e.printStackTrace();
@@ -131,6 +167,10 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
                 e.printStackTrace();
             }
 
+        }
+
+        public void exitThread() {
+            if (commThread != null) commThread.interrupt();
         }
 
 
@@ -144,43 +184,63 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
 
         public CommunicationThread(Socket clientSocket) {
             mClientSocket = clientSocket;
+            try {
+                mClientSocket.setTcpNoDelay(true);
+            } catch (SocketException e) {
+                e.printStackTrace();
+            }
         }
 
         public void run() {
+            String TAG = CommunicationThread.class.getName();
 
-            Log.d(CommunicationThread.class.getName(), "started new CommunicationThread");
+            Log.d(TAG, "started new CommunicationThread");
 
             while (!Thread.currentThread().isInterrupted()) {
-
                 try {
-                    DataInputStream dis = new DataInputStream(mClientSocket.getInputStream());
-                    //read length of data from socket (should be 4 bytes long)
-                    int len = dis.readInt();
+                    BufferedInputStream dis = new BufferedInputStream(mClientSocket.getInputStream());
+                    // As noted before, all messages are preceded by four bytes containing an
+                    // integer representation of the length of the following data, to make sure
+                    // that we can read the correct number of bytes. Hence, we read four bytes
+                    // in order to determine the length integer
+                    byte[] lenbytes = new byte[4];
+                    dis.read(lenbytes);
+                    int len = ByteBuffer.wrap(lenbytes).getInt();
 
-                    Log.i(CommunicationThread.class.getName(), "Reading bytes of length:" + len);
+                    Log.i(TAG, "Reading bytes of length:" + len);
 
                     // read the message data
                     if (len > 0) {
                         readBytes = new byte[len];
-                        dis.readFully(readBytes);
-                        Log.d(CommunicationThread.class.getName(), "Read data: " + Utils.bytesToHex(readBytes));
-                        if(mCallback != null)
+                        dis.read(readBytes);
+                        Log.d(TAG, "Read data: " + Utils.bytesToHex(readBytes));
+                        if(mCallback != null) {
+                            Log.d(TAG, "Delegating to Callback.");
                             mCallback.onDataReceived(readBytes);
-                        else
+                            Log.d(TAG, "Callback finished execution.");
+                        }
+                        else {
+                            Log.i(TAG, "No callback set, saving for later");
                             getSome = true;
+                        }
                     } else {
-                        Log.e(CommunicationThread.class.getName(), "Error no postive number of bytes: " + len);
+                        Log.e(TAG, "Error no postive number of bytes: " + len);
                     }
 
                 } catch (IOException e) {
-                    //TODO
-                    e.printStackTrace();
+                    if (mCallback != null) {
+                        mCallback.notifyBrokenPipe();
+                        return;
+                    }
                 }
             }
+            try {
+                mClientSocket.close();
+            } catch (IOException e) {
+                // e.printStackTrace();
+            }
+            Log.i(TAG, "Shutting down");
         }
 
-    }
-    public interface Callback {
-        public void onDataReceived(byte[] data);
     }
 }

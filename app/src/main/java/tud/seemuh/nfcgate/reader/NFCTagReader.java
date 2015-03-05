@@ -43,4 +43,14 @@ public interface NFCTagReader {
      * Returns True if communication should be possible, False otherwise
      */
     public boolean isConnected();
+
+
+    public byte[] getAtqa();
+
+    public byte getSak();
+
+    public byte[] getHistoricalBytes();
+
+    public byte[] getUID();
+
 }

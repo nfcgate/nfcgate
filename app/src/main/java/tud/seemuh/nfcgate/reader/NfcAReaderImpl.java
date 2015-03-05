@@ -11,6 +11,7 @@ import java.io.IOException;
  *
  */
 public class NfcAReaderImpl implements NFCTagReader {
+    private final static String TAG = "NFC_READER_NFCA";
     private NfcA mAdapter = null;
 
     /**
@@ -19,7 +20,6 @@ public class NfcAReaderImpl implements NFCTagReader {
      * @param tag: A tag using the NfcA technology.
      */
     public NfcAReaderImpl(Tag tag) {
-        Log.d("NFC_READER_NFCA", "NfcA constructor called");
         // Create NFC Adapter to use
         mAdapter = NfcA.get(tag);
         try{
@@ -27,8 +27,7 @@ public class NfcAReaderImpl implements NFCTagReader {
             mAdapter.connect();
         } catch(IOException e) {
             // Something went wrong. For the moment, we will only log this
-            //TODO
-            Log.e("NFC_READER_NFCA", "Encountered IOException in constructor: " + e);
+            Log.e(TAG, "Constructor: Encountered IOException in constructor: " + e);
         }
     }
 
@@ -42,12 +41,11 @@ public class NfcAReaderImpl implements NFCTagReader {
         try {
             // Transceive command (transmit command and receive answer)
             byte[] retval = mAdapter.transceive(command);
+            Log.d(TAG, "sendCmd: Transceived succesfully");
 
-            Log.i("NFC_READER_NFCA", "Transceived succesfully");
             return retval;
         } catch(IOException e) {
-            // TODO: Handle Exception properly
-            Log.e("NFC_READER_NFCA", "Encountered IOException in sendCmd: " + e);
+            Log.e(TAG, "sendCmd: Encountered IOException in sendCmd: ", e);
             return null;
         }
     }
@@ -61,7 +59,7 @@ public class NfcAReaderImpl implements NFCTagReader {
         try{
             mAdapter.close();
         } catch(IOException e) {
-            Log.e("NFC_READER_NFCA", "Encountered IOException in sendCmd: " + e);
+            Log.e(TAG, "closeConnection: Encountered IOException: ", e);
         }
     }
 
@@ -76,5 +74,21 @@ public class NfcAReaderImpl implements NFCTagReader {
     }
 
     public boolean isConnected() { return mAdapter.isConnected(); }
+
+    public byte[] getAtqa() {
+        return mAdapter.getAtqa();
+    }
+
+    public byte getSak() {
+        return (byte)mAdapter.getSak();
+    }
+
+    public byte[] getHistoricalBytes() {
+        return new byte[]{ };
+    }
+
+    public byte[] getUID() {
+        return mAdapter.getTag().getId();
+    }
 
 }

@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="tud.seemuh.nfcgate.nfcd">
+
+
+    <uses-permission android:name="cydia.permission.SUBSTRATE"/>
+
+</manifest>
