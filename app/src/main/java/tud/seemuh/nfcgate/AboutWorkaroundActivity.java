@@ -1,14 +1,19 @@
 package tud.seemuh.nfcgate;
 
 import android.app.Activity;
+import android.content.res.AssetManager;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
 import android.webkit.WebView;
+
+import java.io.IOException;
+import java.util.Locale;
 
 
 public class AboutWorkaroundActivity extends Activity {
     private WebView mWebView;
+
+    private String TAG = "AboutWorkaroundAct";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,6 +21,16 @@ public class AboutWorkaroundActivity extends Activity {
         setContentView(R.layout.activity_about_workaround);
 
         mWebView = (WebView) findViewById(R.id.workaroundDescWebView);
-        mWebView.loadUrl("file:///android_asset/WorkaroundInfo.html");
+        String loc = Locale.getDefault().getLanguage();
+        AssetManager mg = getResources().getAssets();
+        String path = "html/WorkaroundInfo." + loc + ".html";
+        try {
+            mg.open(path);
+            Log.i(TAG, "HTML exists for locale " + loc + ", using it.");
+            mWebView.loadUrl("file:///android_asset/" + path);
+        } catch (IOException ex) {
+            Log.i(TAG, "No HTML for locale " + loc + ", using default (en)");
+            mWebView.loadUrl("file:///android_asset/html/WorkaroundInfo.en.html");
+        }
     }
 }
