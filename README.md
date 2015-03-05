@@ -47,3 +47,9 @@ This application only works with readers which do not implement additional secur
 
 ### Confidentiality of data channel
 Right now, all data is sent unencrypted over the network. We may or may not get around to implementing cryptographic protection, but for now, consider everything you send over the network to be readable by anyone interested. Keep that in mind while performing your own tests. Many NFC protocols are resistant to replay attacks, but your mileage may vary.
+
+## Used Libraries
+This application uses the following external libraries:
+- [Cydia Substrate](http://www.cydiasubstrate.com/) (Licensed under the [LGPLv3](https://www.gnu.org/licenses/lgpl.html))
+- [LibNFC](https://android.googlesource.com/platform/external/libnfc-nci/) (Licensed under the [Apache License v2.0](http://opensource.org/licenses/Apache-2.0))
+- [Protobuf](https://code.google.com/p/protobuf/) (Licensed under the [BSD 3-Clause license](http://opensource.org/licenses/BSD-3-Clause))
