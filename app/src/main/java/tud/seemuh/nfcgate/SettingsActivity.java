@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -159,6 +160,11 @@ public class SettingsActivity extends Activity{
         editor.putString("ip", mIP.getText().toString());
         // save port into the to the preferences buffer
         editor.putInt("port", globalPort);
+
+        // the config has changed, save that
+        Log.i("SettingsActivity", "set 'changed_settings' to 'true'");
+        editor.putBoolean("changed_settings", true);
+
         editor.commit();
 
         // sent the user back to the main activity
