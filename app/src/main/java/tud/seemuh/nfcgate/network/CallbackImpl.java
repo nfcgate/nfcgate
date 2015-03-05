@@ -19,12 +19,15 @@ import tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode;
 import tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode;
 import tud.seemuh.nfcgate.hce.ApduService;
 
-
+/**
+ * Implementation of the Callback interface. This class is used to parse incoming messages and works
+ * with the NetHandler class to process any logic required to follow the protocol.
+ */
 public class CallbackImpl implements Callback {
     private final static String TAG = "CallbackImpl";
 
     private ApduService apdu;
-    private NFCTagReader mReader = null;
+    private NFCTagReader mReader;
     private HighLevelNetworkHandler Handler = NetHandler.getInstance();
     private BroadcomWorkaround mBroadcomWorkaroundRunnable;
     private Thread mBroadcomWorkaroundThread;
@@ -54,7 +57,7 @@ public class CallbackImpl implements Callback {
     }
 
     /**
-     * Implementation of SimpleNetworkConnectionClientImpl.Callback
+     * This function gets called by the LowLevelNetworkHandler upon receiving new data.
      * @param data: received bytes
      */
     @Override

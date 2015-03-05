@@ -4,7 +4,10 @@ import android.os.AsyncTask;
 import android.widget.Button;
 import android.widget.TextView;
 
-
+/**
+ * This class contains a workaround to enable us to update UI elements from another thread,
+ * something which is appearently not possible with standard android methods.
+ */
 public class UpdateUI extends AsyncTask<String, Void, String> {
 
     public enum UpdateMethod {

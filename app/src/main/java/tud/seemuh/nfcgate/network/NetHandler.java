@@ -14,6 +14,16 @@ import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
 import tud.seemuh.nfcgate.util.Utils;
 
+/**
+ * The NetHandler is an implementation of the HighLevelNetworkHandler interface.
+ * It is used to control all network communication and uses a LowLevelNetworkHandler for the actual
+ * network communication. In this handler and the respective Callback implementation (CallbackImpl
+ * in our case), the protocol itself is implemented.
+ *
+ * The NetHandler holds the state of the network connection and is responsible for taking down all
+ * relevant threads once the connection is disconnected, be it by request of the user or by a
+ * general connection loss.
+ */
 public class NetHandler implements HighLevelNetworkHandler {
     private final static String TAG = "NetHandler";
 
@@ -64,16 +74,6 @@ public class NetHandler implements HighLevelNetworkHandler {
     private Button joinButton;
     private Button abortButton;
 
-    /*
-    // This queue contains messages that are to be sent as soon as the connection to the server
-    // has been established. This does NOT mean that a complete SESSION has been established.
-    // For that, use the sendOnSessionReady queue instead.
-    private Queue<Message> sendOnConnectionReady = new LinkedList<Message>();
-
-    // This queue contains messages that are to be sent as soon as a session has been established.
-    // A session counts as established as soon as two clients have joined it.
-    private Queue<Message> sendOnSessionReady = new LinkedList<Message>();
-    */
 
     public NetHandler() {
         status = Status.NOT_CONNECTED;
@@ -139,6 +139,7 @@ public class NetHandler implements HighLevelNetworkHandler {
         new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetMessage);
     }
 
+    // Network message building and sending
     private C2S.Data wrapAsDataMessage(byte[] msg) {
         // Prepare Data Message
         C2S.Data.Builder dataMsg = C2S.Data.newBuilder();
@@ -157,6 +158,20 @@ public class NetHandler implements HighLevelNetworkHandler {
             Log.e(TAG, "sendMessage: Trying to send message while not connected. Failed, doing nothing");
             return;
         }
+
+        // At first glance, the following strategy may seem inefficient. Why do we create a wrapper
+        // message, pack it into a data message, and then pack that data message into another
+        // wrapper message? The answer is easy: Originally, we intended to implement cryptographic
+        // protection for all messages. This would only be possible if we can send arbitrary bytes
+        // in a protobuf message. Hence, the data message was born.
+        // Due to time constraints, the idea of encrypting all packets was shelved for version 1.0.
+        // However, the protocol was already implemented serverside, so changing everything would
+        // have implied a rewrite of the server and the associated test cases. As we still intend
+        // to add cryptographic protection at some point in the future, we opted to use this
+        // slightly inefficient way of handling this problem.
+        // As protobuf invocations are quite cheap, computationally speaking, and the network
+        // latency is quite large in comparison, the extra computational time used here should
+        // not make a large difference overall.
 
         // Prepare a wrapper message
         Wrapper.Builder WrapperMsg = Wrapper.newBuilder();
@@ -209,6 +224,10 @@ public class NetHandler implements HighLevelNetworkHandler {
         }
     }
 
+    /**
+     * Send a status message with the provided status code.
+     * @param code The Status code as defined in the Enum C2C.Status.StatusCode
+     */
     private void sendStatusMessage(C2C.Status.StatusCode code) {
         // Create error message
         C2C.Status.Builder ErrorMsg = C2C.Status.newBuilder();
@@ -219,6 +238,13 @@ public class NetHandler implements HighLevelNetworkHandler {
     }
 
     // Connection management
+
+    /**
+     * Connect to the provided address and port
+     * @param addr String containing the IP we want to connect to
+     * @param port integer containing the target port (usually 5566)
+     * @return The connected NetHandler instance
+     */
     @Override
     public HighLevelNetworkHandler connect(String addr, int port) {
         handler = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(addr, port);
@@ -230,6 +256,10 @@ public class NetHandler implements HighLevelNetworkHandler {
         return this;
     }
 
+    /**
+     * Disconnect from an existing network connection due to user request
+     * (or do nothing if we are not connected)
+     */
     @Override
     public void disconnect() {
         leaveSession(); // Ensure we are no longer in a session
@@ -239,6 +269,9 @@ public class NetHandler implements HighLevelNetworkHandler {
         disconnectCommon();
     }
 
+    /**
+     * Disconnect due to a broken down network connection
+     */
     @Override
     public void disconnectBrokenPipe() {
         setConnectionStatusOutput(CONN_DIED);
@@ -246,23 +279,32 @@ public class NetHandler implements HighLevelNetworkHandler {
         disconnectCommon();
     }
 
-    @Override
-    public void disconnectCardWorkaround() {
-        callbackInstance.disconnectCardWorkaround();
-        new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetMessage);
-    }
-
-    @Override
-    public void notifyCardWorkaroundConnected() {
-        new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetCardMessage);
-    }
-
+    /**
+     * Common code for disconnect() and disconnectBrokenPipe()
+     */
     private void disconnectCommon() {
         if (handler != null) handler.disconnect();
         status = Status.NOT_CONNECTED;
         callbackInstance.shutdown();
         setButtonTexts();
         reactivateButtons();
+    }
+
+    /**
+     * Terminate the workaround for a specific Broadcom card, if it is running.
+     */
+    @Override
+    public void disconnectCardWorkaround() {
+        callbackInstance.disconnectCardWorkaround();
+        new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetMessage);
+    }
+
+    /**
+     * Notify the NetHandler that the card workaround has been started.
+     */
+    @Override
+    public void notifyCardWorkaroundConnected() {
+        new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetCardMessage);
     }
 
     // Session management

@@ -19,7 +19,14 @@ import java.util.Observable;
 
 import tud.seemuh.nfcgate.util.Utils;
 
-
+/**
+ * This class contains the logic for a low-level network connection with the server.
+ * The class only sends and receives raw bytes, all the protocol logic and parsing happen in a
+ * HighLevelNetworkHandler or Callback instance, respectively.
+ *
+ * This class contains two nested classes which implement the actual threads used for the network
+ * communication.
+ */
 public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetworkHandler {
 
     private int mServerPort = 15000;
@@ -42,7 +49,7 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
         try {
             // TODO: Properly support Domain Names & IP Addresses as input --> I just included a catch for the exception
             // Resolve domain name to IP address as string
-            InetAddress addr = null;
+            InetAddress addr;
             addr = InetAddress.getByName(serverAddress);
 
             mServerAddress = (InetAddress.getByName(addr.getHostAddress()));
@@ -127,6 +134,7 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
 
         public void sendBytes(byte[] msg) {
             synchronized (mSendQueueSync) {
+                // If the communication Thread has not started up yet, save the message for later.
                 if(commThread == null) {
                     mSendQueue.add(msg);
                     return;
@@ -137,6 +145,9 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
 
         private void reallySendBytes(byte[] msg) {
             try {
+                // The raw bytes sent are a 4-byte representation of the length of the following
+                // data, followed by the actual data. Hence, we determine the length of the message,
+                // append the message itself, and then send everything through the network socket.
                 OutputStream out = mSocket.getOutputStream();
                 byte[] len = ByteBuffer.allocate(4).putInt(msg.length).array();
                 byte[] full = new byte[4 + msg.length];
@@ -184,10 +195,13 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     BufferedInputStream dis = new BufferedInputStream(mClientSocket.getInputStream());
-                    //read length of data from socket (should be 4 bytes long)
+                    // As noted before, all messages are preceded by four bytes containing an
+                    // integer representation of the length of the following data, to make sure
+                    // that we can read the correct number of bytes. Hence, we read four bytes
+                    // in order to determine the length integer
                     byte[] lenbytes = new byte[4];
                     dis.read(lenbytes);
-                    int len = ByteBuffer.wrap(lenbytes).getInt();;
+                    int len = ByteBuffer.wrap(lenbytes).getInt();
 
                     Log.i(TAG, "Reading bytes of length:" + len);
 

@@ -10,6 +10,12 @@ import tud.seemuh.nfcgate.network.NetHandler;
 import tud.seemuh.nfcgate.network.SimpleLowLevelNetworkConnectionClientImpl;
 import tud.seemuh.nfcgate.util.Utils;
 
+/**
+ * The ApduService class contains the logic for interaction with the Android HCE interface.
+ * Here, we receive messages from the card reader and pass them on to the network interface.
+ * The answer is determined by the other device and the reply is passed to the ApduService by
+ * the Callback class.
+ */
 public class ApduService extends HostApduService {
     private final static String TAG = "ApduService";
 

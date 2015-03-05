@@ -9,10 +9,9 @@ import java.lang.reflect.Method;
 /**
  * Broadcom chips have a problem with DESFire cards: They set them into a specific mode with their
  * keepalive messages, which prevents us from sending messages using another mode. (See #33)
- * This class is an attempt at a workaround: We will try to "fake" a keepalive loop in order to
- * prevent Android from sending the destructive keepalive messages, as per
+ * This class is a workaround: We will try to "fake" a keepalive loop in order to prevent Android
+ * from sending the destructive keepalive messages, as per
  * http://www.dematte.org/2014/08/15/AndroidNFCServiceAndThinClientOneProblemAndOneHack.aspx
- * This may or may not work, but it is at least worth a try.
  *
  * We are basically reproducing the code from this function call:
  * http://grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/4.4.4_r1/android/nfc/tech/BasicTagTechnology.java#73
