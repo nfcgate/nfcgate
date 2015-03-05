@@ -43,7 +43,7 @@ public class UpdateUI extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         if(mMethod == UpdateMethod.appendTextView) {
-            mView.append(result + "\n");
+            mView.append(result);
         } else if(mMethod == UpdateMethod.setTextTextView) {
             mView.setText(result);
         } else if(mMethod == UpdateMethod.setTextButton) {
