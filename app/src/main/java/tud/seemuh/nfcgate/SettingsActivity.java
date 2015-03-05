@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -24,9 +25,12 @@ public class SettingsActivity extends Activity{
     private CheckBox mDevMode;
     // Define ReaderMode (disables HCE)
     private CheckBox mReaderMode;
+    // Workaround warning checkbox
+    private CheckBox mWorkaroundWarning;
     private TextView supportedFeatures;
     private boolean mDevModeEnabled;
     private boolean mReaderModeEnabled;
+    private boolean mWorkaroundWarningEnabled;
     private Button mbtnSaveSettings;
 
     // Define IP:Port Settings
@@ -54,6 +58,7 @@ public class SettingsActivity extends Activity{
         setContentView(R.layout.settings);
         mDevMode = (CheckBox) findViewById(R.id.checkBoxDevMode);
         mReaderMode = (CheckBox) findViewById(R.id.checkReaderMode);
+        mWorkaroundWarning = (CheckBox) findViewById(R.id.checkBoxWorkaroundWarning);
         mIP = (TextView) findViewById(R.id.editIP);
         mPort = (TextView) findViewById(R.id.editPort);
         supportedFeatures = (TextView) findViewById(R.id.textViewSupportedFeatures);
@@ -66,6 +71,8 @@ public class SettingsActivity extends Activity{
         mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
         // retrieve mReaderModeEnabled
         mReaderModeEnabled = preferences.getBoolean("mReaderModeEnabled", false);
+        // Retrieve workaround warning setting
+        mWorkaroundWarningEnabled = preferences.getBoolean("mNeverWarnWorkaround", false);
         // reload saved values & if not found set to default IP:Port (192.168.178.31:5566)
         ip = preferences.getString("ip", "192.168.178.31");
         port = preferences.getInt("port",5566);
@@ -75,6 +82,7 @@ public class SettingsActivity extends Activity{
         mPort.setText(String.valueOf(port));
         mDevMode.setChecked(mDevModeEnabled);
         mReaderMode.setChecked(mReaderModeEnabled);
+        mWorkaroundWarning.setChecked(mWorkaroundWarningEnabled);
 
         nfcisActive = false;
         hce = getPackageManager().hasSystemFeature("android.hardware.nfc.hce");
@@ -135,6 +143,7 @@ public class SettingsActivity extends Activity{
 
         mDevModeEnabled = (((CheckBox) findViewById(R.id.checkBoxDevMode)).isChecked());
         mReaderModeEnabled = (((CheckBox) findViewById(R.id.checkReaderMode)).isChecked());
+        mWorkaroundWarningEnabled = (((CheckBox) findViewById(R.id.checkBoxWorkaroundWarning)).isChecked());
 
         // create Shared Preferences Buffer in private mode
         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
@@ -145,10 +154,17 @@ public class SettingsActivity extends Activity{
         editor.putBoolean("mDevModeEnabled", mDevModeEnabled);
         // save mReaderModeEnabled...
         editor.putBoolean("mReaderModeEnabled", mReaderModeEnabled);
+        // save mWorkaroundWarning
+        editor.putBoolean("mNeverWarnWorkaround", mWorkaroundWarningEnabled);
         // save ip into the to the preferences buffer
         editor.putString("ip", mIP.getText().toString());
         // save port into the to the preferences buffer
         editor.putInt("port", globalPort);
+
+        // the config has changed, save that
+        Log.i("SettingsActivity", "set 'changed_settings' to 'true'");
+        editor.putBoolean("changed_settings", true);
+
         editor.commit();
 
         // sent the user back to the main activity

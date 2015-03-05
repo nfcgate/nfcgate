@@ -7,11 +7,15 @@ import tud.seemuh.nfcgate.network.c2s.C2S;
 
 public interface HighLevelNetworkHandler {
     // Setup
-    public HighLevelNetworkHandler connect(String addr, int port, Callback callback);
+    public HighLevelNetworkHandler connect(String addr, int port);
 
     public void disconnect();
 
     public void disconnectBrokenPipe();
+
+    public void disconnectCardWorkaround();
+
+    public void notifyCardWorkaroundConnected();
 
     public void setDebugView(TextView ldebugView);
 
@@ -20,6 +24,8 @@ public interface HighLevelNetworkHandler {
     public void setPeerStatusView(TextView view);
 
     public void setButtons(Button mReset, Button mConnecttoSession, Button mAbort, Button mJoinSession);
+
+    public void setCallback(Callback mCallback);
 
     // Session messages
     public void createSession();

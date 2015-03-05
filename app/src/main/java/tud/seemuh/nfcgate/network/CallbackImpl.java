@@ -3,8 +3,11 @@ package tud.seemuh.nfcgate.network;
 import android.nfc.Tag;
 import android.util.Log;
 
+import java.io.File;
+
 import tud.seemuh.nfcgate.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.network.meta.MetaMessage;
+import tud.seemuh.nfcgate.reader.BroadcomWorkaround;
 import tud.seemuh.nfcgate.reader.IsoDepReaderImpl;
 import tud.seemuh.nfcgate.reader.NFCTagReader;
 import tud.seemuh.nfcgate.reader.NfcAReaderImpl;
@@ -23,8 +26,8 @@ public class CallbackImpl implements Callback {
     private ApduService apdu;
     private NFCTagReader mReader = null;
     private HighLevelNetworkHandler Handler = NetHandler.getInstance();
-
-    private String SessionToken;
+    private BroadcomWorkaround mBroadcomWorkaroundRunnable;
+    private Thread mBroadcomWorkaroundThread;
 
     public Callback setAPDUService(ApduService as) {
         apdu = as;
@@ -36,6 +39,18 @@ public class CallbackImpl implements Callback {
     @Override
     public void notifyBrokenPipe() {
         Handler.disconnectBrokenPipe();
+    }
+
+    public void shutdown() {
+        disconnectCardWorkaround();
+        if (mReader != null) mReader.closeConnection();
+        mReader = null;
+    }
+
+    public void disconnectCardWorkaround() {
+        if (mBroadcomWorkaroundThread != null) mBroadcomWorkaroundThread.interrupt();
+        mBroadcomWorkaroundThread = null;
+        mBroadcomWorkaroundRunnable = null;
     }
 
     /**
@@ -146,11 +161,15 @@ public class CallbackImpl implements Callback {
                 // Extract NFC Bytes and send them to the card
                 byte[] bytesFromCard = mReader.sendCmd(msg.getDataBytes().toByteArray());
 
-                // Send the reply from the card to the partner
-                Handler.sendAPDUReply(bytesFromCard);
-
-                Log.i(TAG, "HandleNFCData: Received and forwarded reply from card");
-                Log.i(TAG, "HandleNFCData: BytesFromCard: " + Utils.bytesToHex(bytesFromCard));
+                // If the reply is null, the connection has been lost. Shut down Tag connection
+                if (bytesFromCard == null) {
+                    shutdown();
+                } else {
+                    // Reply is not null, forward it.
+                    Handler.sendAPDUReply(bytesFromCard);
+                    Log.i(TAG, "HandleNFCData: Received and forwarded reply from card");
+                    Log.i(TAG, "HandleNFCData: BytesFromCard: " + Utils.bytesToHex(bytesFromCard));
+                }
             } else {
                 Log.e(TAG, "HandleNFCData: No NFC connection active");
                 // There is no connected NFC device
@@ -290,11 +309,30 @@ public class CallbackImpl implements Callback {
         //set callback when data is received
         if(found_supported_tag){
             SimpleLowLevelNetworkConnectionClientImpl.getInstance().setCallback(this);
-            Log.i("NFCGATE_TAG", "UID:  " + Utils.bytesToHex(mReader.getUID()));
-            Log.i("NFCGATE_TAG", "ATQA: " + Utils.bytesToHex(mReader.getAtqa()));
-            Log.i("NFCGATE_TAG", "SAK:  " + Utils.bytesToHex(mReader.getSak()));
-            Log.i("NFCGATE_TAG", "HIST: " + Utils.bytesToHex(mReader.getHistoricalBytes()));
+            Log.d(TAG, "setTag: UID:  " + Utils.bytesToHex(mReader.getUID()));
+            Log.d(TAG, "setTag: ATQA: " + Utils.bytesToHex(mReader.getAtqa()));
+            Log.d(TAG, "setTag: SAK:  " + Utils.bytesToHex(mReader.getSak()));
+            Log.d(TAG, "setTag: HIST: " + Utils.bytesToHex(mReader.getHistoricalBytes()));
             Handler.sendAnticol(mReader.getAtqa(), mReader.getSak(), mReader.getHistoricalBytes(), mReader.getUID());
+        }
+
+        // Check if the device is running a specific Broadcom chipset (used in the Nexus 4, for example)
+        // The drivers for this chipset contain a bug which lead to DESFire cards being set into a specific mode
+        // We want to avoid that, so we use a workaround. This starts another thread that prevents
+        // the keepalive function from running and thus prevents it from setting the mode of the card
+        // Other devices work fine without this workaround, so we only activate it on bugged chipsets
+        // TODO Only activate for DESFire cards
+        File bcmdevice = new File("/dev/bcm2079x-i2c");
+        if (bcmdevice.exists()) {
+            Log.i(TAG, "setTag: Problematic broadcom chip found, activate workaround");
+            // Initialize a runnable object
+            mBroadcomWorkaroundRunnable = new BroadcomWorkaround(tag);
+            // Start up a new thread
+            mBroadcomWorkaroundThread = new Thread(mBroadcomWorkaroundRunnable);
+            mBroadcomWorkaroundThread.start();
+            Handler.notifyCardWorkaroundConnected();
+        } else {
+            Log.i(TAG, "setTag: No problematic broadcom chipset found, leaving workaround inactive");
         }
 
         return found_supported_tag;

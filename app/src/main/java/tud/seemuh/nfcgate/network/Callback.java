@@ -10,4 +10,8 @@ public interface Callback {
     public Callback setAPDUService(ApduService as);
 
     public void notifyBrokenPipe();
+
+    public void shutdown();
+
+    public void disconnectCardWorkaround();
 }

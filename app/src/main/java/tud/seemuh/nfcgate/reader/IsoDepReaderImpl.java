@@ -21,14 +21,13 @@ public class IsoDepReaderImpl implements NFCTagReader {
      * @param tag: A tag using the NfcA technology.
      */
     public IsoDepReaderImpl(Tag tag) {
-        Log.d(TAG, "IsoDep constructor called");
         // Create NFC Adapter to use
         mAdapter = IsoDep.get(tag);
         try {
             // Connect to the NFC card
             mAdapter.connect();
         } catch (Exception e) {
-            Log.e(TAG, "Encountered error in constructor: " + e);
+            Log.e(TAG, "Constructor: Encountered Exception: ", e);
         }
     }
 
@@ -42,15 +41,14 @@ public class IsoDepReaderImpl implements NFCTagReader {
         try {
             // Transceive command and store reply
             byte[] retval = mAdapter.transceive(command);
-
-            Log.i(TAG, "Transceived succesfully");
+            Log.d(TAG, "sendCmd: Transceived successfully");
 
             return retval;
         } catch(IOException e) {
-            Log.e(TAG, "Encountered IOException in sendCmd: " + e);
+            Log.e(TAG, "sendCmd: Encountered IOException in sendCmd: ", e);
             return null;
         } catch(Exception e) {
-            Log.e(TAG, "Encountered Exception in sendCmd: " + e);
+            Log.e(TAG, "sendCmd: Encountered Exception in sendCmd: ", e);
             return null;
         }
     }
@@ -64,7 +62,7 @@ public class IsoDepReaderImpl implements NFCTagReader {
         try{
             mAdapter.close();
         } catch(IOException e) {
-            Log.e(TAG, "Encountered IOException in closeConnection: " + e);
+            Log.e(TAG, "closeConnection: Encountered IOException in closeConnection: ", e);
         }
     }
 

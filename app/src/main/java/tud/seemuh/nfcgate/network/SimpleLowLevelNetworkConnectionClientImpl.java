@@ -222,7 +222,6 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
                 // e.printStackTrace();
             }
             Log.i(TAG, "Shutting down");
-            return;
         }
 
     }

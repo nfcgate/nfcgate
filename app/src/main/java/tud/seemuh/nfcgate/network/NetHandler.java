@@ -109,6 +109,11 @@ public class NetHandler implements HighLevelNetworkHandler {
         joinButton = Join;
     }
 
+    @Override
+    public void setCallback(Callback mCallback) {
+        callbackInstance = mCallback;
+    }
+
     private void appendDebugOutput(String output) {
         new UpdateUI(debugView, UpdateUI.UpdateMethod.appendTextView).execute(output + "\n");
     }
@@ -125,11 +130,13 @@ public class NetHandler implements HighLevelNetworkHandler {
         // We need to pass a parameter, even though it isn't used. Otherwise, the app will crash.
         new UpdateUI(connectButton, UpdateUI.UpdateMethod.enableButton).execute("Unfug");
         new UpdateUI(joinButton, UpdateUI.UpdateMethod.enableButton).execute("Unfug");
+        new UpdateUI(abortButton, UpdateUI.UpdateMethod.disableButton).execute("Unfug");
     }
 
     private void setButtonTexts() {
         new UpdateUI(connectButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.createSessionMessage);
         new UpdateUI(joinButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.joinSessionMessage);
+        new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetMessage);
     }
 
     private C2S.Data wrapAsDataMessage(byte[] msg) {
@@ -199,7 +206,6 @@ public class NetHandler implements HighLevelNetworkHandler {
             handler.sendBytes(msgbytes);
         } else {
             Log.e(TAG, "sendMessage: Trying to send message without connected handler.");
-            // TODO Give indication to caller?
         }
     }
 
@@ -214,10 +220,9 @@ public class NetHandler implements HighLevelNetworkHandler {
 
     // Connection management
     @Override
-    public HighLevelNetworkHandler connect(String addr, int port, Callback mNetCallback) {
+    public HighLevelNetworkHandler connect(String addr, int port) {
         handler = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(addr, port);
-        handler.setCallback(mNetCallback);
-        callbackInstance = mNetCallback;
+        handler.setCallback(callbackInstance);
         status = Status.CONNECTED_NO_SESSION;
         setConnectionStatusOutput(CONN_CONNECTED);
         setPeerStatusOutput(PEER_NO_SESSION);
@@ -229,18 +234,33 @@ public class NetHandler implements HighLevelNetworkHandler {
     public void disconnect() {
         leaveSession(); // Ensure we are no longer in a session
         leaving = true;
-        handler.disconnect();
-        status = Status.NOT_CONNECTED;
         setConnectionStatusOutput(CONN_DISCONNECTED);
         setPeerStatusOutput(PEER_NOT_CONNECTED);
+        disconnectCommon();
     }
 
     @Override
     public void disconnectBrokenPipe() {
-        handler.disconnect();
-        status = Status.NOT_CONNECTED;
         setConnectionStatusOutput(CONN_DIED);
         setPeerStatusOutput(PEER_CONN_DIED);
+        disconnectCommon();
+    }
+
+    @Override
+    public void disconnectCardWorkaround() {
+        callbackInstance.disconnectCardWorkaround();
+        new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetMessage);
+    }
+
+    @Override
+    public void notifyCardWorkaroundConnected() {
+        new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetCardMessage);
+    }
+
+    private void disconnectCommon() {
+        if (handler != null) handler.disconnect();
+        status = Status.NOT_CONNECTED;
+        callbackInstance.shutdown();
         setButtonTexts();
         reactivateButtons();
     }
@@ -351,6 +371,8 @@ public class NetHandler implements HighLevelNetworkHandler {
         b.setHistoricalByte(ByteString.copyFrom(hist));
         b.setUID(ByteString.copyFrom(uid));
 
+        // TODO If we aren't in a session, cache this and send it as soon as a session is established?
+        // (And delete it if the card is removed in the meantime)
         sendMessage(b.build(), MessageCase.ANTICOL);
         Log.d(TAG, "sendAnticol: Sent Anticol message");
     }
@@ -461,7 +483,9 @@ public class NetHandler implements HighLevelNetworkHandler {
 
     @Override
     public void sessionLeaveFailed(C2S.Session.SessionErrorCode errcode) {
-        status = Status.WAITING_FOR_PARTNER; // TODO This may result in an inconsistent state. Handle that better
+        status = Status.WAITING_FOR_PARTNER;
+        // TODO This may result in an inconsistent state
+        // But as "Session leave failed" is a very rare message, that's probably fine for now.
         if (errcode == C2S.Session.SessionErrorCode.ERROR_LEAVE_NOT_JOINED) {
             appendDebugOutput("Session leave failed: Not in a session");
             setConnectionStatusOutput(CONN_CONNECTED);
@@ -489,6 +513,8 @@ public class NetHandler implements HighLevelNetworkHandler {
     public void notifyCardFound() {
         sendStatusMessage(C2C.Status.StatusCode.CARD_FOUND);
     }
+    // TODO If we aren't in a session, cache this and send it as soon as a session is established?
+    // (And delete it if the card is removed in the meantime)
 
     @Override
     public void notifyReaderRemoved() {

@@ -1,8 +1,10 @@
 package tud.seemuh.nfcgate;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -15,14 +17,17 @@ import android.nfc.tech.NfcA;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +43,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     private PendingIntent mPendingIntent;
     private IntentFilter[] mFilters;
     private String[][] mTechLists;
+    private final static String TAG = "MainActivity";
 
     //Connection Client
     protected HighLevelNetworkHandler mConnectionClient;
@@ -64,6 +70,8 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     public static String joinSessionMessage = "Join Session";
     public static String createSessionMessage = "Create Session";
     public static String leaveSessionMessage = "Leave Session";
+    public static String resetMessage = "Reset";
+    public static String resetCardMessage = "Forget Card";
 
     // max. port possible
     private static int maxPort = 65535;
@@ -108,19 +116,66 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mJoinSession = (Button) findViewById(R.id.btnJoinSession);
         mAbort = (Button) findViewById(R.id.abortbutton);
         mConnStatus = (TextView) findViewById(R.id.editConnectionStatus);
-        mInfo = (TextView) findViewById(R.id.DisplayMsg);
         mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
         mIP = (TextView) findViewById(R.id.editIP);
         mPort = (TextView) findViewById(R.id.editPort);
         mPartnerDevice = (TextView) findViewById(R.id.editOtherDevice);
         mConnecttoSession.requestFocus();
         mtoken = (TextView) findViewById(R.id.token);
+
+        mConnectionClient = NetHandler.getInstance();
+
+        //Set the views to update the GUI from another thread
+        mConnectionClient.setDebugView(mDebuginfo);
+        mConnectionClient.setConnectionStatusView(mConnStatus);
+        mConnectionClient.setPeerStatusView(mPartnerDevice);
+        mConnectionClient.setButtons(mReset, mConnecttoSession, mAbort, mJoinSession);
+        mConnectionClient.setCallback(mNetCallback);
+
+        File bcmdevice = new File("/dev/bcm2079x-i2c");
+        final SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        boolean neverShowAgain = preferences.getBoolean("mNeverWarnWorkaround", false);
+        if (bcmdevice.exists() && !neverShowAgain) {
+            LayoutInflater checkboxInflater = this.getLayoutInflater();
+            final View checkboxView = checkboxInflater.inflate(R.layout.workaroundwarning, null);
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.BCMWarnHeader)
+                    .setView(checkboxView)
+                    .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            CheckBox dontShowAgain = (CheckBox) checkboxView.findViewById(R.id.neverAgain);
+                            if (dontShowAgain.isChecked()) {
+                                Log.i(TAG, "onCreate: Don't show this again is checked");
+                                SharedPreferences.Editor editor = preferences.edit();
+
+                                editor.putBoolean("mNeverWarnWorkaround", true);
+
+                                editor.apply();
+                            }
+                            startActivity(new Intent(MainActivity.this, AboutWorkaroundActivity.class));
+                        }
+                    })
+                    .setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            CheckBox dontShowAgain = (CheckBox) checkboxView.findViewById(R.id.neverAgain);
+                            if (dontShowAgain.isChecked()) {
+                                Log.i(TAG, "onCreate: Don't show this again is checked");
+                                SharedPreferences.Editor editor = preferences.edit();
+
+                                editor.putBoolean("mNeverWarnWorkaround", true);
+
+                                editor.apply();
+                            }
+                        }
+                    })
+                    .show();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.i("DEBUG", "onResume(): intent: " + getIntent().getAction());
+        Log.i(TAG, "onResume(): intent: " + getIntent().getAction());
 
         // Load values from the Shared Preferences Buffer
         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
@@ -129,16 +184,33 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             mAdapter.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
 
             if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
-                Log.i("NFCGATE_DEBUG", "onResume(): starting onNewIntent()...");
+                Log.i(TAG, "onResume(): starting onNewIntent()...");
                 onNewIntent(getIntent());
             }
         }
 
         ip = preferences.getString("ip", "192.168.178.31");
-        port = preferences.getInt("port",5566);
-        globalPort = preferences.getInt("port",5566);
-        mIP.setText(ip);
-        mPort.setText(String.valueOf(port));
+        port = preferences.getInt("port", 5566);
+        globalPort = preferences.getInt("port", 5566);
+
+        //on start set the text values
+        if(mIP.getText().toString().trim().length() == 0) {
+            mIP.setText(ip);
+            mPort.setText(String.valueOf(port));
+        }
+
+        boolean chgsett;
+        chgsett = preferences.getBoolean("changed_settings", false);
+
+        if(chgsett) {
+            mIP.setText(ip);
+            mPort.setText(String.valueOf(port));
+
+            // reset the 'settings changed' flag
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("changed_settings", false);
+            editor.commit();
+        }
 
         //ReaderMode
         boolean isReaderModeEnabled = preferences.getBoolean("mReaderModeEnabled", false);
@@ -175,7 +247,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     @Override
     public void onTagDiscovered(Tag tag) {
 
-        Log.i("NFCGATE_DEBUG","Discovered tag in ReaderMode");
+        Log.i(TAG,"Discovered tag in ReaderMode");
         mNetCallback.setTag(tag);
 
         //Toast here is not possible -> exception...
@@ -185,9 +257,9 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
     @Override
     public void onNewIntent(Intent intent) {
-        Log.i("DEBUG", "onNewIntent(): started");
+        Log.i(TAG, "onNewIntent(): started");
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())) {
-            Log.i("NFCGATE_DEBUG","Discovered tag with intent: " + intent);
+            Log.i(TAG,"Discovered tag with intent: " + intent);
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
             mNetCallback.setTag(tag);
@@ -202,23 +274,40 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     public void ButtonResetClicked(View view) {
         // reset the entire application by pressing this button
 
-        mInfo.setText("Please hold your device next to an NFC tag / reader");
-        mDebuginfo.setText("Debugging Output: ");
+        if (mReset.getText().equals(resetMessage)) {
+            // mConnStatus.setText("Server status: Resetting");
+            // mPartnerDevice.setText("Partner status: no device");
+            mDebuginfo.setText("Debugging Output: ");
+            // this.setTitle("You clicked reset");
 
-        if (mConnectionClient != null) mConnectionClient.disconnect();
-        mJoinSession.setText(joinSessionMessage);
-        mJoinSession.setEnabled(true);
-        mConnecttoSession.setText(createSessionMessage);
-        mConnecttoSession.setEnabled(true);
+            if (mConnectionClient != null) mConnectionClient.disconnect();
+            mJoinSession.setText(joinSessionMessage);
+            mJoinSession.setEnabled(true);
+            mConnecttoSession.setText(createSessionMessage);
+            mConnecttoSession.setEnabled(true);
 
-        // Load values from the Shared Preferences Buffer
-        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+            // Load values from the Shared Preferences Buffer
+            SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+            mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
+            // De- or Enables Debug Window
+            mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
+            if (mDevModeEnabled) {
+                mDebuginfo.setVisibility(View.VISIBLE);
+                mDebuginfo.requestFocus();
+            } else {
+                mDebuginfo.setVisibility(View.GONE);  // View.invisible results in an error
+            }
 
-        ip = preferences.getString("ip", "192.168.178.31");
-        port = preferences.getInt("port",5566);
-        globalPort = preferences.getInt("port",5566);
-        mIP.setText(ip);
-        mPort.setText(String.valueOf(port));
+            ip = preferences.getString("ip", "192.168.178.31");
+            port = preferences.getInt("port", 5566);
+            globalPort = preferences.getInt("port", 5566);
+            mIP.setText(ip);
+            mPort.setText(String.valueOf(port));
+        } else if (mReset.getText().equals(resetCardMessage)) {
+            mConnectionClient.disconnectCardWorkaround();
+        } else {
+            Log.e(TAG, "resetButtonClicked: Unknown message");
+        }
     }
 
     public void ButtonAbortClicked(View view) {
@@ -227,6 +316,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mJoinSession.setEnabled(true);
         mConnecttoSession.setText(createSessionMessage);
         mConnecttoSession.setEnabled(true);
+        mAbort.setEnabled(false);
 
         // mConnStatus.setText("Server status: Disconnecting");
         // mPartnerDevice.setText("Partner status: no device");
@@ -246,18 +336,12 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         {
             mConnecttoSession.setText(leaveSessionMessage);
             mJoinSession.setEnabled(false);
+            mAbort.setEnabled(true);
 //            this.setTitle("You clicked connect");
 //            mConnStatus.setText("Server status: Connecting");
 //            mPartnerDevice.setText("Partner status: waiting");
-            mConnectionClient = NetHandler.getInstance();
 
-            //Set the view to update the GUI from another thread
-            mConnectionClient.setDebugView(mDebuginfo);
-            mConnectionClient.setConnectionStatusView(mConnStatus);
-            mConnectionClient.setPeerStatusView(mPartnerDevice);
-            mConnectionClient.setButtons(mReset, mConnecttoSession, mAbort, mJoinSession);
-
-            mConnectionClient.connect(mIP.getText().toString(), port, mNetCallback);
+            mConnectionClient.connect(mIP.getText().toString(), port);
             mConnectionClient.createSession();
         }
         else
@@ -368,18 +452,12 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
         mJoinSession.setText(leaveSessionMessage);
         mConnecttoSession.setEnabled(false);
+        mAbort.setEnabled(true);
         //this.setTitle("You clicked connect");
         //mConnStatus.setText("Server status: Connecting");
         //mPartnerDevice.setText("Partner status: waiting");
-        mConnectionClient = NetHandler.getInstance();
 
-        //Set the view to update the GUI from another thread
-        mConnectionClient.setDebugView(mDebuginfo);
-        mConnectionClient.setConnectionStatusView(mConnStatus);
-        mConnectionClient.setPeerStatusView(mPartnerDevice);
-        mConnectionClient.setButtons(mReset, mConnecttoSession, mAbort, mJoinSession);
-
-        mConnectionClient.connect(mIP.getText().toString(), globalPort, mNetCallback);
+        mConnectionClient.connect(mIP.getText().toString(), globalPort);
 
         // Load token from the Shared Preferences Buffer
         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
