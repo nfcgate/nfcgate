@@ -11,7 +11,7 @@ public class SinkManager implements Runnable {
     
     // Enum enumerating all installed Sinks. Used to identify a sink to perform operations on.
     // Devs: Add new sink types here
-    public enum Sinks {
+    public enum SinkType {
         FILE
     }
 
@@ -21,7 +21,7 @@ public class SinkManager implements Runnable {
     // Storage for Sink instances and Threads
     private HashMap<Sink, BlockingQueue<byte[]>> mQueueMap = new HashMap<Sink, BlockingQueue<byte[]>>();
     private HashMap<Sink, Thread> mThreadMap = new HashMap<Sink, Thread>();
-    private HashMap<Sinks, Sink> mSinkInstanceMap = new HashMap<Sinks, Sink>();
+    private HashMap<SinkType, Sink> mSinkInstanceMap = new HashMap<SinkType, Sink>();
 
     public SinkManager(BlockingQueue<byte[]> que) {
         mInputQueue = que;
@@ -31,11 +31,11 @@ public class SinkManager implements Runnable {
      * Add a new Sink to the SinkManager
      * @param sinkIdentifier Identifier for the type of Sink.
      */
-    public void addSink(Sinks sinkIdentifier) {
+    public void addSink(SinkType sinkIdentifier) {
         // Initialize the Sink object
         // Devs: Add new sink types here
         Sink newSink;
-        if (sinkIdentifier == Sinks.FILE) {
+        if (sinkIdentifier == SinkType.FILE) {
             newSink = new FileSink();
         } else {
             Log.e(TAG, "addSink: passed Enum not handled.");
