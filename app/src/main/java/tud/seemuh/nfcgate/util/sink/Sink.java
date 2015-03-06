@@ -1,6 +1,6 @@
 package tud.seemuh.nfcgate.util.sink;
 
-import java.io.PipedReader;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * The Sink interface defines an API for different types of data sinks.
@@ -13,8 +13,8 @@ import java.io.PipedReader;
  * blocking the SinkManager (writes to PipedWriters block if the buffer is full).
  */
 public interface Sink extends Runnable {
-    // Set the PipedReader which should be used to receive data from the SinkManager
-    public void setPipe(PipedReader readPipe);
+    // Set the BlockingQueue which should be used to receive data from the SinkManager
+    public void setQueue(BlockingQueue<byte[]> readQueue);
 
     // The main loop of the Sink thread. This is where all the work takes place
     public void run();

@@ -1,6 +1,6 @@
 package tud.seemuh.nfcgate.util.sink;
 
-import java.io.PipedReader;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * The FileSink class provides a simple file dump interface. Data is written to a regular text file
@@ -9,11 +9,11 @@ import java.io.PipedReader;
 public class FileSink implements Sink {
     public String TAG = "FileSink";
 
-    private PipedReader mReadPipe;
+    private BlockingQueue<byte[]> mQueue;
 
     @Override
-    public void setPipe(PipedReader readPipe) {
-        mReadPipe = readPipe;
+    public void setQueue(BlockingQueue<byte[]> readQueue) {
+        mQueue = readQueue;
     }
 
     @Override
