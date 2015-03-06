@@ -1,6 +1,7 @@
 package tud.seemuh.nfcgate.util.sink;
 
 import android.util.Log;
+import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
@@ -12,7 +13,8 @@ public class SinkManager implements Runnable {
     // Enum enumerating all installed Sinks. Used to identify a sink to perform operations on.
     // Devs: Add new sink types here
     public enum SinkType {
-        FILE
+        FILE,
+        DISPLAY_TEXTVIEW,
     }
 
     // BlockingQueue linked to the NetHandler
@@ -28,29 +30,64 @@ public class SinkManager implements Runnable {
     }
 
     /**
+     * Common functionality for all addSink operations.
+     * @param cSink The new Sink object, already instantiated
+     * @param cSinkType The SinkType (from the enum above)
+     */
+    private void addSinkCommon(Sink cSink, SinkType cSinkType) {
+        // Set up queue
+        BlockingQueue<byte[]> sharedQueue = new LinkedBlockingQueue<byte[]>();
+
+        // Pass linked pipe to the Sink
+        cSink.setQueue(sharedQueue);
+
+        // Store information in HashMaps
+        mQueueMap.put(cSink, sharedQueue);
+        mSinkInstanceMap.put(cSinkType, cSink);
+    }
+
+    /**
      * Add a new Sink to the SinkManager
      * @param sinkIdentifier Identifier for the type of Sink.
      */
     public void addSink(SinkType sinkIdentifier) {
+        // Currently, there are no sinks that can be added without any parameters
+        // If there ever are any, put them here
+        Log.e(TAG, "addSink: passed Enum not handled with these parameters.");
+    }
+
+    /**
+     * Add a new Sink using one TextView to the SinkManager
+     * @param sinkIdentifier Identifier for the type of Sink.
+     * @param tView TextView the Sink requires
+     */
+    public void addSink(SinkType sinkIdentifier, TextView tView) {
+        Sink newSink;
+        if (sinkIdentifier == SinkType.DISPLAY_TEXTVIEW) {
+            newSink = new TextViewSink(tView);
+        } else {
+            Log.e(TAG, "addSink: passed Enum not handled with these parameters.");
+            return;
+        }
+        addSinkCommon(newSink, sinkIdentifier);
+    }
+
+    /**
+     * Add a new Sink using one String to the SinkManager
+     * @param sinkIdentifier Identifier for the type of Sink.
+     * @param cfgString String the Sink requires
+     */
+    public void addSink(SinkType sinkIdentifier, String cfgString) {
         // Initialize the Sink object
         // Devs: Add new sink types here
         Sink newSink;
         if (sinkIdentifier == SinkType.FILE) {
-            newSink = new FileSink();
+            newSink = new FileSink(cfgString);
         } else {
-            Log.e(TAG, "addSink: passed Enum not handled.");
+            Log.e(TAG, "addSink: passed Enum not handled with these parameters.");
             return;
         }
-        
-        // Set up queue
-        BlockingQueue<byte[]> sharedQueue = new LinkedBlockingQueue<byte[]>();
-        
-        // Pass linked pipe to the Sink
-        newSink.setQueue(sharedQueue);
-
-        // Store information in HashMaps
-        mQueueMap.put(newSink, sharedQueue);
-        mSinkInstanceMap.put(sinkIdentifier, newSink);
+        addSinkCommon(newSink, sinkIdentifier);
     }
 
     @Override

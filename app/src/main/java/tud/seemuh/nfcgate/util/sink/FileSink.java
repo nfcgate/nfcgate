@@ -10,6 +10,11 @@ public class FileSink implements Sink {
     public String TAG = "FileSink";
 
     private BlockingQueue<byte[]> mQueue;
+    private String mOutputFileName;
+
+    public FileSink(String outfile) {
+        mOutputFileName = outfile;
+    }
 
     @Override
     public void setQueue(BlockingQueue<byte[]> readQueue) {
