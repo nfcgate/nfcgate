@@ -114,7 +114,7 @@ public class SinkManager implements Runnable {
                     }
                 }
             } catch (InterruptedException e) {
-                Log.e(TAG, "run: Normal Operation: Interrupted. Shutting down.");
+                Log.i(TAG, "run: Normal Operation: Interrupted. Shutting down.");
                 break;
             }
         }
