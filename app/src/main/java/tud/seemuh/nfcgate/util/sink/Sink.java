@@ -14,7 +14,7 @@ import java.util.concurrent.BlockingQueue;
  */
 public interface Sink extends Runnable {
     // Set the BlockingQueue which should be used to receive data from the SinkManager
-    public void setQueue(BlockingQueue<byte[]> readQueue);
+    public void setQueue(BlockingQueue<NfcComm> readQueue);
 
     // The main loop of the Sink thread. This is where all the work takes place
     public void run();

@@ -9,7 +9,7 @@ import java.util.concurrent.BlockingQueue;
 public class FileSink implements Sink {
     public String TAG = "FileSink";
 
-    private BlockingQueue<byte[]> mQueue;
+    private BlockingQueue<NfcComm> mQueue;
     private String mOutputFileName;
 
     public FileSink(String outfile) {
@@ -17,7 +17,7 @@ public class FileSink implements Sink {
     }
 
     @Override
-    public void setQueue(BlockingQueue<byte[]> readQueue) {
+    public void setQueue(BlockingQueue<NfcComm> readQueue) {
         mQueue = readQueue;
     }
 

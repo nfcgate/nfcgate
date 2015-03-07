@@ -12,7 +12,7 @@ public class TextViewSink implements Sink {
     private String TAG = "DebugOutputSink";
 
     private TextView mDebugView;
-    private BlockingQueue<byte[]> mQueue;
+    private BlockingQueue<NfcComm> mQueue;
 
     /**
      * Constructor. Expects a TextView to which he can append debug output
@@ -27,7 +27,7 @@ public class TextViewSink implements Sink {
      * @param readQueue The BlockingQueue object
      */
     @Override
-    public void setQueue(BlockingQueue<byte[]> readQueue) {
+    public void setQueue(BlockingQueue<NfcComm> readQueue) {
         mQueue = readQueue;
     }
 

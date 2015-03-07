@@ -18,14 +18,14 @@ public class SinkManager implements Runnable {
     }
 
     // BlockingQueue linked to the NetHandler
-    private BlockingQueue<byte[]> mInputQueue;
+    private BlockingQueue<NfcComm> mInputQueue;
     
     // Storage for Sink instances and Threads
-    private HashMap<Sink, BlockingQueue<byte[]>> mQueueMap = new HashMap<Sink, BlockingQueue<byte[]>>();
+    private HashMap<Sink, BlockingQueue<NfcComm>> mQueueMap = new HashMap<Sink, BlockingQueue<NfcComm>>();
     private HashMap<Sink, Thread> mThreadMap = new HashMap<Sink, Thread>();
     private HashMap<SinkType, Sink> mSinkInstanceMap = new HashMap<SinkType, Sink>();
 
-    public SinkManager(BlockingQueue<byte[]> que) {
+    public SinkManager(BlockingQueue<NfcComm> que) {
         mInputQueue = que;
     }
 
@@ -36,7 +36,7 @@ public class SinkManager implements Runnable {
      */
     private void addSinkCommon(Sink cSink, SinkType cSinkType) {
         // Set up queue
-        BlockingQueue<byte[]> sharedQueue = new LinkedBlockingQueue<byte[]>();
+        BlockingQueue<NfcComm> sharedQueue = new LinkedBlockingQueue<NfcComm>();
 
         // Pass linked pipe to the Sink
         cSink.setQueue(sharedQueue);
@@ -103,9 +103,9 @@ public class SinkManager implements Runnable {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 // Retrieve one byte[] from the queue (blocking until available or interrupted)
-                byte[] msg = mInputQueue.take();
+                NfcComm msg = mInputQueue.take();
                 // Distribute the byte[] to all Sinks
-                for (BlockingQueue<byte[]> cQueue : mQueueMap.values()) {
+                for (BlockingQueue<NfcComm> cQueue : mQueueMap.values()) {
                     try {
                         // Distribute to current Queue, raising exception if Queue is full
                         cQueue.add(msg);
