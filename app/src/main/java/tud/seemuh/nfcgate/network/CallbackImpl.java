@@ -18,6 +18,7 @@ import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
 import tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode;
 import tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode;
 import tud.seemuh.nfcgate.hce.ApduService;
+import tud.seemuh.nfcgate.util.sink.NfcComm;
 
 /**
  * Implementation of the Callback interface. This class is used to parse incoming messages and works
@@ -150,8 +151,13 @@ public class CallbackImpl implements Callback {
         byte[] a_sak = msg.getSAK().toByteArray();
         byte sak = a_sak.length > 0 ? a_sak[0] : 0;
 
-        DaemonConfiguration.getInstance().uploadConfiguration(atqa, sak, hist, msg.getUID().toByteArray());
+        byte[] uid = msg.getUID().toByteArray();
+
+        DaemonConfiguration.getInstance().uploadConfiguration(atqa, sak, hist, uid);
         DaemonConfiguration.getInstance().enablePatch();
+
+        // notify SinkManager
+        Handler.notifySinkManager(new NfcComm(a_atqa, sak, a_hist, uid));
     }
 
 
@@ -159,10 +165,17 @@ public class CallbackImpl implements Callback {
         if (msg.getDataSource() == C2C.NFCData.DataSource.READER) {
             // We received a signal FROM a reader device and are required to talk TO a card.
             if (mReader.isConnected()) {
+                // Extract NFC Bytes from message
+                byte[] cmd = msg.getDataBytes().toByteArray();
+
+                // Logging
                 Log.i(TAG, "HandleNFCData: Received message for a card, forwarding...");
-                Log.d(TAG, "HandleNFCData: " + Utils.bytesToHex(msg.getDataBytes().toByteArray()));
-                // Extract NFC Bytes and send them to the card
-                byte[] bytesFromCard = mReader.sendCmd(msg.getDataBytes().toByteArray());
+                Log.d(TAG, "HandleNFCData: " + Utils.bytesToHex(cmd));
+
+                // Notify SinkManager
+                Handler.notifySinkManager(new NfcComm(NfcComm.Source.HCE, cmd));
+                // communicate with the card
+                byte[] bytesFromCard = mReader.sendCmd(cmd);
 
                 // If the reply is null, the connection has been lost. Shut down Tag connection
                 if (bytesFromCard == null) {
@@ -182,7 +195,11 @@ public class CallbackImpl implements Callback {
             if (apdu != null) {
                 Log.i(TAG, "HandleNFCData: Received a message for a reader, forwarding...");
                 // We received a signal FROM a card and are required to talk TO a reader.
-                apdu.sendResponse(msg.getDataBytes().toByteArray());
+                byte[] reply = msg.getDataBytes().toByteArray();
+                apdu.sendResponse(reply);
+
+                // Notify SinkManager
+                Handler.notifySinkManager(new NfcComm(NfcComm.Source.CARD, reply));
             } else {
                 Log.e(TAG, "HandleNFCData: Received a message for a reader, but no APDU instance active.");
                 Handler.notifyNFCNotConnected();
@@ -312,11 +329,18 @@ public class CallbackImpl implements Callback {
         //set callback when data is received
         if(found_supported_tag){
             SimpleLowLevelNetworkConnectionClientImpl.getInstance().setCallback(this);
-            Log.d(TAG, "setTag: UID:  " + Utils.bytesToHex(mReader.getUID()));
-            Log.d(TAG, "setTag: ATQA: " + Utils.bytesToHex(mReader.getAtqa()));
-            Log.d(TAG, "setTag: SAK:  " + Utils.bytesToHex(mReader.getSak()));
-            Log.d(TAG, "setTag: HIST: " + Utils.bytesToHex(mReader.getHistoricalBytes()));
-            Handler.sendAnticol(mReader.getAtqa(), mReader.getSak(), mReader.getHistoricalBytes(), mReader.getUID());
+            byte[] uid = mReader.getUID();
+            byte[] atqa = mReader.getAtqa();
+            byte sak = mReader.getSak();
+            byte[] hist = mReader.getHistoricalBytes();
+            Log.d(TAG, "setTag: UID:  " + Utils.bytesToHex(uid));
+            Log.d(TAG, "setTag: ATQA: " + Utils.bytesToHex(atqa));
+            Log.d(TAG, "setTag: SAK:  " + Utils.bytesToHex(sak));
+            Log.d(TAG, "setTag: HIST: " + Utils.bytesToHex(hist));
+            Handler.sendAnticol(atqa, sak, hist, uid);
+
+            // Notify SinkManager
+            Handler.notifySinkManager(new NfcComm(atqa, sak, hist, uid));
         }
 
         // Check if the device is running a specific Broadcom chipset (used in the Nexus 4, for example)
