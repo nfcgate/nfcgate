@@ -26,7 +26,9 @@ Afterwards, launch the app on both phones. Enter the IP and Port of the Server (
 
 Now take the non-HCE-Phone and hold it to the card you want to read. The phone will detect the tag and read out some information, which will be sent to the HCE-Phone. There, it will be used to initialize and enable our patch to the Android NFC Daemon. Keep the phone attached to the card.
 
-Now (*and only now*), you can hold the HCE-Phone to the reader **The first read may fail** if you are using a Device with a Broadcom BCM20793 chip like the Nexus 4. If this happens, just try again by removing the device from the reader and re-attaching it. If you have enabled it, the non-HCE-phone will display the raw bytes it received from the card in the debug window. In the future, we will add an option to dump them to a file for later analysis. The server will also display the bytes.
+Now (*and only now*), you can hold the HCE-Phone to the reader **The first read may fail** if you are using a Device with a Broadcom BCM20793 chip like the Nexus 4. If this happens, just try again by removing the device from the reader and re-attaching it. So far, we have only observed this behaviour with the Nexus 4, other devices like the Nexus 5 seem to not be affected.
+
+If you have enabled it, the non-HCE-phone will display the raw bytes it received from the card in the debug window. In the future, we will add an option to dump them to a file for later analysis. The server will also display the bytes.
 
 Once you are done, you can remove the card and reader, and disconnect from the server using the disconnect button.
 
