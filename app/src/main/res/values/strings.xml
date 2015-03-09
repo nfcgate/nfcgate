@@ -12,12 +12,12 @@
     <string name="No">No</string>
     <string name="BCMWarn"><![CDATA[
     You are using a Broadcom BCM20793 chip, which has some known problems.
-    We are using a workaround to avoid these, but this has some side effects. Do you want to read more?
+    We are using a workaround to avoid some of these, but this has some side effects. Do you want to read more?
     ]]></string>
-    <string name="BCMWarnHeader">Device requires workaround</string>
+    <string name="BCMWarnHeader">Known issues</string>
     <string name="nevershowagain">Don\'t show this again</string>
     <string name="nevershowwarningsettings">Do not show workaround warning</string>
 
-    <string name="title_activity_about_workaround">NFCGate - Workaround Information</string>
+    <string name="title_activity_about_workaround">Broadcom BCM20793 Information</string>
     <string name="title_activity_about">About NFCGate</string>
 </resources>

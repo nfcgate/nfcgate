@@ -23,14 +23,14 @@ public class AboutWorkaroundActivity extends Activity {
         mWebView = (WebView) findViewById(R.id.workaroundDescWebView);
         String loc = Locale.getDefault().getLanguage();
         AssetManager mg = getResources().getAssets();
-        String path = "html/WorkaroundInfo." + loc + ".html";
+        String path = "html/bcm20793-info." + loc + ".html";
         try {
             mg.open(path);
             Log.i(TAG, "HTML exists for locale " + loc + ", using it.");
             mWebView.loadUrl("file:///android_asset/" + path);
         } catch (IOException ex) {
             Log.i(TAG, "No HTML for locale " + loc + ", using default (en)");
-            mWebView.loadUrl("file:///android_asset/html/WorkaroundInfo.en.html");
+            mWebView.loadUrl("file:///android_asset/html/bcm20793-info.en.html");
         }
     }
 }
