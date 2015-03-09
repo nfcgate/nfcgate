@@ -299,13 +299,11 @@ public class CallbackImpl implements Callback {
 
                 mReader = new IsoDepReaderImpl(tag);
                 Log.d(TAG, "setTag: Chose IsoDep technology.");
-                break;
             } else if("android.nfc.tech.NfcA".equals(type)) {
                 found_supported_tag = true;
 
                 mReader = new NfcAReaderImpl(tag);
                 Log.d(TAG, "setTag: Chose NfcA technology.");
-                break;
             }
         }
 
