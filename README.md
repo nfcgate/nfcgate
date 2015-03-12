@@ -7,7 +7,7 @@ NFCGate is an Android application meant to relay communication between an NFC re
 This application was developed for security research purposes by students of the [TU Darmstadt](https://www.tu-darmstadt.de/), [Secure Mobile Networking Lab](https://www.seemoo.tu-darmstadt.de/). Please do not use this application for malicious purposes.
 
 ## Requirements
-- Two android phones with NFC Chips, running Android 4.4+ (API-Level 19+). Android 5 is untested so far, but *may* work.
+- Two android phones with NFC Chips, running Android 4.4+ (API-Level 19+), but not Android 5 or later (due to changes in the Android system, Cydia Substrate, which we depend on, does not work on those versions of Android).
 - At least one of these devices needs to support HCE (Host Card Emulation). Most NFC-Enabled phones of the lats few years should support that.
 - The HCE phone needs to use a Broadcom NFC chip (compatible phones include the Nexus 4 and 5).
 - The HCE phone needs to be rooted and have [Cydia Substrate](http://www.cydiasubstrate.com/) installed and enabled (see [here](https://github.com/malexmave/nfcgate/wiki/Cydia-Substrate) for help on how to get that done)
