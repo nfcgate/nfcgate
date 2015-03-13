@@ -321,10 +321,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
         setButtonTexts();
         reactivateButtons();
         // Stop sink Manager
-        if (mSinkManagerThread != null) {
-            mSinkManagerThread.interrupt();
-            mSinkManagerThread = null;
-        }
+        if (mSinkManagerThread != null) mSinkManagerThread.interrupt();
         mSinkManagerThread = null;
     }
 
