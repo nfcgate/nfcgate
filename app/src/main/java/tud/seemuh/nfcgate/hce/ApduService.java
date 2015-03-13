@@ -5,9 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import tud.seemuh.nfcgate.network.Callback;
-import tud.seemuh.nfcgate.network.CallbackImpl;
-import tud.seemuh.nfcgate.network.NetHandler;
-import tud.seemuh.nfcgate.network.SimpleLowLevelNetworkConnectionClientImpl;
+import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;
 import tud.seemuh.nfcgate.util.Utils;
 
 /**
@@ -19,7 +17,7 @@ import tud.seemuh.nfcgate.util.Utils;
 public class ApduService extends HostApduService {
     private final static String TAG = "ApduService";
 
-    private NetHandler Handler = NetHandler.getInstance();
+    private HighLevelProtobufHandler Handler = HighLevelProtobufHandler.getInstance();
 
     /**
      * empty apdu byte array

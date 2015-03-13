@@ -91,10 +91,10 @@ public class FileSink implements Sink {
                     // We are dealing with regular NFC traffic.
                     if (msg.getSource() == NfcComm.Source.CARD) {
                         // Write out NFC data sent by card
-                        outStream.write(strDate + ": Card: " + Utils.bytesToHex(msg.getData()));
+                        outStream.write(strDate + ": Card: " + Utils.bytesToHex(msg.getData()) + "\n");
                     } else if (msg.getSource() == NfcComm.Source.HCE) {
                         // Write out NFC data sent by reader
-                        outStream.write(strDate + ": HCE:  " + Utils.bytesToHex(msg.getData()));
+                        outStream.write(strDate + ": HCE:  " + Utils.bytesToHex(msg.getData()) + "\n");
                     } else {
                         Log.e(TAG, "run: Unhandled message source, doing nothing");
                     }

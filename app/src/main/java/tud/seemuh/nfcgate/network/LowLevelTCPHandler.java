@@ -3,9 +3,6 @@ package tud.seemuh.nfcgate.network;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ConnectException;
@@ -28,7 +25,7 @@ import tud.seemuh.nfcgate.util.Utils;
  * This class contains two nested classes which implement the actual threads used for the network
  * communication.
  */
-public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetworkHandler {
+public class LowLevelTCPHandler implements LowLevelNetworkHandler {
 
     private int mServerPort = 15000;
     private InetAddress mServerAddress;
@@ -39,14 +36,14 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
     private Socket mSocket;
     private Callback mCallback;
 
-    private static SimpleLowLevelNetworkConnectionClientImpl mInstance;
+    private static LowLevelTCPHandler mInstance;
 
-    public static SimpleLowLevelNetworkConnectionClientImpl getInstance() {
-        if(mInstance == null) mInstance = new SimpleLowLevelNetworkConnectionClientImpl();
+    public static LowLevelTCPHandler getInstance() {
+        if(mInstance == null) mInstance = new LowLevelTCPHandler();
         return mInstance;
     }
 
-    public SimpleLowLevelNetworkConnectionClientImpl connect(String serverAddress, int serverPort) {
+    public LowLevelTCPHandler connect(String serverAddress, int serverPort) {
         try {
             // TODO: Properly support Domain Names & IP Addresses as input --> I just included a catch for the exception
             // Resolve domain name to IP address as string
@@ -60,17 +57,17 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
                 mClientThread = new Thread(mRunnableClientThread);
                 mClientThread.start();
             } else {
-                Log.d(SimpleLowLevelNetworkConnectionClientImpl.class.getName(), "Client thread already started");
+                Log.d(LowLevelTCPHandler.class.getName(), "Client thread already started");
             }
 
         } catch (Exception e1){
-            Log.e(SimpleLowLevelNetworkConnectionClientImpl.class.getName(), "Unknown Host: "+serverAddress);
+            Log.e(LowLevelTCPHandler.class.getName(), "Unknown Host: "+serverAddress);
         }
         mServerPort = serverPort;
         return this;
     }
 
-    public SimpleLowLevelNetworkConnectionClientImpl setCallback(Callback callback) {
+    public LowLevelTCPHandler setCallback(Callback callback) {
         mCallback = callback;
         return this;
     }
@@ -207,10 +204,9 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
                     dis.read(lenbytes);
                     int len = ByteBuffer.wrap(lenbytes).getInt();
 
-                    Log.i(TAG, "Reading bytes of length:" + len);
-
                     // read the message data
                     if (len > 0) {
+                        Log.i(TAG, "Reading bytes of length:" + len);
                         readBytes = new byte[len];
                         dis.read(readBytes);
                         Log.d(TAG, "Read data: " + Utils.bytesToHex(readBytes));
@@ -225,6 +221,7 @@ public class SimpleLowLevelNetworkConnectionClientImpl implements LowLevelNetwor
                         }
                     } else {
                         Log.e(TAG, "Error no postive number of bytes: " + len);
+                        throw new IOException("Protocol error: Length information was negative or null");
                     }
 
                 } catch (IOException e) {

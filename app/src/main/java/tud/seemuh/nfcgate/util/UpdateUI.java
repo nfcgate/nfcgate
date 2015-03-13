@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate.network;
+package tud.seemuh.nfcgate.util;
 
 import android.os.AsyncTask;
 import android.widget.Button;
