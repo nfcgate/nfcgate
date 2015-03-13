@@ -8,9 +8,9 @@ import java.io.File;
 import tud.seemuh.nfcgate.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.network.meta.MetaMessage;
 import tud.seemuh.nfcgate.reader.BroadcomWorkaround;
-import tud.seemuh.nfcgate.reader.IsoDepReaderImpl;
+import tud.seemuh.nfcgate.reader.IsoDepReader;
 import tud.seemuh.nfcgate.reader.NFCTagReader;
-import tud.seemuh.nfcgate.reader.NfcAReaderImpl;
+import tud.seemuh.nfcgate.reader.NfcAReader;
 import tud.seemuh.nfcgate.util.Utils;
 import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
@@ -314,12 +314,12 @@ public class ProtobufCallback implements Callback {
             if("android.nfc.tech.IsoDep".equals(type)) {
                 found_supported_tag = true;
 
-                mReader = new IsoDepReaderImpl(tag);
+                mReader = new IsoDepReader(tag);
                 Log.d(TAG, "setTag: Chose IsoDep technology.");
             } else if("android.nfc.tech.NfcA".equals(type)) {
                 found_supported_tag = true;
 
-                mReader = new NfcAReaderImpl(tag);
+                mReader = new NfcAReader(tag);
                 Log.d(TAG, "setTag: Chose NfcA technology.");
             }
         }
