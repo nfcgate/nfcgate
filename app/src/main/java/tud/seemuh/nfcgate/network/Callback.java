@@ -1,7 +1,5 @@
 package tud.seemuh.nfcgate.network;
 
-import android.widget.TextView;
-
 import tud.seemuh.nfcgate.hce.ApduService;
 
 public interface Callback {

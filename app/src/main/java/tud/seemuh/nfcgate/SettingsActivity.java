@@ -1,7 +1,6 @@
 package tud.seemuh.nfcgate;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
