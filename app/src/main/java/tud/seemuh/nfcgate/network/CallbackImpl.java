@@ -338,9 +338,6 @@ public class CallbackImpl implements Callback {
             Log.d(TAG, "setTag: SAK:  " + Utils.bytesToHex(sak));
             Log.d(TAG, "setTag: HIST: " + Utils.bytesToHex(hist));
             Handler.sendAnticol(atqa, sak, hist, uid);
-
-            // Notify SinkManager
-            Handler.notifySinkManager(new NfcComm(atqa, sak, hist, uid));
         }
 
         // Check if the device is running a specific Broadcom chipset (used in the Nexus 4, for example)
