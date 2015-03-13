@@ -34,9 +34,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import tud.seemuh.nfcgate.hce.DaemonConfiguration;
-import tud.seemuh.nfcgate.network.CallbackImpl;
+import tud.seemuh.nfcgate.network.ProtobufCallback;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
-import tud.seemuh.nfcgate.network.NetHandler;
+import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;
 import tud.seemuh.nfcgate.util.sink.NfcComm;
 import tud.seemuh.nfcgate.util.sink.SinkInitException;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
@@ -67,7 +67,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     private String ip;
     private int port;
 
-    private CallbackImpl mNetCallback = new CallbackImpl();
+    private ProtobufCallback mNetCallback = new ProtobufCallback();
 
     // declares main functionality
     private Button mReset, mConnecttoSession, mAbort, mJoinSession;
@@ -133,7 +133,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mtoken = (TextView) findViewById(R.id.token);
 
         // Create connection client
-        mConnectionClient = NetHandler.getInstance();
+        mConnectionClient = HighLevelProtobufHandler.getInstance();
 
         // Pass necessary references to ConnectionClient
         mConnectionClient.setDebugView(mDebuginfo);

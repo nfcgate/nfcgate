@@ -17,7 +17,7 @@ public class SinkManager implements Runnable {
         DISPLAY_TEXTVIEW,
     }
 
-    // BlockingQueue linked to the NetHandler
+    // BlockingQueue linked to the HighLevelProtobufHandler
     private BlockingQueue<NfcComm> mInputQueue;
     
     // Storage for Sink instances and Threads

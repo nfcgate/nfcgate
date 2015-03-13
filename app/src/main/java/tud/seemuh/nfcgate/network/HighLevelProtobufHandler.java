@@ -19,17 +19,17 @@ import tud.seemuh.nfcgate.util.sink.NfcComm;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
 
 /**
- * The NetHandler is an implementation of the HighLevelNetworkHandler interface.
+ * The HighLevelProtobufHandler is an implementation of the HighLevelNetworkHandler interface.
  * It is used to control all network communication and uses a LowLevelNetworkHandler for the actual
- * network communication. In this handler and the respective Callback implementation (CallbackImpl
+ * network communication. In this handler and the respective Callback implementation (ProtobufCallback
  * in our case), the protocol itself is implemented.
  *
- * The NetHandler holds the state of the network connection and is responsible for taking down all
+ * The HighLevelProtobufHandler holds the state of the network connection and is responsible for taking down all
  * relevant threads once the connection is disconnected, be it by request of the user or by a
  * general connection loss.
  */
-public class NetHandler implements HighLevelNetworkHandler {
-    private final static String TAG = "NetHandler";
+public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
+    private final static String TAG = "HighLevelProtobufHandler";
 
     private final static String CONN_CONNECTED = "Connected";
     private final static String CONN_DISCONNECTED = "Disconnected";
@@ -50,7 +50,7 @@ public class NetHandler implements HighLevelNetworkHandler {
     private final static String PEER_CONN_DIED = "Connection broke down";
 
     private LowLevelNetworkHandler handler;
-    private static NetHandler mInstance = null;
+    private static HighLevelProtobufHandler mInstance = null;
     private String secret;
     private enum Status {
         NOT_CONNECTED,
@@ -83,14 +83,14 @@ public class NetHandler implements HighLevelNetworkHandler {
     private BlockingQueue<NfcComm> mSinkManagerQueue;
 
 
-    public NetHandler() {
+    public HighLevelProtobufHandler() {
         status = Status.NOT_CONNECTED;
     }
 
 
     // Helper functions
-    public static NetHandler getInstance() {
-        if(mInstance == null) mInstance = new NetHandler();
+    public static HighLevelProtobufHandler getInstance() {
+        if(mInstance == null) mInstance = new HighLevelProtobufHandler();
         return mInstance;
     }
 
@@ -270,13 +270,13 @@ public class NetHandler implements HighLevelNetworkHandler {
      * Connect to the provided address and port
      * @param addr String containing the IP we want to connect to
      * @param port integer containing the target port (usually 5566)
-     * @return The connected NetHandler instance
+     * @return The connected HighLevelProtobufHandler instance
      */
     @Override
     public HighLevelNetworkHandler connect(String addr, int port) {
         mSinkManagerThread = new Thread(mSinkManager);
         mSinkManagerThread.start();
-        handler = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(addr, port);
+        handler = LowLevelTCPHandler.getInstance().connect(addr, port);
         handler.setCallback(callbackInstance);
         status = Status.CONNECTED_NO_SESSION;
         setConnectionStatusOutput(CONN_CONNECTED);
@@ -334,7 +334,7 @@ public class NetHandler implements HighLevelNetworkHandler {
     }
 
     /**
-     * Notify the NetHandler that the card workaround has been started.
+     * Notify the HighLevelProtobufHandler that the card workaround has been started.
      */
     @Override
     public void notifyCardWorkaroundConnected() {

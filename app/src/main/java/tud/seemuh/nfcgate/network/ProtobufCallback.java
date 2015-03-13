@@ -22,14 +22,14 @@ import tud.seemuh.nfcgate.util.sink.NfcComm;
 
 /**
  * Implementation of the Callback interface. This class is used to parse incoming messages and works
- * with the NetHandler class to process any logic required to follow the protocol.
+ * with the HighLevelProtobufHandler class to process any logic required to follow the protocol.
  */
-public class CallbackImpl implements Callback {
-    private final static String TAG = "CallbackImpl";
+public class ProtobufCallback implements Callback {
+    private final static String TAG = "ProtobufCallback";
 
     private ApduService apdu;
     private NFCTagReader mReader;
-    private HighLevelNetworkHandler Handler = NetHandler.getInstance();
+    private HighLevelNetworkHandler Handler = HighLevelProtobufHandler.getInstance();
     private BroadcomWorkaround mBroadcomWorkaroundRunnable;
     private Thread mBroadcomWorkaroundThread;
 
@@ -38,7 +38,7 @@ public class CallbackImpl implements Callback {
         return this;
     }
 
-    public CallbackImpl() {}
+    public ProtobufCallback() {}
 
     @Override
     public void notifyBrokenPipe() {
@@ -231,23 +231,23 @@ public class CallbackImpl implements Callback {
             Log.e(TAG, "handleStatus: Other party sent INVALID_MSG_FMT. Doing nothing");
         }
         else if (msg.getCode() == StatusCode.READER_FOUND) {
-            Log.d(TAG, "handleStatus: Other party sent READER_FOUND. Delegating to NetHandler.");
+            Log.d(TAG, "handleStatus: Other party sent READER_FOUND. Delegating to HighLevelProtobufHandler.");
             Handler.sessionPartnerAPDUModeOn();
         }
         else if (msg.getCode() == StatusCode.READER_REMOVED) {
-            Log.d(TAG, "handleStatus: Other party sent READER_REMOVED. Delegating to NetHandler.");
+            Log.d(TAG, "handleStatus: Other party sent READER_REMOVED. Delegating to HighLevelProtobufHandler.");
             Handler.sessionPartnerAPDUModeOff();
         }
         else if (msg.getCode() == StatusCode.CARD_FOUND) {
-            Log.d(TAG, "handleStatus: Other party sent CARD_FOUND. Delegating to NetHandler.");
+            Log.d(TAG, "handleStatus: Other party sent CARD_FOUND. Delegating to HighLevelProtobufHandler.");
             Handler.sessionPartnerReaderModeOn();
         }
         else if (msg.getCode() == StatusCode.CARD_REMOVED) {
-            Log.d(TAG, "handleStatus: Other party sent CARD_REMOVED. Delegating to NetHandler.");
+            Log.d(TAG, "handleStatus: Other party sent CARD_REMOVED. Delegating to HighLevelProtobufHandler.");
             Handler.sessionPartnerReaderModeOff();
         }
         else if (msg.getCode() == StatusCode.NFC_NO_CONN) {
-            Log.d(TAG, "handleStatus: Other party sent NFC_NO_CONN. Delegating to NetHandler.");
+            Log.d(TAG, "handleStatus: Other party sent NFC_NO_CONN. Delegating to HighLevelProtobufHandler.");
             Handler.sessionPartnerNFCLost();
         }
         else {
@@ -326,7 +326,7 @@ public class CallbackImpl implements Callback {
 
         //set callback when data is received
         if(found_supported_tag){
-            SimpleLowLevelNetworkConnectionClientImpl.getInstance().setCallback(this);
+            LowLevelTCPHandler.getInstance().setCallback(this);
             byte[] uid = mReader.getUID();
             byte[] atqa = mReader.getAtqa();
             byte sak = mReader.getSak();
