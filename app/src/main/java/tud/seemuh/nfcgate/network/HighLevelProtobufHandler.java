@@ -436,7 +436,6 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
 
         // Send reply
         sendMessage(reply.build(), MessageCase.NFCDATA);
-        appendDebugOutput(Utils.bytesToHex(nfcdata));
 
         // Send to SinkManager
         notifySinkManager(new NfcComm(NfcComm.Source.CARD, nfcdata));
