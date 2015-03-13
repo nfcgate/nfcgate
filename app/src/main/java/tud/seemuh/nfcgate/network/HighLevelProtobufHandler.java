@@ -30,7 +30,7 @@ import tud.seemuh.nfcgate.util.sink.SinkManager;
  * general connection loss.
  */
 public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
-    private final static String TAG = "HighLevelProtobufHandler";
+    private final static String TAG = "ProtobufHandler";
 
     private final static String CONN_CONNECTED = "Connected";
     private final static String CONN_DISCONNECTED = "Disconnected";
