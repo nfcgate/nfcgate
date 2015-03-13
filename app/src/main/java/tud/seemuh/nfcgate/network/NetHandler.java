@@ -7,12 +7,16 @@ import android.widget.TextView;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 
+import java.util.concurrent.BlockingQueue;
+
 import tud.seemuh.nfcgate.MainActivity;
 import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
 import tud.seemuh.nfcgate.util.Utils;
+import tud.seemuh.nfcgate.util.sink.NfcComm;
+import tud.seemuh.nfcgate.util.sink.SinkManager;
 
 /**
  * The NetHandler is an implementation of the HighLevelNetworkHandler interface.
@@ -74,6 +78,10 @@ public class NetHandler implements HighLevelNetworkHandler {
     private Button joinButton;
     private Button abortButton;
 
+    private SinkManager mSinkManager;
+    private Thread mSinkManagerThread;
+    private BlockingQueue<NfcComm> mSinkManagerQueue;
+
 
     public NetHandler() {
         status = Status.NOT_CONNECTED;
@@ -109,6 +117,16 @@ public class NetHandler implements HighLevelNetworkHandler {
         joinButton = Join;
     }
 
+    public void setSinkManager(SinkManager sm, BlockingQueue<NfcComm> smq) {
+        if (mSinkManagerThread != null ) {
+            Log.e(TAG, "setSinkManager: mSinkManagerThread != null. Stopping and replacing old SinkManager");
+            mSinkManagerThread.interrupt();
+            mSinkManagerThread = null;
+        }
+        mSinkManager = sm;
+        mSinkManagerQueue = smq;
+    }
+
     @Override
     public void setCallback(Callback mCallback) {
         callbackInstance = mCallback;
@@ -137,6 +155,15 @@ public class NetHandler implements HighLevelNetworkHandler {
         new UpdateUI(connectButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.createSessionMessage);
         new UpdateUI(joinButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.joinSessionMessage);
         new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetMessage);
+    }
+
+    @Override
+    public void notifySinkManager(NfcComm msg) {
+        try {
+            mSinkManagerQueue.add(msg);
+        } catch (IllegalStateException e) {
+            Log.e(TAG, "notifySinkManager: Tried to notify sm, but queue is full. Ignoring.");
+        }
     }
 
     // Network message building and sending
@@ -247,6 +274,8 @@ public class NetHandler implements HighLevelNetworkHandler {
      */
     @Override
     public HighLevelNetworkHandler connect(String addr, int port) {
+        mSinkManagerThread = new Thread(mSinkManager);
+        mSinkManagerThread.start();
         handler = SimpleLowLevelNetworkConnectionClientImpl.getInstance().connect(addr, port);
         handler.setCallback(callbackInstance);
         status = Status.CONNECTED_NO_SESSION;
@@ -283,11 +312,16 @@ public class NetHandler implements HighLevelNetworkHandler {
      * Common code for disconnect() and disconnectBrokenPipe()
      */
     private void disconnectCommon() {
+        // Disconnect network
         if (handler != null) handler.disconnect();
         status = Status.NOT_CONNECTED;
         callbackInstance.shutdown();
+        // Set default UI state
         setButtonTexts();
         reactivateButtons();
+        // Stop sink Manager
+        mSinkManagerThread.interrupt();
+        mSinkManagerThread = null;
     }
 
     /**
@@ -384,9 +418,8 @@ public class NetHandler implements HighLevelNetworkHandler {
         // Send prepared message
         sendMessage(apduMessage.build(), MessageCase.NFCDATA);
 
-        // Log
-        Log.d(TAG, "sendAPDUMessage: sent APDU message");
-        appendDebugOutput(Utils.bytesToHex(apdu));
+        // Send to SinkManager
+        notifySinkManager(new NfcComm(NfcComm.Source.HCE, apdu));
     }
 
     @Override
@@ -403,6 +436,9 @@ public class NetHandler implements HighLevelNetworkHandler {
         // Send reply
         sendMessage(reply.build(), MessageCase.NFCDATA);
         appendDebugOutput(Utils.bytesToHex(nfcdata));
+
+        // Send to SinkManager
+        notifySinkManager(new NfcComm(NfcComm.Source.CARD, nfcdata));
     }
 
     @Override
@@ -417,6 +453,8 @@ public class NetHandler implements HighLevelNetworkHandler {
         // (And delete it if the card is removed in the meantime)
         sendMessage(b.build(), MessageCase.ANTICOL);
         Log.d(TAG, "sendAnticol: Sent Anticol message");
+
+        notifySinkManager(new NfcComm(atqa, sak, hist, uid));
     }
 
     // Session status management

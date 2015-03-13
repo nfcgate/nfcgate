@@ -28,6 +28,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +37,9 @@ import tud.seemuh.nfcgate.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.network.CallbackImpl;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.network.NetHandler;
+import tud.seemuh.nfcgate.util.sink.NfcComm;
+import tud.seemuh.nfcgate.util.sink.SinkInitException;
+import tud.seemuh.nfcgate.util.sink.SinkManager;
 
 public class MainActivity extends Activity implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener, ReaderCallback{
 
@@ -47,6 +52,10 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
     //Connection Client
     protected HighLevelNetworkHandler mConnectionClient;
+
+    // Sink Manager
+    private SinkManager mSinkManager;
+    private BlockingQueue<NfcComm> mSinkManagerQueue = new LinkedBlockingQueue<NfcComm>();
 
     // Defined name of the Shared Preferences Buffer
     public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
@@ -123,9 +132,10 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mConnecttoSession.requestFocus();
         mtoken = (TextView) findViewById(R.id.token);
 
+        // Create connection client
         mConnectionClient = NetHandler.getInstance();
 
-        //Set the views to update the GUI from another thread
+        // Pass necessary references to ConnectionClient
         mConnectionClient.setDebugView(mDebuginfo);
         mConnectionClient.setConnectionStatusView(mConnStatus);
         mConnectionClient.setPeerStatusView(mPartnerDevice);
@@ -247,7 +257,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     @Override
     public void onTagDiscovered(Tag tag) {
 
-        Log.i(TAG,"Discovered tag in ReaderMode");
+        Log.i(TAG, "Discovered tag in ReaderMode");
         mNetCallback.setTag(tag);
 
         //Toast here is not possible -> exception...
@@ -269,6 +279,29 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
             Toast.makeText(this, "Found Tag", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     * Common code for network connection establishment
+     */
+    private void networkConnectCommon() {
+        mSinkManager = new SinkManager(mSinkManagerQueue);
+        mConnectionClient.setSinkManager(mSinkManager, mSinkManagerQueue);
+
+        // FIXME For debugging purposes, hardcoded selecting of sinks happens here
+        // This should be selectable by the user
+
+        // Initialize debug output sink
+        // TODO This should most definitely be solved in a more elegant fashion
+        try {
+            mSinkManager.addSink(SinkManager.SinkType.DISPLAY_TEXTVIEW, mDebuginfo);
+            mSinkManager.addSink(SinkManager.SinkType.FILE, "testFile.txt");
+        } catch (SinkInitException e) {
+            e.printStackTrace();
+        }
+
+        // Do the actual network connection
+        mConnectionClient.connect(mIP.getText().toString(), port);
     }
 
     public void ButtonResetClicked(View view) {
@@ -341,7 +374,10 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 //            mConnStatus.setText("Server status: Connecting");
 //            mPartnerDevice.setText("Partner status: waiting");
 
-            mConnectionClient.connect(mIP.getText().toString(), port);
+            // Run common code for network connection establishment
+            networkConnectCommon();
+
+            // Create session
             mConnectionClient.createSession();
         }
         else
@@ -457,7 +493,8 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         //mConnStatus.setText("Server status: Connecting");
         //mPartnerDevice.setText("Partner status: waiting");
 
-        mConnectionClient.connect(mIP.getText().toString(), globalPort);
+        // Run common network connection est. code
+        networkConnectCommon();
 
         // Load token from the Shared Preferences Buffer
         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
