@@ -316,16 +316,19 @@ public class ProtobufCallback implements Callback {
 
                 mReader = new IsoDepReader(tag);
                 Log.d(TAG, "setTag: Chose IsoDep technology.");
+                break;
             } else if("android.nfc.tech.NfcA".equals(type)) {
                 found_supported_tag = true;
 
                 mReader = new NfcAReader(tag);
                 Log.d(TAG, "setTag: Chose NfcA technology.");
+                break;
             }
         }
 
         //set callback when data is received
         if(found_supported_tag){
+            Log.d(TAG, "setTag: Setting callback");
             LowLevelTCPHandler.getInstance().setCallback(this);
             byte[] uid = mReader.getUID();
             byte[] atqa = mReader.getAtqa();
