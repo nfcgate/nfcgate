@@ -14,6 +14,7 @@ import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
+import tud.seemuh.nfcgate.util.UpdateUI;
 import tud.seemuh.nfcgate.util.Utils;
 import tud.seemuh.nfcgate.util.sink.NfcComm;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
