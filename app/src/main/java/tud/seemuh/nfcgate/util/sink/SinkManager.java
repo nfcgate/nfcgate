@@ -50,7 +50,7 @@ public class SinkManager implements Runnable {
      * Add a new Sink to the SinkManager
      * @param sinkIdentifier Identifier for the type of Sink.
      */
-    public void addSink(SinkType sinkIdentifier) {
+    public void addSink(SinkType sinkIdentifier) throws SinkInitException {
         // Currently, there are no sinks that can be added without any parameters
         // If there ever are any, put them here
         Log.e(TAG, "addSink: passed Enum not handled with these parameters.");
@@ -61,7 +61,7 @@ public class SinkManager implements Runnable {
      * @param sinkIdentifier Identifier for the type of Sink.
      * @param tView TextView the Sink requires
      */
-    public void addSink(SinkType sinkIdentifier, TextView tView) {
+    public void addSink(SinkType sinkIdentifier, TextView tView) throws SinkInitException {
         Sink newSink;
         if (sinkIdentifier == SinkType.DISPLAY_TEXTVIEW) {
             newSink = new TextViewSink(tView);
@@ -77,7 +77,7 @@ public class SinkManager implements Runnable {
      * @param sinkIdentifier Identifier for the type of Sink.
      * @param cfgString String the Sink requires
      */
-    public void addSink(SinkType sinkIdentifier, String cfgString) {
+    public void addSink(SinkType sinkIdentifier, String cfgString) throws SinkInitException {
         // Initialize the Sink object
         // Devs: Add new sink types here
         Sink newSink;

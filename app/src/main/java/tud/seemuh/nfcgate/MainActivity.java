@@ -38,6 +38,7 @@ import tud.seemuh.nfcgate.network.CallbackImpl;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.network.NetHandler;
 import tud.seemuh.nfcgate.util.sink.NfcComm;
+import tud.seemuh.nfcgate.util.sink.SinkInitException;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
 
 public class MainActivity extends Activity implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener, ReaderCallback{
@@ -256,7 +257,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     @Override
     public void onTagDiscovered(Tag tag) {
 
-        Log.i(TAG,"Discovered tag in ReaderMode");
+        Log.i(TAG, "Discovered tag in ReaderMode");
         mNetCallback.setTag(tag);
 
         //Toast here is not possible -> exception...
@@ -291,7 +292,13 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         // This should be selectable by the user
 
         // Initialize debug output sink
-        mSinkManager.addSink(SinkManager.SinkType.DISPLAY_TEXTVIEW, mDebuginfo);
+        // TODO This should most definitely be solved in a more elegant fashion
+        try {
+            mSinkManager.addSink(SinkManager.SinkType.DISPLAY_TEXTVIEW, mDebuginfo);
+            mSinkManager.addSink(SinkManager.SinkType.FILE, "testFile.txt");
+        } catch (SinkInitException e) {
+            e.printStackTrace();
+        }
 
         // Do the actual network connection
         mConnectionClient.connect(mIP.getText().toString(), port);
