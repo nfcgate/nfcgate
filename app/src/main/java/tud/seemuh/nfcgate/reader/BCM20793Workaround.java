@@ -7,7 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * Broadcom chips have a problem with DESFire cards: They set them into a specific mode with their
+ * The Broadcom BCM20793 has a problem with DESFire cards: It sets them into a specific mode with its
  * keepalive messages, which prevents us from sending messages using another mode. (See #33)
  * This class is a workaround: We will try to "fake" a keepalive loop in order to prevent Android
  * from sending the destructive keepalive messages, as per
@@ -20,11 +20,11 @@ import java.lang.reflect.Method;
  * The way we use them, the only effect should be that the Keepalive-Timer is reset every time we
  * call the connect()-Function in the loop below.
  */
-public class BroadcomWorkaround implements Runnable {
-    private String TAG = "BroadcomWorkaround";
+public class BCM20793Workaround implements Runnable {
+    private String TAG = "BCM20793Workaround";
     private Tag mTag;
 
-    public BroadcomWorkaround(Tag tag) {
+    public BCM20793Workaround(Tag tag) {
         mTag = tag;
     }
 

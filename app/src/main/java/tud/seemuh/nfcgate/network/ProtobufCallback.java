@@ -7,7 +7,7 @@ import java.io.File;
 
 import tud.seemuh.nfcgate.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.network.meta.MetaMessage;
-import tud.seemuh.nfcgate.reader.BroadcomWorkaround;
+import tud.seemuh.nfcgate.reader.BCM20793Workaround;
 import tud.seemuh.nfcgate.reader.IsoDepReader;
 import tud.seemuh.nfcgate.reader.NFCTagReader;
 import tud.seemuh.nfcgate.reader.NfcAReader;
@@ -30,7 +30,7 @@ public class ProtobufCallback implements Callback {
     private ApduService apdu;
     private NFCTagReader mReader;
     private HighLevelNetworkHandler Handler = HighLevelProtobufHandler.getInstance();
-    private BroadcomWorkaround mBroadcomWorkaroundRunnable;
+    private BCM20793Workaround mBroadcomWorkaroundRunnable;
     private Thread mBroadcomWorkaroundThread;
 
     public Callback setAPDUService(ApduService as) {
@@ -351,7 +351,7 @@ public class ProtobufCallback implements Callback {
         if (bcmdevice.exists()) {
             Log.i(TAG, "setTag: Problematic broadcom chip found, activate workaround");
             // Initialize a runnable object
-            mBroadcomWorkaroundRunnable = new BroadcomWorkaround(tag);
+            mBroadcomWorkaroundRunnable = new BCM20793Workaround(tag);
             // Start up a new thread
             mBroadcomWorkaroundThread = new Thread(mBroadcomWorkaroundRunnable);
             mBroadcomWorkaroundThread.start();
