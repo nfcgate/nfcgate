@@ -204,10 +204,9 @@ public class LowLevelTCPHandler implements LowLevelNetworkHandler {
                     dis.read(lenbytes);
                     int len = ByteBuffer.wrap(lenbytes).getInt();
 
-                    Log.i(TAG, "Reading bytes of length:" + len);
-
                     // read the message data
                     if (len > 0) {
+                        Log.i(TAG, "Reading bytes of length:" + len);
                         readBytes = new byte[len];
                         dis.read(readBytes);
                         Log.d(TAG, "Read data: " + Utils.bytesToHex(readBytes));
@@ -222,6 +221,7 @@ public class LowLevelTCPHandler implements LowLevelNetworkHandler {
                         }
                     } else {
                         Log.e(TAG, "Error no postive number of bytes: " + len);
+                        throw new IOException("Protocol error: Length information was negative or null");
                     }
 
                 } catch (IOException e) {
