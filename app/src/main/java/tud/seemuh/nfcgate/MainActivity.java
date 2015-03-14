@@ -34,6 +34,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import tud.seemuh.nfcgate.hce.DaemonConfiguration;
+import tud.seemuh.nfcgate.network.Callback;
 import tud.seemuh.nfcgate.network.ProtobufCallback;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;
@@ -67,7 +68,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     private String ip;
     private int port;
 
-    private ProtobufCallback mNetCallback = new ProtobufCallback();
+    private Callback mNetCallback = new ProtobufCallback();
 
     // declares main functionality
     private Button mReset, mConnecttoSession, mAbort, mJoinSession;

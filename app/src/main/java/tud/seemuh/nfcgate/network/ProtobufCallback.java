@@ -304,6 +304,7 @@ public class ProtobufCallback implements Callback {
      * @param tag nfc tag
      * @return true if a supported tag is found
      */
+    @Override
     public boolean setTag(Tag tag) {
 
         boolean found_supported_tag = false;
