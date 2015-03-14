@@ -311,7 +311,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         if (mReset.getText().equals(resetMessage)) {
             // mConnStatus.setText("Server status: Resetting");
             // mPartnerDevice.setText("Partner status: no device");
-            mDebuginfo.setText("Debugging Output: ");
+            mDebuginfo.setText("Debugging Output:\n");
             // this.setTitle("You clicked reset");
 
             if (mConnectionClient != null) mConnectionClient.disconnect();
