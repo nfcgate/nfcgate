@@ -53,7 +53,8 @@ public interface Callback {
     /**
      * Passes a reference to the Tag object to the Callback implementation. MUST notify connected
      * session partner about the Anticollision bytes (using the HighLevelNetworkHandler.sendAnticol()
-     * method). MUST start the Broadcom BCM20793 workaround thread, where applicable.
+     * method). MUST start the Broadcom BCM20793 workaround thread, where applicable (find out if
+     * it is needed using the BCM20793Workaround.workaroundNeeded() static function).
      *
      * @param tag The Tag object that was passed with the android systen intent
      * @return true if the tag is supported, false otherwise.

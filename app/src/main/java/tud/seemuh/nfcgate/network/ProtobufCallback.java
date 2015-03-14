@@ -348,8 +348,7 @@ public class ProtobufCallback implements Callback {
         // the keepalive function from running and thus prevents it from setting the mode of the card
         // Other devices work fine without this workaround, so we only activate it on bugged chipsets
         // TODO Only activate for DESFire cards
-        File bcmdevice = new File("/dev/bcm2079x-i2c");
-        if (bcmdevice.exists()) {
+        if (BCM20793Workaround.workaroundNeeded()) {
             Log.i(TAG, "setTag: Problematic broadcom chip found, activate workaround");
             // Initialize a runnable object
             mBroadcomWorkaroundRunnable = new BCM20793Workaround(tag);

@@ -3,6 +3,7 @@ package tud.seemuh.nfcgate.reader;
 import android.nfc.Tag;
 import android.util.Log;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -21,6 +22,11 @@ import java.lang.reflect.Method;
  * call the connect()-Function in the loop below.
  */
 public class BCM20793Workaround implements Runnable {
+    public static boolean workaroundNeeded() {
+        File bcmdevice = new File("/dev/bcm2079x-i2c");
+        return bcmdevice.exists();
+    }
+
     private String TAG = "BCM20793Workaround";
     private Tag mTag;
 
