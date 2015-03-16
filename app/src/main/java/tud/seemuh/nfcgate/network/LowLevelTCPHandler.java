@@ -209,7 +209,11 @@ public class LowLevelTCPHandler implements LowLevelNetworkHandler {
                     if (len > 0) {
                         Log.i(TAG, "Reading bytes of length:" + len);
                         readBytes = new byte[len];
-                        dis.read(readBytes);
+                        int read = 0;
+                        do {
+                            read += dis.read(readBytes, read, len-read);
+                        } while(read < len);
+
                         Log.d(TAG, "Read data: " + Utils.bytesToHex(readBytes));
                         if(mCallback != null) {
                             Log.d(TAG, "Delegating to Callback.");
