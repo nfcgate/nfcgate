@@ -201,7 +201,8 @@ public class LowLevelTCPHandler implements LowLevelNetworkHandler {
                     // that we can read the correct number of bytes. Hence, we read four bytes
                     // in order to determine the length integer
                     byte[] lenbytes = new byte[4];
-                    dis.read(lenbytes);
+                    int rcvlen = dis.read(lenbytes);
+                    Log.d(TAG, "Got " + rcvlen + " bytes");
                     int len = ByteBuffer.wrap(lenbytes).getInt();
 
                     // read the message data
