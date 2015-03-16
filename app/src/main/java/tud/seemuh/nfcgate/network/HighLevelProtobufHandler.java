@@ -159,6 +159,10 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
 
     @Override
     public void notifySinkManager(NfcComm msg) {
+        if (mSinkManagerQueue == null) {
+            Log.e(TAG, "notifySinkManager: Trying to notify, but Queue is still null. Ignoring.");
+            return;
+        }
         try {
             mSinkManagerQueue.add(msg);
         } catch (IllegalStateException e) {
