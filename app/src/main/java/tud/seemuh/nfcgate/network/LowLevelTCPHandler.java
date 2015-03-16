@@ -101,6 +101,11 @@ public class LowLevelTCPHandler implements LowLevelNetworkHandler {
 
             try {
                 mSocket = new Socket(mServerAddress, mServerPort);
+                try {
+                    mSocket.setTcpNoDelay(true);
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                }
 
                 //read answer from SOCKET
                 mRunnableComThread = new CommunicationThread(mSocket);
@@ -181,11 +186,6 @@ public class LowLevelTCPHandler implements LowLevelNetworkHandler {
 
         public CommunicationThread(Socket clientSocket) {
             mClientSocket = clientSocket;
-            try {
-                mClientSocket.setTcpNoDelay(true);
-            } catch (SocketException e) {
-                e.printStackTrace();
-            }
         }
 
         public void run() {
