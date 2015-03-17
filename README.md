@@ -41,7 +41,7 @@ Our patch to the android NFC Daemon only works with Broadcom chips (or, to be mo
 The patch is also only compatible with devices that can run Cydia Substrate (e.g. not running Android 5, and not blocking Substrate from working through other methods like SELinux).
 
 ### Broadcom BCM20793 (Nexus 4) workaround
-The Broadcom BCM20793 chip (as used in the Nexus 4 and the latest Revision of the Nexus 6) contains a bug which makes it impossible to use our application with MiFare DESFire cards (a common NFC card for payment systems). We are using a workaround to enable us to still read these cards, but that workaround has some side effects. When you start the application, you will get a warning if you are using an affected device. Please read the information carefully.
+The Broadcom BCM20793 chip (as used in the Nexus 4 and the latest Revision of the Nexus 7) contains a bug which makes it impossible to use our application with MiFare DESFire cards (a common NFC card for payment systems). We are using a workaround to enable us to still read these cards, but that workaround has some side effects. When you start the application, you will get a warning if you are using an affected device. Please read the information carefully.
 
 ### Compatibility with cards
 Android no longer offers support for MiFare classic chips on many devices. In general, we can only proxy tags supported by android. When in doubt, use an application like NFC Tag info to find out if your tag is compatible. We have done extensive testing with MiFare DESFire cards using a Nexus S, Nexus 4 and Nexus 5 as reader, and a Nexus 4 or Nexus 5 as HCE phone. All other combinations are untested (feedback is welcome).
