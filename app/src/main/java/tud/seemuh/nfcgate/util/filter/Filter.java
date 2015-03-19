@@ -41,7 +41,6 @@ public class Filter {
      * @return Potentially modified NfcComm object with Anticol data
      */
     public NfcComm filter(NfcComm anticol) {
-        if (anticol.getType() != NfcComm.Type.AnticolBytes) return anticol;
         if (mCond.applies(anticol)) {
             return mAction.performAction(anticol);
         } else {
