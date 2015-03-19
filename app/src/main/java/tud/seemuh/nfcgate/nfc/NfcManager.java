@@ -151,7 +151,16 @@ public class NfcManager {
      */
     public void sendToCard(NfcComm nfcdata) {
         nfcdata = handleHceDataCommon(nfcdata);
-        // TODO
+
+        // Communicate with card
+        byte[] reply = mReader.sendCmd(nfcdata.getData());
+
+        // Create NfcComm object and pass it through filter and sinks
+        NfcComm nfcreply = new NfcComm(NfcComm.Source.CARD, reply);
+        nfcreply = handleCardDataCommon(nfcreply);
+
+        // TODO Send reply over the network
+
     }
 
     /**
@@ -159,8 +168,11 @@ public class NfcManager {
      * @param nfcdata NfcComm object containing the message for the Reader
      */
     public void sendToReader(NfcComm nfcdata) {
+        // Pass data through sinks and filters
         nfcdata = handleCardDataCommon(nfcdata);
-        // TODO
+
+        // Send data to the Reader device
+        mApduService.sendResponse(nfcdata.getData());
     }
 
     // HCE Handler
@@ -170,7 +182,7 @@ public class NfcManager {
      */
     public void handleHCEData(NfcComm nfcdata) {
         nfcdata = handleHceDataCommon(nfcdata);
-        // TODO
+        // TODO Send message over the network
     }
 
     // Anticol
@@ -180,9 +192,9 @@ public class NfcManager {
      */
     public NfcComm getAnticolData() {
         // Get Anticol data
-        byte[] uid = mReader.getUID();
+        byte[] uid  = mReader.getUID();
         byte[] atqa = mReader.getAtqa();
-        byte sak = mReader.getSak();
+        byte sak    = mReader.getSak();
         byte[] hist = mReader.getHistoricalBytes();
 
         // Create NfcComm object
