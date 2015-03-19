@@ -54,6 +54,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
     private LowLevelNetworkHandler handler;
     private static HighLevelProtobufHandler mInstance = null;
     private String secret;
+
     private enum Status {
         NOT_CONNECTED,
         CONNECTED_NO_SESSION,
@@ -346,7 +347,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
      */
     @Override
     public void disconnectCardWorkaround() {
-        mCallbackInstance.disconnectCardWorkaround();
+        mNfcManager.stopWorkaround();
         new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetMessage);
     }
 

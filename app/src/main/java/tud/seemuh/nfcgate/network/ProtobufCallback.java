@@ -249,7 +249,7 @@ public class ProtobufCallback implements Callback {
         }
     }
 
-    
+
     public void setNfcManager(NfcManager nfcManager) {
         mNfcManager = nfcManager;
     }

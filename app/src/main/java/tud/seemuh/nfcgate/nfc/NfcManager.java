@@ -41,6 +41,18 @@ public class NfcManager {
     private BCM20793Workaround mBroadcomWorkaroundRunnable;
     private Thread mBroadcomWorkaroundThread;
 
+    private static NfcManager mInstance = null;
+
+
+    // Constructor
+    public NfcManager () {
+        mInstance = this;
+    }
+
+    public static NfcManager getInstance() {
+        if (mInstance == null) mInstance = new NfcManager();
+        return mInstance;
+    }
 
     // Private helper functions
     private void notifySinkManager(NfcComm nfcdata) {
@@ -120,6 +132,15 @@ public class NfcManager {
      */
     public void setApduService(ApduService apduService) {
         mApduService = apduService;
+        mNetworkHandler.notifyReaderFound();
+    }
+
+    /**
+     * Called when the APDU service is disconnected
+     */
+    public void unsetApduService() {
+        mApduService = null;
+        mNetworkHandler.notifyReaderRemoved();
     }
 
     /**
