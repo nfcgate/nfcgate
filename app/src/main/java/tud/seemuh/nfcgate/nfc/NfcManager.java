@@ -7,6 +7,7 @@ import java.util.concurrent.BlockingQueue;
 
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.nfc.hce.ApduService;
+import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.nfc.reader.BCM20793Workaround;
 import tud.seemuh.nfcgate.nfc.reader.IsoDepReader;
 import tud.seemuh.nfcgate.nfc.reader.NFCTagReader;
@@ -103,7 +104,7 @@ public class NfcManager {
 
         if (found_supported_tag) {
             // Start the workaround thread, if needed
-            startWorkaround(mTag);
+            startWorkaround();
 
             // TODO Usually, we send Anticol data at this point
         }
@@ -200,15 +201,28 @@ public class NfcManager {
      */
     public void setAnticolData(NfcComm anticol) {
         anticol = handleAnticolDataCommon(anticol);
-        // TODO
+
+        // Parse data and transform to proper formats
+        byte[] a_atqa = anticol.getAtqa();
+        byte atqa = a_atqa.length > 0 ? a_atqa[a_atqa.length-1] : 0;
+
+        byte[] a_hist = anticol.getHist();
+        byte hist = a_hist.length > 0 ? a_atqa[0] : 0;
+
+        byte sak = anticol.getSak();
+
+        byte[] uid = anticol.getUid();
+
+        // Enable the Native Code Patch
+        DaemonConfiguration.getInstance().uploadConfiguration(atqa, sak, hist, uid);
+        DaemonConfiguration.getInstance().enablePatch();
     }
 
     // Workaround Handling
     /**
      * Start workaround, if needed
-     * @param tag The NFC Tag object
      */
-    public void startWorkaround(Tag tag) {
+    private void startWorkaround() {
         // Check if the device is running a specific Broadcom chipset (used in the Nexus 4, for example)
         // The drivers for this chipset contain a bug which lead to DESFire cards being set into a specific mode
         // We want to avoid that, so we use a workaround. This starts another thread that prevents
@@ -219,7 +233,7 @@ public class NfcManager {
             Log.i(TAG, "setTag: Problematic broadcom chip found, activate workaround");
 
             // Initialize a runnable object
-            mBroadcomWorkaroundRunnable = new BCM20793Workaround(tag);
+            mBroadcomWorkaroundRunnable = new BCM20793Workaround(mTag);
 
             // Start up a new thread
             mBroadcomWorkaroundThread = new Thread(mBroadcomWorkaroundRunnable);
