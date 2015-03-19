@@ -7,6 +7,18 @@ import tud.seemuh.nfcgate.util.NfcComm;
  * article for more information.
  */
 public interface Action {
+    public enum TARGET {
+        NFC,
+        ANTICOL
+    }
+
+    public enum ANTICOLFIELD {
+        UID,
+        ATQA,
+        SAK,
+        HIST
+    }
+
     /**
      * Perform the requested action on the NFC data
      * @param nfcdata NfcComm object with NFC data
