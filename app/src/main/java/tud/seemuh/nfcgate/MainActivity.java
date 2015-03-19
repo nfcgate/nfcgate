@@ -57,7 +57,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     protected HighLevelNetworkHandler mConnectionClient;
 
     // NFC Manager
-    private NfcManager mNfcManager;
+    private NfcManager mNfcManager = new NfcManager();
 
     // Sink Manager
     private SinkManager mSinkManager;
@@ -259,6 +259,11 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mAdapter.disableForegroundDispatch(this);
     }
 
+    private void onTagDiscoveredCommon(Tag tag) {
+        // Pass reference to NFC Manager
+        mNfcManager.setTag(tag);
+    }
+
     /**
      * Function to get tag when readerMode is enabled
      * @param tag
@@ -267,11 +272,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     public void onTagDiscovered(Tag tag) {
 
         Log.i(TAG, "Discovered tag in ReaderMode");
-        mNetCallback.setTag(tag);
-
-        //Toast here is not possible -> exception...
-        // TODO This may lead to weird results if we are not already in a session
-        if (mConnectionClient != null) mConnectionClient.notifyCardFound();
+        onTagDiscoveredCommon(tag);
     }
 
     @Override
@@ -281,12 +282,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             Log.i(TAG,"Discovered tag with intent: " + intent);
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
-            mNetCallback.setTag(tag);
-
-            // TODO This may lead to weird results if we are not already in a session
-            if (mConnectionClient != null) mConnectionClient.notifyCardFound();
-
-            Toast.makeText(this, "Found Tag", Toast.LENGTH_SHORT).show();
+            onTagDiscoveredCommon(tag);
         }
     }
 
@@ -294,9 +290,6 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
      * Common code for network connection establishment
      */
     private void networkConnectCommon() {
-        // Initialize NfcManager
-        mNfcManager = new NfcManager();
-
         // Initialize SinkManager
         mSinkManager = new SinkManager(mSinkManagerQueue);
 

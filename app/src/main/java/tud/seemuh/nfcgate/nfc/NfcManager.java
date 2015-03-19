@@ -108,6 +108,10 @@ public class NfcManager {
 
             // TODO Usually, we send Anticol data at this point
         }
+
+        // Notify partner about the newly detected card
+        // This may lead to error messages if we are not already in a session
+        mNetworkHandler.notifyCardFound();
     }
 
     /**
@@ -150,17 +154,26 @@ public class NfcManager {
      * @param nfcdata NFcComm object containing the message for the card
      */
     public void sendToCard(NfcComm nfcdata) {
-        nfcdata = handleHceDataCommon(nfcdata);
+        if (mReader.isConnected()) {
+            nfcdata = handleHceDataCommon(nfcdata);
 
-        // Communicate with card
-        byte[] reply = mReader.sendCmd(nfcdata.getData());
+            // Communicate with card
+            byte[] reply = mReader.sendCmd(nfcdata.getData());
+            if (reply == null) {
+                // TODO Connection to card has been lost, do something about it
+                mNetworkHandler.notifyNFCNotConnected();
+            } else {
+                // Create NfcComm object and pass it through filter and sinks
+                NfcComm nfcreply = new NfcComm(NfcComm.Source.CARD, reply);
+                nfcreply = handleCardDataCommon(nfcreply);
 
-        // Create NfcComm object and pass it through filter and sinks
-        NfcComm nfcreply = new NfcComm(NfcComm.Source.CARD, reply);
-        nfcreply = handleCardDataCommon(nfcreply);
-
-        // TODO Send reply over the network
-
+                // TODO Send reply over the network
+            }
+        } else {
+            Log.e(TAG, "HandleNFCData: No NFC connection active");
+            // There is no connected NFC device
+            mNetworkHandler.notifyNFCNotConnected();
+        }
     }
 
     /**
@@ -168,11 +181,17 @@ public class NfcManager {
      * @param nfcdata NfcComm object containing the message for the Reader
      */
     public void sendToReader(NfcComm nfcdata) {
-        // Pass data through sinks and filters
-        nfcdata = handleCardDataCommon(nfcdata);
+        if (mApduService != null) {
+            // Pass data through sinks and filters
+            nfcdata = handleCardDataCommon(nfcdata);
 
-        // Send data to the Reader device
-        mApduService.sendResponse(nfcdata.getData());
+            // Send data to the Reader device
+            mApduService.sendResponse(nfcdata.getData());
+        } else {
+            Log.e(TAG, "HandleNFCData: Received a message for a reader, but no APDU instance active.");
+            mNetworkHandler.notifyNFCNotConnected();
+        }
+
     }
 
     // HCE Handler
@@ -222,12 +241,13 @@ public class NfcManager {
         byte hist = a_hist.length > 0 ? a_atqa[0] : 0;
 
         byte sak = anticol.getSak();
-
         byte[] uid = anticol.getUid();
 
         // Enable the Native Code Patch
         DaemonConfiguration.getInstance().uploadConfiguration(atqa, sak, hist, uid);
         DaemonConfiguration.getInstance().enablePatch();
+
+        Log.i(TAG, "setAnticolData: Patch enabled");
     }
 
     // Workaround Handling
@@ -265,5 +285,11 @@ public class NfcManager {
         if (mBroadcomWorkaroundThread != null) mBroadcomWorkaroundThread.interrupt();
         mBroadcomWorkaroundThread = null;
         mBroadcomWorkaroundRunnable = null;
+    }
+
+    public void shutdown() {
+        stopWorkaround();
+        if (mReader != null) mReader.closeConnection();
+        mReader = null;
     }
 }
