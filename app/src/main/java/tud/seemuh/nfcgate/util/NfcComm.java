@@ -34,6 +34,8 @@ public class NfcComm {
     private byte[] mHist_prefilter;
     private byte[] mUid_prefilter;
 
+    private boolean filterChanged = false;
+
     /**
      * Instantiate an NfcComm object for regular NFC Traffic
      * @param source The source of the NFC data, as chosen from the Enum
@@ -66,22 +68,27 @@ public class NfcComm {
     // TODO Make sure these are all set properly
     public void setData(byte[] data) {
         mBytes = data;
+        filterChanged = true;
     }
 
     public void setAtqa(byte[] atqa) {
         mAtqa = atqa;
+        filterChanged = true;
     }
 
     public void setSak(byte sak) {
         mSak = sak;
+        filterChanged = true;
     }
 
     public void setHist(byte[] hist) {
         mHist = hist;
+        filterChanged = true;
     }
 
     public void setUid(byte[] uid) {
         mUid = uid;
+        filterChanged = true;
     }
 
     // Variable getters
@@ -112,6 +119,10 @@ public class NfcComm {
 
     public byte[] getUid() {
         return mUid;
+    }
+
+    public boolean isChanged() {
+        return filterChanged;
     }
 
     // Getters for prefilter data
