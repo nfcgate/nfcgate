@@ -13,6 +13,7 @@ import tud.seemuh.nfcgate.nfc.reader.IsoDepReader;
 import tud.seemuh.nfcgate.nfc.reader.NFCTagReader;
 import tud.seemuh.nfcgate.nfc.reader.NfcAReader;
 import tud.seemuh.nfcgate.util.NfcComm;
+import tud.seemuh.nfcgate.util.Utils;
 import tud.seemuh.nfcgate.util.filter.FilterManager;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
 
@@ -71,24 +72,41 @@ public class NfcManager {
     }
 
 
-    // TODO Logging
     private NfcComm handleAnticolDataCommon(NfcComm nfcdata) {
+        Log.d(TAG, "handleAnticolDataCommon: Pre-Filter: " +
+                Utils.bytesToHex(nfcdata.getUid())  + " - " +
+                Utils.bytesToHex(nfcdata.getAtqa()) + " - " +
+                Utils.bytesToHex(nfcdata.getSak())  + " - " +
+                Utils.bytesToHex(nfcdata.getHist()));
         nfcdata = mFilterManager.filterAnticolData(nfcdata);
         notifySinkManager(nfcdata);
+        Log.d(TAG, "handleAnticolDataCommon: Post-Filter: " +
+                Utils.bytesToHex(nfcdata.getUid())  + " - " +
+                Utils.bytesToHex(nfcdata.getAtqa()) + " - " +
+                Utils.bytesToHex(nfcdata.getSak())  + " - " +
+                Utils.bytesToHex(nfcdata.getHist()));
         return nfcdata;
     }
 
 
     private NfcComm handleHceDataCommon(NfcComm nfcdata) {
+        Log.d(TAG, "handleHceDataCommon: Pre-Filter: " +
+                Utils.bytesToHex(nfcdata.getData()));
         nfcdata = mFilterManager.filterHCEData(nfcdata);
         notifySinkManager(nfcdata);
+        Log.d(TAG, "handleHceDataCommon: Post-Filter: " +
+                Utils.bytesToHex(nfcdata.getData()));
         return nfcdata;
     }
 
 
     private NfcComm handleCardDataCommon(NfcComm nfcdata) {
+        Log.d(TAG, "handleCardDataCommon: Pre-Filter: " +
+                Utils.bytesToHex(nfcdata.getData()));
         nfcdata = mFilterManager.filterCardData(nfcdata);
         notifySinkManager(nfcdata);
+        Log.d(TAG, "handleCardDataCommon: Post-Filter: " +
+                Utils.bytesToHex(nfcdata.getData()));
         return nfcdata;
     }
 
