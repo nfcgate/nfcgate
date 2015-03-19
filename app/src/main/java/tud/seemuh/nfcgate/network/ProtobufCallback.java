@@ -3,6 +3,7 @@ package tud.seemuh.nfcgate.network;
 import android.nfc.Tag;
 import android.util.Log;
 
+import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.network.meta.MetaMessage;
 import tud.seemuh.nfcgate.nfc.reader.BCM20793Workaround;
@@ -30,6 +31,7 @@ public class ProtobufCallback implements Callback {
     private HighLevelNetworkHandler Handler = HighLevelProtobufHandler.getInstance();
     private BCM20793Workaround mBroadcomWorkaroundRunnable;
     private Thread mBroadcomWorkaroundThread;
+    private NfcManager mNfcManager;
 
     public Callback setAPDUService(ApduService as) {
         apdu = as;
@@ -359,5 +361,9 @@ public class ProtobufCallback implements Callback {
         }
 
         return found_supported_tag;
+    }
+
+    public void setNfcManager(NfcManager nfcManager) {
+        mNfcManager = nfcManager;
     }
 }

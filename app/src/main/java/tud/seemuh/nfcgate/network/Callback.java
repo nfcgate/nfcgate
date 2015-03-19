@@ -2,6 +2,7 @@ package tud.seemuh.nfcgate.network;
 
 import android.nfc.Tag;
 
+import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.nfc.hce.ApduService;
 
 /**
@@ -29,6 +30,12 @@ public interface Callback {
      * @return The Callback object ("this")
      */
     public Callback setAPDUService(ApduService as);
+
+    /**
+     * This method sets the NfcManager object that is required for all NFC interactions.
+     * @param nfcManager NfcManager object
+     */
+    public void setNfcManager(NfcManager nfcManager);
 
     /**
      * Called when the underlying communication channel breaks down. MUST notify the

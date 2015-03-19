@@ -33,6 +33,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.network.Callback;
 import tud.seemuh.nfcgate.network.ProtobufCallback;
@@ -54,6 +55,9 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
     //Connection Client
     protected HighLevelNetworkHandler mConnectionClient;
+
+    // NFC Manager
+    private NfcManager mNfcManager;
 
     // Sink Manager
     private SinkManager mSinkManager;
@@ -290,8 +294,21 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
      * Common code for network connection establishment
      */
     private void networkConnectCommon() {
+        // Initialize NfcManager
+        mNfcManager = new NfcManager();
+
+        // Initialize SinkManager
         mSinkManager = new SinkManager(mSinkManagerQueue);
-        mConnectionClient.setSinkManager(mSinkManager, mSinkManagerQueue);
+
+        // Initialize FilterManager
+        mFilterManager = new FilterManager();
+
+        // Pass references
+        mConnectionClient.setSinkManager(mSinkManager, mSinkManagerQueue); // TODO Remove
+        mConnectionClient.setNfcManager(mNfcManager);
+        mNfcManager.setSinkManager(mSinkManager, mSinkManagerQueue);
+        mNfcManager.setFilterManager(mFilterManager);
+        mNfcManager.setNetworkHandler(mConnectionClient);
 
         // FIXME For debugging purposes, hardcoded selecting of sinks happens here
         // This should be selectable by the user
@@ -305,9 +322,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             e.printStackTrace();
         }
 
-        mFilterManager = new FilterManager();
         // TODO Initialize and add Filters
-        mConnectionClient.setFilterManager(mFilterManager);
 
         // Do the actual network connection
         mConnectionClient.connect(mIP.getText().toString(), port);

@@ -14,6 +14,7 @@ import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
+import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.util.UpdateUI;
 import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.filter.FilterManager;
@@ -68,7 +69,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
     private Status status;
     private boolean leaving = false;
 
-    private Callback callbackInstance;
+    private Callback mCallbackInstance;
 
     private TextView debugView;
     private TextView connectionStatusView;
@@ -83,7 +84,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
     private Thread mSinkManagerThread;
     private BlockingQueue<NfcComm> mSinkManagerQueue;
 
-    private FilterManager mFilterManager;
+    private NfcManager mNfcManager;
 
 
     public HighLevelProtobufHandler() {
@@ -98,7 +99,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
     }
 
     public Callback getCallback() {
-        return callbackInstance;
+        return mCallbackInstance;
     }
 
     public void setDebugView(TextView ldebugView) {
@@ -130,13 +131,18 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
         mSinkManagerQueue = smq;
     }
 
-    public void setFilterManager(FilterManager filterManager) {
-        mFilterManager = filterManager;
+    public void setNfcManager(NfcManager nfcManager) {
+        mNfcManager = nfcManager;
     }
 
     @Override
     public void setCallback(Callback mCallback) {
-        callbackInstance = mCallback;
+        mCallbackInstance = mCallback;
+        if (mNfcManager != null) {
+            mCallbackInstance.setNfcManager(mNfcManager);
+        } else {
+            Log.e(TAG, "setCallback: mNfcManager is not set (yet). Not passing reference to callback");
+        }
     }
 
     private void appendDebugOutput(String output) {
@@ -288,7 +294,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
         mSinkManagerThread = new Thread(mSinkManager);
         mSinkManagerThread.start();
         handler = LowLevelTCPHandler.getInstance().connect(addr, port);
-        handler.setCallback(callbackInstance);
+        handler.setCallback(mCallbackInstance);
         status = Status.CONNECTED_NO_SESSION;
         setConnectionStatusOutput(CONN_CONNECTED);
         setPeerStatusOutput(PEER_NO_SESSION);
@@ -326,7 +332,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
         // Disconnect network
         if (handler != null) handler.disconnect();
         status = Status.NOT_CONNECTED;
-        callbackInstance.shutdown();
+        mCallbackInstance.shutdown();
         // Set default UI state
         setButtonTexts();
         reactivateButtons();
@@ -340,7 +346,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
      */
     @Override
     public void disconnectCardWorkaround() {
-        callbackInstance.disconnectCardWorkaround();
+        mCallbackInstance.disconnectCardWorkaround();
         new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetMessage);
     }
 
