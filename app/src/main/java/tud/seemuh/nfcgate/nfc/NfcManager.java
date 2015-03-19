@@ -14,14 +14,27 @@ import tud.seemuh.nfcgate.util.sink.SinkManager;
  * The NFC Manager is responsible for all NFC Interactions.
  */
 public class NfcManager {
-    // Reference setters
+    // NFC Objects
+    private Tag mTag;
+    private ApduService mApduService;
 
+    // Sink Manager
+    private SinkManager mSinkManager;
+    private BlockingQueue<NfcComm> mSinkManagerQueue;
+
+    // Filter Manager
+    private FilterManager mFilterManager;
+
+    // Network Handler
+    private HighLevelNetworkHandler mNetworkHandler;
+
+    // Reference setters
     /**
      * Set the Reference to the NFC Tag
      * @param tag The NFC Tag object
      */
     public void setTag(Tag tag) {
-        // TODO
+        mTag = tag;
     }
 
     /**
@@ -29,7 +42,7 @@ public class NfcManager {
      * @param apduService The ApduService object
      */
     public void setApduService(ApduService apduService) {
-        // TODO
+        mApduService = apduService;
     }
 
     /**
@@ -38,7 +51,8 @@ public class NfcManager {
      * @param smq The BlockingQueue connected with the SinkManager
      */
     public void setSinkManager(SinkManager sinkManager, BlockingQueue<NfcComm> smq) {
-        // TODO
+        mSinkManager = sinkManager;
+        mSinkManagerQueue = smq;
     }
 
     /**
@@ -46,7 +60,7 @@ public class NfcManager {
      * @param filterManager The FilterManager object
      */
     public void setFilterManager(FilterManager filterManager) {
-        // TODO
+        mFilterManager = filterManager;
     }
 
     /**
@@ -54,7 +68,7 @@ public class NfcManager {
      * @param netHandler The HighLevelNetworkHandler object
      */
     public void setNetworkHandler(HighLevelNetworkHandler netHandler) {
-        // TODO
+        mNetworkHandler = netHandler;
     }
 
     // NFC Interactions
