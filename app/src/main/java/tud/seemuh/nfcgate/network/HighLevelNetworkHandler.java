@@ -8,8 +8,6 @@ import java.util.concurrent.BlockingQueue;
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.util.NfcComm;
-import tud.seemuh.nfcgate.util.filter.FilterManager;
-import tud.seemuh.nfcgate.util.sink.SinkManager;
 
 public interface HighLevelNetworkHandler {
     // Setup
@@ -67,11 +65,11 @@ public interface HighLevelNetworkHandler {
     public void sessionLeaveFailed(C2S.Session.SessionErrorCode errcode);
 
     // NFC messages
-    public void sendAPDUMessage(byte[] apdu);
+    public void sendAPDUMessage(NfcComm nfcdata);
 
-    public void sendAPDUReply(byte[] reply);
+    public void sendAPDUReply(NfcComm nfcdata);
 
-    public void sendAnticol(byte[] atqa, byte sak, byte[] hist, byte[] uid);
+    public void sendAnticol(NfcComm nfcdata);
 
     // Notification messages
     public void notifyReaderFound();
@@ -97,11 +95,6 @@ public interface HighLevelNetworkHandler {
     public void sendKeepaliveMessage();
 
     public void sendKeepaliveReply();
-
-    // Sink Manager
-    public void setSinkManager(SinkManager mSinkManager, BlockingQueue<NfcComm> mSinkManagerQueue);
-
-    public void notifySinkManager(NfcComm nfc);
 
     // NFC Manager
     public void setNfcManager(NfcManager nfcManager);

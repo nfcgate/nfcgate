@@ -29,6 +29,7 @@ public class NfcManager {
 
     // Sink Manager
     private SinkManager mSinkManager;
+    private Thread mSinkManagerThread;
     private BlockingQueue<NfcComm> mSinkManagerQueue;
 
     // Filter Manager
@@ -118,7 +119,7 @@ public class NfcManager {
             // Start the workaround thread, if needed
             startWorkaround();
 
-            // TODO Usually, we send Anticol data at this point
+            mNetworkHandler.sendAnticol(getAnticolData());
         }
 
         // Notify partner about the newly detected card
@@ -188,7 +189,8 @@ public class NfcManager {
                 NfcComm nfcreply = new NfcComm(NfcComm.Source.CARD, reply);
                 nfcreply = handleCardDataCommon(nfcreply);
 
-                // TODO Send reply over the network
+                // Send message
+                mNetworkHandler.sendAPDUReply(nfcreply);
             }
         } else {
             Log.e(TAG, "HandleNFCData: No NFC connection active");
@@ -222,7 +224,7 @@ public class NfcManager {
      */
     public void handleHCEData(NfcComm nfcdata) {
         nfcdata = handleHceDataCommon(nfcdata);
-        // TODO Send message over the network
+        mNetworkHandler.sendAPDUMessage(nfcdata);
     }
 
     // Anticol
@@ -312,5 +314,11 @@ public class NfcManager {
         stopWorkaround();
         if (mReader != null) mReader.closeConnection();
         mReader = null;
+
+    }
+
+    public void start() {
+        mSinkManagerThread = new Thread(mSinkManager);
+        mSinkManagerThread.start();
     }
 }

@@ -57,7 +57,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     protected HighLevelNetworkHandler mConnectionClient;
 
     // NFC Manager
-    private NfcManager mNfcManager = new NfcManager();
+    private NfcManager mNfcManager;
 
     // Sink Manager
     private SinkManager mSinkManager;
@@ -143,12 +143,14 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
         // Create connection client
         mConnectionClient = HighLevelProtobufHandler.getInstance();
+        mNfcManager = NfcManager.getInstance();
 
         // Pass necessary references to ConnectionClient
         mConnectionClient.setDebugView(mDebuginfo);
         mConnectionClient.setConnectionStatusView(mConnStatus);
         mConnectionClient.setPeerStatusView(mPartnerDevice);
         mConnectionClient.setButtons(mReset, mConnecttoSession, mAbort, mJoinSession);
+        mConnectionClient.setNfcManager(mNfcManager);
         mConnectionClient.setCallback(mNetCallback);
 
         File bcmdevice = new File("/dev/bcm2079x-i2c");
@@ -297,8 +299,6 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mFilterManager = new FilterManager();
 
         // Pass references
-        mConnectionClient.setSinkManager(mSinkManager, mSinkManagerQueue); // TODO Remove
-        mConnectionClient.setNfcManager(mNfcManager);
         mNfcManager.setSinkManager(mSinkManager, mSinkManagerQueue);
         mNfcManager.setFilterManager(mFilterManager);
         mNfcManager.setNetworkHandler(mConnectionClient);
