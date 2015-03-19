@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate.hce;
+package tud.seemuh.nfcgate.nfc.hce;
 
 import android.nfc.cardemulation.HostApduService;
 import android.os.Bundle;

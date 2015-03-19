@@ -3,19 +3,19 @@ package tud.seemuh.nfcgate.network;
 import android.nfc.Tag;
 import android.util.Log;
 
-import tud.seemuh.nfcgate.hce.DaemonConfiguration;
+import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.network.meta.MetaMessage;
-import tud.seemuh.nfcgate.reader.BCM20793Workaround;
-import tud.seemuh.nfcgate.reader.IsoDepReader;
-import tud.seemuh.nfcgate.reader.NFCTagReader;
-import tud.seemuh.nfcgate.reader.NfcAReader;
+import tud.seemuh.nfcgate.nfc.reader.BCM20793Workaround;
+import tud.seemuh.nfcgate.nfc.reader.IsoDepReader;
+import tud.seemuh.nfcgate.nfc.reader.NFCTagReader;
+import tud.seemuh.nfcgate.nfc.reader.NfcAReader;
 import tud.seemuh.nfcgate.util.Utils;
 import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
 import tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode;
 import tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode;
-import tud.seemuh.nfcgate.hce.ApduService;
+import tud.seemuh.nfcgate.nfc.hce.ApduService;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 /**

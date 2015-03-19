@@ -2,7 +2,7 @@ package tud.seemuh.nfcgate.network;
 
 import android.nfc.Tag;
 
-import tud.seemuh.nfcgate.hce.ApduService;
+import tud.seemuh.nfcgate.nfc.hce.ApduService;
 
 /**
  * Interface for networking callbacks. A networking callback is passed a byte[] into its

@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate.reader;
+package tud.seemuh.nfcgate.nfc.reader;
 
 import android.nfc.Tag;
 import android.util.Log;

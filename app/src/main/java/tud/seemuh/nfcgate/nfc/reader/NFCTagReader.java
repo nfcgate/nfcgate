@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate.reader;
+package tud.seemuh.nfcgate.nfc.reader;
 
 /**
  * Interface to all NFCTagReader-Classes.
