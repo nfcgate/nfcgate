@@ -8,16 +8,9 @@ import tud.seemuh.nfcgate.util.NfcComm;
  */
 public interface Conditional {
     /**
-     * Check if the conditional matches the provided APDU.
-     * @param apdu NFC data
-     * @return True if the conditional matches, False otherwise
-     */
-    public boolean applies(byte[] apdu);
-
-    /**
-     * Check if the conditional matches the provided Anticol data
-     * @param anticol NfcComm object with Anticol data
+     * Check if the conditional matches the provided NfcComm data
+     * @param nfcdata NfcComm object with NFC data
      * @return True if the conditional matches, false otherwise
      */
-    public boolean applies(NfcComm anticol);
+    public boolean applies(NfcComm nfcdata);
 }

@@ -8,16 +8,9 @@ import tud.seemuh.nfcgate.util.NfcComm;
  */
 public interface Action {
     /**
-     * Perform the requested action on the APDU data
-     * @param apdu NFC Data
-     * @return The modified APDU data as a byte[]
+     * Perform the requested action on the NFC data
+     * @param nfcdata NfcComm object with NFC data
+     * @return Modified NfcComm object with new NFC data
      */
-    public byte[] performAction(byte[] apdu);
-
-    /**
-     * Perform the requested action on the Anticol data
-     * @param anticol NfcComm object with Anticol data
-     * @return Modified NfcComm object with new Anticol data
-     */
-    public NfcComm performAction(NfcComm anticol);
+    public NfcComm performAction(NfcComm nfcdata);
 }

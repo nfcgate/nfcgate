@@ -48,30 +48,32 @@ public class FilterManager {
     // Actual filtering functions
     /**
      * Execute filters that are registered for HCE data
-     * @param apdu The APDU that should be filtered
+     * @param nfcdata The APDU that should be filtered
      * @return The filtered HCE data
      */
-    public byte[] filterHCEData(byte[] apdu) {
+    public NfcComm filterHCEData(NfcComm nfcdata) {
         if (mHCENonEmpty) {
+            if (nfcdata.getType() != NfcComm.Type.NFCBytes) return nfcdata;
             for (Filter f : mHCEFilters) {
-                apdu = f.filter(apdu);
+                nfcdata = f.filter(nfcdata);
             }
         }
-        return apdu;
+        return nfcdata;
     }
 
     /**
      * Execute filters that are registered for Card data
-     * @param apdu The APDU that should be filtered
+     * @param nfcdata The APDU that should be filtered
      * @return The filtered Card data
      */
-    public byte[] filterCardData(byte[] apdu) {
+    public NfcComm filterCardData(NfcComm nfcdata) {
         if (mCardNonEmpty) {
+            if (nfcdata.getType() != NfcComm.Type.NFCBytes) return nfcdata;
             for (Filter f : mCardFilters) {
-                apdu = f.filter(apdu);
+                nfcdata = f.filter(nfcdata);
             }
         }
-        return apdu;
+        return nfcdata;
     }
 
     /**

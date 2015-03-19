@@ -23,28 +23,15 @@ public class Filter {
     }
 
     /**
-     * Filter APDU data according to Conditional and Action
-     * @param apdu NFC Data
-     * @return Potentially modified NFC Data
+     * Filter NFC data according to Conditional and Action
+     * @param nfcdata NfcComm object with NFC data
+     * @return Potentially modified NfcComm object with NFC data
      */
-    public byte[] filter(byte[] apdu) {
-        if (mCond.applies(apdu)) {
-            return mAction.performAction(apdu);
+    public NfcComm filter(NfcComm nfcdata) {
+        if (mCond.applies(nfcdata)) {
+            return mAction.performAction(nfcdata);
         } else {
-            return apdu;
-        }
-    }
-
-    /**
-     * Filter Anticol data according to Conditional and Action
-     * @param anticol NfcComm object with Anticol data
-     * @return Potentially modified NfcComm object with Anticol data
-     */
-    public NfcComm filter(NfcComm anticol) {
-        if (mCond.applies(anticol)) {
-            return mAction.performAction(anticol);
-        } else {
-            return anticol;
+            return nfcdata;
         }
     }
 }
