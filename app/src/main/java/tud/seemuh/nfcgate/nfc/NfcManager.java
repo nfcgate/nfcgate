@@ -50,10 +50,12 @@ public class NfcManager {
         mInstance = this;
     }
 
+
     public static NfcManager getInstance() {
         if (mInstance == null) mInstance = new NfcManager();
         return mInstance;
     }
+
 
     // Private helper functions
     private void notifySinkManager(NfcComm nfcdata) {
@@ -68,6 +70,7 @@ public class NfcManager {
         }
     }
 
+
     // TODO Logging
     private NfcComm handleAnticolDataCommon(NfcComm nfcdata) {
         nfcdata = mFilterManager.filterAnticolData(nfcdata);
@@ -75,17 +78,20 @@ public class NfcManager {
         return nfcdata;
     }
 
+
     private NfcComm handleHceDataCommon(NfcComm nfcdata) {
         nfcdata = mFilterManager.filterHCEData(nfcdata);
         notifySinkManager(nfcdata);
         return nfcdata;
     }
 
+
     private NfcComm handleCardDataCommon(NfcComm nfcdata) {
         nfcdata = mFilterManager.filterCardData(nfcdata);
         notifySinkManager(nfcdata);
         return nfcdata;
     }
+
 
     // Reference setters
     /**
@@ -127,6 +133,7 @@ public class NfcManager {
         mNetworkHandler.notifyCardFound();
     }
 
+
     /**
      * Set the Reference to the ApduService
      * @param apduService The ApduService object
@@ -136,6 +143,7 @@ public class NfcManager {
         mNetworkHandler.notifyReaderFound();
     }
 
+
     /**
      * Called when the APDU service is disconnected
      */
@@ -143,6 +151,7 @@ public class NfcManager {
         mApduService = null;
         mNetworkHandler.notifyReaderRemoved();
     }
+
 
     /**
      * Set the Reference to the SinkManager
@@ -154,6 +163,7 @@ public class NfcManager {
         mSinkManagerQueue = smq;
     }
 
+
     /**
      * Set the reference to the FilterManager
      * @param filterManager The FilterManager object
@@ -162,6 +172,7 @@ public class NfcManager {
         mFilterManager = filterManager;
     }
 
+
     /**
      * Set the reference to the HighLevelNetworkHandler
      * @param netHandler The HighLevelNetworkHandler object
@@ -169,6 +180,7 @@ public class NfcManager {
     public void setNetworkHandler(HighLevelNetworkHandler netHandler) {
         mNetworkHandler = netHandler;
     }
+
 
     // NFC Interactions
     /**
@@ -200,6 +212,7 @@ public class NfcManager {
         }
     }
 
+
     /**
      * Send NFC data to the Reader
      * @param nfcdata NfcComm object containing the message for the Reader
@@ -218,6 +231,7 @@ public class NfcManager {
 
     }
 
+
     // HCE Handler
     /**
      * Called by the ApduService when a new APDU is received
@@ -228,6 +242,7 @@ public class NfcManager {
         nfcdata = handleHceDataCommon(nfcdata);
         mNetworkHandler.sendAPDUMessage(nfcdata);
     }
+
 
     // Anticol
     /**
@@ -250,6 +265,7 @@ public class NfcManager {
         // Return NfcComm object w/ anticol data
         return anticol;
     }
+
 
     /**
      * Set the Anticollision data in the native code patch
@@ -274,6 +290,7 @@ public class NfcManager {
 
         Log.i(TAG, "setAnticolData: Patch enabled");
     }
+
 
     // Workaround Handling
     /**
@@ -303,6 +320,7 @@ public class NfcManager {
         }
     }
 
+
     /**
      * Stop the Broadcom Workaround thread, if it exists.
      */
@@ -313,6 +331,10 @@ public class NfcManager {
         mBroadcomWorkaroundRunnable = null;
     }
 
+
+    /**
+     * Shut down the NfcManager instance.
+     */
     public void shutdown() {
         Log.i(TAG, "shutdown: Stopping workaround, closing connections");
         stopWorkaround();
@@ -322,9 +344,12 @@ public class NfcManager {
         mSinkManagerQueue = null;
         mSinkManager = null;
         mSinkManagerThread = null;
-
     }
 
+
+    /**
+     * Start up the NfcManager and related services.
+     */
     public void start() {
         Log.i(TAG, "start: Starting SinkManager Thread");
         mSinkManagerThread = new Thread(mSinkManager);
