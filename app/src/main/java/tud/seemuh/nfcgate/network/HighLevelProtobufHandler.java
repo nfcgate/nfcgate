@@ -16,6 +16,7 @@ import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
 import tud.seemuh.nfcgate.util.UpdateUI;
 import tud.seemuh.nfcgate.util.NfcComm;
+import tud.seemuh.nfcgate.util.filter.FilterManager;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
 
 /**
@@ -82,6 +83,8 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
     private Thread mSinkManagerThread;
     private BlockingQueue<NfcComm> mSinkManagerQueue;
 
+    private FilterManager mFilterManager;
+
 
     public HighLevelProtobufHandler() {
         status = Status.NOT_CONNECTED;
@@ -125,6 +128,10 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
         }
         mSinkManager = sm;
         mSinkManagerQueue = smq;
+    }
+
+    public void setFilterManager(FilterManager filterManager) {
+        mFilterManager = filterManager;
     }
 
     @Override

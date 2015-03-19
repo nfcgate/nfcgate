@@ -39,6 +39,7 @@ import tud.seemuh.nfcgate.network.ProtobufCallback;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;
 import tud.seemuh.nfcgate.util.NfcComm;
+import tud.seemuh.nfcgate.util.filter.FilterManager;
 import tud.seemuh.nfcgate.util.sink.SinkInitException;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
 
@@ -57,6 +58,9 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     // Sink Manager
     private SinkManager mSinkManager;
     private BlockingQueue<NfcComm> mSinkManagerQueue = new LinkedBlockingQueue<NfcComm>();
+
+    // Filter Manager
+    private FilterManager mFilterManager;
 
     // Defined name of the Shared Preferences Buffer
     public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
@@ -300,6 +304,10 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         } catch (SinkInitException e) {
             e.printStackTrace();
         }
+
+        mFilterManager = new FilterManager();
+        // TODO Initialize and add Filters
+        mConnectionClient.setFilterManager(mFilterManager);
 
         // Do the actual network connection
         mConnectionClient.connect(mIP.getText().toString(), port);

@@ -7,6 +7,7 @@ import java.util.concurrent.BlockingQueue;
 
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.util.NfcComm;
+import tud.seemuh.nfcgate.util.filter.FilterManager;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
 
 public interface HighLevelNetworkHandler {
@@ -100,4 +101,7 @@ public interface HighLevelNetworkHandler {
     public void setSinkManager(SinkManager mSinkManager, BlockingQueue<NfcComm> mSinkManagerQueue);
 
     public void notifySinkManager(NfcComm nfc);
+
+    // Filter Manager
+    public void setFilterManager(FilterManager filterManager);
 }
