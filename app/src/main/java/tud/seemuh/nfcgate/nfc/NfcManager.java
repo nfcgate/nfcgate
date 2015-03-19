@@ -182,7 +182,8 @@ public class NfcManager {
             // Communicate with card
             byte[] reply = mReader.sendCmd(nfcdata.getData());
             if (reply == null) {
-                // TODO Connection to card has been lost, do something about it
+                mReader.closeConnection();
+                mNetworkHandler.disconnectCardWorkaround();
                 mNetworkHandler.notifyNFCNotConnected();
             } else {
                 // Create NfcComm object and pass it through filter and sinks
@@ -223,6 +224,7 @@ public class NfcManager {
      * @param nfcdata An NfcComm object containing the APDU
      */
     public void handleHCEData(NfcComm nfcdata) {
+        Log.d(TAG, "handleHCEData: Got data from ApduService");
         nfcdata = handleHceDataCommon(nfcdata);
         mNetworkHandler.sendAPDUMessage(nfcdata);
     }
@@ -305,19 +307,26 @@ public class NfcManager {
      * Stop the Broadcom Workaround thread, if it exists.
      */
     public void stopWorkaround() {
+        Log.i(TAG, "stopWorkaround: Workaround thread stopping");
         if (mBroadcomWorkaroundThread != null) mBroadcomWorkaroundThread.interrupt();
         mBroadcomWorkaroundThread = null;
         mBroadcomWorkaroundRunnable = null;
     }
 
     public void shutdown() {
+        Log.i(TAG, "shutdown: Stopping workaround, closing connections");
         stopWorkaround();
         if (mReader != null) mReader.closeConnection();
         mReader = null;
+        if (mSinkManagerThread != null) mSinkManagerThread.interrupt();
+        mSinkManagerQueue = null;
+        mSinkManager = null;
+        mSinkManagerThread = null;
 
     }
 
     public void start() {
+        Log.i(TAG, "start: Starting SinkManager Thread");
         mSinkManagerThread = new Thread(mSinkManager);
         mSinkManagerThread.start();
     }
