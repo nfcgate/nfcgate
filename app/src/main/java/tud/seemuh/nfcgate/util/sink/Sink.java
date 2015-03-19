@@ -2,6 +2,8 @@ package tud.seemuh.nfcgate.util.sink;
 
 import java.util.concurrent.BlockingQueue;
 
+import tud.seemuh.nfcgate.util.NfcComm;
+
 /**
  * The Sink interface defines an API for different types of data sinks.
  * A data sink is a class which receives all NFC traffic and does something with it.

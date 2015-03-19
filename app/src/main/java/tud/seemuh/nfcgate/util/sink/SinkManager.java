@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import tud.seemuh.nfcgate.util.NfcComm;
+
 public class SinkManager implements Runnable {
     private final String TAG = "SinkManager";
     

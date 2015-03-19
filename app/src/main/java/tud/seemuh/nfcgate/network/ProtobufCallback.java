@@ -3,8 +3,6 @@ package tud.seemuh.nfcgate.network;
 import android.nfc.Tag;
 import android.util.Log;
 
-import java.io.File;
-
 import tud.seemuh.nfcgate.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.network.meta.MetaMessage;
 import tud.seemuh.nfcgate.reader.BCM20793Workaround;
@@ -18,7 +16,7 @@ import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
 import tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode;
 import tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode;
 import tud.seemuh.nfcgate.hce.ApduService;
-import tud.seemuh.nfcgate.util.sink.NfcComm;
+import tud.seemuh.nfcgate.util.NfcComm;
 
 /**
  * Implementation of the Callback interface. This class is used to parse incoming messages and works

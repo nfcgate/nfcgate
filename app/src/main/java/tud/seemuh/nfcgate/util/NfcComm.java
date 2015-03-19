@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate.util.sink;
+package tud.seemuh.nfcgate.util;
 
 /**
  * The NfcComm-Class provides an object to store NFC bytes and information about them.

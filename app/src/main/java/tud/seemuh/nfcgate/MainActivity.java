@@ -38,7 +38,7 @@ import tud.seemuh.nfcgate.network.Callback;
 import tud.seemuh.nfcgate.network.ProtobufCallback;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;
-import tud.seemuh.nfcgate.util.sink.NfcComm;
+import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.sink.SinkInitException;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
 

@@ -6,7 +6,7 @@ import android.widget.TextView;
 import java.util.concurrent.BlockingQueue;
 
 import tud.seemuh.nfcgate.network.c2s.C2S;
-import tud.seemuh.nfcgate.util.sink.NfcComm;
+import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
 
 public interface HighLevelNetworkHandler {

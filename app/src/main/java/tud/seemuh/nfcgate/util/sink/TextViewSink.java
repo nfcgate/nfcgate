@@ -5,6 +5,7 @@ import android.widget.TextView;
 
 import java.util.concurrent.BlockingQueue;
 
+import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.UpdateUI;
 import tud.seemuh.nfcgate.util.Utils;
 
