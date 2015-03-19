@@ -7,6 +7,17 @@ import tud.seemuh.nfcgate.util.NfcComm;
  * Information.
  */
 public interface Conditional {
+    public enum TARGET {
+        NFC,
+        ANTICOL
+    }
+
+    public enum ANTICOLFIELD {
+        UID,
+        ATQA,
+        SAK,
+        HIST
+    }
     /**
      * Check if the conditional matches the provided NfcComm data
      * @param nfcdata NfcComm object with NFC data
