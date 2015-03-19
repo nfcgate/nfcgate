@@ -63,6 +63,7 @@ public class NfcComm {
     }
 
     // Setters for postfilter data
+    // TODO Make sure these are all set properly
     public void setData(byte[] data) {
         mBytes = data;
     }
@@ -114,6 +115,7 @@ public class NfcComm {
     }
 
     // Getters for prefilter data
+    // TODO Use these in the Sink implementation, where appropriate
     public byte[] getOldData() {
         return mBytes_prefilter;
     }
