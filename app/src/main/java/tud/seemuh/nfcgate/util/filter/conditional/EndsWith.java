@@ -4,7 +4,7 @@ import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.filter.FilterInitException;
 
 /**
- * Created by max on 20.03.15.
+ * A simple conditional that checks if something ends with a certain value
  */
 public class EndsWith extends Conditional {
     public EndsWith(byte[] pattern, TARGET target) throws FilterInitException {
@@ -20,6 +20,12 @@ public class EndsWith extends Conditional {
     }
 
     // Helper functions
+
+    /**
+     * Helper function to check if mMatchPattern is a suffix of the provided byte[].
+     * @param compare The byte[] to run the check on
+     * @return True if mMatchPattern is a suffix, false otherwise
+     */
     private boolean isSuffix(byte[] compare) {
         if (compare.length < mMatchPattern.length) return false;
         int offset = compare.length - mMatchPattern.length;
@@ -29,6 +35,12 @@ public class EndsWith extends Conditional {
         return true;
     }
 
+    /**
+     * Helper function to check if mMatchPatternByte is a suffix of the provided byte (which can
+     * only happen if they are identical).
+     * @param compare The byte to compare with
+     * @return True if mMatchPatternByte is a suffix of compare, false otherwise.
+     */
     private boolean isSuffix(byte compare) {
         return mMatchByte == compare;
     }
