@@ -4,7 +4,7 @@ import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.filter.FilterInitException;
 
 /**
- * An action to replace bytes in a message
+ * An action to replace bytes in a message, starting at an offset
  */
 public class ReplaceBytes implements Action {
     private TARGET mTarget;
