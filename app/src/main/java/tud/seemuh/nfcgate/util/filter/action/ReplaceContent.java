@@ -7,30 +7,18 @@ import tud.seemuh.nfcgate.util.filter.conditional.Conditional;
 /**
  * An action which replaces the contents of the targeted field with a constant.
  */
-public class ReplaceContent implements Action {
-    private TARGET mTarget;
-    private byte[] mNewContent;
-    private byte mNewContentSak;
-    private ANTICOLFIELD mAnticolTarget;
+public class ReplaceContent extends Action {
 
     public ReplaceContent(byte[] content, TARGET target) throws FilterInitException {
-        if (target != TARGET.NFC) throw new FilterInitException("Wrong constructor for target type");
-        mTarget = target;
-        mNewContent = content;
+        super(content, target);
     }
 
     public ReplaceContent(byte[] content, TARGET target, ANTICOLFIELD targetfield) throws FilterInitException {
-        if (target != TARGET.ANTICOL || targetfield == ANTICOLFIELD.SAK) throw new FilterInitException("Wrong constructor for target type");
-        mTarget = target;
-        mNewContent = content;
-        mAnticolTarget = targetfield;
+        super(content, target, targetfield);
     }
 
     public ReplaceContent(byte content, TARGET target, ANTICOLFIELD targetfield) throws FilterInitException {
-        if (target != TARGET.ANTICOL || targetfield != ANTICOLFIELD.SAK) throw new FilterInitException("Wrong constructor for target type");
-        mTarget = target;
-        mNewContentSak = content;
-        mAnticolTarget = targetfield;
+        super(content, target, targetfield);
     }
 
     @Override
@@ -48,7 +36,7 @@ public class ReplaceContent implements Action {
         } else if (mAnticolTarget == ANTICOLFIELD.HIST) {
             nfcdata.setHist(mNewContent);
         } else if (mAnticolTarget == ANTICOLFIELD.SAK) {
-            nfcdata.setSak(mNewContentSak);
+            nfcdata.setSak(mNewContentByte);
         }
         return nfcdata;
     }
