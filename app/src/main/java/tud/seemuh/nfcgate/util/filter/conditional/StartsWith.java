@@ -6,12 +6,7 @@ import tud.seemuh.nfcgate.util.filter.FilterInitException;
 /**
  * A simple conditional that checks if something starts with a certain value
  */
-public class StartsWith implements Conditional {
-    private TARGET mTarget;
-    private byte[] mMatchPattern;
-    private byte mMatchByte;
-    private ANTICOLFIELD mAnticolTarget;
-
+public class StartsWith extends Conditional {
     private boolean isPrefix(byte[] compare) {
         if (compare.length < mMatchPattern.length) return false;
         for (int i = 0; i < mMatchPattern.length; i++) {
@@ -25,25 +20,15 @@ public class StartsWith implements Conditional {
     }
 
     public StartsWith(byte[] pattern, TARGET target) throws FilterInitException {
-        if (target == TARGET.ANTICOL) throw new FilterInitException("Wrong constructor signature for Anticol data.");
-        mTarget = target;
-        mMatchPattern = pattern;
+        super(pattern, target);
     }
 
     public StartsWith(byte[] pattern, TARGET target, ANTICOLFIELD field) throws FilterInitException {
-        if (target == TARGET.NFC || field == ANTICOLFIELD.SAK)
-            throw new FilterInitException("Wrong constructor signature for NFC data.");
-        mTarget = target;
-        mMatchPattern = pattern;
-        mAnticolTarget = field;
+        super(pattern, target, field);
     }
 
     public StartsWith(byte pattern, TARGET target, ANTICOLFIELD field) throws FilterInitException {
-        if (target == TARGET.NFC || field != ANTICOLFIELD.SAK)
-            throw new FilterInitException("Wrong constructor signature for NFC data.");
-        mTarget = target;
-        mMatchByte = pattern;
-        mAnticolTarget = field;
+        super(pattern, target, field);
     }
 
     @Override

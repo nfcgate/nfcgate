@@ -6,32 +6,17 @@ import tud.seemuh.nfcgate.util.filter.FilterInitException;
 /**
  * Created by max on 20.03.15.
  */
-public class EndsWith implements Conditional {
-    private byte[] mMatchPattern;
-    private byte mMatchByte;
-    private TARGET mTarget;
-    private ANTICOLFIELD mAnticolTarget;
-
+public class EndsWith extends Conditional {
     public EndsWith(byte[] pattern, TARGET target) throws FilterInitException {
-        if (target == TARGET.ANTICOL) throw new FilterInitException("Wrong constructor signature for Anticol data.");
-        mTarget = target;
-        mMatchPattern = pattern;
+        super(pattern, target);
     }
 
     public EndsWith(byte[] pattern, TARGET target, ANTICOLFIELD field) throws FilterInitException {
-        if (target == TARGET.NFC || field == ANTICOLFIELD.SAK)
-            throw new FilterInitException("Wrong constructor signature for NFC data.");
-        mTarget = target;
-        mMatchPattern = pattern;
-        mAnticolTarget = field;
+        super(pattern, target, field);
     }
 
     public EndsWith(byte pattern, TARGET target, ANTICOLFIELD field) throws FilterInitException {
-        if (target == TARGET.NFC || field != ANTICOLFIELD.SAK)
-            throw new FilterInitException("Wrong constructor signature for NFC data.");
-        mTarget = target;
-        mMatchByte = pattern;
-        mAnticolTarget = field;
+        super(pattern, target, field);
     }
 
     // Helper functions

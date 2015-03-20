@@ -8,30 +8,17 @@ import tud.seemuh.nfcgate.util.filter.FilterInitException;
 /**
  * A simple conditional that checks if the provided data is equal to the provided pattern.
  */
-public class Equals implements Conditional {
-    private TARGET mTarget;
-    private byte[] mMatchPattern;
-    private byte mMatchByte;
-    private ANTICOLFIELD mAnticolTarget;
-
+public class Equals extends Conditional {
     public Equals(byte[] pattern, TARGET target) throws FilterInitException {
-        if (target == TARGET.ANTICOL) throw new FilterInitException("Wrong constructor signature for Anticol data.");
-        mTarget = target;
-        mMatchPattern = pattern;
+        super(pattern, target);
     }
 
     public Equals(byte[] pattern, TARGET target, ANTICOLFIELD field) throws FilterInitException {
-        if (target == TARGET.NFC || field == ANTICOLFIELD.SAK) throw new FilterInitException("Wrong constructor signature for NFC data.");
-        mTarget = target;
-        mMatchPattern = pattern;
-        mAnticolTarget = field;
+        super(pattern, target, field);
     }
 
     public Equals(byte pattern, TARGET target, ANTICOLFIELD field) throws FilterInitException {
-        if (target == TARGET.NFC || field != ANTICOLFIELD.SAK) throw new FilterInitException("Wrong constructor signature for NFC data.");
-        mTarget = target;
-        mMatchByte = pattern;
-        mAnticolTarget = field;
+        super(pattern, target, field);
     }
 
     @Override

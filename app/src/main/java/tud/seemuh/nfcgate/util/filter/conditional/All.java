@@ -7,17 +7,17 @@ import tud.seemuh.nfcgate.util.filter.FilterInitException;
  * Conditional that always returns true, as long as the provided NfcComm object is of the correct
  * type.
  */
-public class All implements Conditional {
-    private TARGET mTarget;
-
-    public All(TARGET target) throws FilterInitException {
-        if (target == TARGET.ANTICOL) throw new FilterInitException("Wrong constructor signature for Anticol data.");
-        mTarget = target;
+public class All extends Conditional {
+    public All(byte[] pattern, TARGET target) throws FilterInitException {
+        super(pattern, target);
     }
 
-    public All(TARGET target, ANTICOLFIELD field) throws FilterInitException {
-        if (target == TARGET.NFC) throw new FilterInitException("Wrong constructor signature for NFC data.");
-        mTarget = target;
+    public All(byte[] pattern, TARGET target, ANTICOLFIELD field) throws FilterInitException {
+        super(pattern, target, field);
+    }
+
+    public All(byte pattern, TARGET target, ANTICOLFIELD field) throws FilterInitException {
+        super(pattern, target, field);
     }
 
     @Override
