@@ -7,18 +7,31 @@ import tud.seemuh.nfcgate.util.filter.conditional.Conditional;
 /**
  * An action which replaces the contents of the targeted field with a constant.
  */
-public class ReplaceContent extends Action {
+public class ReplaceContent implements Action {
+
+    private TARGET mTarget;
+    private ANTICOLFIELD mAnticolTarget;
+    private byte[] mNewContent;
+    private byte mNewContentByte;
 
     public ReplaceContent(byte[] content, TARGET target) throws FilterInitException {
-        super(content, target);
+        if (target != TARGET.NFC) throw new FilterInitException("Wrong constructor for target type");
+        mTarget = target;
+        mNewContent = content;
     }
 
     public ReplaceContent(byte[] content, TARGET target, ANTICOLFIELD targetfield) throws FilterInitException {
-        super(content, target, targetfield);
+        if (target != TARGET.ANTICOL || targetfield == ANTICOLFIELD.SAK) throw new FilterInitException("Wrong constructor for target type");
+        mTarget = target;
+        mNewContent = content;
+        mAnticolTarget = targetfield;
     }
 
     public ReplaceContent(byte content, TARGET target, ANTICOLFIELD targetfield) throws FilterInitException {
-        super(content, target, targetfield);
+        if (target != TARGET.ANTICOL || targetfield != ANTICOLFIELD.SAK) throw new FilterInitException("Wrong constructor for target type");
+        mTarget = target;
+        mNewContentByte = content;
+        mAnticolTarget = targetfield;
     }
 
     @Override
