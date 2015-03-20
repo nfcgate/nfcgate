@@ -1,7 +1,5 @@
 package tud.seemuh.nfcgate.util.filter.conditional;
 
-import java.util.Arrays;
-
 import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.filter.FilterInitException;
 
