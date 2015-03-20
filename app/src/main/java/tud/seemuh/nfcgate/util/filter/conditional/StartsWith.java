@@ -9,6 +9,7 @@ import tud.seemuh.nfcgate.util.filter.FilterInitException;
 public class StartsWith implements Conditional {
     private TARGET mTarget;
     private byte[] mMatchPattern;
+    private byte mMatchByte;
     private ANTICOLFIELD mAnticolTarget;
 
     private boolean isPrefix(byte[] compare) {
@@ -20,7 +21,7 @@ public class StartsWith implements Conditional {
     }
 
     private boolean isPrefix(byte compare) {
-        return mMatchPattern.length <= 1 && mMatchPattern[0] == compare;
+        return mMatchByte == compare;
     }
 
     public StartsWith(byte[] pattern, TARGET target) throws FilterInitException {
@@ -30,9 +31,18 @@ public class StartsWith implements Conditional {
     }
 
     public StartsWith(byte[] pattern, TARGET target, ANTICOLFIELD field) throws FilterInitException {
-        if (target == TARGET.NFC) throw new FilterInitException("Wrong constructor signature for NFC data.");
+        if (target == TARGET.NFC || field == ANTICOLFIELD.SAK)
+            throw new FilterInitException("Wrong constructor signature for NFC data.");
         mTarget = target;
         mMatchPattern = pattern;
+        mAnticolTarget = field;
+    }
+
+    public StartsWith(byte pattern, TARGET target, ANTICOLFIELD field) throws FilterInitException {
+        if (target == TARGET.NFC || field != ANTICOLFIELD.SAK)
+            throw new FilterInitException("Wrong constructor signature for NFC data.");
+        mTarget = target;
+        mMatchByte = pattern;
         mAnticolTarget = field;
     }
 

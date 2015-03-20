@@ -157,7 +157,7 @@ public class StartsWithTest extends TestCase {
 
     public void testAnticolSakMatching() {
         try {
-            sw = new StartsWith(new byte[] {pattern3[0]}, Conditional.TARGET.ANTICOL, Conditional.ANTICOLFIELD.SAK);
+            sw = new StartsWith((byte) pattern3[0], Conditional.TARGET.ANTICOL, Conditional.ANTICOLFIELD.SAK);
         } catch (Exception e) {
             assertTrue("Exception thrown where it was not supposed to", false);
         }
