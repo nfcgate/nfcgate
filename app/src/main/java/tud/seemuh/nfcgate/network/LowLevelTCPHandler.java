@@ -193,9 +193,9 @@ public class LowLevelTCPHandler implements LowLevelNetworkHandler {
 
             Log.d(TAG, "started new CommunicationThread");
 
-            while (!Thread.currentThread().isInterrupted()) {
-                try {
-                    BufferedInputStream dis = new BufferedInputStream(mClientSocket.getInputStream());
+            try {
+                BufferedInputStream dis = new BufferedInputStream(mClientSocket.getInputStream());
+                while (!Thread.currentThread().isInterrupted()) {
                     // As noted before, all messages are preceded by four bytes containing an
                     // integer representation of the length of the following data, to make sure
                     // that we can read the correct number of bytes. Hence, we read four bytes
@@ -228,12 +228,11 @@ public class LowLevelTCPHandler implements LowLevelNetworkHandler {
                         Log.e(TAG, "Error no postive number of bytes: " + len);
                         throw new IOException("Protocol error: Length information was negative or null");
                     }
-
-                } catch (IOException e) {
-                    if (mCallback != null) {
-                        mCallback.notifyBrokenPipe();
-                        return;
-                    }
+                }
+            } catch (IOException e) {
+                if (mCallback != null) {
+                    mCallback.notifyBrokenPipe();
+                    return;
                 }
             }
             try {
