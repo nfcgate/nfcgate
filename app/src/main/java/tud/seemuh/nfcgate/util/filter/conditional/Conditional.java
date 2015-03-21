@@ -1,5 +1,7 @@
 package tud.seemuh.nfcgate.util.filter.conditional;
 
+import java.lang.annotation.Target;
+
 import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.filter.FilterInitException;
 
@@ -25,6 +27,8 @@ public abstract class Conditional {
     protected TARGET mTarget;
     protected ANTICOLFIELD mAnticolTarget;
     protected int mInteger;
+    protected Conditional mCond1;
+    protected Conditional mCond2;
 
     public Conditional(byte[] pattern, TARGET target) throws FilterInitException {
         if (target == TARGET.ANTICOL) throw new FilterInitException("Wrong constructor signature for Anticol data.");
@@ -60,6 +64,23 @@ public abstract class Conditional {
         if (target == TARGET.ANTICOL) throw new FilterInitException("Wrong constructor signature for Anticol data.");
         mTarget = target;
         mInteger = integer;
+    }
+
+    public Conditional(TARGET target) throws  FilterInitException {
+        if (target == TARGET.ANTICOL) throw new FilterInitException("Wrong constructor signature for Anticol data.");
+        mTarget = target;
+    }
+
+    public Conditional(TARGET target, ANTICOLFIELD field) throws FilterInitException {
+        if (target == TARGET.NFC)
+            throw new FilterInitException("Wrong constructor signature for NFC data.");
+        mTarget = target;
+        mAnticolTarget = field;
+    }
+
+    public Conditional(Conditional cond1, Conditional cond2) {
+        mCond1 = cond1;
+        mCond2 = cond2;
     }
 
     /**

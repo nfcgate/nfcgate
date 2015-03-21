@@ -8,16 +8,12 @@ import tud.seemuh.nfcgate.util.filter.FilterInitException;
  * type.
  */
 public class All extends Conditional {
-    public All(byte[] pattern, TARGET target) throws FilterInitException {
-        super(pattern, target);
+    public All(TARGET target) throws FilterInitException {
+        super(target);
     }
 
-    public All(byte[] pattern, TARGET target, ANTICOLFIELD field) throws FilterInitException {
-        super(pattern, target, field);
-    }
-
-    public All(byte pattern, TARGET target, ANTICOLFIELD field) throws FilterInitException {
-        super(pattern, target, field);
+    public All(TARGET target, ANTICOLFIELD field) throws FilterInitException {
+        super(target, field);
     }
 
     @Override

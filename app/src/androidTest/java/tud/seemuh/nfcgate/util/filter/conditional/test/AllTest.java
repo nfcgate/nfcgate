@@ -43,7 +43,7 @@ public class AllTest extends TestCase {
 
     public void testIncorrectAnticolInit() {
         try {
-            eq = new All(pattern1, Conditional.TARGET.ANTICOL);
+            eq = new All(Conditional.TARGET.ANTICOL);
             assertEquals("No exception thrown on incorrect constructor", true, false);
         } catch (Exception e) {
             assertTrue("Incorrect Exception thrown", (e instanceof FilterInitException));
@@ -52,7 +52,7 @@ public class AllTest extends TestCase {
 
     public void testIncorrectNfcDataInit() {
         try {
-            eq = new All(pattern1, Conditional.TARGET.NFC, Conditional.ANTICOLFIELD.ATQA);
+            eq = new All(Conditional.TARGET.NFC, Conditional.ANTICOLFIELD.ATQA);
             assertEquals("No exception thrown on incorrect constructor", true, false);
         } catch (Exception e) {
             assertTrue("Incorrect Exception thrown", (e instanceof FilterInitException));
@@ -61,7 +61,7 @@ public class AllTest extends TestCase {
 
     public void testCorrectNfcDataInit() {
         try {
-            eq = new All(pattern1, Conditional.TARGET.NFC);
+            eq = new All(Conditional.TARGET.NFC);
         } catch (Exception e) {
             assertTrue("Exception thrown where it was not supposed to", false);
         }
@@ -69,7 +69,7 @@ public class AllTest extends TestCase {
 
     public void testCorrectAnticolInit() {
         try {
-            eq = new All(pattern4, Conditional.TARGET.ANTICOL, Conditional.ANTICOLFIELD.SAK);
+            eq = new All(Conditional.TARGET.ANTICOL, Conditional.ANTICOLFIELD.SAK);
         } catch (Exception e) {
             assertTrue("Exception thrown where it was not supposed to", false);
         }
@@ -77,7 +77,7 @@ public class AllTest extends TestCase {
 
     public void testNFCDataPattern1Matching() {
         try {
-            eq = new All(pattern1, Conditional.TARGET.NFC);
+            eq = new All(Conditional.TARGET.NFC);
         } catch (Exception e) {
             assertTrue("Exception thrown where it was not supposed to", false);
         }
@@ -94,7 +94,7 @@ public class AllTest extends TestCase {
 
     public void testIncorrectTypeNotMatching1() {
         try {
-            eq = new All(pattern1, Conditional.TARGET.NFC);
+            eq = new All(Conditional.TARGET.NFC);
         } catch (Exception e) {
             assertTrue("Exception thrown where it was not supposed to", false);
         }
@@ -103,7 +103,7 @@ public class AllTest extends TestCase {
 
     public void testIncorrectTypeNotMatching2() {
         try {
-            eq = new All(pattern1, Conditional.TARGET.ANTICOL, Conditional.ANTICOLFIELD.UID);
+            eq = new All(Conditional.TARGET.ANTICOL, Conditional.ANTICOLFIELD.UID);
         } catch (Exception e) {
             assertTrue("Exception thrown where it was not supposed to", false);
         }
