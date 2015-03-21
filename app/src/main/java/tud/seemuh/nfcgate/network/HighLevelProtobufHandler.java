@@ -7,18 +7,14 @@ import android.widget.TextView;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 
-import java.util.concurrent.BlockingQueue;
-
 import tud.seemuh.nfcgate.MainActivity;
 import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
 import tud.seemuh.nfcgate.nfc.NfcManager;
-import tud.seemuh.nfcgate.util.UpdateUI;
 import tud.seemuh.nfcgate.util.NfcComm;
-import tud.seemuh.nfcgate.util.filter.FilterManager;
-import tud.seemuh.nfcgate.util.sink.SinkManager;
+import tud.seemuh.nfcgate.util.UpdateUI;
 
 /**
  * The HighLevelProtobufHandler is an implementation of the HighLevelNetworkHandler interface.

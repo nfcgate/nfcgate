@@ -4,8 +4,6 @@ import android.nfc.cardemulation.HostApduService;
 import android.os.Bundle;
 import android.util.Log;
 
-import tud.seemuh.nfcgate.network.Callback;
-import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.Utils;

@@ -3,7 +3,6 @@ package tud.seemuh.nfcgate.nfc.reader;
 import android.nfc.Tag;
 import android.util.Log;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 

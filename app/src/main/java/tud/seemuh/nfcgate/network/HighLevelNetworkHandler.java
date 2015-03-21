@@ -3,8 +3,6 @@ package tud.seemuh.nfcgate.network;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.concurrent.BlockingQueue;
-
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.util.NfcComm;

@@ -33,12 +33,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import tud.seemuh.nfcgate.nfc.NfcManager;
-import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.network.Callback;
-import tud.seemuh.nfcgate.network.ProtobufCallback;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;
+import tud.seemuh.nfcgate.network.ProtobufCallback;
+import tud.seemuh.nfcgate.nfc.NfcManager;
+import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.filter.FilterManager;
 import tud.seemuh.nfcgate.util.sink.SinkInitException;
