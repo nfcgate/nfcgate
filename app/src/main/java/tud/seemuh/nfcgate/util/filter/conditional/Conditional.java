@@ -81,6 +81,10 @@ public abstract class Conditional {
         mCond2 = cond2;
     }
 
+    public Conditional(Conditional cond1) {
+        mCond1 = cond1;
+    }
+
     /**
      * Check if the conditional matches the provided NfcComm data
      * @param nfcdata NfcComm object with NFC data
