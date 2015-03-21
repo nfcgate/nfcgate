@@ -2,7 +2,6 @@ package tud.seemuh.nfcgate.util.filter.action;
 
 import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.filter.FilterInitException;
-import tud.seemuh.nfcgate.util.filter.conditional.Conditional;
 
 /**
  * An action which replaces the contents of the targeted field with a constant.

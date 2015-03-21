@@ -2,7 +2,6 @@ package tud.seemuh.nfcgate.util.filter.action;
 
 import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.filter.FilterInitException;
-import tud.seemuh.nfcgate.util.filter.conditional.Conditional;
 
 /**
  * Interface for Actions, as used in the Filter infrastructure. Please check the relevant Wiki
