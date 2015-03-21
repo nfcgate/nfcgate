@@ -24,6 +24,7 @@ public abstract class Conditional {
     protected byte mMatchByte;
     protected TARGET mTarget;
     protected ANTICOLFIELD mAnticolTarget;
+    protected int mInteger;
 
     public Conditional(byte[] pattern, TARGET target) throws FilterInitException {
         if (target == TARGET.ANTICOL) throw new FilterInitException("Wrong constructor signature for Anticol data.");
@@ -45,6 +46,20 @@ public abstract class Conditional {
         mTarget = target;
         mMatchByte = pattern;
         mAnticolTarget = field;
+    }
+
+    public Conditional(int integer, TARGET target, ANTICOLFIELD field) throws FilterInitException {
+        if (target == TARGET.NFC)
+            throw new FilterInitException("Wrong constructor signature for NFC data.");
+        mTarget = target;
+        mInteger = integer;
+        mAnticolTarget = field;
+    }
+
+    public Conditional(int integer, TARGET target) throws FilterInitException {
+        if (target == TARGET.ANTICOL) throw new FilterInitException("Wrong constructor signature for Anticol data.");
+        mTarget = target;
+        mInteger = integer;
     }
 
     /**
