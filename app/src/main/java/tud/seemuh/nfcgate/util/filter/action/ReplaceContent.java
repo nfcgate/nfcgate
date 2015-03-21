@@ -7,50 +7,47 @@ import tud.seemuh.nfcgate.util.filter.conditional.Conditional;
 /**
  * An action which replaces the contents of the targeted field with a constant.
  */
-public class ReplaceContent implements Action {
-
-    private TARGET mTarget;
-    private ANTICOLFIELD mAnticolTarget;
-    private byte[] mNewContent;
-    private byte mNewContentByte;
+public class ReplaceContent extends Action {
 
     public ReplaceContent(byte[] content, TARGET target) throws FilterInitException {
-        if (target != TARGET.NFC) throw new FilterInitException("Wrong constructor for target type");
-        mTarget = target;
-        mNewContent = content;
+        super(content, target);
     }
 
     public ReplaceContent(byte[] content, TARGET target, ANTICOLFIELD targetfield) throws FilterInitException {
-        if (target != TARGET.ANTICOL || targetfield == ANTICOLFIELD.SAK) throw new FilterInitException("Wrong constructor for target type");
-        mTarget = target;
-        mNewContent = content;
-        mAnticolTarget = targetfield;
+        super(content, target, targetfield);
     }
 
     public ReplaceContent(byte content, TARGET target, ANTICOLFIELD targetfield) throws FilterInitException {
-        if (target != TARGET.ANTICOL || targetfield != ANTICOLFIELD.SAK) throw new FilterInitException("Wrong constructor for target type");
-        mTarget = target;
-        mNewContentByte = content;
-        mAnticolTarget = targetfield;
+        super(content, target, targetfield);
     }
 
     @Override
-    public NfcComm performAction(NfcComm nfcdata) {
-        if ((nfcdata.getType() == NfcComm.Type.NFCBytes && mTarget == TARGET.ANTICOL)
-         || (nfcdata.getType() == NfcComm.Type.AnticolBytes && mTarget == TARGET.NFC)) {
-            return nfcdata;
-        }
-        if (mTarget == TARGET.NFC) {
-            nfcdata.setData(mNewContent);
-        } else if (mAnticolTarget == ANTICOLFIELD.UID) {
-            nfcdata.setUid(mNewContent);
-        } else if (mAnticolTarget == ANTICOLFIELD.ATQA) {
-            nfcdata.setAtqa(mNewContent);
-        } else if (mAnticolTarget == ANTICOLFIELD.HIST) {
-            nfcdata.setHist(mNewContent);
-        } else if (mAnticolTarget == ANTICOLFIELD.SAK) {
-            nfcdata.setSak(mNewContentByte);
-        }
+    protected NfcComm modifyNfcData(NfcComm nfcdata) {
+        nfcdata.setData(mNewContent);
+        return nfcdata;
+    }
+
+    @Override
+    protected NfcComm modifyUidData(NfcComm nfcdata) {
+        nfcdata.setUid(mNewContent);
+        return nfcdata;
+    }
+
+    @Override
+    protected NfcComm modifyAtqaData(NfcComm nfcdata) {
+        nfcdata.setAtqa(mNewContent);
+        return nfcdata;
+    }
+
+    @Override
+    protected NfcComm modifyHistData(NfcComm nfcdata) {
+        nfcdata.setHist(mNewContent);
+        return nfcdata;
+    }
+
+    @Override
+    protected NfcComm modifySakData(NfcComm nfcdata) {
+        nfcdata.setSak(mNewContentByte);
         return nfcdata;
     }
 }
