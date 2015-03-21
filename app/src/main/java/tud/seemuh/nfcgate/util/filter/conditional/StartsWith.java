@@ -42,23 +42,28 @@ public class StartsWith extends Conditional {
         return mMatchByte == compare;
     }
 
+    @Override
+    protected boolean checkNfcData(NfcComm nfcdata) {
+        return isPrefix(nfcdata.getData());
+    }
 
     @Override
-    public boolean applies(NfcComm nfcdata) {
-        if (mTarget == TARGET.NFC) {
-            return (nfcdata.getType() == NfcComm.Type.NFCBytes) && isPrefix(nfcdata.getData());
-        } else {
-            if (nfcdata.getType() != NfcComm.Type.AnticolBytes) return false;
-            if (mAnticolTarget == ANTICOLFIELD.UID) {
-                return isPrefix(nfcdata.getUid());
-            } else if (mAnticolTarget == ANTICOLFIELD.ATQA) {
-                return isPrefix(nfcdata.getAtqa());
-            } else if (mAnticolTarget == ANTICOLFIELD.HIST) {
-                return isPrefix(nfcdata.getHist());
-            } else if (mAnticolTarget == ANTICOLFIELD.SAK) {
-                return isPrefix(nfcdata.getSak());
-            }
-        }
-        return false;
+    protected boolean checkUidData(NfcComm nfcdata) {
+        return isPrefix(nfcdata.getUid());
+    }
+
+    @Override
+    protected boolean checkAtqaData(NfcComm nfcdata) {
+        return isPrefix(nfcdata.getAtqa());
+    }
+
+    @Override
+    protected boolean checkHistData(NfcComm nfcdata) {
+        return isPrefix(nfcdata.getHist());
+    }
+
+    @Override
+    protected boolean checkSakData(NfcComm nfcdata) {
+        return isPrefix(nfcdata.getSak());
     }
 }

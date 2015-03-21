@@ -67,5 +67,31 @@ public abstract class Conditional {
      * @param nfcdata NfcComm object with NFC data
      * @return True if the conditional matches, false otherwise
      */
-    public abstract boolean applies(NfcComm nfcdata);
+    public boolean applies(NfcComm nfcdata) {
+        if (mTarget == TARGET.NFC) {
+            return (nfcdata.getType() == NfcComm.Type.NFCBytes) && checkNfcData(nfcdata);
+        } else {
+            if (nfcdata.getType() != NfcComm.Type.AnticolBytes) return false;
+            if (mAnticolTarget == ANTICOLFIELD.UID) {
+                return checkUidData(nfcdata);
+            } else if (mAnticolTarget == ANTICOLFIELD.ATQA) {
+                return checkAtqaData(nfcdata);
+            } else if (mAnticolTarget == ANTICOLFIELD.HIST) {
+                return checkHistData(nfcdata);
+            } else if (mAnticolTarget == ANTICOLFIELD.SAK) {
+                return checkSakData(nfcdata);
+            }
+        }
+        return false;
+    }
+
+    protected abstract boolean checkNfcData(NfcComm nfcdata);
+
+    protected abstract boolean checkUidData(NfcComm nfcdata);
+
+    protected abstract boolean checkAtqaData(NfcComm nfcdata);
+
+    protected abstract boolean checkHistData(NfcComm nfcdata);
+
+    protected abstract boolean checkSakData(NfcComm nfcdata);
 }

@@ -46,21 +46,27 @@ public class EndsWith extends Conditional {
     }
 
     @Override
-    public boolean applies(NfcComm nfcdata) {
-        if (mTarget == TARGET.NFC) {
-            return (nfcdata.getType() == NfcComm.Type.NFCBytes) && isSuffix(nfcdata.getData());
-        } else {
-            if (nfcdata.getType() != NfcComm.Type.AnticolBytes) return false;
-            if (mAnticolTarget == ANTICOLFIELD.UID) {
-                return isSuffix(nfcdata.getUid());
-            } else if (mAnticolTarget == ANTICOLFIELD.ATQA) {
-                return isSuffix(nfcdata.getAtqa());
-            } else if (mAnticolTarget == ANTICOLFIELD.HIST) {
-                return isSuffix(nfcdata.getHist());
-            } else if (mAnticolTarget == ANTICOLFIELD.SAK) {
-                return isSuffix(nfcdata.getSak());
-            }
-        }
-        return false;
+    protected boolean checkNfcData(NfcComm nfcdata) {
+        return isSuffix(nfcdata.getData());
+    }
+
+    @Override
+    protected boolean checkUidData(NfcComm nfcdata) {
+        return isSuffix(nfcdata.getUid());
+    }
+
+    @Override
+    protected boolean checkAtqaData(NfcComm nfcdata) {
+        return isSuffix(nfcdata.getAtqa());
+    }
+
+    @Override
+    protected boolean checkHistData(NfcComm nfcdata) {
+        return isSuffix(nfcdata.getHist());
+    }
+
+    @Override
+    protected boolean checkSakData(NfcComm nfcdata) {
+        return isSuffix(nfcdata.getSak());
     }
 }

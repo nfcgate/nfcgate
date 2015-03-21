@@ -22,21 +22,27 @@ public class Equals extends Conditional {
     }
 
     @Override
-    public boolean applies(NfcComm nfcdata) {
-        if (mTarget == TARGET.NFC) {
-            return (nfcdata.getType() == NfcComm.Type.NFCBytes) && Arrays.equals(nfcdata.getData(), mMatchPattern);
-        } else {
-            if (nfcdata.getType() != NfcComm.Type.AnticolBytes) return false;
-            if (mAnticolTarget == ANTICOLFIELD.UID) {
-                return Arrays.equals(nfcdata.getUid(), mMatchPattern);
-            } else if (mAnticolTarget == ANTICOLFIELD.ATQA) {
-                return Arrays.equals(nfcdata.getAtqa(), mMatchPattern);
-            } else if (mAnticolTarget == ANTICOLFIELD.HIST) {
-                return Arrays.equals(nfcdata.getHist(), mMatchPattern);
-            } else if (mAnticolTarget == ANTICOLFIELD.SAK) {
-                return nfcdata.getSak() == mMatchByte;
-            }
-        }
-        return false;
+    protected boolean checkNfcData(NfcComm nfcdata) {
+        return Arrays.equals(nfcdata.getData(), mMatchPattern);
+    }
+
+    @Override
+    protected boolean checkUidData(NfcComm nfcdata) {
+        return Arrays.equals(nfcdata.getUid(), mMatchPattern);
+    }
+
+    @Override
+    protected boolean checkAtqaData(NfcComm nfcdata) {
+        return Arrays.equals(nfcdata.getAtqa(), mMatchPattern);
+    }
+
+    @Override
+    protected boolean checkHistData(NfcComm nfcdata) {
+        return Arrays.equals(nfcdata.getHist(), mMatchPattern);
+    }
+
+    @Override
+    protected boolean checkSakData(NfcComm nfcdata) {
+        return nfcdata.getSak() == mMatchByte;
     }
 }

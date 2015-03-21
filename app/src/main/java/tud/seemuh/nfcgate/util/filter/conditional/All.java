@@ -21,8 +21,27 @@ public class All extends Conditional {
     }
 
     @Override
-    public boolean applies(NfcComm nfcdata) {
-        return (nfcdata.getType() == NfcComm.Type.NFCBytes && mTarget == TARGET.NFC)
-                || (nfcdata.getType() == NfcComm.Type.AnticolBytes && mTarget == TARGET.ANTICOL);
+    protected boolean checkNfcData(NfcComm nfcdata) {
+        return true;
+    }
+
+    @Override
+    protected boolean checkUidData(NfcComm nfcdata) {
+        return true;
+    }
+
+    @Override
+    protected boolean checkAtqaData(NfcComm nfcdata) {
+        return true;
+    }
+
+    @Override
+    protected boolean checkHistData(NfcComm nfcdata) {
+        return true;
+    }
+
+    @Override
+    protected boolean checkSakData(NfcComm nfcdata) {
+        return true;
     }
 }

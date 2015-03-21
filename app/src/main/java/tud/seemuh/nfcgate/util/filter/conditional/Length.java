@@ -16,22 +16,27 @@ public class Length extends Conditional {
     }
 
     @Override
-    public boolean applies(NfcComm nfcdata) {
-        if (mTarget == TARGET.NFC) {
-            return (nfcdata.getType() == NfcComm.Type.NFCBytes)
-                    && nfcdata.getData().length == mInteger;
-        } else {
-            if (nfcdata.getType() != NfcComm.Type.AnticolBytes) return false;
-            if (mAnticolTarget == ANTICOLFIELD.UID) {
-                return nfcdata.getUid().length == mInteger;
-            } else if (mAnticolTarget == ANTICOLFIELD.ATQA) {
-                return nfcdata.getAtqa().length == mInteger;
-            } else if (mAnticolTarget == ANTICOLFIELD.HIST) {
-                return nfcdata.getHist().length == mInteger;
-            } else if (mAnticolTarget == ANTICOLFIELD.SAK) {
-                return mInteger == 1;  // This assumes that the SAK value is set at all
-            }
-        }
-        return false;
+    protected boolean checkNfcData(NfcComm nfcdata) {
+        return nfcdata.getData().length == mInteger;
+    }
+
+    @Override
+    protected boolean checkUidData(NfcComm nfcdata) {
+        return nfcdata.getUid().length == mInteger;
+    }
+
+    @Override
+    protected boolean checkAtqaData(NfcComm nfcdata) {
+        return nfcdata.getAtqa().length == mInteger;
+    }
+
+    @Override
+    protected boolean checkHistData(NfcComm nfcdata) {
+        return nfcdata.getHist().length == mInteger;
+    }
+
+    @Override
+    protected boolean checkSakData(NfcComm nfcdata) {
+        return mInteger == 1;
     }
 }
