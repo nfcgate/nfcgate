@@ -27,24 +27,24 @@ public class Append extends Action {
         return nfcdata;
     }
 
-    // Anticol cannot be appended to => Return null so that we notice if we try.
+    // Anticol cannot be appended to => Return the original value
     @Override
     protected NfcComm modifyUidData(NfcComm nfcdata) {
-        return null;
+        return nfcdata;
     }
 
     @Override
     protected NfcComm modifyAtqaData(NfcComm nfcdata) {
-        return null;
+        return nfcdata;
     }
 
     @Override
     protected NfcComm modifyHistData(NfcComm nfcdata) {
-        return null;
+        return nfcdata;
     }
 
     @Override
     protected NfcComm modifySakData(NfcComm nfcdata) {
-        return null;
+        return nfcdata;
     }
 }
