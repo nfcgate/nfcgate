@@ -74,6 +74,13 @@ public abstract class Action {
         mAnticolTarget = targetfield;
     }
 
+    public Action(int offset, TARGET target) throws FilterInitException {
+        if (target != TARGET.NFC) throw new FilterInitException("Illegal constructor for target type");
+        if (offset < 0) throw new FilterInitException("Offset must be larger than or equal to 0");
+        mOffset = offset;
+        mTarget = target;
+    }
+
     /**
      * Perform the requested action on the NFC data
      * @param nfcdata NfcComm object with NFC data
