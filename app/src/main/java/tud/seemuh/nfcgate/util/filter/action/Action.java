@@ -25,6 +25,7 @@ public abstract class Action {
     protected byte[] mNewContent;
     protected byte mNewContentByte;
     protected int mOffset;
+    protected Action[] mActionList;
 
     // Different constructors for different types of actions
     public Action(byte[] content, int offset, TARGET target) throws FilterInitException {
@@ -79,6 +80,12 @@ public abstract class Action {
         if (offset < 0) throw new FilterInitException("Offset must be larger than or equal to 0");
         mOffset = offset;
         mTarget = target;
+    }
+
+    public Action(Action... act) throws FilterInitException {
+        if (act == null || act.length == 0)
+            throw new FilterInitException("Most provide at least one action");
+        mActionList = act;
     }
 
     /**
