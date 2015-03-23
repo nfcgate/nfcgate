@@ -78,7 +78,9 @@ public class NfcManager {
                 Utils.bytesToHex(nfcdata.getAtqa()) + " - " +
                 Utils.bytesToHex(nfcdata.getSak())  + " - " +
                 Utils.bytesToHex(nfcdata.getHist()));
-        nfcdata = mFilterManager.filterAnticolData(nfcdata);
+        if (mFilterManager != null) {
+            nfcdata = mFilterManager.filterAnticolData(nfcdata);
+        }
         notifySinkManager(nfcdata);
         Log.d(TAG, "handleAnticolDataCommon: Post-Filter: " +
                 Utils.bytesToHex(nfcdata.getUid())  + " - " +
@@ -92,7 +94,9 @@ public class NfcManager {
     private NfcComm handleHceDataCommon(NfcComm nfcdata) {
         Log.d(TAG, "handleHceDataCommon: Pre-Filter: " +
                 Utils.bytesToHex(nfcdata.getData()));
-        nfcdata = mFilterManager.filterHCEData(nfcdata);
+        if (mFilterManager != null) {
+            nfcdata = mFilterManager.filterHCEData(nfcdata);
+        }
         notifySinkManager(nfcdata);
         Log.d(TAG, "handleHceDataCommon: Post-Filter: " +
                 Utils.bytesToHex(nfcdata.getData()));
@@ -103,7 +107,9 @@ public class NfcManager {
     private NfcComm handleCardDataCommon(NfcComm nfcdata) {
         Log.d(TAG, "handleCardDataCommon: Pre-Filter: " +
                 Utils.bytesToHex(nfcdata.getData()));
-        nfcdata = mFilterManager.filterCardData(nfcdata);
+        if (mFilterManager != null) {
+            nfcdata = mFilterManager.filterCardData(nfcdata);
+        }
         notifySinkManager(nfcdata);
         Log.d(TAG, "handleCardDataCommon: Post-Filter: " +
                 Utils.bytesToHex(nfcdata.getData()));
@@ -139,16 +145,19 @@ public class NfcManager {
             }
         }
 
-        if (found_supported_tag) {
+        if (found_supported_tag && mNetworkHandler != null) {
             // Start the workaround thread, if needed
             startWorkaround();
 
             mNetworkHandler.sendAnticol(getAnticolData());
+            // Notify partner about the newly detected card
+            // This may lead to error messages if we are not already in a session
+            mNetworkHandler.notifyCardFound();
+        } else if (found_supported_tag) {
+            Log.i(TAG, "setTag: Got supported tag, but no network handler is set. Doing nothing");
+        } else {
+            Log.e(TAG, "setTag: Tag not supported");
         }
-
-        // Notify partner about the newly detected card
-        // This may lead to error messages if we are not already in a session
-        mNetworkHandler.notifyCardFound();
     }
 
 
