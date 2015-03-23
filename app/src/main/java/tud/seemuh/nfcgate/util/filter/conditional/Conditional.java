@@ -77,7 +77,7 @@ public abstract class Conditional {
     }
 
     public Conditional(Conditional... cond) throws FilterInitException {
-        if (cond == null)
+        if (cond == null || cond.length == 0)
             throw new FilterInitException("Must provide at least one Conditional");
         mCondList = cond;
     }

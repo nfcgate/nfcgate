@@ -3,6 +3,7 @@ package tud.seemuh.nfcgate.util.filter.conditional.test;
 import junit.framework.TestCase;
 
 import tud.seemuh.nfcgate.util.NfcComm;
+import tud.seemuh.nfcgate.util.filter.FilterInitException;
 import tud.seemuh.nfcgate.util.filter.conditional.All;
 import tud.seemuh.nfcgate.util.filter.conditional.And;
 import tud.seemuh.nfcgate.util.filter.conditional.Conditional;
@@ -30,6 +31,14 @@ public class AndTest extends TestCase {
     protected NfcComm anticol1 = new NfcComm(target1, target1[0], target1, target1);
     protected NfcComm anticol2 = new NfcComm(target2, target2[0], target2, target2);
 
+    public void testIncorrectConstructor() {
+        try {
+            and = new And();
+            assertFalse("No exception thrown on incorrect constructor", true);
+        } catch (Exception e) {
+            assertTrue("Incorrect Exception thrown", (e instanceof FilterInitException));
+        }
+    }
     public void testAllAndAll() {
         try {
             cond1 = new All(Conditional.TARGET.NFC);
