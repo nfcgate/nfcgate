@@ -1,18 +1,24 @@
 package tud.seemuh.nfcgate.util.filter.conditional;
 
 import tud.seemuh.nfcgate.util.NfcComm;
+import tud.seemuh.nfcgate.util.filter.FilterInitException;
 
 /**
- * The logical AND of two conditionals
+ * The logical AND of a number of conditionals
  */
 public class And extends Conditional {
-    public And(Conditional cond1, Conditional cond2) {
-        super(cond1, cond2);
+    public And(Conditional... cond) throws FilterInitException {
+        super(cond);
     }
 
     @Override
     public boolean applies(NfcComm nfcdata) {
-        return mCond1.applies(nfcdata) && mCond2.applies(nfcdata);
+        boolean rv = true;
+        for (Conditional c : mCondList) {
+            rv = rv && c.applies(nfcdata);
+            if (!rv) return false;
+        }
+        return true;
     }
 
     // All of these functions are never used, but have to be implemented in order to conform to the

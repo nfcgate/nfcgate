@@ -12,7 +12,7 @@ public class Not extends Conditional {
 
     @Override
     public boolean applies(NfcComm nfcdata) {
-        return !mCond1.applies(nfcdata);
+        return !mSingleCond.applies(nfcdata);
     }
 
     // All of these functions are never used, but have to be implemented in order to conform to the

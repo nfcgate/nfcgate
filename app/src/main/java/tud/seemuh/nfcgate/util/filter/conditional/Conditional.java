@@ -25,8 +25,8 @@ public abstract class Conditional {
     protected TARGET mTarget;
     protected ANTICOLFIELD mAnticolTarget;
     protected int mInteger;
-    protected Conditional mCond1;
-    protected Conditional mCond2;
+    protected Conditional[] mCondList;
+    protected Conditional mSingleCond;
 
     public Conditional(byte[] pattern, TARGET target) throws FilterInitException {
         if (target == TARGET.ANTICOL) throw new FilterInitException("Wrong constructor signature for Anticol data.");
@@ -76,13 +76,14 @@ public abstract class Conditional {
         mAnticolTarget = field;
     }
 
-    public Conditional(Conditional cond1, Conditional cond2) {
-        mCond1 = cond1;
-        mCond2 = cond2;
+    public Conditional(Conditional... cond) throws FilterInitException {
+        if (cond == null)
+            throw new FilterInitException("Must provide at least one Conditional");
+        mCondList = cond;
     }
 
     public Conditional(Conditional cond1) {
-        mCond1 = cond1;
+        mSingleCond = cond1;
     }
 
     /**

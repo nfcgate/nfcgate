@@ -16,6 +16,7 @@ public class AndTest extends TestCase {
     protected And and;
     protected Conditional cond1;
     protected Conditional cond2;
+    protected Conditional cond3;
 
     protected byte[] pattern1 = new byte[] { (byte)0x00, (byte)0x10 };
     protected byte[] pattern2 = new byte[] { (byte)0x10, (byte)0x10 };
@@ -35,7 +36,7 @@ public class AndTest extends TestCase {
             cond2 = new All(Conditional.TARGET.NFC);
             and = new And(cond1, cond2);
         } catch (Exception e) {
-            assertTrue("Exception thrown where none was expected", false);
+            assertTrue("Exception thrown where none was expected: " + e.toString(), false);
         }
 
         assertTrue("False where True was expected", and.applies(nfc1));
@@ -66,6 +67,21 @@ public class AndTest extends TestCase {
             cond1 = new StartsWith(pattern1, Conditional.TARGET.NFC);
             cond2 = new EndsWith(pattern2, Conditional.TARGET.NFC);
             and = new And(cond1, cond2);
+        } catch (Exception e) {
+            assertTrue("Exception thrown where none was expected", false);
+        }
+
+        assertFalse("True where false was expected", and.applies(nfc1));
+        assertTrue("False where True was expected", and.applies(nfc2));
+    }
+
+    public void testBeginsAndEndsAndTrue() {
+        try {
+            // This test isn't useful per se, but it tests the behaviour for more than two inputs
+            cond1 = new StartsWith(pattern1, Conditional.TARGET.NFC);
+            cond2 = new EndsWith(pattern2, Conditional.TARGET.NFC);
+            cond3 = new All(Conditional.TARGET.NFC);
+            and = new And(cond1, cond2, cond3);
         } catch (Exception e) {
             assertTrue("Exception thrown where none was expected", false);
         }

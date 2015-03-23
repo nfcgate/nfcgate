@@ -6,6 +6,7 @@ import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.filter.conditional.All;
 import tud.seemuh.nfcgate.util.filter.conditional.Conditional;
 import tud.seemuh.nfcgate.util.filter.conditional.EndsWith;
+import tud.seemuh.nfcgate.util.filter.conditional.Not;
 import tud.seemuh.nfcgate.util.filter.conditional.Xor;
 import tud.seemuh.nfcgate.util.filter.conditional.StartsWith;
 
@@ -16,6 +17,7 @@ public class XorTest extends TestCase {
     protected Xor xor;
     protected Conditional cond1;
     protected Conditional cond2;
+    protected Conditional cond3;
 
     protected byte[] pattern1 = new byte[] { (byte)0x00, (byte)0x10 };
     protected byte[] pattern2 = new byte[] { (byte)0x10, (byte)0x10 };
@@ -36,6 +38,24 @@ public class XorTest extends TestCase {
             cond1 = new All(Conditional.TARGET.NFC);
             cond2 = new All(Conditional.TARGET.NFC);
             xor = new Xor(cond1, cond2);
+        } catch (Exception e) {
+            assertTrue("Exception thrown where none was expected", false);
+        }
+
+        assertFalse("True where False was expected", xor.applies(nfc1));
+        assertFalse("True where False was expected", xor.applies(nfc2));
+        assertFalse("True where False was expected", xor.applies(nfc3));
+
+        assertFalse("True where False was expected", xor.applies(anticol1));
+        assertFalse("True where False was expected", xor.applies(anticol2));
+    }
+
+    public void testContradictionOfThree() {
+        try {
+            cond1 = new All(Conditional.TARGET.NFC);
+            cond2 = new All(Conditional.TARGET.NFC);
+            cond3 = new All(Conditional.TARGET.NFC);
+            xor = new Xor(cond1, cond2, cond3);
         } catch (Exception e) {
             assertTrue("Exception thrown where none was expected", false);
         }
