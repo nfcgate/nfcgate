@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate;
+package tud.seemuh.nfcgate.gui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -7,6 +7,8 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+
+import tud.seemuh.nfcgate.R;
 
 public class enablenfc_dialog extends DialogFragment {
     /* The activity that creates an instance of this dialog fragment must

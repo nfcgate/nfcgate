@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate;
+package tud.seemuh.nfcgate.gui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
+import tud.seemuh.nfcgate.R;
 
 public class token_dialog extends DialogFragment {
 /* The activity that creates an instance of this dialog fragment must

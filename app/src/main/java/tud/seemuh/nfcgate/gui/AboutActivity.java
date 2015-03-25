@@ -1,7 +1,9 @@
-package tud.seemuh.nfcgate;
+package tud.seemuh.nfcgate.gui;
 
 import android.app.Activity;
 import android.os.Bundle;
+
+import tud.seemuh.nfcgate.R;
 
 /**
  *

@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate;
+package tud.seemuh.nfcgate.gui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -33,6 +33,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.network.Callback;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;

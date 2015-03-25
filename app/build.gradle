@@ -26,7 +26,8 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':nfcd')
     compile files('libs/protobuf-java-2.6.1.jar')
+    compile 'com.android.support:support-v4:21.0.3'
 }
