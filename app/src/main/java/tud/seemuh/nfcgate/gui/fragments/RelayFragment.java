@@ -1,7 +1,6 @@
 package tud.seemuh.nfcgate.gui.fragments;
 
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,6 +11,8 @@ import android.nfc.tech.IsoDep;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NfcA;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -181,8 +182,6 @@ public class RelayFragment extends Fragment {
     public void showEnableNFCDialog() {
         // Create an instance of the dialog fragment and show it
         DialogFragment dialog = new enablenfc_dialog();
-        dialog.show(getActivity().getFragmentManager(), "Enable NFC: ");
+        dialog.show(getFragmentManager(), "Enable NFC: ");
     }
-
-
 }

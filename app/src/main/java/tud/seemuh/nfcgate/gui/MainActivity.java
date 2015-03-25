@@ -2,7 +2,6 @@ package tud.seemuh.nfcgate.gui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +15,7 @@ import android.nfc.tech.Ndef;
 import android.nfc.tech.NfcA;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -49,7 +49,8 @@ import tud.seemuh.nfcgate.util.filter.FilterManager;
 import tud.seemuh.nfcgate.util.sink.SinkInitException;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity
+    implements enablenfc_dialog.NFCNoticeDialogListener {
         //implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener, ReaderCallback{
 
     private NfcAdapter mAdapter;
@@ -539,17 +540,18 @@ public class MainActivity extends FragmentActivity {
 //        // User touched the dialog's cancel button
 //        // Toast.makeText(this, "You clicked cancel, no connection was established...", Toast.LENGTH_LONG).show();
 //    }
-//
-//    @Override
-//    public void onNFCDialogPositiveClick(DialogFragment dialog) {
-//        // User touched the dialog's goto settings button
-//        Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
-//        startActivity(intent);
-//}
-//
-//    @Override
-//    public void onNFCDialogNegativeClick(DialogFragment dialog) {
-//        // User touched the dialog's cancel button
-//        Toast.makeText(this, "Caution! The app can't do something useful without NFC enabled -> please enable NFC in your phone settings", Toast.LENGTH_LONG).show();
-//    }
+
+
+    @Override
+    public void onNFCDialogPositiveClick(DialogFragment dialog) {
+        // User touched the dialog's goto settings button
+        Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
+        startActivity(intent);
+}
+
+    @Override
+    public void onNFCDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's cancel button
+        Toast.makeText(this, "Caution! The app can't do something useful without NFC enabled -> please enable NFC in your phone settings", Toast.LENGTH_LONG).show();
+    }
 }
