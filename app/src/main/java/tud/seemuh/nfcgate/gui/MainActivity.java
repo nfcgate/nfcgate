@@ -16,6 +16,7 @@ import android.nfc.tech.Ndef;
 import android.nfc.tech.NfcA;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -45,7 +46,8 @@ import tud.seemuh.nfcgate.util.filter.FilterManager;
 import tud.seemuh.nfcgate.util.sink.SinkInitException;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
 
-public class MainActivity extends Activity implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener, ReaderCallback{
+public class MainActivity extends FragmentActivity
+        implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener, ReaderCallback {
 
     private NfcAdapter mAdapter;
     private IntentFilter mIntentFilter = new IntentFilter();
@@ -377,35 +379,25 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
     public void ButtonCreateSessionClicked(View view) {
         // Create a new Session
-        if (!checkIpPort(mIP.getText().toString(), mPort.getText().toString()))
-        {
+        if (!checkIpPort(mIP.getText().toString(), mPort.getText().toString())) {
             Toast.makeText(this, "Please enter a valid ip & port", Toast.LENGTH_LONG).show();
             return;
         }
 
-        if (!mConnecttoSession.getText().equals(leaveSessionMessage))
-        {
+        if (!mConnecttoSession.getText().equals(leaveSessionMessage)) {
             mConnecttoSession.setText(leaveSessionMessage);
             mJoinSession.setEnabled(false);
             mAbort.setEnabled(true);
-//            this.setTitle("You clicked connect");
-//            mConnStatus.setText("Server status: Connecting");
-//            mPartnerDevice.setText("Partner status: waiting");
 
             // Run common code for network connection establishment
             networkConnectCommon();
 
             // Create session
             mConnectionClient.createSession();
-        }
-        else
-        {
+        } else {
             // the button was already clicked and we want to disconnect from the session
             mConnecttoSession.setText(createSessionMessage);
-//            mConnStatus.setText("Server status: Disconnecting");
-//            mPartnerDevice.setText("Partner status: no device");
             mJoinSession.setEnabled(true);
-            // this.setTitle("You clicked disconnect");
 
             mConnectionClient.leaveSession();
         }
