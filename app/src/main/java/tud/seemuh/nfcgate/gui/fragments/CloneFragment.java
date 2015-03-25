@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import tud.seemuh.nfcgate.R;
 
-public class FragmentClone extends Fragment {
+public class CloneFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -19,9 +19,9 @@ public class FragmentClone extends Fragment {
         return v;
     }
 
-    public static RelayFragment newInstance(String text) {
+    public static CloneFragment newInstance() {
 
-        RelayFragment f = new RelayFragment();
+        CloneFragment f = new CloneFragment();
 
         //Bundle b = new Bundle();
         //b.putString("msg", text);
