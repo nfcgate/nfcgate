@@ -25,6 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +40,10 @@ import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;
 import tud.seemuh.nfcgate.network.ProtobufCallback;
 import tud.seemuh.nfcgate.nfc.NfcManager;
+import tud.seemuh.nfcgate.util.NfcComm;
+import tud.seemuh.nfcgate.util.filter.FilterManager;
+import tud.seemuh.nfcgate.util.sink.SinkInitException;
+import tud.seemuh.nfcgate.util.sink.SinkManager;
 
 public class RelayFragment extends Fragment
         implements OnClickListener, enablenfc_dialog.NFCNoticeDialogListener  {
@@ -60,6 +66,17 @@ public class RelayFragment extends Fragment
 
     // NFC Manager
     private NfcManager mNfcManager;
+
+    // Sink Manager
+    private SinkManager mSinkManager;
+    private BlockingQueue<NfcComm> mSinkManagerQueue = new LinkedBlockingQueue<NfcComm>();
+
+    // Filter Manager
+    private FilterManager mFilterManager;
+
+    // IP:Port combination saved for enhanced user comfort
+    private String ip;
+    private int port;
 
     // declares main functionality
     private Button mReset, mConnecttoSession, mAbort, mJoinSession;
@@ -93,8 +110,7 @@ public class RelayFragment extends Fragment
 
         mIntentFilter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
 
-        if (!mAdapter.isEnabled())
-        {
+        if (!mAdapter.isEnabled()) {
             // NFC is not enabled -> "Tell the user to enable NFC"
             showEnableNFCDialog();
         }
@@ -243,8 +259,7 @@ public class RelayFragment extends Fragment
                     mAbort.setEnabled(true);
 
                     // Run common code for network connection establishment
-                    //FIXME
-                    //networkConnectCommon();
+                    networkConnectCommon();
 
                     // Create session
                     mConnectionClient.createSession();
@@ -277,6 +292,36 @@ public class RelayFragment extends Fragment
         validIp = matcher.matches();
         if (validPort) globalPort = int_port;
         return validPort && validIp;
+    }
+
+    private void networkConnectCommon() {
+        // Initialize SinkManager
+        mSinkManager = new SinkManager(mSinkManagerQueue);
+
+        // Initialize FilterManager
+        mFilterManager = new FilterManager();
+
+        // Pass references
+        mNfcManager.setSinkManager(mSinkManager, mSinkManagerQueue);
+        mNfcManager.setFilterManager(mFilterManager);
+        mNfcManager.setNetworkHandler(mConnectionClient);
+
+        // FIXME For debugging purposes, hardcoded selecting of sinks happens here
+        // This should be selectable by the user
+
+        // Initialize debug output sink
+        // TODO This should most definitely be solved in a more elegant fashion
+        try {
+            mSinkManager.addSink(SinkManager.SinkType.DISPLAY_TEXTVIEW, mDebuginfo);
+            mSinkManager.addSink(SinkManager.SinkType.FILE, "testFile.txt");
+        } catch (SinkInitException e) {
+            e.printStackTrace();
+        }
+
+        // TODO Initialize and add Filters
+
+        // Do the actual network connection
+        mConnectionClient.connect(mIP.getText().toString(), port);
     }
 
     @Override

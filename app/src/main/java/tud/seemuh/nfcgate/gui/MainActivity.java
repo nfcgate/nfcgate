@@ -66,13 +66,6 @@ public class MainActivity extends FragmentActivity
     // NFC Manager
     private NfcManager mNfcManager;
 
-    // Sink Manager
-    private SinkManager mSinkManager;
-    private BlockingQueue<NfcComm> mSinkManagerQueue = new LinkedBlockingQueue<NfcComm>();
-
-    // Filter Manager
-    private FilterManager mFilterManager;
-
     // Defined name of the Shared Preferences Buffer
     //TODO this is now DOUBLE DEFINED: here and in the RelayFragment
     public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
@@ -80,9 +73,7 @@ public class MainActivity extends FragmentActivity
     // private var set by settings dialog whether dev mode is enabled or not
     private boolean mDevModeEnabled = false;
 
-    // IP:Port combination saved for enhanced user comfort
-    private String ip;
-    private int port;
+
 
     private Callback mNetCallback = new ProtobufCallback();
 
@@ -211,35 +202,7 @@ public class MainActivity extends FragmentActivity
 //    /**
 //     * Common code for network connection establishment
 //     */
-    private void networkConnectCommon() {
-        // Initialize SinkManager
-        mSinkManager = new SinkManager(mSinkManagerQueue);
 
-        // Initialize FilterManager
-        mFilterManager = new FilterManager();
-
-        // Pass references
-        mNfcManager.setSinkManager(mSinkManager, mSinkManagerQueue);
-        mNfcManager.setFilterManager(mFilterManager);
-        mNfcManager.setNetworkHandler(mConnectionClient);
-
-        // FIXME For debugging purposes, hardcoded selecting of sinks happens here
-        // This should be selectable by the user
-
-        // Initialize debug output sink
-        // TODO This should most definitely be solved in a more elegant fashion
-        try {
-            mSinkManager.addSink(SinkManager.SinkType.DISPLAY_TEXTVIEW, mDebuginfo);
-            mSinkManager.addSink(SinkManager.SinkType.FILE, "testFile.txt");
-        } catch (SinkInitException e) {
-            e.printStackTrace();
-        }
-
-        // TODO Initialize and add Filters
-
-        // Do the actual network connection
-        mConnectionClient.connect(mIP.getText().toString(), port);
-    }
 //
 //    public void ButtonResetClicked(View view) {
 //        // reset the entire application by pressing this button
@@ -336,7 +299,7 @@ public class MainActivity extends FragmentActivity
         mAbort.setEnabled(true);
 
         // Run common network connection est. code
-        networkConnectCommon();
+        //networkConnectCommon();
 
         // Load token from the Shared Preferences Buffer
         SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
