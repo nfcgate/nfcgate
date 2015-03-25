@@ -161,9 +161,10 @@ public class RelayFragment extends Fragment
         mConnectionClient.setNfcManager(mNfcManager);
         mConnectionClient.setCallback(mNetCallback);
 
+        File bcmdevice = new File("/dev/bcm2079x-i2c");
         final SharedPreferences preferences = getActivity().getSharedPreferences(PREF_FILE_NAME, v.getContext().MODE_PRIVATE);
         boolean neverShowAgain = preferences.getBoolean("mNeverWarnWorkaround", false);
-        if (BCM20793Workaround.workaroundNeeded() && !neverShowAgain) {
+        if (bcmdevice.exists() && !neverShowAgain) {
             LayoutInflater checkboxInflater = getActivity().getLayoutInflater();
             final View checkboxView = checkboxInflater.inflate(R.layout.workaroundwarning, null);
             new AlertDialog.Builder(v.getContext())
@@ -216,7 +217,7 @@ public class RelayFragment extends Fragment
 
     public void showEnableNFCDialog() {
         // Create an instance of the dialog fragment and show it
-        DialogFragment dialog = new enablenfc_dialog();
+        DialogFragment dialog = enablenfc_dialog.getInstance(RelayFragment.this);
         dialog.show(getFragmentManager(), "Enable NFC: ");
     }
 
@@ -325,14 +326,14 @@ public class RelayFragment extends Fragment
     }
 
     @Override
-    public void onNFCDialogPositiveClick(DialogFragment dialog) {
+    public void onNFCDialogPositiveClick() {
         // User touched the dialog's goto settings button
         Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
         startActivity(intent);
     }
 
     @Override
-    public void onNFCDialogNegativeClick(DialogFragment dialog) {
+    public void onNFCDialogNegativeClick() {
         // User touched the dialog's cancel button
         Toast.makeText(v.getContext(), "Caution! The app can't do something useful without NFC enabled -> please enable NFC in your phone settings", Toast.LENGTH_LONG).show();
     }

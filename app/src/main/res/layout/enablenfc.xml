@@ -25,4 +25,16 @@
         android:editable="false"
         android:hint="Please enable NFC to use this app " />
 
+    <Button
+        android:id="@+id/dismiss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dismiss" />
+
+    <Button
+        android:id="@+id/go_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Go to Settings" />
+
 </LinearLayout>
