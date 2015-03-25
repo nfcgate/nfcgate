@@ -117,97 +117,6 @@ public class MainActivity extends FragmentActivity
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setViewPager(pager);
 
-//        mAdapter = NfcAdapter.getDefaultAdapter(this);
-//
-//        mIntentFilter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
-//
-//        if (!mAdapter.isEnabled())
-//        {
-//            // NFC is not enabled -> "Tell the user to enable NFC"
-//            showEnableNFCDialog();
-//        }
-//
-//        // Create a generic PendingIntent that will be delivered to this activity.
-//        // The NFC stack will fill in the intent with the details of the discovered tag before
-//        // delivering to this activity.
-//        mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
-//                getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-//
-//        // Setup an foreground intent filter for NFC
-//        IntentFilter tech = new IntentFilter();
-//        tech.addAction(NfcAdapter.ACTION_TECH_DISCOVERED);
-//        mFilters = new IntentFilter[] { tech, };
-//        // this thing must have the same structure as in the tech.xml
-//        mTechLists = new String[][] {
-//                new String[] {NfcA.class.getName()},
-//                new String[] {Ndef.class.getName()},
-//                new String[] {IsoDep.class.getName()}
-//                //we could add all of the Types from the tech.xml here
-//        };
-//
-//        // Create Buttons & TextViews
-//        mReset = (Button) findViewById(R.id.resetstatus);
-//        mConnecttoSession = (Button) findViewById(R.id.btnCreateSession);
-//        mJoinSession = (Button) findViewById(R.id.btnJoinSession);
-//        mAbort = (Button) findViewById(R.id.abortbutton);
-//        mConnStatus = (TextView) findViewById(R.id.editConnectionStatus);
-//        mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
-//        mIP = (TextView) findViewById(R.id.editIP);
-//        mPort = (TextView) findViewById(R.id.editPort);
-//        mPartnerDevice = (TextView) findViewById(R.id.editOtherDevice);
-//        mConnecttoSession.requestFocus();
-//        mtoken = (TextView) findViewById(R.id.token);
-//
-//        // Create connection client
-//        mConnectionClient = HighLevelProtobufHandler.getInstance();
-//        mNfcManager = NfcManager.getInstance();
-//
-//        // Pass necessary references to ConnectionClient
-//        mConnectionClient.setDebugView(mDebuginfo);
-//        mConnectionClient.setConnectionStatusView(mConnStatus);
-//        mConnectionClient.setPeerStatusView(mPartnerDevice);
-//        mConnectionClient.setButtons(mReset, mConnecttoSession, mAbort, mJoinSession);
-//        mConnectionClient.setNfcManager(mNfcManager);
-//        mConnectionClient.setCallback(mNetCallback);
-//
-//        File bcmdevice = new File("/dev/bcm2079x-i2c");
-//        final SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-//        boolean neverShowAgain = preferences.getBoolean("mNeverWarnWorkaround", false);
-//        if (bcmdevice.exists() && !neverShowAgain) {
-//            LayoutInflater checkboxInflater = this.getLayoutInflater();
-//            final View checkboxView = checkboxInflater.inflate(R.layout.workaroundwarning, null);
-//            new AlertDialog.Builder(this)
-//                    .setTitle(R.string.BCMWarnHeader)
-//                    .setView(checkboxView)
-//                    .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            CheckBox dontShowAgain = (CheckBox) checkboxView.findViewById(R.id.neverAgain);
-//                            if (dontShowAgain.isChecked()) {
-//                                Log.i(TAG, "onCreate: Don't show this again is checked");
-//                                SharedPreferences.Editor editor = preferences.edit();
-//
-//                                editor.putBoolean("mNeverWarnWorkaround", true);
-//
-//                                editor.apply();
-//                            }
-//                            startActivity(new Intent(MainActivity.this, AboutWorkaroundActivity.class));
-//                        }
-//                    })
-//                    .setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            CheckBox dontShowAgain = (CheckBox) checkboxView.findViewById(R.id.neverAgain);
-//                            if (dontShowAgain.isChecked()) {
-//                                Log.i(TAG, "onCreate: Don't show this again is checked");
-//                                SharedPreferences.Editor editor = preferences.edit();
-//
-//                                editor.putBoolean("mNeverWarnWorkaround", true);
-//
-//                                editor.apply();
-//                            }
-//                        }
-//                    })
-//                    .show();
-//        }
     }
 
 //    @Override
@@ -404,9 +313,6 @@ public class MainActivity extends FragmentActivity
 //            mConnecttoSession.setText(leaveSessionMessage);
 //            mJoinSession.setEnabled(false);
 //            mAbort.setEnabled(true);
-////            this.setTitle("You clicked connect");
-////            mConnStatus.setText("Server status: Connecting");
-////            mPartnerDevice.setText("Partner status: waiting");
 //
 //            // Run common code for network connection establishment
 //            networkConnectCommon();
@@ -418,10 +324,7 @@ public class MainActivity extends FragmentActivity
 //        {
 //            // the button was already clicked and we want to disconnect from the session
 //            mConnecttoSession.setText(createSessionMessage);
-////            mConnStatus.setText("Server status: Disconnecting");
-////            mPartnerDevice.setText("Partner status: no device");
 //            mJoinSession.setEnabled(true);
-//            // this.setTitle("You clicked disconnect");
 //
 //            mConnectionClient.leaveSession();
 //        }
@@ -503,29 +406,20 @@ public class MainActivity extends FragmentActivity
 //        }
 //    }
 //
-//    public void showEnableNFCDialog() {
-//        // Create an instance of the dialog fragment and show it
-//        DialogFragment dialog = new enablenfc_dialog();
-//        dialog.show(this.getFragmentManager(), "Enable NFC: ");
-//    }
-//
-//    public void showTokenDialog() {
-//        // Create an instance of the dialog fragment and show it
-//        DialogFragment dialog = new token_dialog();
-//        dialog.show(this.getFragmentManager(), "Enter token: ");
-//    }
-//
+
+
+
+    public void showTokenDialog() {
+        // Create an instance of the dialog fragment and show it
+        DialogFragment dialog = new token_dialog();
+        dialog.show(getSupportFragmentManager(), "Enter token: ");
+    }
+
     @Override
     public void onTokenDialogPositiveClick(DialogFragment dialog) {
-        // User touched the dialog's submit button
-        // Toast.makeText(this, "You clicked submit, server is now processing your token...", Toast.LENGTH_LONG).show();
-
         mJoinSession.setText(leaveSessionMessage);
         mConnecttoSession.setEnabled(false);
         mAbort.setEnabled(true);
-        //this.setTitle("You clicked connect");
-        //mConnStatus.setText("Server status: Connecting");
-        //mPartnerDevice.setText("Partner status: waiting");
 
         // Run common network connection est. code
         networkConnectCommon();
