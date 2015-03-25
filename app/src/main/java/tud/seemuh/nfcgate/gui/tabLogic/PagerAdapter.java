@@ -27,7 +27,13 @@ public class PagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return "Item " + (position + 1);
+        if(position == 0) {
+            return "Relay Mode";
+        } else if(position == 1) {
+            return "Clone Mode";
+        } else {
+            return "Item " + (position + 1);
+        }
     }
 
 

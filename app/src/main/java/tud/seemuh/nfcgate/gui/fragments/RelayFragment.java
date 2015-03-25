@@ -11,9 +11,8 @@ import android.nfc.NfcAdapter;
 import android.nfc.tech.IsoDep;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NfcA;
-import android.provider.Settings;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +27,8 @@ import java.io.File;
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.gui.AboutWorkaroundActivity;
 import tud.seemuh.nfcgate.gui.MainActivity;
+import tud.seemuh.nfcgate.gui.enablenfc_dialog;
+import tud.seemuh.nfcgate.gui.token_dialog;
 import tud.seemuh.nfcgate.network.Callback;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;
@@ -77,14 +78,12 @@ public class RelayFragment extends Fragment {
         if (!mAdapter.isEnabled())
         {
             // NFC is not enabled -> "Tell the user to enable NFC"
-            //FIXME
-            //showEnableNFCDialog();
+            showEnableNFCDialog();
         }
 
         // Create a generic PendingIntent that will be delivered to this activity.
         // The NFC stack will fill in the intent with the details of the discovered tag before
         // delivering to this activity.
-        //FIXME
         mPendingIntent = PendingIntent.getActivity(v.getContext(), 0, new Intent(v.getContext(),
                 getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 
@@ -179,43 +178,10 @@ public class RelayFragment extends Fragment {
         return f;
     }
 
-//    @Override
-//    public void onTokenDialogPositiveClick(DialogFragment dialog) {
-//        // User touched the dialog's submit button
-//        // Toast.makeText(this, "You clicked submit, server is now processing your token...", Toast.LENGTH_LONG).show();
-//
-//        mJoinSession.setText(leaveSessionMessage);
-//        mConnecttoSession.setEnabled(false);
-//        mAbort.setEnabled(true);
-//        //this.setTitle("You clicked connect");
-//        //mConnStatus.setText("Server status: Connecting");
-//        //mPartnerDevice.setText("Partner status: waiting");
-//
-//        // Run common network connection est. code
-//        networkConnectCommon();
-//
-//        // Load token from the Shared Preferences Buffer
-//        SharedPreferences preferences = super.getActivity().getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-//        String token = preferences.getString("token", "000000");
-//
-//        mConnectionClient.joinSession(token);
-//
-//    }
-
-    public void onTokenDialogNegativeClick(DialogFragment dialog) {
-        // User touched the dialog's cancel button
-        // Toast.makeText(this, "You clicked cancel, no connection was established...", Toast.LENGTH_LONG).show();
-    }
-
-    public void onNFCDialogPositiveClick(DialogFragment dialog) {
-        // User touched the dialog's goto settings button
-        Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
-        startActivity(intent);
-    }
-
-    public void onNFCDialogNegativeClick(DialogFragment dialog) {
-        // User touched the dialog's cancel button
-        Toast.makeText(v.getContext(), "Caution! The app can't do something useful without NFC enabled -> please enable NFC in your phone settings", Toast.LENGTH_LONG).show();
+    public void showEnableNFCDialog() {
+        // Create an instance of the dialog fragment and show it
+        DialogFragment dialog = new enablenfc_dialog();
+        dialog.show(getActivity().getFragmentManager(), "Enable NFC: ");
     }
 
 
