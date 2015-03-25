@@ -39,7 +39,8 @@ import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;
 import tud.seemuh.nfcgate.network.ProtobufCallback;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 
-public class RelayFragment extends Fragment implements OnClickListener {
+public class RelayFragment extends Fragment
+        implements OnClickListener, enablenfc_dialog.NFCNoticeDialogListener  {
 
     private final static String TAG = "RelayFragment";
 
@@ -119,6 +120,7 @@ public class RelayFragment extends Fragment implements OnClickListener {
         // Create Buttons & TextViews
         mReset = (Button) v.findViewById(R.id.resetstatus);
         mConnecttoSession = (Button) v.findViewById(R.id.btnCreateSession);
+        mConnecttoSession.setOnClickListener(this);
         mJoinSession = (Button) v.findViewById(R.id.btnJoinSession);
         mJoinSession.setOnClickListener(this);
         mAbort = (Button) v.findViewById(R.id.abortbutton);
@@ -228,7 +230,32 @@ public class RelayFragment extends Fragment implements OnClickListener {
                     mConnectionClient.leaveSession();
                 }
                 break;
-            //caste ...
+            case R.id.btnCreateSession:
+                // Create a new Session
+                if (!checkIpPort(mIP.getText().toString(), mPort.getText().toString())) {
+                    Toast.makeText(v.getContext(), "Please enter a valid ip & port", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                if (!mConnecttoSession.getText().equals(leaveSessionMessage)) {
+                    mConnecttoSession.setText(leaveSessionMessage);
+                    mJoinSession.setEnabled(false);
+                    mAbort.setEnabled(true);
+
+                    // Run common code for network connection establishment
+                    //FIXME
+                    //networkConnectCommon();
+
+                    // Create session
+                    mConnectionClient.createSession();
+                } else {
+                    // the button was already clicked and we want to disconnect from the session
+                    mConnecttoSession.setText(createSessionMessage);
+                    mJoinSession.setEnabled(true);
+
+                    mConnectionClient.leaveSession();
+                }
+                break;
         }
     }
 
@@ -250,5 +277,18 @@ public class RelayFragment extends Fragment implements OnClickListener {
         validIp = matcher.matches();
         if (validPort) globalPort = int_port;
         return validPort && validIp;
+    }
+
+    @Override
+    public void onNFCDialogPositiveClick(DialogFragment dialog) {
+        // User touched the dialog's goto settings button
+        Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onNFCDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's cancel button
+        Toast.makeText(v.getContext(), "Caution! The app can't do something useful without NFC enabled -> please enable NFC in your phone settings", Toast.LENGTH_LONG).show();
     }
 }

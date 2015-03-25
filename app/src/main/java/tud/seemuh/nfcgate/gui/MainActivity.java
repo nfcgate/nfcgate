@@ -50,7 +50,7 @@ import tud.seemuh.nfcgate.util.sink.SinkInitException;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
 
 public class MainActivity extends FragmentActivity
-    implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener {
+    implements token_dialog.NoticeDialogListener {
         //implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener, ReaderCallback{
 
     private NfcAdapter mAdapter;
@@ -294,40 +294,6 @@ public class MainActivity extends FragmentActivity
 //        //this.setTitle("You clicked abort");
 //    }
 //
-//    public void ButtonCreateSessionClicked(View view) {
-//        // Create a new Session
-//        if (!checkIpPort(mIP.getText().toString(), mPort.getText().toString()))
-//        {
-//            Toast.makeText(this, "Please enter a valid ip & port", Toast.LENGTH_LONG).show();
-//            return;
-//        }
-//
-//        if (!mConnecttoSession.getText().equals(leaveSessionMessage))
-//        {
-//            mConnecttoSession.setText(leaveSessionMessage);
-//            mJoinSession.setEnabled(false);
-//            mAbort.setEnabled(true);
-//
-//            // Run common code for network connection establishment
-//            networkConnectCommon();
-//
-//            // Create session
-//            mConnectionClient.createSession();
-//        }
-//        else
-//        {
-//            // the button was already clicked and we want to disconnect from the session
-//            mConnecttoSession.setText(createSessionMessage);
-//            mJoinSession.setEnabled(true);
-//
-//            mConnectionClient.leaveSession();
-//        }
-//    }
-//
-    public void ButtonJoinSessionClicked(View view) {
-
-    }
-//
 
 //
 //    @Override
@@ -387,16 +353,5 @@ public class MainActivity extends FragmentActivity
     }
 
 
-    @Override
-    public void onNFCDialogPositiveClick(DialogFragment dialog) {
-        // User touched the dialog's goto settings button
-        Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
-        startActivity(intent);
-}
 
-    @Override
-    public void onNFCDialogNegativeClick(DialogFragment dialog) {
-        // User touched the dialog's cancel button
-        Toast.makeText(this, "Caution! The app can't do something useful without NFC enabled -> please enable NFC in your phone settings", Toast.LENGTH_LONG).show();
-    }
 }
