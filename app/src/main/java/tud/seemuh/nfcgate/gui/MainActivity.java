@@ -50,7 +50,7 @@ import tud.seemuh.nfcgate.util.sink.SinkInitException;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
 
 public class MainActivity extends FragmentActivity
-    implements enablenfc_dialog.NFCNoticeDialogListener {
+    implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener {
         //implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener, ReaderCallback{
 
     private NfcAdapter mAdapter;
@@ -73,6 +73,9 @@ public class MainActivity extends FragmentActivity
     // Filter Manager
     private FilterManager mFilterManager;
 
+    // Defined name of the Shared Preferences Buffer
+    //TODO this is now DOUBLE DEFINED: here and in the RelayFragment
+    public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
 
     // private var set by settings dialog whether dev mode is enabled or not
     private boolean mDevModeEnabled = false;
@@ -305,35 +308,35 @@ public class MainActivity extends FragmentActivity
 //    /**
 //     * Common code for network connection establishment
 //     */
-//    private void networkConnectCommon() {
-//        // Initialize SinkManager
-//        mSinkManager = new SinkManager(mSinkManagerQueue);
-//
-//        // Initialize FilterManager
-//        mFilterManager = new FilterManager();
-//
-//        // Pass references
-//        mNfcManager.setSinkManager(mSinkManager, mSinkManagerQueue);
-//        mNfcManager.setFilterManager(mFilterManager);
-//        mNfcManager.setNetworkHandler(mConnectionClient);
-//
-//        // FIXME For debugging purposes, hardcoded selecting of sinks happens here
-//        // This should be selectable by the user
-//
-//        // Initialize debug output sink
-//        // TODO This should most definitely be solved in a more elegant fashion
-//        try {
-//            mSinkManager.addSink(SinkManager.SinkType.DISPLAY_TEXTVIEW, mDebuginfo);
-//            mSinkManager.addSink(SinkManager.SinkType.FILE, "testFile.txt");
-//        } catch (SinkInitException e) {
-//            e.printStackTrace();
-//        }
-//
-//        // TODO Initialize and add Filters
-//
-//        // Do the actual network connection
-//        mConnectionClient.connect(mIP.getText().toString(), port);
-//    }
+    private void networkConnectCommon() {
+        // Initialize SinkManager
+        mSinkManager = new SinkManager(mSinkManagerQueue);
+
+        // Initialize FilterManager
+        mFilterManager = new FilterManager();
+
+        // Pass references
+        mNfcManager.setSinkManager(mSinkManager, mSinkManagerQueue);
+        mNfcManager.setFilterManager(mFilterManager);
+        mNfcManager.setNetworkHandler(mConnectionClient);
+
+        // FIXME For debugging purposes, hardcoded selecting of sinks happens here
+        // This should be selectable by the user
+
+        // Initialize debug output sink
+        // TODO This should most definitely be solved in a more elegant fashion
+        try {
+            mSinkManager.addSink(SinkManager.SinkType.DISPLAY_TEXTVIEW, mDebuginfo);
+            mSinkManager.addSink(SinkManager.SinkType.FILE, "testFile.txt");
+        } catch (SinkInitException e) {
+            e.printStackTrace();
+        }
+
+        // TODO Initialize and add Filters
+
+        // Do the actual network connection
+        mConnectionClient.connect(mIP.getText().toString(), port);
+    }
 //
 //    public void ButtonResetClicked(View view) {
 //        // reset the entire application by pressing this button
@@ -512,34 +515,34 @@ public class MainActivity extends FragmentActivity
 //        dialog.show(this.getFragmentManager(), "Enter token: ");
 //    }
 //
-//    @Override
-//    public void onTokenDialogPositiveClick(DialogFragment dialog) {
-//        // User touched the dialog's submit button
-//        // Toast.makeText(this, "You clicked submit, server is now processing your token...", Toast.LENGTH_LONG).show();
-//
-//        mJoinSession.setText(leaveSessionMessage);
-//        mConnecttoSession.setEnabled(false);
-//        mAbort.setEnabled(true);
-//        //this.setTitle("You clicked connect");
-//        //mConnStatus.setText("Server status: Connecting");
-//        //mPartnerDevice.setText("Partner status: waiting");
-//
-//        // Run common network connection est. code
-//        networkConnectCommon();
-//
-//        // Load token from the Shared Preferences Buffer
-//        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-//        String token = preferences.getString("token", "000000");
-//
-//        mConnectionClient.joinSession(token);
-//
-//    }
-//
-//    @Override
-//    public void onTokenDialogNegativeClick(DialogFragment dialog) {
-//        // User touched the dialog's cancel button
-//        // Toast.makeText(this, "You clicked cancel, no connection was established...", Toast.LENGTH_LONG).show();
-//    }
+    @Override
+    public void onTokenDialogPositiveClick(DialogFragment dialog) {
+        // User touched the dialog's submit button
+        // Toast.makeText(this, "You clicked submit, server is now processing your token...", Toast.LENGTH_LONG).show();
+
+        mJoinSession.setText(leaveSessionMessage);
+        mConnecttoSession.setEnabled(false);
+        mAbort.setEnabled(true);
+        //this.setTitle("You clicked connect");
+        //mConnStatus.setText("Server status: Connecting");
+        //mPartnerDevice.setText("Partner status: waiting");
+
+        // Run common network connection est. code
+        networkConnectCommon();
+
+        // Load token from the Shared Preferences Buffer
+        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        String token = preferences.getString("token", "000000");
+
+        mConnectionClient.joinSession(token);
+
+    }
+
+    @Override
+    public void onTokenDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's cancel button
+        // Toast.makeText(this, "You clicked cancel, no connection was established...", Toast.LENGTH_LONG).show();
+    }
 
 
     @Override
