@@ -90,18 +90,12 @@ public class MainActivity extends FragmentActivity
     private Button mReset, mConnecttoSession, mAbort, mJoinSession;
     private TextView mConnStatus, mInfo, mDebuginfo, mIP, mPort, mPartnerDevice, mtoken;
 
-    // regex for IP checking
-    private static final String regexIPpattern ="^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
-
+    //FIXME double in RelayFragment
     public static String joinSessionMessage = "Join Session";
     public static String createSessionMessage = "Create Session";
     public static String leaveSessionMessage = "Leave Session";
     public static String resetMessage = "Reset";
     public static String resetCardMessage = "Forget Card";
-
-    // max. port possible
-    private static int maxPort = 65535;
-    int globalPort = 0;
 
     private SlidingTabLayout mSlidingTabLayout;
 
@@ -330,52 +324,11 @@ public class MainActivity extends FragmentActivity
 //        }
 //    }
 //
-//    public void ButtonJoinSessionClicked(View view) {
-//        // Join an existing session
-//        if (!checkIpPort(mIP.getText().toString(), mPort.getText().toString()))
-//        {
-//            Toast.makeText(this, "Please enter a valid ip & port", Toast.LENGTH_LONG).show();
-//            return;
-//        }
+    public void ButtonJoinSessionClicked(View view) {
+
+    }
 //
-//        if (!mJoinSession.getText().equals(leaveSessionMessage))
-//        {
-//            // Display dialog to enter the token
-//            showTokenDialog();   // all logic is implemented below in "onTokenDialogPositiveClick" method
-//        }
-//        else
-//        {
-//            // the button was already clicked and we want to disconnect from the session
-//            mJoinSession.setText(joinSessionMessage);
-//            //mConnStatus.setText("Server status: Disconnecting");
-//            //mPartnerDevice.setText("Partner status: no device");
-//            mConnecttoSession.setEnabled(true);
-//            //this.setTitle("You clicked disconnect");
-//
-//            mConnectionClient.leaveSession();
-//        }
-//    }
-//
-//    public boolean checkIpPort(String ip, String port)
-//    {
-//        boolean validPort = false;
-//        boolean gotException = false;
-//        boolean validIp = false;
-//        Pattern pattern = Pattern.compile(regexIPpattern);
-//        Matcher matcher = pattern.matcher(ip);
-//        int int_port = 0;
-//        try {
-//            int_port = Integer.parseInt(port.trim());
-//        } catch (NumberFormatException e) {
-//            gotException = true;
-//        }
-//        if (!gotException) {
-//            if ((int_port > 0) && (int_port <= maxPort)) validPort = true;
-//        }
-//        validIp = matcher.matches();
-//        if (validPort) globalPort = int_port;
-//        return validPort && validIp;
-//    }
+
 //
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
@@ -409,11 +362,6 @@ public class MainActivity extends FragmentActivity
 
 
 
-    public void showTokenDialog() {
-        // Create an instance of the dialog fragment and show it
-        DialogFragment dialog = new token_dialog();
-        dialog.show(getSupportFragmentManager(), "Enter token: ");
-    }
 
     @Override
     public void onTokenDialogPositiveClick(DialogFragment dialog) {

@@ -17,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -24,6 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.gui.AboutWorkaroundActivity;
@@ -36,7 +39,7 @@ import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;
 import tud.seemuh.nfcgate.network.ProtobufCallback;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 
-public class RelayFragment extends Fragment {
+public class RelayFragment extends Fragment implements OnClickListener {
 
     private final static String TAG = "RelayFragment";
 
@@ -60,6 +63,19 @@ public class RelayFragment extends Fragment {
     // declares main functionality
     private Button mReset, mConnecttoSession, mAbort, mJoinSession;
     private TextView mConnStatus, mInfo, mDebuginfo, mIP, mPort, mPartnerDevice, mtoken;
+
+    // max. port possible
+    private static int maxPort = 65535;
+    int globalPort = 0;
+
+    // regex for IP checking
+    private static final String regexIPpattern ="^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+
+    public static String joinSessionMessage = "Join Session";
+    public static String createSessionMessage = "Create Session";
+    public static String leaveSessionMessage = "Leave Session";
+    public static String resetMessage = "Reset";
+    public static String resetCardMessage = "Forget Card";
 
     private View v;
 
@@ -104,6 +120,7 @@ public class RelayFragment extends Fragment {
         mReset = (Button) v.findViewById(R.id.resetstatus);
         mConnecttoSession = (Button) v.findViewById(R.id.btnCreateSession);
         mJoinSession = (Button) v.findViewById(R.id.btnJoinSession);
+        mJoinSession.setOnClickListener(this);
         mAbort = (Button) v.findViewById(R.id.abortbutton);
         mConnStatus = (TextView) v.findViewById(R.id.editConnectionStatus);
         mDebuginfo = (TextView) v.findViewById(R.id.editTextDevModeEnabledDebugging);
@@ -183,5 +200,55 @@ public class RelayFragment extends Fragment {
         // Create an instance of the dialog fragment and show it
         DialogFragment dialog = new enablenfc_dialog();
         dialog.show(getFragmentManager(), "Enable NFC: ");
+    }
+
+    public void showTokenDialog() {
+        // Create an instance of the dialog fragment and show it
+        DialogFragment dialog = new token_dialog();
+        dialog.show(getFragmentManager(), "Enter token: ");
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case R.id.btnJoinSession:
+                // Join an existing session
+                if (!checkIpPort(mIP.getText().toString(), mPort.getText().toString())) {
+                    Toast.makeText(v.getContext(), "Please enter a valid ip & port", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                if (!mJoinSession.getText().equals(leaveSessionMessage)) {
+                    // Display dialog to enter the token
+                    showTokenDialog();   // all logic is implemented below in "onTokenDialogPositiveClick" method
+                } else {
+                    // the button was already clicked and we want to disconnect from the session
+                    mJoinSession.setText(joinSessionMessage);
+                    mConnecttoSession.setEnabled(true);
+                    mConnectionClient.leaveSession();
+                }
+                break;
+            //caste ...
+        }
+    }
+
+    public boolean checkIpPort(String ip, String port) {
+        boolean validPort = false;
+        boolean gotException = false;
+        boolean validIp = false;
+        Pattern pattern = Pattern.compile(regexIPpattern);
+        Matcher matcher = pattern.matcher(ip);
+        int int_port = 0;
+        try {
+            int_port = Integer.parseInt(port.trim());
+        } catch (NumberFormatException e) {
+            gotException = true;
+        }
+        if (!gotException) {
+            if ((int_port > 0) && (int_port <= maxPort)) validPort = true;
+        }
+        validIp = matcher.matches();
+        if (validPort) globalPort = int_port;
+        return validPort && validIp;
     }
 }
