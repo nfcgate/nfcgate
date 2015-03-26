@@ -48,8 +48,10 @@ public class RelayFragment extends Fragment
 
     private final static String TAG = "RelayFragment";
 
+    //single instance of this class
+    private static RelayFragment fragment;
 
-    private PendingIntent mPendingIntent;
+    public PendingIntent mPendingIntent;
     private IntentFilter[] mFilters;
     private String[][] mTechLists;
 
@@ -107,21 +109,26 @@ public class RelayFragment extends Fragment
         v = inflater.inflate(R.layout.fragment_relay, container, false);
         Log.d(TAG, "onCreateView");
 
-        mAdapter = NfcAdapter.getDefaultAdapter(v.getContext());
+        //mAdapter = NfcAdapter.getDefaultAdapter(v.getContext());
 
-        mIntentFilter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
+        //mIntentFilter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
 
+        /*
         if (!mAdapter.isEnabled()) {
             // NFC is not enabled -> "Tell the user to enable NFC"
             showEnableNFCDialog();
         }
+        */
 
+        /*
         // Create a generic PendingIntent that will be delivered to this activity.
         // The NFC stack will fill in the intent with the details of the discovered tag before
         // delivering to this activity.
         mPendingIntent = PendingIntent.getActivity(getActivity(), 0, new Intent(getActivity(),
                 getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+                */
 
+        /*
         // Setup an foreground intent filter for NFC
         IntentFilter tech = new IntentFilter();
         tech.addAction(NfcAdapter.ACTION_TECH_DISCOVERED);
@@ -133,6 +140,7 @@ public class RelayFragment extends Fragment
                 new String[] {IsoDep.class.getName()}
                 //we could add all of the Types from the tech.xml here
         };
+        */
 
         // Create Buttons & TextViews
         mReset = (Button) v.findViewById(R.id.btnResetstatus);
@@ -212,7 +220,7 @@ public class RelayFragment extends Fragment
         // Load values from the Shared Preferences Buffer
         SharedPreferences preferences = v.getContext().getSharedPreferences(PREF_FILE_NAME, v.getContext().MODE_PRIVATE);
 
-
+        /*
         if (mAdapter != null && mAdapter.isEnabled()) {
             mAdapter.enableForegroundDispatch(getActivity(), mPendingIntent, mFilters, mTechLists);
 
@@ -220,7 +228,7 @@ public class RelayFragment extends Fragment
                 Log.i(TAG, "onResume(): starting onNewIntent()...");
                 ((MainActivity)getActivity()).onNewIntent(getActivity().getIntent());
             }
-        }
+        }*/
 
         ip = preferences.getString("ip", "192.168.178.31");
         port = preferences.getInt("port", 5566);
@@ -245,6 +253,7 @@ public class RelayFragment extends Fragment
             editor.commit();
         }
 
+        /*
         //ReaderMode
         boolean isReaderModeEnabled = preferences.getBoolean("mReaderModeEnabled", false);
         if(isReaderModeEnabled) {
@@ -253,7 +262,7 @@ public class RelayFragment extends Fragment
                     NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
         } else {
             mAdapter.disableReaderMode(getActivity());
-        }
+        }*/
 
         // De- or Enables Debug Window
         mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
@@ -269,16 +278,11 @@ public class RelayFragment extends Fragment
     }
 
 
-    public static RelayFragment newInstance() {
-
-        RelayFragment f = new RelayFragment();
-
-        //Bundle b = new Bundle();
-        //b.putString("msg", text);
-
-        //f.setArguments(b);
-
-        return f;
+    public static RelayFragment getInstance() {
+        if(fragment == null) {
+            fragment = new RelayFragment();
+        }
+        return fragment;
     }
 
     @Override
@@ -425,13 +429,6 @@ public class RelayFragment extends Fragment
 
         // Do the actual network connection
         mConnectionClient.connect(mIP.getText().toString(), port);
-    }
-
-
-    public void showEnableNFCDialog() {
-        // Create an instance of the dialog fragment and show it
-        DialogFragment dialog = EnablenfcDialog.getInstance(RelayFragment.this);
-        dialog.show(getFragmentManager(), "Enable NFC: ");
     }
 
     @Override

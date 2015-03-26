@@ -10,6 +10,8 @@ import tud.seemuh.nfcgate.R;
 
 public class CloneFragment extends Fragment {
 
+    private static CloneFragment fragment;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_clone, container, false);
@@ -19,15 +21,12 @@ public class CloneFragment extends Fragment {
         return v;
     }
 
-    public static CloneFragment newInstance() {
+    public static CloneFragment getInstance() {
 
-        CloneFragment f = new CloneFragment();
+        if(fragment == null) {
+            fragment = new CloneFragment();
+        }
 
-        //Bundle b = new Bundle();
-        //b.putString("msg", text);
-
-        //f.setArguments(b);
-
-        return f;
+        return fragment;
     }
 }

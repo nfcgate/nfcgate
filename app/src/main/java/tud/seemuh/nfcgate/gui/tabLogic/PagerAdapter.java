@@ -39,9 +39,9 @@ public class PagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int pos) {
         switch(pos) {
 
-            case 0: return RelayFragment.newInstance();
-            case 1: return CloneFragment.newInstance();
-            default: return CloneFragment.newInstance();
+            case 0: return RelayFragment.getInstance();
+            case 1: return CloneFragment.getInstance();
+            default: return CloneFragment.getInstance();
         }
     }
 

@@ -7,41 +7,34 @@ import android.content.SharedPreferences;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.ReaderCallback;
 import android.nfc.Tag;
+import android.nfc.tech.IsoDep;
+import android.nfc.tech.Ndef;
+import android.nfc.tech.NfcA;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.gui.fragments.RelayFragment;
-import tud.seemuh.nfcgate.gui.fragments.TokenDialog;
 import tud.seemuh.nfcgate.gui.tabLayout.SlidingTabLayout;
 import tud.seemuh.nfcgate.gui.tabLogic.PagerAdapter;
-import tud.seemuh.nfcgate.network.Callback;
-import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
-import tud.seemuh.nfcgate.network.ProtobufCallback;
-import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
 
 public class MainActivity extends FragmentActivity
         implements ReaderCallback {
         //implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener, ReaderCallback{
 
-    /*
     private NfcAdapter mAdapter;
     private IntentFilter mIntentFilter = new IntentFilter();
     private PendingIntent mPendingIntent;
     private IntentFilter[] mFilters;
     private String[][] mTechLists;
-    */
+
     private final static String TAG = "MainActivity";
 
     //Connection Client
@@ -76,6 +69,9 @@ public class MainActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mAdapter = NfcAdapter.getDefaultAdapter(this);
+        mIntentFilter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
+
         ViewPager pager = (ViewPager) findViewById(R.id.viewpager);
         pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
 
@@ -83,11 +79,58 @@ public class MainActivity extends FragmentActivity
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setViewPager(pager);
 
+        if (!mAdapter.isEnabled()) {
+            // NFC is not enabled -> "Tell the user to enable NFC"
+            //FIXME NPE here
+            //RelayFragment.getInstance().showEnableNFCDialog();
+        }
+
+        // Create a generic PendingIntent that will be delivered to this activity.
+        // The NFC stack will fill in the intent with the details of the discovered tag before
+        // delivering to this activity.
+        mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
+                getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+
+        // Setup an foreground intent filter for NFC
+        IntentFilter tech = new IntentFilter();
+        tech.addAction(NfcAdapter.ACTION_TECH_DISCOVERED);
+        mFilters = new IntentFilter[] { tech, };
+        // this thing must have the same structure as in the tech.xml
+        mTechLists = new String[][] {
+                new String[] {NfcA.class.getName()},
+                new String[] {Ndef.class.getName()},
+                new String[] {IsoDep.class.getName()}
+                //we could add all of the Types from the tech.xml here
+        };
+
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        // Load values from the Shared Preferences Buffer
+        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+
+        if (mAdapter != null && mAdapter.isEnabled()) {
+            mAdapter.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
+
+            if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(this.getIntent().getAction())) {
+                Log.i(TAG, "onResume(): starting onNewIntent()...");
+                this.onNewIntent(this.getIntent());
+            }
+        }
+
+        //ReaderMode
+        boolean isReaderModeEnabled = preferences.getBoolean("mReaderModeEnabled", false);
+        if(isReaderModeEnabled) {
+            //This cast to ReaderCallback seems unavoidable, stupid Java...
+            mAdapter.enableReaderMode(this, this,
+                    NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
+        } else {
+            mAdapter.disableReaderMode(this);
+        }
     }
 
 //    @Override
@@ -162,9 +205,11 @@ public class MainActivity extends FragmentActivity
     private void onTagDiscoveredCommon(Tag tag) {
         // Pass reference to NFC Manager
         //mNfcManager.setTag(tag);
+        Log.d(TAG, "onTagDiscoveredCommon");
 
-        RelayFragment fragment = (RelayFragment) getSupportFragmentManager().getFragments().get(0);
-        fragment.mNfcManager.setTag(tag);
+        //RelayFragment fragment = (RelayFragment) getSupportFragmentManager().getFragments().get(0);
+        //fragment.mNfcManager.setTag(tag);
+        RelayFragment.getInstance().mNfcManager.setTag(tag);
     }
 
     /**
@@ -186,6 +231,9 @@ public class MainActivity extends FragmentActivity
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
             onTagDiscoveredCommon(tag);
+
+            //This toast is very useful for debugging, DONT delete it!!!
+            Toast.makeText(this, "Found Tag", Toast.LENGTH_SHORT).show();
         }
     }
 
