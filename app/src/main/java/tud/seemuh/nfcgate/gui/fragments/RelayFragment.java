@@ -161,10 +161,9 @@ public class RelayFragment extends Fragment
         mConnectionClient.setNfcManager(mNfcManager);
         mConnectionClient.setCallback(mNetCallback);
 
-        File bcmdevice = new File("/dev/bcm2079x-i2c");
         final SharedPreferences preferences = getActivity().getSharedPreferences(PREF_FILE_NAME, v.getContext().MODE_PRIVATE);
         boolean neverShowAgain = preferences.getBoolean("mNeverWarnWorkaround", false);
-        if (bcmdevice.exists() && !neverShowAgain) {
+        if (BCM20793Workaround.workaroundNeeded() && !neverShowAgain) {
             LayoutInflater checkboxInflater = getActivity().getLayoutInflater();
             final View checkboxView = checkboxInflater.inflate(R.layout.workaroundwarning, null);
             new AlertDialog.Builder(v.getContext())

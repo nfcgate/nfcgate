@@ -29,7 +29,7 @@ public class enablenfc_dialog extends DialogFragment {
 
     public static enablenfc_dialog getInstance(NFCNoticeDialogListener dialogInterface) {
         enablenfc_dialog fragmentDialog = new enablenfc_dialog();
-        
+
         mListener = dialogInterface;
 
         return fragmentDialog;
