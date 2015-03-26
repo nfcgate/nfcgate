@@ -32,7 +32,7 @@ import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
 
 public class MainActivity extends FragmentActivity
-        implements ReaderCallback{
+        implements ReaderCallback {
         //implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener, ReaderCallback{
 
     /*
@@ -189,66 +189,6 @@ public class MainActivity extends FragmentActivity
         }
     }
 
-//    /**
-//     * Common code for network connection establishment
-//     */
-
-//
-//    public void ButtonResetClicked(View view) {
-//        // reset the entire application by pressing this button
-//
-//        if (mReset.getText().equals(resetMessage)) {
-//            // mConnStatus.setText("Server status: Resetting");
-//            // mPartnerDevice.setText("Partner status: no device");
-//            mDebuginfo.setText("Debugging Output:\n");
-//            // this.setTitle("You clicked reset");
-//
-//            if (mConnectionClient != null) mConnectionClient.disconnect();
-//            mJoinSession.setText(joinSessionMessage);
-//            mJoinSession.setEnabled(true);
-//            mConnecttoSession.setText(createSessionMessage);
-//            mConnecttoSession.setEnabled(true);
-//
-//            // Load values from the Shared Preferences Buffer
-//            SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-//            mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
-//            // De- or Enables Debug Window
-//            mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
-//            if (mDevModeEnabled) {
-//                mDebuginfo.setVisibility(View.VISIBLE);
-//                mDebuginfo.requestFocus();
-//            } else {
-//                mDebuginfo.setVisibility(View.GONE);  // View.invisible results in an error
-//            }
-//
-//            ip = preferences.getString("ip", "192.168.178.31");
-//            port = preferences.getInt("port", 5566);
-//            globalPort = preferences.getInt("port", 5566);
-//            mIP.setText(ip);
-//            mPort.setText(String.valueOf(port));
-//        } else if (mReset.getText().equals(resetCardMessage)) {
-//            mConnectionClient.disconnectCardWorkaround();
-//        } else {
-//            Log.e(TAG, "resetButtonClicked: Unknown message");
-//        }
-//    }
-//
-//    public void ButtonAbortClicked(View view) {
-//        // Abort the current connection attempt
-//        mJoinSession.setText(joinSessionMessage);
-//        mJoinSession.setEnabled(true);
-//        mConnecttoSession.setText(createSessionMessage);
-//        mConnecttoSession.setEnabled(true);
-//        mAbort.setEnabled(false);
-//
-//        // mConnStatus.setText("Server status: Disconnecting");
-//        // mPartnerDevice.setText("Partner status: no device");
-//        if (mConnectionClient != null) mConnectionClient.disconnect();
-//        //this.setTitle("You clicked abort");
-//    }
-//
-
-//
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
