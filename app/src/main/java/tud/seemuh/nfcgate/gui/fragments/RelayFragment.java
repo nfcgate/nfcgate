@@ -24,7 +24,6 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
@@ -32,9 +31,8 @@ import java.util.regex.Pattern;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.gui.AboutWorkaroundActivity;
-import tud.seemuh.nfcgate.gui.MainActivity;
-import tud.seemuh.nfcgate.gui.enablenfc_dialog;
-import tud.seemuh.nfcgate.gui.token_dialog;
+import tud.seemuh.nfcgate.gui.EnablenfcDialog;
+import tud.seemuh.nfcgate.gui.TokenDialog;
 import tud.seemuh.nfcgate.network.Callback;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;
@@ -47,7 +45,7 @@ import tud.seemuh.nfcgate.util.sink.SinkInitException;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
 
 public class RelayFragment extends Fragment
-        implements OnClickListener, enablenfc_dialog.NFCNoticeDialogListener  {
+        implements OnClickListener, EnablenfcDialog.NFCNoticeDialogListener  {
 
     private final static String TAG = "RelayFragment";
 
@@ -216,13 +214,13 @@ public class RelayFragment extends Fragment
 
     public void showEnableNFCDialog() {
         // Create an instance of the dialog fragment and show it
-        DialogFragment dialog = enablenfc_dialog.getInstance(RelayFragment.this);
+        DialogFragment dialog = EnablenfcDialog.getInstance(RelayFragment.this);
         dialog.show(getFragmentManager(), "Enable NFC: ");
     }
 
     public void showTokenDialog() {
         // Create an instance of the dialog fragment and show it
-        DialogFragment dialog = new token_dialog();
+        DialogFragment dialog = new TokenDialog();
         dialog.show(getFragmentManager(), "Enter token: ");
     }
 

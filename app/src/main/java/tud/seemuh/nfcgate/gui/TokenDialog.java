@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import tud.seemuh.nfcgate.R;
 
-public class token_dialog extends DialogFragment {
+public class TokenDialog extends DialogFragment {
 /* The activity that creates an instance of this dialog fragment must
  * implement this interface in order to receive event callbacks.
  * Each method passes the DialogFragment in case the host needs to query it. */
@@ -61,13 +61,13 @@ public class token_dialog extends DialogFragment {
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putString("token", token);
                         editor.commit();
-                        mListener.onTokenDialogPositiveClick(token_dialog.this);
+                        mListener.onTokenDialogPositiveClick(TokenDialog.this);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Send the negative button event back to the host activity
-                        mListener.onTokenDialogNegativeClick(token_dialog.this);
+                        mListener.onTokenDialogNegativeClick(TokenDialog.this);
                     }
                 });
         return builder.create();

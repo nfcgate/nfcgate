@@ -1,12 +1,6 @@
 package tud.seemuh.nfcgate.gui;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +9,7 @@ import android.widget.Button;
 
 import tud.seemuh.nfcgate.R;
 
-public class enablenfc_dialog extends DialogFragment {
+public class EnablenfcDialog extends DialogFragment {
     /* The activity that creates an instance of this dialog fragment must
  * implement this interface in order to receive event callbacks.
  * Each method passes the DialogFragment in case the host needs to query it. */
@@ -27,8 +21,8 @@ public class enablenfc_dialog extends DialogFragment {
     // Use this instance of the interface to deliver action events
     static NFCNoticeDialogListener mListener;
 
-    public static enablenfc_dialog getInstance(NFCNoticeDialogListener dialogInterface) {
-        enablenfc_dialog fragmentDialog = new enablenfc_dialog();
+    public static EnablenfcDialog getInstance(NFCNoticeDialogListener dialogInterface) {
+        EnablenfcDialog fragmentDialog = new EnablenfcDialog();
 
         mListener = dialogInterface;
 
@@ -40,12 +34,13 @@ public class enablenfc_dialog extends DialogFragment {
 
         View pushDialogView = getActivity().getLayoutInflater().inflate(R.layout.enablenfc, null);
 
-        Button dismissBtn = (Button) pushDialogView.findViewById(R.id.dismiss);
+        final Button dismissBtn = (Button) pushDialogView.findViewById(R.id.dismiss);
         dismissBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // send click event
                 mListener.onNFCDialogNegativeClick();
+                dismiss();
             }
         });
 
@@ -55,6 +50,7 @@ public class enablenfc_dialog extends DialogFragment {
             public void onClick(View v) {
                 // send click event
                 mListener.onNFCDialogPositiveClick();
+                dismiss();
             }
         });
 

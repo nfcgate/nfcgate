@@ -1,56 +1,26 @@
 package tud.seemuh.nfcgate.gui;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.nfc.NfcAdapter;
-import android.nfc.NfcAdapter.ReaderCallback;
-import android.nfc.Tag;
-import android.nfc.tech.IsoDep;
-import android.nfc.tech.Ndef;
-import android.nfc.tech.NfcA;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.File;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.gui.tabLayout.SlidingTabLayout;
 import tud.seemuh.nfcgate.gui.tabLogic.PagerAdapter;
 import tud.seemuh.nfcgate.network.Callback;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
-import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;
 import tud.seemuh.nfcgate.network.ProtobufCallback;
 import tud.seemuh.nfcgate.nfc.NfcManager;
-import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
-import tud.seemuh.nfcgate.util.NfcComm;
-import tud.seemuh.nfcgate.util.filter.FilterManager;
-import tud.seemuh.nfcgate.util.sink.SinkInitException;
-import tud.seemuh.nfcgate.util.sink.SinkManager;
 
 public class MainActivity extends FragmentActivity
-    implements token_dialog.NoticeDialogListener {
+    implements TokenDialog.NoticeDialogListener {
         //implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener, ReaderCallback{
 
     private NfcAdapter mAdapter;
