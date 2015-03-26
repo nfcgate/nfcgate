@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.gui.fragments.TokenDialog;
 import tud.seemuh.nfcgate.gui.tabLayout.SlidingTabLayout;
 import tud.seemuh.nfcgate.gui.tabLogic.PagerAdapter;
 import tud.seemuh.nfcgate.network.Callback;
@@ -19,8 +20,7 @@ import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.network.ProtobufCallback;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 
-public class MainActivity extends FragmentActivity
-    implements TokenDialog.NoticeDialogListener {
+public class MainActivity extends FragmentActivity {
         //implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener, ReaderCallback{
 
     private NfcAdapter mAdapter;
@@ -261,29 +261,6 @@ public class MainActivity extends FragmentActivity
 
 
 
-
-    @Override
-    public void onTokenDialogPositiveClick(DialogFragment dialog) {
-        mJoinSession.setText(leaveSessionMessage);
-        mConnecttoSession.setEnabled(false);
-        mAbort.setEnabled(true);
-
-        // Run common network connection est. code
-        //networkConnectCommon();
-
-        // Load token from the Shared Preferences Buffer
-        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-        String token = preferences.getString("token", "000000");
-
-        mConnectionClient.joinSession(token);
-
-    }
-
-    @Override
-    public void onTokenDialogNegativeClick(DialogFragment dialog) {
-        // User touched the dialog's cancel button
-        // Toast.makeText(this, "You clicked cancel, no connection was established...", Toast.LENGTH_LONG).show();
-    }
 
 
 

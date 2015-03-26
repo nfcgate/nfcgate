@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate.gui;
+package tud.seemuh.nfcgate.gui.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -19,7 +19,7 @@ public class EnablenfcDialog extends DialogFragment {
     }
 
     // Use this instance of the interface to deliver action events
-    static NFCNoticeDialogListener mListener;
+    private static NFCNoticeDialogListener mListener;
 
     public static EnablenfcDialog getInstance(NFCNoticeDialogListener dialogInterface) {
         EnablenfcDialog fragmentDialog = new EnablenfcDialog();
@@ -32,9 +32,9 @@ public class EnablenfcDialog extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View pushDialogView = getActivity().getLayoutInflater().inflate(R.layout.enablenfc, null);
+        View pushDialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_enablenfc, null);
 
-        final Button dismissBtn = (Button) pushDialogView.findViewById(R.id.dismiss);
+        final Button dismissBtn = (Button) pushDialogView.findViewById(R.id.enablenfc_dismiss_btn);
         dismissBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -44,7 +44,7 @@ public class EnablenfcDialog extends DialogFragment {
             }
         });
 
-        Button goSettingsBtn = (Button) pushDialogView.findViewById(R.id.go_settings);
+        Button goSettingsBtn = (Button) pushDialogView.findViewById(R.id.enablenfc_go_settings_btn);
         goSettingsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

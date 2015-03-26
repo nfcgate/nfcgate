@@ -31,8 +31,6 @@ import java.util.regex.Pattern;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.gui.AboutWorkaroundActivity;
-import tud.seemuh.nfcgate.gui.EnablenfcDialog;
-import tud.seemuh.nfcgate.gui.TokenDialog;
 import tud.seemuh.nfcgate.network.Callback;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;
@@ -45,7 +43,7 @@ import tud.seemuh.nfcgate.util.sink.SinkInitException;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
 
 public class RelayFragment extends Fragment
-        implements OnClickListener, EnablenfcDialog.NFCNoticeDialogListener  {
+        implements OnClickListener, EnablenfcDialog.NFCNoticeDialogListener, TokenDialog.NoticeDialogListener{
 
     private final static String TAG = "RelayFragment";
 
@@ -212,18 +210,6 @@ public class RelayFragment extends Fragment
         return f;
     }
 
-    public void showEnableNFCDialog() {
-        // Create an instance of the dialog fragment and show it
-        DialogFragment dialog = EnablenfcDialog.getInstance(RelayFragment.this);
-        dialog.show(getFragmentManager(), "Enable NFC: ");
-    }
-
-    public void showTokenDialog() {
-        // Create an instance of the dialog fragment and show it
-        DialogFragment dialog = new TokenDialog();
-        dialog.show(getFragmentManager(), "Enter token: ");
-    }
-
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
@@ -322,6 +308,13 @@ public class RelayFragment extends Fragment
         mConnectionClient.connect(mIP.getText().toString(), port);
     }
 
+
+    public void showEnableNFCDialog() {
+        // Create an instance of the dialog fragment and show it
+        DialogFragment dialog = EnablenfcDialog.getInstance(RelayFragment.this);
+        dialog.show(getFragmentManager(), "Enable NFC: ");
+    }
+
     @Override
     public void onNFCDialogPositiveClick() {
         // User touched the dialog's goto settings button
@@ -333,5 +326,34 @@ public class RelayFragment extends Fragment
     public void onNFCDialogNegativeClick() {
         // User touched the dialog's cancel button
         Toast.makeText(v.getContext(), "Caution! The app can't do something useful without NFC enabled -> please enable NFC in your phone settings", Toast.LENGTH_LONG).show();
+    }
+
+    public void showTokenDialog() {
+        // Create an instance of the dialog fragment and show it
+        DialogFragment dialog = TokenDialog.getInstance(RelayFragment.this);
+        dialog.show(getFragmentManager(), "Enter token: ");
+    }
+
+    @Override
+    public void onTokenDialogPositiveClick() {
+        mJoinSession.setText(leaveSessionMessage);
+        mConnecttoSession.setEnabled(false);
+        mAbort.setEnabled(true);
+
+        // Run common network connection est. code
+        networkConnectCommon();
+
+        // Load token from the Shared Preferences Buffer
+        SharedPreferences preferences = v.getContext().getSharedPreferences(PREF_FILE_NAME, v.getContext().MODE_PRIVATE);
+        String token = preferences.getString("token", "000000");
+
+        mConnectionClient.joinSession(token);
+
+    }
+
+    @Override
+    public void onTokenDialogNegativeClick() {
+        // User touched the dialog's cancel button
+        // Toast.makeText(this, "You clicked cancel, no connection was established...", Toast.LENGTH_LONG).show();
     }
 }
