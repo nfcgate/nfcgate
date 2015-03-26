@@ -105,6 +105,7 @@ public class RelayFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_relay, container, false);
+        Log.d(TAG, "onCreateView");
 
         mAdapter = NfcAdapter.getDefaultAdapter(v.getContext());
 
@@ -134,12 +135,13 @@ public class RelayFragment extends Fragment
         };
 
         // Create Buttons & TextViews
-        mReset = (Button) v.findViewById(R.id.resetstatus);
+        mReset = (Button) v.findViewById(R.id.btnResetstatus);
+        mReset.setOnClickListener(this);
         mConnecttoSession = (Button) v.findViewById(R.id.btnCreateSession);
         mConnecttoSession.setOnClickListener(this);
         mJoinSession = (Button) v.findViewById(R.id.btnJoinSession);
         mJoinSession.setOnClickListener(this);
-        mAbort = (Button) v.findViewById(R.id.abortbutton);
+        mAbort = (Button) v.findViewById(R.id.btnAbortbutton);
         mConnStatus = (TextView) v.findViewById(R.id.editConnectionStatus);
         mDebuginfo = (TextView) v.findViewById(R.id.editTextDevModeEnabledDebugging);
         mIP = (TextView) v.findViewById(R.id.editIP);
@@ -321,6 +323,41 @@ public class RelayFragment extends Fragment
                     mJoinSession.setEnabled(true);
 
                     mConnectionClient.leaveSession();
+                }
+                break;
+            case R.id.btnResetstatus:
+                if (mReset.getText().equals(resetMessage)) {
+                    // mConnStatus.setText("Server status: Resetting");
+                    // mPartnerDevice.setText("Partner status: no device");
+                    mDebuginfo.setText("Debugging Output:\n");
+                    // this.setTitle("You clicked reset");
+
+                    if (mConnectionClient != null) mConnectionClient.disconnect();
+                    mJoinSession.setText(joinSessionMessage);
+                    mJoinSession.setEnabled(true);
+                    mConnecttoSession.setText(createSessionMessage);
+                    mConnecttoSession.setEnabled(true);
+
+                    // Load values from the Shared Preferences Buffer
+                    SharedPreferences preferences = getActivity().getSharedPreferences(PREF_FILE_NAME, v.getContext().MODE_PRIVATE);
+                    mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
+                    // De- or Enables Debug Window
+                    if (mDevModeEnabled) {
+                        mDebuginfo.setVisibility(View.VISIBLE);
+                        mDebuginfo.requestFocus();
+                    } else {
+                        mDebuginfo.setVisibility(View.GONE);  // View.invisible results in an error
+                    }
+
+                    ip = preferences.getString("ip", "192.168.178.31");
+                    port = preferences.getInt("port", 5566);
+                    globalPort = preferences.getInt("port", 5566);
+                    mIP.setText(ip);
+                    mPort.setText(String.valueOf(port));
+                } else if (mReset.getText().equals(resetCardMessage)) {
+                    mConnectionClient.disconnectCardWorkaround();
+                } else {
+                    Log.e(TAG, "resetButtonClicked: Unknown message");
                 }
                 break;
         }
