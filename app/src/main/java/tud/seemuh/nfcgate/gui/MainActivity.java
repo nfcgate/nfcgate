@@ -13,8 +13,12 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.gui.fragments.RelayFragment;
@@ -25,6 +29,7 @@ import tud.seemuh.nfcgate.network.Callback;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.network.ProtobufCallback;
 import tud.seemuh.nfcgate.nfc.NfcManager;
+import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
 
 public class MainActivity extends FragmentActivity
         implements ReaderCallback{
@@ -244,35 +249,34 @@ public class MainActivity extends FragmentActivity
 //
 
 //
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu items for use in the action bar
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.menu_main, menu);
-//        return super.onCreateOptionsMenu(menu);
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle presses on the action bar items
-//        switch (item.getItemId()) {
-//            case  R.id.action_settings:
-//                startActivityForResult(new Intent(MainActivity.this, SettingsActivity.class), 0);
-//                return true;
-//            case R.id.action_about:
-//                startActivity(new Intent(MainActivity.this, AboutActivity.class));
-//                return true;
-//            case R.id.action_getpatchstate:
-//                Toast.makeText(this, "Patch state: " + (DaemonConfiguration.getInstance().isPatchEnabled() ? "Active" : "Inactive"), Toast.LENGTH_LONG).show();
-//                return true;
-//            case R.id.action_disablepatch:
-//                DaemonConfiguration.getInstance().disablePatch();
-//                Toast.makeText(this, "Patch disabled", Toast.LENGTH_LONG).show();
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//    }
-//
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case  R.id.action_settings:
+                startActivityForResult(new Intent(MainActivity.this, SettingsActivity.class), 0);
+                return true;
+            case R.id.action_about:
+                startActivity(new Intent(MainActivity.this, AboutActivity.class));
+                return true;
+            case R.id.action_getpatchstate:
+                Toast.makeText(this, "Patch state: " + (DaemonConfiguration.getInstance().isPatchEnabled() ? "Active" : "Inactive"), Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.action_disablepatch:
+                DaemonConfiguration.getInstance().disablePatch();
+                Toast.makeText(this, "Patch disabled", Toast.LENGTH_LONG).show();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 
 

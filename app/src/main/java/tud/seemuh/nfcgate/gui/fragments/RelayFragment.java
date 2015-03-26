@@ -475,4 +475,6 @@ public class RelayFragment extends Fragment
         // User touched the dialog's cancel button
         // Toast.makeText(this, "You clicked cancel, no connection was established...", Toast.LENGTH_LONG).show();
     }
+
+
 }
