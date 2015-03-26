@@ -24,7 +24,6 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
@@ -32,7 +31,6 @@ import java.util.regex.Pattern;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.gui.AboutWorkaroundActivity;
-import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.gui.enablenfc_dialog;
 import tud.seemuh.nfcgate.gui.token_dialog;
 import tud.seemuh.nfcgate.network.Callback;
