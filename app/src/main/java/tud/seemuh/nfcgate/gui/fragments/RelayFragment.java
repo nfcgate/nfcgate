@@ -142,6 +142,7 @@ public class RelayFragment extends Fragment
         mJoinSession = (Button) v.findViewById(R.id.btnJoinSession);
         mJoinSession.setOnClickListener(this);
         mAbort = (Button) v.findViewById(R.id.btnAbortbutton);
+        mAbort.setOnClickListener(this);
         mConnStatus = (TextView) v.findViewById(R.id.editConnectionStatus);
         mDebuginfo = (TextView) v.findViewById(R.id.editTextDevModeEnabledDebugging);
         mIP = (TextView) v.findViewById(R.id.editIP);
@@ -359,6 +360,19 @@ public class RelayFragment extends Fragment
                 } else {
                     Log.e(TAG, "resetButtonClicked: Unknown message");
                 }
+                break;
+            case R.id.btnAbortbutton:
+                // Abort the current connection attempt
+                mJoinSession.setText(joinSessionMessage);
+                mJoinSession.setEnabled(true);
+                mConnecttoSession.setText(createSessionMessage);
+                mConnecttoSession.setEnabled(true);
+                mAbort.setEnabled(false);
+
+                // mConnStatus.setText("Server status: Disconnecting");
+                // mPartnerDevice.setText("Partner status: no device");
+                if (mConnectionClient != null) mConnectionClient.disconnect();
+                //this.setTitle("You clicked abort");
                 break;
         }
     }
