@@ -10,7 +10,6 @@ import tud.seemuh.nfcgate.gui.fragments.CloneFragment;
 import tud.seemuh.nfcgate.gui.fragments.RelayFragment;
 
 public class PagerAdapter extends FragmentPagerAdapter {
-    private Fragment frag_ref;
 
     public PagerAdapter(FragmentManager fm) {
         super(fm);

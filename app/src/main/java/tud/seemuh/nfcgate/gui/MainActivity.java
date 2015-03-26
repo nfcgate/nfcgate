@@ -1,17 +1,23 @@
 package tud.seemuh.nfcgate.gui;
 
 import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.nfc.NfcAdapter;
+import android.nfc.NfcAdapter.ReaderCallback;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.gui.fragments.RelayFragment;
 import tud.seemuh.nfcgate.gui.fragments.TokenDialog;
 import tud.seemuh.nfcgate.gui.tabLayout.SlidingTabLayout;
 import tud.seemuh.nfcgate.gui.tabLogic.PagerAdapter;
@@ -20,36 +26,36 @@ import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.network.ProtobufCallback;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity
+        implements ReaderCallback{
         //implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener, ReaderCallback{
 
+    /*
     private NfcAdapter mAdapter;
     private IntentFilter mIntentFilter = new IntentFilter();
     private PendingIntent mPendingIntent;
     private IntentFilter[] mFilters;
     private String[][] mTechLists;
+    */
     private final static String TAG = "MainActivity";
 
     //Connection Client
-    protected HighLevelNetworkHandler mConnectionClient;
+    //protected HighLevelNetworkHandler mConnectionClient;
 
     // NFC Manager
-    private NfcManager mNfcManager;
+    //public NfcManager mNfcManager;
 
     // Defined name of the Shared Preferences Buffer
     //TODO this is now DOUBLE DEFINED: here and in the RelayFragment
     public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
 
-    // private var set by settings dialog whether dev mode is enabled or not
-    private boolean mDevModeEnabled = false;
 
 
-
-    private Callback mNetCallback = new ProtobufCallback();
+    //private Callback mNetCallback = new ProtobufCallback();
 
     // declares main functionality
-    private Button mReset, mConnecttoSession, mAbort, mJoinSession;
-    private TextView mConnStatus, mInfo, mDebuginfo, mIP, mPort, mPartnerDevice, mtoken;
+    //private Button mReset, mConnecttoSession, mAbort, mJoinSession;
+    //private TextView mConnStatus, mInfo, mDebuginfo, mIP, mPort, mPartnerDevice, mtoken;
 
     //FIXME double in RelayFragment
     public static String joinSessionMessage = "Join Session";
@@ -72,6 +78,11 @@ public class MainActivity extends FragmentActivity {
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setViewPager(pager);
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
 //    @Override
@@ -142,33 +153,37 @@ public class MainActivity extends FragmentActivity {
 //        mAdapter.disableForegroundDispatch(this);
 //    }
 //
-//    private void onTagDiscoveredCommon(Tag tag) {
-//        // Pass reference to NFC Manager
-//        mNfcManager.setTag(tag);
-//    }
-//
-//    /**
-//     * Function to get tag when readerMode is enabled
-//     * @param tag
-//     */
-//    @Override
-//    public void onTagDiscovered(Tag tag) {
-//
-//        Log.i(TAG, "Discovered tag in ReaderMode");
-//        onTagDiscoveredCommon(tag);
-//    }
-//
-//    @Override
-//    public void onNewIntent(Intent intent) {
-//        Log.i(TAG, "onNewIntent(): started");
-//        if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())) {
-//            Log.i(TAG,"Discovered tag with intent: " + intent);
-//            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-//
-//            onTagDiscoveredCommon(tag);
-//        }
-//    }
-//
+
+    private void onTagDiscoveredCommon(Tag tag) {
+        // Pass reference to NFC Manager
+        //mNfcManager.setTag(tag);
+
+        RelayFragment fragment = (RelayFragment) getSupportFragmentManager().getFragments().get(0);
+        fragment.mNfcManager.setTag(tag);
+    }
+
+    /**
+     * Function to get tag when readerMode is enabled
+     * @param tag
+     */
+    @Override
+    public void onTagDiscovered(Tag tag) {
+
+        Log.i(TAG, "Discovered tag in ReaderMode");
+        onTagDiscoveredCommon(tag);
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        Log.i(TAG, "onNewIntent(): started");
+        if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())) {
+            Log.i(TAG,"Discovered tag with intent: " + intent);
+            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+
+            onTagDiscoveredCommon(tag);
+        }
+    }
+
 //    /**
 //     * Common code for network connection establishment
 //     */
