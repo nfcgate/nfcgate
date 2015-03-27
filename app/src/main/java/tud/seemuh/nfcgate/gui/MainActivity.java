@@ -19,18 +19,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.gui.fragments.EnablenfcDialog;
 import tud.seemuh.nfcgate.gui.fragments.RelayFragment;
+import tud.seemuh.nfcgate.gui.fragments.WorkaroundDialog;
 import tud.seemuh.nfcgate.gui.tabLayout.SlidingTabLayout;
 import tud.seemuh.nfcgate.gui.tabLogic.PagerAdapter;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
+import tud.seemuh.nfcgate.nfc.reader.BCM20793Workaround;
 
 public class MainActivity extends FragmentActivity
-        implements ReaderCallback,EnablenfcDialog.NFCNoticeDialogListener {
-        //implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener, ReaderCallback{
+        implements ReaderCallback,EnablenfcDialog.NFCNoticeDialogListener, WorkaroundDialog.WorkaroundDialogListener {
 
     private NfcAdapter mAdapter;
     private IntentFilter mIntentFilter = new IntentFilter();
@@ -64,6 +67,13 @@ public class MainActivity extends FragmentActivity
         if (!mAdapter.isEnabled()) {
             // NFC is not enabled -> "Tell the user to enable NFC"
             showEnableNFCDialog();
+        }
+
+        final SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        boolean neverShowAgain = preferences.getBoolean("mNeverWarnWorkaround", false);
+        if (BCM20793Workaround.workaroundNeeded() && !neverShowAgain) {
+            WorkaroundDialog dialog = WorkaroundDialog.getInstance(this);
+            dialog.show(this.getSupportFragmentManager(), "Known issues");
         }
 
         ViewPager pager = (ViewPager) findViewById(R.id.viewpager);
@@ -121,75 +131,6 @@ public class MainActivity extends FragmentActivity
             mAdapter.disableReaderMode(this);
         }
     }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        Log.i(TAG, "onResume(): intent: " + getIntent().getAction());
-//
-//        // Load values from the Shared Preferences Buffer
-//        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-//
-//        if (mAdapter != null && mAdapter.isEnabled()) {
-//            mAdapter.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
-//
-//            if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())) {
-//                Log.i(TAG, "onResume(): starting onNewIntent()...");
-//                onNewIntent(getIntent());
-//            }
-//        }
-//
-//        ip = preferences.getString("ip", "192.168.178.31");
-//        port = preferences.getInt("port", 5566);
-//        globalPort = preferences.getInt("port", 5566);
-//
-//        //on start set the text values
-//        if(mIP.getText().toString().trim().length() == 0) {
-//            mIP.setText(ip);
-//            mPort.setText(String.valueOf(port));
-//        }
-//
-//        boolean chgsett;
-//        chgsett = preferences.getBoolean("changed_settings", false);
-//
-//        if(chgsett) {
-//            mIP.setText(ip);
-//            mPort.setText(String.valueOf(port));
-//
-//            // reset the 'settings changed' flag
-//            SharedPreferences.Editor editor = preferences.edit();
-//            editor.putBoolean("changed_settings", false);
-//            editor.commit();
-//        }
-//
-//        //ReaderMode
-//        boolean isReaderModeEnabled = preferences.getBoolean("mReaderModeEnabled", false);
-//        if(isReaderModeEnabled) {
-//            mAdapter.enableReaderMode(this, this, NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
-//        } else {
-//            mAdapter.disableReaderMode(this);
-//        }
-//
-//        // De- or Enables Debug Window
-//        mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
-//        mDebuginfo = (TextView) findViewById(R.id.editTextDevModeEnabledDebugging);
-//        if (mDevModeEnabled) {
-//            mDebuginfo.setVisibility(View.VISIBLE);
-//            mDebuginfo.requestFocus();
-//        } else {
-//            mDebuginfo.setVisibility(View.GONE);  // View.invisible results in an error
-//        }
-//
-//        mConnecttoSession.requestFocus();
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//
-//        mAdapter.disableForegroundDispatch(this);
-//    }
-//
 
     private void onTagDiscoveredCommon(Tag tag) {
         // Pass reference to NFC Manager
@@ -276,6 +217,36 @@ public class MainActivity extends FragmentActivity
     }
 
 
+    @Override
+    public void onWorkaroundPositiveClick() {
+        final SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        final View checkboxView = getLayoutInflater().inflate(R.layout.dialog_workaroundwarning, null);
 
+        CheckBox dontShowAgain = (CheckBox) checkboxView.findViewById(R.id.neverAgain);
+        if (dontShowAgain.isChecked()) {
+            Log.i(TAG, "onCreate: Don't show this again is checked");
+            SharedPreferences.Editor editor = preferences.edit();
 
+            editor.putBoolean("mNeverWarnWorkaround", true);
+            editor.apply();
+        }
+        startActivity(new Intent(MainActivity.this, AboutWorkaroundActivity.class));
+
+    }
+
+    @Override
+    public void onWorkaroundNegativeClick() {
+        final SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        final View checkboxView = getLayoutInflater().inflate(R.layout.dialog_workaroundwarning, null);
+
+        CheckBox dontShowAgain = (CheckBox) checkboxView.findViewById(R.id.neverAgain);
+        if (dontShowAgain.isChecked()) {
+            Log.i(TAG, "onCreate: Don't show this again is checked");
+            SharedPreferences.Editor editor = preferences.edit();
+
+            editor.putBoolean("mNeverWarnWorkaround", true);
+            editor.apply();
+        }
+
+    }
 }
