@@ -64,7 +64,7 @@
         </activity-alias>
 
         <service
-            android:name=".hce.ApduService"
+            android:name=".nfc.hce.ApduService"
             android:exported="true"
             android:permission="android.permission.BIND_NFC_SERVICE" >
             <intent-filter>

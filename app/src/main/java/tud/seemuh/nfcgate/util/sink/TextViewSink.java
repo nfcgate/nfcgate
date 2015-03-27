@@ -5,6 +5,7 @@ import android.widget.TextView;
 
 import java.util.concurrent.BlockingQueue;
 
+import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.UpdateUI;
 import tud.seemuh.nfcgate.util.Utils;
 
@@ -48,20 +49,43 @@ public class TextViewSink implements Sink {
                 // Handle message
                 if (msg.getType() == NfcComm.Type.AnticolBytes) {
                     // We are dealing with an Anticol message
-                    String output = "Card data:"
-                            + "\n  UID: "  + Utils.bytesToHex(msg.getUid())
-                            + "\n  ATQA: " + Utils.bytesToHex(msg.getAtqa())
-                            + "\n  SAK: "  + Utils.bytesToHex(msg.getSak())
-                            + "\n  Hist: " + Utils.bytesToHex(msg.getHist());
-                    UpdateTextView(output);
+                    if (msg.isChanged()) {
+                        String output = "Card data (Pre-filter in Brackets):"
+                                + "\n  UID: " + Utils.bytesToHex(msg.getUid())
+                                + " (" + Utils.bytesToHex(msg.getOldUid()) + ")"
+                                + "\n  ATQA: " + Utils.bytesToHex(msg.getAtqa())
+                                + " (" + Utils.bytesToHex(msg.getOldAtqa()) + ")"
+                                + "\n  SAK: " + Utils.bytesToHex(msg.getSak())
+                                + " (" + Utils.bytesToHex(msg.getOldSak()) + ")"
+                                + "\n  Hist: " + Utils.bytesToHex(msg.getHist())
+                                + " (" + Utils.bytesToHex(msg.getOldHist()) + ")";
+                        UpdateTextView(output);
+                    } else {
+                        String output = "Card data:"
+                                + "\n  UID: "  + Utils.bytesToHex(msg.getUid())
+                                + "\n  ATQA: " + Utils.bytesToHex(msg.getAtqa())
+                                + "\n  SAK: "  + Utils.bytesToHex(msg.getSak())
+                                + "\n  Hist: " + Utils.bytesToHex(msg.getHist());
+                        UpdateTextView(output);
+                    }
                 } else if (msg.getType() == NfcComm.Type.NFCBytes) {
                     // We are dealing with regular NFC traffic.
                     if (msg.getSource() == NfcComm.Source.CARD) {
                         // Write out NFC data sent by card
-                        UpdateTextView("C: " + Utils.bytesToHex(msg.getData()));
+                        if (msg.isChanged()) {
+                            UpdateTextView("C: " + Utils.bytesToHex(msg.getData())
+                                    + "(" + Utils.bytesToHex(msg.getOldData()) + ")");
+                        } else {
+                            UpdateTextView("C: " + Utils.bytesToHex(msg.getData()));
+                        }
                     } else if (msg.getSource() == NfcComm.Source.HCE) {
                         // Write out NFC data sent by reader
-                        UpdateTextView("R: " + Utils.bytesToHex(msg.getData()));
+                        if (msg.isChanged()) {
+                            UpdateTextView("R: " + Utils.bytesToHex(msg.getData())
+                                    + "(" + Utils.bytesToHex(msg.getOldData()) + ")");
+                        } else {
+                            UpdateTextView("R: " + Utils.bytesToHex(msg.getData()));
+                        }
                     } else {
                         Log.e(TAG, "run: Unhandled message source, doing nothing");
                     }

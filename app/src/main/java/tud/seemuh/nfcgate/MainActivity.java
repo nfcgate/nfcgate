@@ -33,12 +33,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import tud.seemuh.nfcgate.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.network.Callback;
-import tud.seemuh.nfcgate.network.ProtobufCallback;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;
-import tud.seemuh.nfcgate.util.sink.NfcComm;
+import tud.seemuh.nfcgate.network.ProtobufCallback;
+import tud.seemuh.nfcgate.nfc.NfcManager;
+import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
+import tud.seemuh.nfcgate.util.NfcComm;
+import tud.seemuh.nfcgate.util.filter.FilterManager;
 import tud.seemuh.nfcgate.util.sink.SinkInitException;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
 
@@ -54,9 +56,15 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     //Connection Client
     protected HighLevelNetworkHandler mConnectionClient;
 
+    // NFC Manager
+    private NfcManager mNfcManager;
+
     // Sink Manager
     private SinkManager mSinkManager;
     private BlockingQueue<NfcComm> mSinkManagerQueue = new LinkedBlockingQueue<NfcComm>();
+
+    // Filter Manager
+    private FilterManager mFilterManager;
 
     // Defined name of the Shared Preferences Buffer
     public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
@@ -135,12 +143,14 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
 
         // Create connection client
         mConnectionClient = HighLevelProtobufHandler.getInstance();
+        mNfcManager = NfcManager.getInstance();
 
         // Pass necessary references to ConnectionClient
         mConnectionClient.setDebugView(mDebuginfo);
         mConnectionClient.setConnectionStatusView(mConnStatus);
         mConnectionClient.setPeerStatusView(mPartnerDevice);
         mConnectionClient.setButtons(mReset, mConnecttoSession, mAbort, mJoinSession);
+        mConnectionClient.setNfcManager(mNfcManager);
         mConnectionClient.setCallback(mNetCallback);
 
         File bcmdevice = new File("/dev/bcm2079x-i2c");
@@ -251,6 +261,11 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         mAdapter.disableForegroundDispatch(this);
     }
 
+    private void onTagDiscoveredCommon(Tag tag) {
+        // Pass reference to NFC Manager
+        mNfcManager.setTag(tag);
+    }
+
     /**
      * Function to get tag when readerMode is enabled
      * @param tag
@@ -259,11 +274,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
     public void onTagDiscovered(Tag tag) {
 
         Log.i(TAG, "Discovered tag in ReaderMode");
-        mNetCallback.setTag(tag);
-
-        //Toast here is not possible -> exception...
-        // TODO This may lead to weird results if we are not already in a session
-        if (mConnectionClient != null) mConnectionClient.notifyCardFound();
+        onTagDiscoveredCommon(tag);
     }
 
     @Override
@@ -273,12 +284,7 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
             Log.i(TAG,"Discovered tag with intent: " + intent);
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
-            mNetCallback.setTag(tag);
-
-            // TODO This may lead to weird results if we are not already in a session
-            if (mConnectionClient != null) mConnectionClient.notifyCardFound();
-
-            Toast.makeText(this, "Found Tag", Toast.LENGTH_SHORT).show();
+            onTagDiscoveredCommon(tag);
         }
     }
 
@@ -286,8 +292,16 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
      * Common code for network connection establishment
      */
     private void networkConnectCommon() {
+        // Initialize SinkManager
         mSinkManager = new SinkManager(mSinkManagerQueue);
-        mConnectionClient.setSinkManager(mSinkManager, mSinkManagerQueue);
+
+        // Initialize FilterManager
+        mFilterManager = new FilterManager();
+
+        // Pass references
+        mNfcManager.setSinkManager(mSinkManager, mSinkManagerQueue);
+        mNfcManager.setFilterManager(mFilterManager);
+        mNfcManager.setNetworkHandler(mConnectionClient);
 
         // FIXME For debugging purposes, hardcoded selecting of sinks happens here
         // This should be selectable by the user
@@ -300,6 +314,8 @@ public class MainActivity extends Activity implements token_dialog.NoticeDialogL
         } catch (SinkInitException e) {
             e.printStackTrace();
         }
+
+        // TODO Initialize and add Filters
 
         // Do the actual network connection
         mConnectionClient.connect(mIP.getText().toString(), port);

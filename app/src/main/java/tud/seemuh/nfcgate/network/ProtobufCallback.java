@@ -1,24 +1,15 @@
 package tud.seemuh.nfcgate.network;
 
-import android.nfc.Tag;
 import android.util.Log;
 
-import java.io.File;
-
-import tud.seemuh.nfcgate.hce.DaemonConfiguration;
-import tud.seemuh.nfcgate.network.meta.MetaMessage;
-import tud.seemuh.nfcgate.reader.BCM20793Workaround;
-import tud.seemuh.nfcgate.reader.IsoDepReader;
-import tud.seemuh.nfcgate.reader.NFCTagReader;
-import tud.seemuh.nfcgate.reader.NfcAReader;
-import tud.seemuh.nfcgate.util.Utils;
 import tud.seemuh.nfcgate.network.c2c.C2C;
-import tud.seemuh.nfcgate.network.c2s.C2S;
-import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
 import tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode;
+import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode;
-import tud.seemuh.nfcgate.hce.ApduService;
-import tud.seemuh.nfcgate.util.sink.NfcComm;
+import tud.seemuh.nfcgate.network.meta.MetaMessage;
+import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
+import tud.seemuh.nfcgate.nfc.NfcManager;
+import tud.seemuh.nfcgate.util.NfcComm;
 
 /**
  * Implementation of the Callback interface. This class is used to parse incoming messages and works
@@ -27,16 +18,9 @@ import tud.seemuh.nfcgate.util.sink.NfcComm;
 public class ProtobufCallback implements Callback {
     private final static String TAG = "ProtobufCallback";
 
-    private ApduService apdu;
-    private NFCTagReader mReader;
-    private HighLevelNetworkHandler Handler = HighLevelProtobufHandler.getInstance();
-    private BCM20793Workaround mBroadcomWorkaroundRunnable;
-    private Thread mBroadcomWorkaroundThread;
 
-    public Callback setAPDUService(ApduService as) {
-        apdu = as;
-        return this;
-    }
+    private HighLevelNetworkHandler Handler = HighLevelProtobufHandler.getInstance();
+    private NfcManager mNfcManager;
 
     public ProtobufCallback() {}
 
@@ -46,17 +30,8 @@ public class ProtobufCallback implements Callback {
     }
 
     public void shutdown() {
-        disconnectCardWorkaround();
-        if (mReader != null) mReader.closeConnection();
-        mReader = null;
+        // Do nothing
     }
-
-    public void disconnectCardWorkaround() {
-        if (mBroadcomWorkaroundThread != null) mBroadcomWorkaroundThread.interrupt();
-        mBroadcomWorkaroundThread = null;
-        mBroadcomWorkaroundRunnable = null;
-    }
-
     /**
      * This function gets called by the LowLevelNetworkHandler upon receiving new data.
      * @param data: received bytes
@@ -153,57 +128,25 @@ public class ProtobufCallback implements Callback {
 
         byte[] uid = msg.getUID().toByteArray();
 
-        DaemonConfiguration.getInstance().uploadConfiguration(atqa, sak, hist, uid);
-        DaemonConfiguration.getInstance().enablePatch();
+        NfcComm anticol = new NfcComm(a_atqa, sak, a_hist, uid);
 
-        // notify SinkManager
-        Handler.notifySinkManager(new NfcComm(a_atqa, sak, a_hist, uid));
+        mNfcManager.setAnticolData(anticol);
     }
 
 
     private void handleNFCData(C2C.NFCData msg) {
         if (msg.getDataSource() == C2C.NFCData.DataSource.READER) {
             // We received a signal FROM a reader device and are required to talk TO a card.
-            if (mReader.isConnected()) {
-                // Extract NFC Bytes from message
-                byte[] cmd = msg.getDataBytes().toByteArray();
-
-                // Logging
-                Log.i(TAG, "HandleNFCData: Received message for a card, forwarding...");
-                Log.d(TAG, "HandleNFCData: " + Utils.bytesToHex(cmd));
-
-                // Notify SinkManager
-                Handler.notifySinkManager(new NfcComm(NfcComm.Source.HCE, cmd));
-                // communicate with the card
-                byte[] bytesFromCard = mReader.sendCmd(cmd);
-
-                // If the reply is null, the connection has been lost. Shut down Tag connection
-                if (bytesFromCard == null) {
-                    shutdown();
-                } else {
-                    // Reply is not null, forward it.
-                    Handler.sendAPDUReply(bytesFromCard);
-                    Log.i(TAG, "HandleNFCData: Received and forwarded reply from card");
-                    Log.i(TAG, "HandleNFCData: BytesFromCard: " + Utils.bytesToHex(bytesFromCard));
-                }
-            } else {
-                Log.e(TAG, "HandleNFCData: No NFC connection active");
-                // There is no connected NFC device
-                Handler.notifyNFCNotConnected();
-            }
+            NfcComm nfcdata = new NfcComm(NfcComm.Source.HCE, msg.getDataBytes().toByteArray());
+            mNfcManager.sendToCard(nfcdata);
+        } else  if (msg.getDataSource() == C2C.NFCData.DataSource.CARD) {
+            // We received a signal FROM a card and are required to talk TO a reader.
+            NfcComm nfcdata = new NfcComm(NfcComm.Source.CARD, msg.getDataBytes().toByteArray());
+            mNfcManager.sendToReader(nfcdata);
         } else {
-            if (apdu != null) {
-                Log.i(TAG, "HandleNFCData: Received a message for a reader, forwarding...");
-                // We received a signal FROM a card and are required to talk TO a reader.
-                byte[] reply = msg.getDataBytes().toByteArray();
-                apdu.sendResponse(reply);
-
-                // Notify SinkManager
-                Handler.notifySinkManager(new NfcComm(NfcComm.Source.CARD, reply));
-            } else {
-                Log.e(TAG, "HandleNFCData: Received a message for a reader, but no APDU instance active.");
-                Handler.notifyNFCNotConnected();
-            }
+            // Wait, what? This should be impossible. Are we using an old protocol version?
+            Log.e(TAG, "HandleNfcData: Received Nfc Data from unknown source => Not implemented");
+            Handler.notifyNotImplemented();
         }
     }
 
@@ -299,67 +242,7 @@ public class ProtobufCallback implements Callback {
     }
 
 
-    /**
-     * Called on nfc tag intent
-     * @param tag nfc tag
-     * @return true if a supported tag is found
-     */
-    @Override
-    public boolean setTag(Tag tag) {
-
-        boolean found_supported_tag = false;
-
-        //identify tag type
-        for(String type: tag.getTechList()) {
-            Log.i(TAG, "setTag: Tag TechList: " + type);
-            if("android.nfc.tech.IsoDep".equals(type)) {
-                found_supported_tag = true;
-
-                mReader = new IsoDepReader(tag);
-                Log.d(TAG, "setTag: Chose IsoDep technology.");
-                break;
-            } else if("android.nfc.tech.NfcA".equals(type)) {
-                found_supported_tag = true;
-
-                mReader = new NfcAReader(tag);
-                Log.d(TAG, "setTag: Chose NfcA technology.");
-                break;
-            }
-        }
-
-        //set callback when data is received
-        if(found_supported_tag){
-            Log.d(TAG, "setTag: Setting callback");
-            LowLevelTCPHandler.getInstance().setCallback(this);
-            byte[] uid = mReader.getUID();
-            byte[] atqa = mReader.getAtqa();
-            byte sak = mReader.getSak();
-            byte[] hist = mReader.getHistoricalBytes();
-            Log.d(TAG, "setTag: UID:  " + Utils.bytesToHex(uid));
-            Log.d(TAG, "setTag: ATQA: " + Utils.bytesToHex(atqa));
-            Log.d(TAG, "setTag: SAK:  " + Utils.bytesToHex(sak));
-            Log.d(TAG, "setTag: HIST: " + Utils.bytesToHex(hist));
-            Handler.sendAnticol(atqa, sak, hist, uid);
-        }
-
-        // Check if the device is running a specific Broadcom chipset (used in the Nexus 4, for example)
-        // The drivers for this chipset contain a bug which lead to DESFire cards being set into a specific mode
-        // We want to avoid that, so we use a workaround. This starts another thread that prevents
-        // the keepalive function from running and thus prevents it from setting the mode of the card
-        // Other devices work fine without this workaround, so we only activate it on bugged chipsets
-        // TODO Only activate for DESFire cards
-        if (BCM20793Workaround.workaroundNeeded()) {
-            Log.i(TAG, "setTag: Problematic broadcom chip found, activate workaround");
-            // Initialize a runnable object
-            mBroadcomWorkaroundRunnable = new BCM20793Workaround(tag);
-            // Start up a new thread
-            mBroadcomWorkaroundThread = new Thread(mBroadcomWorkaroundRunnable);
-            mBroadcomWorkaroundThread.start();
-            Handler.notifyCardWorkaroundConnected();
-        } else {
-            Log.i(TAG, "setTag: No problematic broadcom chipset found, leaving workaround inactive");
-        }
-
-        return found_supported_tag;
+    public void setNfcManager(NfcManager nfcManager) {
+        mNfcManager = nfcManager;
     }
 }

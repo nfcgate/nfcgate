@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 
+import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.Utils;
 
 /**
@@ -78,23 +79,46 @@ public class FileSink implements Sink {
                 strDate = sdfDate.format(now);
 
                 if (msg.getType() == NfcComm.Type.AnticolBytes) {
+                    String output = "";
                     // We are dealing with an Anticol message
-                    String output = "Card data: "
-                            + "UID: "  + Utils.bytesToHex(msg.getUid())
-                            + " - ATQA: " + Utils.bytesToHex(msg.getAtqa())
-                            + " - SAK: "  + Utils.bytesToHex(msg.getSak())
-                            + " - Hist: " + Utils.bytesToHex(msg.getHist());
-                    // Write to file
+                    if (msg.isChanged()) {
+                        output = "Card data (pre-filter in bracket): "
+                                + "UID: " + Utils.bytesToHex(msg.getUid())
+                                + " (" + Utils.bytesToHex(msg.getOldUid()) + ")"
+                                + " - ATQA: " + Utils.bytesToHex(msg.getAtqa())
+                                + " (" + Utils.bytesToHex(msg.getOldAtqa()) + ")"
+                                + " - SAK: " + Utils.bytesToHex(msg.getSak())
+                                + " (" + Utils.bytesToHex(msg.getOldSak()) + ")"
+                                + " - Hist: " + Utils.bytesToHex(msg.getHist())
+                                + " (" + Utils.bytesToHex(msg.getOldHist()) + ")";
+                    } else {
+                        output = "Card data: "
+                                + "UID: " + Utils.bytesToHex(msg.getUid())
+                                + " - ATQA: " + Utils.bytesToHex(msg.getAtqa())
+                                + " - SAK: " + Utils.bytesToHex(msg.getSak())
+                                + " - Hist: " + Utils.bytesToHex(msg.getHist());
+                        // Write to file
+                    }
                     outStream.write(strDate + ": " + output + "\n");
 
                 } else if (msg.getType() == NfcComm.Type.NFCBytes) {
                     // We are dealing with regular NFC traffic.
                     if (msg.getSource() == NfcComm.Source.CARD) {
                         // Write out NFC data sent by card
-                        outStream.write(strDate + ": Card: " + Utils.bytesToHex(msg.getData()) + "\n");
+                        if (msg.isChanged()) {
+                            outStream.write(strDate + ": Card: " + Utils.bytesToHex(msg.getData()) +
+                                    " (" + Utils.bytesToHex(msg.getOldData()) + ")\n");
+                        } else {
+                            outStream.write(strDate + ": Card: " + Utils.bytesToHex(msg.getData()) + "\n");
+                        }
                     } else if (msg.getSource() == NfcComm.Source.HCE) {
                         // Write out NFC data sent by reader
-                        outStream.write(strDate + ": HCE:  " + Utils.bytesToHex(msg.getData()) + "\n");
+                        if (msg.isChanged()) {
+                            outStream.write(strDate + ": HCE:  " + Utils.bytesToHex(msg.getData()) +
+                                    " (" + Utils.bytesToHex(msg.getOldData()) + ")\n");
+                        } else {
+                            outStream.write(strDate + ": HCE:  " + Utils.bytesToHex(msg.getData()) + "\n");
+                        }
                     } else {
                         Log.e(TAG, "run: Unhandled message source, doing nothing");
                     }

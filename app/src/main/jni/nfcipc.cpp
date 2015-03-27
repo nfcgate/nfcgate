@@ -20,10 +20,10 @@
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__ )
 
 extern "C" {
-    JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_enablePatch(JNIEnv* env, jobject javaThis);
-    JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_disablePatch(JNIEnv* env, jobject javaThis);
-    JNIEXPORT jboolean JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_isPatchEnabled(JNIEnv* env, jobject javaThis);
-    JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_uploadConfiguration(JNIEnv* env, jobject javaThis, jbyte atqa, jbyte sak, jbyte hist, jbyteArray uid);
+    JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_nfc_hce_DaemonConfiguration_enablePatch(JNIEnv* env, jobject javaThis);
+    JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_nfc_hce_DaemonConfiguration_disablePatch(JNIEnv* env, jobject javaThis);
+    JNIEXPORT jboolean JNICALL Java_tud_seemuh_nfcgate_nfc_hce_DaemonConfiguration_isPatchEnabled(JNIEnv* env, jobject javaThis);
+    JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_nfc_hce_DaemonConfiguration_uploadConfiguration(JNIEnv* env, jobject javaThis, jbyte atqa, jbyte sak, jbyte hist, jbyteArray uid);
 }
 
 void sendPacket(const ipcpacket p);
@@ -37,7 +37,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved) {
 /**
  * send an ENABLE packet to the nfcd
  */
-JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_enablePatch(JNIEnv* env, jobject javaThis) {
+JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_nfc_hce_DaemonConfiguration_enablePatch(JNIEnv* env, jobject javaThis) {
     LOGI("enablePatch");
     ipcpacket p;
     p.type = ipctype::ENABLE;
@@ -47,7 +47,7 @@ JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_enablePat
 /**
  * send an DISABLE packet to the nfcd
  */
-JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_disablePatch(JNIEnv* env, jobject javaThis) {
+JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_nfc_hce_DaemonConfiguration_disablePatch(JNIEnv* env, jobject javaThis) {
     LOGI("disablePatch");
     ipcpacket p;
     p.type = ipctype::DISABLE;
@@ -57,7 +57,7 @@ JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_disablePa
 /**
  * read the current patch status
  */
-JNIEXPORT jboolean JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_isPatchEnabled(JNIEnv* env, jobject javaThis) {
+JNIEXPORT jboolean JNICALL Java_tud_seemuh_nfcgate_nfc_hce_DaemonConfiguration_isPatchEnabled(JNIEnv* env, jobject javaThis) {
     ipcpacket p;
     p.type = ipctype::STATUS;
     // request state and receive response
@@ -69,7 +69,7 @@ JNIEXPORT jboolean JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_isPat
 /**
  * send the new chip configuration
  */
-JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_hce_DaemonConfiguration_uploadConfiguration(JNIEnv* env, jobject javaThis, jbyte atqa, jbyte sak, jbyte hist, jbyteArray _uid) {
+JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_nfc_hce_DaemonConfiguration_uploadConfiguration(JNIEnv* env, jobject javaThis, jbyte atqa, jbyte sak, jbyte hist, jbyteArray _uid) {
     LOGI("uploadConfiguration");
     jsize len = env->GetArrayLength(_uid);
     if(len > sizeof(ipcpacket::uid)) {

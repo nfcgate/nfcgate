@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate.util.sink;
+package tud.seemuh.nfcgate.util;
 
 /**
  * The NfcComm-Class provides an object to store NFC bytes and information about them.
@@ -17,12 +17,24 @@ public class NfcComm {
 
     private Source mSource;
     private Type mType;
+    // Contains the used bytes
     private byte[] mBytes;
+    // Contains the bytes before the filter process on this device
+    private byte[] mBytes_prefilter;
 
+    // Contains the used (post-filtering) anticol data
     private byte[] mAtqa;
     private byte mSak;
     private byte[] mHist;
     private byte[] mUid;
+
+    // Contains the Anticol data before filtering
+    private byte[] mAtqa_prefilter;
+    private byte mSak_prefilter;
+    private byte[] mHist_prefilter;
+    private byte[] mUid_prefilter;
+
+    private boolean filterChanged = false;
 
     /**
      * Instantiate an NfcComm object for regular NFC Traffic
@@ -33,6 +45,7 @@ public class NfcComm {
         mSource = source;
         mType = Type.NFCBytes;
         mBytes = data;
+        mBytes_prefilter = data;
     }
 
     /**
@@ -45,13 +58,40 @@ public class NfcComm {
     public NfcComm (byte[] atqa, byte sak, byte[] hist, byte[] uid) {
         mSource = Source.CARD;
         mType = Type.AnticolBytes;
-        mAtqa = atqa;
-        mSak = sak;
-        mHist = hist;
-        mUid = uid;
+        mAtqa = mAtqa_prefilter = atqa;
+        mSak = mSak_prefilter = sak;
+        mHist = mHist_prefilter = hist;
+        mUid = mUid_prefilter = uid;
     }
 
-    // What follows are regular getters for the variables
+    // Setters for postfilter data
+    // TODO Make sure these are all set properly
+    public void setData(byte[] data) {
+        mBytes = data;
+        filterChanged = true;
+    }
+
+    public void setAtqa(byte[] atqa) {
+        mAtqa = atqa;
+        filterChanged = true;
+    }
+
+    public void setSak(byte sak) {
+        mSak = sak;
+        filterChanged = true;
+    }
+
+    public void setHist(byte[] hist) {
+        mHist = hist;
+        filterChanged = true;
+    }
+
+    public void setUid(byte[] uid) {
+        mUid = uid;
+        filterChanged = true;
+    }
+
+    // Variable getters
     // It is the responsibility of the Sink implementation to check if the return value is not null.
     public Type getType() {
         return mType;
@@ -79,5 +119,31 @@ public class NfcComm {
 
     public byte[] getUid() {
         return mUid;
+    }
+
+    public boolean isChanged() {
+        return filterChanged;
+    }
+
+    // Getters for prefilter data
+    // TODO Use these in the Sink implementation, where appropriate
+    public byte[] getOldData() {
+        return mBytes_prefilter;
+    }
+
+    public byte[] getOldAtqa() {
+        return mAtqa_prefilter;
+    }
+
+    public byte getOldSak() {
+        return mSak_prefilter;
+    }
+
+    public byte[] getOldHist() {
+        return mHist_prefilter;
+    }
+
+    public byte[] getOldUid() {
+        return mUid_prefilter;
     }
 }

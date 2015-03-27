@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate.hce;
+package tud.seemuh.nfcgate.nfc.hce;
 
 /**
  * Interface to the nfc daemon patches

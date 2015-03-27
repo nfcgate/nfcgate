@@ -1,11 +1,11 @@
-package tud.seemuh.nfcgate.hce;
+package tud.seemuh.nfcgate.nfc.hce;
 
 import android.nfc.cardemulation.HostApduService;
 import android.os.Bundle;
 import android.util.Log;
 
-import tud.seemuh.nfcgate.network.Callback;
-import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;
+import tud.seemuh.nfcgate.nfc.NfcManager;
+import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.Utils;
 
 /**
@@ -17,7 +17,7 @@ import tud.seemuh.nfcgate.util.Utils;
 public class ApduService extends HostApduService {
     private final static String TAG = "ApduService";
 
-    private HighLevelProtobufHandler Handler = HighLevelProtobufHandler.getInstance();
+    private NfcManager mNfcManager = NfcManager.getInstance();
 
     /**
      * empty apdu byte array
@@ -26,13 +26,8 @@ public class ApduService extends HostApduService {
      */
     private final byte[] DONT_RESPOND = new byte[]{};
 
-    /**
-     * Callback from the network thread whenever we get data from it
-     */
-    private Callback mCallback = Handler.getCallback().setAPDUService(this);
-
     public ApduService() {
-        Handler.notifyReaderFound();
+        mNfcManager.setApduService(this);
     }
 
     /**
@@ -46,17 +41,20 @@ public class ApduService extends HostApduService {
 
         Log.d(TAG, "APDU-IN: " + Utils.bytesToHex(apdu));
 
-        // Package the ADPU into a C2C message
-        Handler.sendAPDUMessage(apdu);
+        // Package the ADPU into a NfcComm object
+        NfcComm nfcdata = new NfcComm(NfcComm.Source.HCE, apdu);
 
+        // Send the object to the handler
+        mNfcManager.handleHCEData(nfcdata);
 
+        // Tell the HCE implementation to wait a moment
         return DONT_RESPOND;
     }
 
     @Override
     public void onDeactivated(int reason) {
         Log.i(TAG, "Deactivated: " + reason);
-        Handler.notifyReaderRemoved();
+        mNfcManager.unsetApduService();
     }
 
     public void sendResponse(byte[] apdu) {

@@ -7,16 +7,14 @@ import android.widget.TextView;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 
-import java.util.concurrent.BlockingQueue;
-
 import tud.seemuh.nfcgate.MainActivity;
 import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
+import tud.seemuh.nfcgate.nfc.NfcManager;
+import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.UpdateUI;
-import tud.seemuh.nfcgate.util.sink.NfcComm;
-import tud.seemuh.nfcgate.util.sink.SinkManager;
 
 /**
  * The HighLevelProtobufHandler is an implementation of the HighLevelNetworkHandler interface.
@@ -52,6 +50,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
     private LowLevelNetworkHandler handler;
     private static HighLevelProtobufHandler mInstance = null;
     private String secret;
+
     private enum Status {
         NOT_CONNECTED,
         CONNECTED_NO_SESSION,
@@ -67,7 +66,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
     private Status status;
     private boolean leaving = false;
 
-    private Callback callbackInstance;
+    private Callback mCallbackInstance;
 
     private TextView debugView;
     private TextView connectionStatusView;
@@ -78,9 +77,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
     private Button joinButton;
     private Button abortButton;
 
-    private SinkManager mSinkManager;
-    private Thread mSinkManagerThread;
-    private BlockingQueue<NfcComm> mSinkManagerQueue;
+    private NfcManager mNfcManager;
 
 
     public HighLevelProtobufHandler() {
@@ -95,7 +92,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
     }
 
     public Callback getCallback() {
-        return callbackInstance;
+        return mCallbackInstance;
     }
 
     public void setDebugView(TextView ldebugView) {
@@ -117,19 +114,18 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
         joinButton = Join;
     }
 
-    public void setSinkManager(SinkManager sm, BlockingQueue<NfcComm> smq) {
-        if (mSinkManagerThread != null ) {
-            Log.e(TAG, "setSinkManager: mSinkManagerThread != null. Stopping and replacing old SinkManager");
-            mSinkManagerThread.interrupt();
-            mSinkManagerThread = null;
-        }
-        mSinkManager = sm;
-        mSinkManagerQueue = smq;
+    public void setNfcManager(NfcManager nfcManager) {
+        mNfcManager = nfcManager;
     }
 
     @Override
     public void setCallback(Callback mCallback) {
-        callbackInstance = mCallback;
+        mCallbackInstance = mCallback;
+        if (mNfcManager != null) {
+            mCallbackInstance.setNfcManager(mNfcManager);
+        } else {
+            Log.e(TAG, "setCallback: mNfcManager is not set (yet). Not passing reference to callback");
+        }
     }
 
     private void appendDebugOutput(String output) {
@@ -155,19 +151,6 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
         new UpdateUI(connectButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.createSessionMessage);
         new UpdateUI(joinButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.joinSessionMessage);
         new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetMessage);
-    }
-
-    @Override
-    public void notifySinkManager(NfcComm msg) {
-        if (mSinkManagerQueue == null) {
-            Log.e(TAG, "notifySinkManager: Trying to notify, but Queue is still null. Ignoring.");
-            return;
-        }
-        try {
-            mSinkManagerQueue.add(msg);
-        } catch (IllegalStateException e) {
-            Log.e(TAG, "notifySinkManager: Tried to notify sm, but queue is full. Ignoring.");
-        }
     }
 
     // Network message building and sending
@@ -278,10 +261,9 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
      */
     @Override
     public HighLevelNetworkHandler connect(String addr, int port) {
-        mSinkManagerThread = new Thread(mSinkManager);
-        mSinkManagerThread.start();
+        mNfcManager.start();
         handler = LowLevelTCPHandler.getInstance().connect(addr, port);
-        handler.setCallback(callbackInstance);
+        handler.setCallback(mCallbackInstance);
         status = Status.CONNECTED_NO_SESSION;
         setConnectionStatusOutput(CONN_CONNECTED);
         setPeerStatusOutput(PEER_NO_SESSION);
@@ -319,13 +301,12 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
         // Disconnect network
         if (handler != null) handler.disconnect();
         status = Status.NOT_CONNECTED;
-        callbackInstance.shutdown();
+        mCallbackInstance.shutdown();
         // Set default UI state
         setButtonTexts();
         reactivateButtons();
-        // Stop sink Manager
-        if (mSinkManagerThread != null) mSinkManagerThread.interrupt();
-        mSinkManagerThread = null;
+        // Stop NfcManager
+        mNfcManager.shutdown();
     }
 
     /**
@@ -333,7 +314,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
      */
     @Override
     public void disconnectCardWorkaround() {
-        callbackInstance.disconnectCardWorkaround();
+        mNfcManager.stopWorkaround();
         new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetMessage);
     }
 
@@ -409,11 +390,16 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
 
     // NFC Message passing
     @Override
-    public void sendAPDUMessage(byte[] apdu) {
+    public void sendAPDUMessage(NfcComm nfcdata) {
+        if (nfcdata.getType() != NfcComm.Type.NFCBytes) {
+            Log.e(TAG, "sendApduMessage: NfcComm object does not contain NFC bytes. Doing nothing.");
+            return;
+        }
         if (status != Status.PARTNER_READER_MODE) {
             Log.e(TAG, "sendAPDUMessage: Trying to send APDU message to partner who is not in reader mode. Doing nothing.");
             return;
         }
+        byte[] apdu = nfcdata.getData();
         // Prepare message
         C2C.NFCData.Builder apduMessage = C2C.NFCData.newBuilder();
         apduMessage.setDataSource(C2C.NFCData.DataSource.READER);
@@ -421,31 +407,43 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
 
         // Send prepared message
         sendMessage(apduMessage.build(), MessageCase.NFCDATA);
-
-        // Send to SinkManager
-        notifySinkManager(new NfcComm(NfcComm.Source.HCE, apdu));
     }
 
     @Override
-    public void sendAPDUReply(byte[] nfcdata) {
+    public void sendAPDUReply(NfcComm nfcdata) {
+        if (nfcdata.getType() != NfcComm.Type.NFCBytes) {
+            Log.e(TAG, "sendApduReply: NfcComm object does not contain NFC bytes. Doing nothing.");
+            return;
+        }
         if (status != Status.PARTNER_APDU_MODE) {
             Log.e(TAG, "sendAPDUReply: Trying to send APDU reply to partner who is not in APDU mode. Doing nothing.");
             return;
         }
+        byte[] nfcbytes = nfcdata.getData();
+
+        // Build reply Protobuf
         C2C.NFCData.Builder reply = C2C.NFCData.newBuilder();
-        ByteString replyBytes = ByteString.copyFrom(nfcdata);
-        reply.setDataBytes(replyBytes);
+        reply.setDataBytes(ByteString.copyFrom(nfcbytes));
         reply.setDataSource(C2C.NFCData.DataSource.CARD);
 
         // Send reply
         sendMessage(reply.build(), MessageCase.NFCDATA);
-
-        // Send to SinkManager
-        notifySinkManager(new NfcComm(NfcComm.Source.CARD, nfcdata));
     }
 
     @Override
-    public void sendAnticol(byte[] atqa, byte sak, byte[] hist, byte[] uid) {
+    public void sendAnticol(NfcComm nfcdata) {
+        if (nfcdata.getType() != NfcComm.Type.AnticolBytes) {
+            Log.e(TAG, "sendAnticol: NfcComm object does not contain Anticol bytes. Doing nothing.");
+            return;
+        }
+
+        // Retrieve values
+        byte[] atqa = nfcdata.getAtqa();
+        byte sak = nfcdata.getSak();
+        byte[] hist = nfcdata.getHist();
+        byte[] uid = nfcdata.getUid();
+
+        // Build reply protobuf
         C2C.Anticol.Builder b = C2C.Anticol.newBuilder();
         b.setATQA(ByteString.copyFrom(atqa));
         b.setSAK(ByteString.copyFrom(new byte[]{sak}));
@@ -456,8 +454,6 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
         // (And delete it if the card is removed in the meantime)
         sendMessage(b.build(), MessageCase.ANTICOL);
         Log.d(TAG, "sendAnticol: Sent Anticol message");
-
-        notifySinkManager(new NfcComm(atqa, sak, hist, uid));
     }
 
     // Session status management
