@@ -109,39 +109,6 @@ public class RelayFragment extends Fragment
         v = inflater.inflate(R.layout.fragment_relay, container, false);
         Log.d(TAG, "onCreateView");
 
-        //mAdapter = NfcAdapter.getDefaultAdapter(v.getContext());
-
-        //mIntentFilter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
-
-        /*
-        if (!mAdapter.isEnabled()) {
-            // NFC is not enabled -> "Tell the user to enable NFC"
-            showEnableNFCDialog();
-        }
-        */
-
-        /*
-        // Create a generic PendingIntent that will be delivered to this activity.
-        // The NFC stack will fill in the intent with the details of the discovered tag before
-        // delivering to this activity.
-        mPendingIntent = PendingIntent.getActivity(getActivity(), 0, new Intent(getActivity(),
-                getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-                */
-
-        /*
-        // Setup an foreground intent filter for NFC
-        IntentFilter tech = new IntentFilter();
-        tech.addAction(NfcAdapter.ACTION_TECH_DISCOVERED);
-        mFilters = new IntentFilter[] { tech, };
-        // this thing must have the same structure as in the tech.xml
-        mTechLists = new String[][] {
-                new String[] {NfcA.class.getName()},
-                new String[] {Ndef.class.getName()},
-                new String[] {IsoDep.class.getName()}
-                //we could add all of the Types from the tech.xml here
-        };
-        */
-
         // Create Buttons & TextViews
         mReset = (Button) v.findViewById(R.id.btnResetstatus);
         mReset.setOnClickListener(this);
@@ -170,44 +137,6 @@ public class RelayFragment extends Fragment
         mConnectionClient.setButtons(mReset, mConnecttoSession, mAbort, mJoinSession);
         mConnectionClient.setNfcManager(mNfcManager);
         mConnectionClient.setCallback(mNetCallback);
-
-        final SharedPreferences preferences = getActivity().getSharedPreferences(PREF_FILE_NAME, v.getContext().MODE_PRIVATE);
-        boolean neverShowAgain = preferences.getBoolean("mNeverWarnWorkaround", false);
-        if (BCM20793Workaround.workaroundNeeded() && !neverShowAgain) {
-            LayoutInflater checkboxInflater = getActivity().getLayoutInflater();
-            final View checkboxView = checkboxInflater.inflate(R.layout.workaroundwarning, null);
-            new AlertDialog.Builder(v.getContext())
-                    .setTitle(R.string.BCMWarnHeader)
-                    .setView(checkboxView)
-                    .setPositiveButton(R.string.Yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            CheckBox dontShowAgain = (CheckBox) checkboxView.findViewById(R.id.neverAgain);
-                            if (dontShowAgain.isChecked()) {
-                                Log.i(TAG, "onCreate: Don't show this again is checked");
-                                SharedPreferences.Editor editor = preferences.edit();
-
-                                editor.putBoolean("mNeverWarnWorkaround", true);
-
-                                editor.apply();
-                            }
-                            startActivity(new Intent(v.getContext(), AboutWorkaroundActivity.class));
-                        }
-                    })
-                    .setNegativeButton(R.string.No, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            CheckBox dontShowAgain = (CheckBox) checkboxView.findViewById(R.id.neverAgain);
-                            if (dontShowAgain.isChecked()) {
-                                Log.i(TAG, "onCreate: Don't show this again is checked");
-                                SharedPreferences.Editor editor = preferences.edit();
-
-                                editor.putBoolean("mNeverWarnWorkaround", true);
-
-                                editor.apply();
-                            }
-                        }
-                    })
-                    .show();
-        }
 
         return v;
     }
