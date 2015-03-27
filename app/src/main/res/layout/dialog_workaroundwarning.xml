@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="No" />
+            android:text="@string/No" />
 
         <Button
             style="?android:attr/buttonBarButtonStyle"
@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Yes" />
+            android:text="@string/Yes" />
 
     </LinearLayout>
 </LinearLayout>

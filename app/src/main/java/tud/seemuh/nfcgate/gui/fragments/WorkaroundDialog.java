@@ -29,6 +29,8 @@ public class WorkaroundDialog extends DialogFragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Set dialog title
+        getDialog().setTitle(R.string.BCMWarnHeader);
 
         View pushDialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_workaroundwarning, null);
 
