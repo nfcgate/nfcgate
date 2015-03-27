@@ -1,17 +1,7 @@
 package tud.seemuh.nfcgate.gui.fragments;
 
-import android.app.AlertDialog;
-import android.app.PendingIntent;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.nfc.NfcAdapter;
-import android.nfc.tech.IsoDep;
-import android.nfc.tech.Ndef;
-import android.nfc.tech.NfcA;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -20,7 +10,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,14 +19,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import tud.seemuh.nfcgate.R;
-import tud.seemuh.nfcgate.gui.AboutWorkaroundActivity;
-import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.network.Callback;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.network.HighLevelProtobufHandler;
 import tud.seemuh.nfcgate.network.ProtobufCallback;
 import tud.seemuh.nfcgate.nfc.NfcManager;
-import tud.seemuh.nfcgate.nfc.reader.BCM20793Workaround;
 import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.filter.FilterManager;
 import tud.seemuh.nfcgate.util.sink.SinkInitException;
@@ -49,14 +35,7 @@ public class RelayFragment extends Fragment
     private final static String TAG = "RelayFragment";
 
     //single instance of this class
-    private static RelayFragment fragment;
-
-    public PendingIntent mPendingIntent;
-    private IntentFilter[] mFilters;
-    private String[][] mTechLists;
-
-    private NfcAdapter mAdapter;
-    private IntentFilter mIntentFilter = new IntentFilter();
+    private static RelayFragment mFragment;
 
     // Defined name of the Shared Preferences Buffer
     public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
@@ -96,7 +75,7 @@ public class RelayFragment extends Fragment
     public static String resetMessage = "Reset";
     public static String resetCardMessage = "Forget Card";
 
-    private View v;
+    private View mRelayView;
 
     private Callback mNetCallback = new ProtobufCallback();
 
@@ -106,25 +85,25 @@ public class RelayFragment extends Fragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        v = inflater.inflate(R.layout.fragment_relay, container, false);
+        mRelayView = inflater.inflate(R.layout.fragment_relay, container, false);
         Log.d(TAG, "onCreateView");
 
         // Create Buttons & TextViews
-        mReset = (Button) v.findViewById(R.id.btnResetstatus);
+        mReset = (Button) mRelayView.findViewById(R.id.btnResetstatus);
         mReset.setOnClickListener(this);
-        mConnecttoSession = (Button) v.findViewById(R.id.btnCreateSession);
+        mConnecttoSession = (Button) mRelayView.findViewById(R.id.btnCreateSession);
         mConnecttoSession.setOnClickListener(this);
-        mJoinSession = (Button) v.findViewById(R.id.btnJoinSession);
+        mJoinSession = (Button) mRelayView.findViewById(R.id.btnJoinSession);
         mJoinSession.setOnClickListener(this);
-        mAbort = (Button) v.findViewById(R.id.btnAbortbutton);
+        mAbort = (Button) mRelayView.findViewById(R.id.btnAbortbutton);
         mAbort.setOnClickListener(this);
-        mConnStatus = (TextView) v.findViewById(R.id.editConnectionStatus);
-        mDebuginfo = (TextView) v.findViewById(R.id.editTextDevModeEnabledDebugging);
-        mIP = (TextView) v.findViewById(R.id.editIP);
-        mPort = (TextView) v.findViewById(R.id.editPort);
-        mPartnerDevice = (TextView) v.findViewById(R.id.editOtherDevice);
+        mConnStatus = (TextView) mRelayView.findViewById(R.id.editConnectionStatus);
+        mDebuginfo = (TextView) mRelayView.findViewById(R.id.editTextDevModeEnabledDebugging);
+        mIP = (TextView) mRelayView.findViewById(R.id.editIP);
+        mPort = (TextView) mRelayView.findViewById(R.id.editPort);
+        mPartnerDevice = (TextView) mRelayView.findViewById(R.id.editOtherDevice);
         mConnecttoSession.requestFocus();
-        mtoken = (TextView) v.findViewById(R.id.token);
+        mtoken = (TextView) mRelayView.findViewById(R.id.token);
 
         // Create connection client
         mConnectionClient = HighLevelProtobufHandler.getInstance();
@@ -138,7 +117,7 @@ public class RelayFragment extends Fragment
         mConnectionClient.setNfcManager(mNfcManager);
         mConnectionClient.setCallback(mNetCallback);
 
-        return v;
+        return mRelayView;
     }
 
     @Override
@@ -147,17 +126,7 @@ public class RelayFragment extends Fragment
         Log.i(TAG, "onResume(): intent: " + getActivity().getIntent().getAction());
 
         // Load values from the Shared Preferences Buffer
-        SharedPreferences preferences = v.getContext().getSharedPreferences(PREF_FILE_NAME, v.getContext().MODE_PRIVATE);
-
-        /*
-        if (mAdapter != null && mAdapter.isEnabled()) {
-            mAdapter.enableForegroundDispatch(getActivity(), mPendingIntent, mFilters, mTechLists);
-
-            if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(getActivity().getIntent().getAction())) {
-                Log.i(TAG, "onResume(): starting onNewIntent()...");
-                ((MainActivity)getActivity()).onNewIntent(getActivity().getIntent());
-            }
-        }*/
+        SharedPreferences preferences = mRelayView.getContext().getSharedPreferences(PREF_FILE_NAME, mRelayView.getContext().MODE_PRIVATE);
 
         ip = preferences.getString("ip", "192.168.178.31");
         port = preferences.getInt("port", 5566);
@@ -182,20 +151,9 @@ public class RelayFragment extends Fragment
             editor.commit();
         }
 
-        /*
-        //ReaderMode
-        boolean isReaderModeEnabled = preferences.getBoolean("mReaderModeEnabled", false);
-        if(isReaderModeEnabled) {
-            //This cast to ReaderCallback seems unavoidable, stupid Java...
-            mAdapter.enableReaderMode(getActivity(), (NfcAdapter.ReaderCallback) getActivity(),
-                    NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
-        } else {
-            mAdapter.disableReaderMode(getActivity());
-        }*/
-
         // De- or Enables Debug Window
         mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
-        mDebuginfo = (TextView) v.findViewById(R.id.editTextDevModeEnabledDebugging);
+        mDebuginfo = (TextView) mRelayView.findViewById(R.id.editTextDevModeEnabledDebugging);
         if (mDevModeEnabled) {
             mDebuginfo.setVisibility(View.VISIBLE);
             mDebuginfo.requestFocus();
@@ -208,10 +166,10 @@ public class RelayFragment extends Fragment
 
 
     public static RelayFragment getInstance() {
-        if(fragment == null) {
-            fragment = new RelayFragment();
+        if(mFragment == null) {
+            mFragment = new RelayFragment();
         }
-        return fragment;
+        return mFragment;
     }
 
     @Override
@@ -302,10 +260,9 @@ public class RelayFragment extends Fragment
                 mConnecttoSession.setEnabled(true);
                 mAbort.setEnabled(false);
 
-                // mConnStatus.setText("Server status: Disconnecting");
-                // mPartnerDevice.setText("Partner status: no device");
-                if (mConnectionClient != null) mConnectionClient.disconnect();
-                //this.setTitle("You clicked abort");
+                if (mConnectionClient != null) {
+                    mConnectionClient.disconnect();
+                }
                 break;
         }
     }
@@ -377,7 +334,7 @@ public class RelayFragment extends Fragment
         networkConnectCommon();
 
         // Load token from the Shared Preferences Buffer
-        SharedPreferences preferences = v.getContext().getSharedPreferences(PREF_FILE_NAME, v.getContext().MODE_PRIVATE);
+        SharedPreferences preferences = mRelayView.getContext().getSharedPreferences(PREF_FILE_NAME, mRelayView.getContext().MODE_PRIVATE);
         String token = preferences.getString("token", "000000");
 
         mConnectionClient.joinSession(token);

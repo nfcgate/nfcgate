@@ -16,7 +16,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -45,13 +44,12 @@ public class MainActivity extends FragmentActivity
     private final static String TAG = "MainActivity";
 
     // Defined name of the Shared Preferences Buffer
-    //TODO this is now DOUBLE DEFINED: here and in the RelayFragment
+    //TODO double RelayFragment -> move to Enum
     public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
 
-    //FIXME double in RelayFragment
+    //TODO double in RelayFragment -> move to Enum
     public static String joinSessionMessage = "Join Session";
     public static String createSessionMessage = "Create Session";
-    //public static String leaveSessionMessage = "Leave Session";
     public static String resetMessage = "Reset";
     public static String resetCardMessage = "Forget Card";
 
@@ -135,11 +133,7 @@ public class MainActivity extends FragmentActivity
 
     private void onTagDiscoveredCommon(Tag tag) {
         // Pass reference to NFC Manager
-        //mNfcManager.setTag(tag);
         Log.d(TAG, "onTagDiscoveredCommon");
-
-        //RelayFragment fragment = (RelayFragment) getSupportFragmentManager().getFragments().get(0);
-        //fragment.mNfcManager.setTag(tag);
         RelayFragment.getInstance().mNfcManager.setTag(tag);
     }
 

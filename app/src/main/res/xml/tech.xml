@@ -1,4 +1,4 @@
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources>
     <!-- inside of a 'tech-list', values will be ANDed, so all must match! -->
     <!-- tech-lists will be ORed with one another -->
     <tech-list>
