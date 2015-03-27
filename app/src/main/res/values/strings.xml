@@ -20,4 +20,9 @@
 
     <string name="title_activity_about_workaround">Broadcom BCM20793 Information</string>
     <string name="title_activity_about">About NFCGate</string>
+
+    <string name="title_dialog_token">Enter Session Token</string>
+    <string name="token_dialog_hint">Enter token here</string>
+    <string name="token_dialog_cancel">Cancel</string>
+    <string name="token_dialog_submit">Submit Token</string>
 </resources>

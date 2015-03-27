@@ -2,26 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="#E5FDFC">
+    android:background="#FFFFFF">
     <!--android:theme="@android:style/Theme.Holo.Dialog">-->
 
 
-    <ImageView
+    <!-- Commented out to match android style -->
+    <!-- <ImageView
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:scaleType="center"
         android:background="#FBFDBB34"
-        android:contentDescription="@string/app_name" />
+        android:contentDescription="@string/app_name" /> -->
 
     <EditText
         android:id="@+id/token"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
-        android:hint="Enter token here "
+        android:hint="@string/token_dialog_hint"
         android:inputType="number" />
 
     <LinearLayout
@@ -35,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Cancel" />
+            android:text="@string/token_dialog_cancel" />
 
         <Button
             style="?android:attr/buttonBarButtonStyle"
@@ -43,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Submit Token" />
+            android:text="@string/token_dialog_submit" />
 
     </LinearLayout>
 </LinearLayout>

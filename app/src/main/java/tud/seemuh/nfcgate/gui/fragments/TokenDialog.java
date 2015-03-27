@@ -40,6 +40,8 @@ public class TokenDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Set title
+        getDialog().setTitle(R.string.title_dialog_token);
 
         final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_token, null);
 
