@@ -12,8 +12,8 @@ import tud.seemuh.nfcgate.R;
 public class WorkaroundDialog extends DialogFragment{
 
     public interface WorkaroundDialogListener  {
-        public void onWorkaroundPositiveClick();
-        public void onWorkaroundNegativeClick();
+        public void onWorkaroundPositiveClick(View v);
+        public void onWorkaroundNegativeClick(View v);
     }
 
     // Use this instance of the interface to deliver action events
@@ -32,14 +32,14 @@ public class WorkaroundDialog extends DialogFragment{
         // Set dialog title
         getDialog().setTitle(R.string.BCMWarnHeader);
 
-        View pushDialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_workaroundwarning, null);
+        final View pushDialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_workaroundwarning, null);
 
         final Button dismissBtn = (Button) pushDialogView.findViewById(R.id.btnWorkaroundNo);
         dismissBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // send click event
-                mListener.onWorkaroundNegativeClick();
+                mListener.onWorkaroundNegativeClick(pushDialogView);
                 dismiss();
             }
         });
@@ -49,7 +49,7 @@ public class WorkaroundDialog extends DialogFragment{
             @Override
             public void onClick(View v) {
                 // send click event
-                mListener.onWorkaroundPositiveClick();
+                mListener.onWorkaroundPositiveClick(pushDialogView);
                 dismiss();
             }
         });

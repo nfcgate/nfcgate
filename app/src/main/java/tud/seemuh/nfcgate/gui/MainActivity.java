@@ -16,6 +16,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -218,11 +219,10 @@ public class MainActivity extends FragmentActivity
 
 
     @Override
-    public void onWorkaroundPositiveClick() {
+    public void onWorkaroundPositiveClick(View v) {
         final SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-        final View checkboxView = getLayoutInflater().inflate(R.layout.dialog_workaroundwarning, null);
 
-        CheckBox dontShowAgain = (CheckBox) checkboxView.findViewById(R.id.neverAgain);
+        CheckBox dontShowAgain = (CheckBox) v.findViewById(R.id.neverAgain);
         if (dontShowAgain.isChecked()) {
             Log.i(TAG, "onCreate: Don't show this again is checked");
             SharedPreferences.Editor editor = preferences.edit();
@@ -235,11 +235,10 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
-    public void onWorkaroundNegativeClick() {
+    public void onWorkaroundNegativeClick(View v) {
         final SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-        final View checkboxView = getLayoutInflater().inflate(R.layout.dialog_workaroundwarning, null);
 
-        CheckBox dontShowAgain = (CheckBox) checkboxView.findViewById(R.id.neverAgain);
+        CheckBox dontShowAgain = (CheckBox) v.findViewById(R.id.neverAgain);
         if (dontShowAgain.isChecked()) {
             Log.i(TAG, "onCreate: Don't show this again is checked");
             SharedPreferences.Editor editor = preferences.edit();
