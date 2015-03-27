@@ -6,9 +6,8 @@ import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.filter.conditional.All;
 import tud.seemuh.nfcgate.util.filter.conditional.Conditional;
 import tud.seemuh.nfcgate.util.filter.conditional.EndsWith;
-import tud.seemuh.nfcgate.util.filter.conditional.Not;
-import tud.seemuh.nfcgate.util.filter.conditional.Xor;
 import tud.seemuh.nfcgate.util.filter.conditional.StartsWith;
+import tud.seemuh.nfcgate.util.filter.conditional.Xor;
 
 /**
  * Test the OR conditional operator

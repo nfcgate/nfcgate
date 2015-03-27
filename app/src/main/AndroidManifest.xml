@@ -25,7 +25,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".gui.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -35,7 +35,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Splash"
+            android:name=".gui.Splash"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -51,7 +51,7 @@
             android:name=".ActivityAlias"
             android:enabled="true"
             android:screenOrientation="portrait"
-            android:targetActivity=".MainActivity" >
+            android:targetActivity=".gui.MainActivity" >
             <intent-filter>
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
 
@@ -77,7 +77,7 @@
         </service>
 
         <activity
-            android:name=".AboutActivity"
+            android:name=".gui.AboutActivity"
             android:label="@string/title_activity_about"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -87,7 +87,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".gui.SettingsActivity"
             android:label="Settings"
             android:screenOrientation="portrait"
             android:targetActivity="MainActivity" >
@@ -98,12 +98,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AboutWorkaroundActivity"
+            android:name=".gui.AboutWorkaroundActivity"
             android:label="@string/title_activity_about_workaround"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".gui.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="tud.seemuh.nfcgate.MainActivity" />
+                android:value=".gui.MainActivity" />
         </activity>
     </application>
 

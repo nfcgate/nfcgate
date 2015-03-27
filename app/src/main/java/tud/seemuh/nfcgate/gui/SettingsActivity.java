@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate;
+package tud.seemuh.nfcgate.gui;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import tud.seemuh.nfcgate.R;
 
 /**
  *

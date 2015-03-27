@@ -7,7 +7,7 @@ import android.widget.TextView;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 
-import tud.seemuh.nfcgate.MainActivity;
+import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper;

@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate;
+package tud.seemuh.nfcgate.gui;
 
 import android.app.Activity;
 import android.content.res.AssetManager;
@@ -8,6 +8,8 @@ import android.webkit.WebView;
 
 import java.io.IOException;
 import java.util.Locale;
+
+import tud.seemuh.nfcgate.R;
 
 
 public class AboutWorkaroundActivity extends Activity {
