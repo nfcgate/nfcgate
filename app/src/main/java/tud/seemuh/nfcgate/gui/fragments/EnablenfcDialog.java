@@ -33,7 +33,8 @@ public class EnablenfcDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        // Set Dialog Title
+        getDialog().setTitle(R.string.title_dialog_enablenfc);
         View pushDialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_enablenfc, null);
 
         final Button dismissBtn = (Button) pushDialogView.findViewById(R.id.enablenfc_dismiss_btn);

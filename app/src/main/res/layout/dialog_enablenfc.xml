@@ -7,24 +7,16 @@
     android:paddingTop="0dip"
     android:measureWithLargestChild="true">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:scaleType="center"
-        android:background="#FBFDBB34"
-        android:contentDescription="@string/app_name" />
-
     <TextView
         android:id="@+id/enablenfc"
-        android:inputType="text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
-        android:editable="false"
-        android:hint="Please enable NFC to use this app " />
+        android:textColor="#000000"
+        android:hint="@string/enablenfc_dialog_text" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Dismiss" />
+            android:text="@string/enablenfc_dialog_cancel" />
 
         <Button
             style="?android:attr/buttonBarButtonStyle"
@@ -45,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Go to Settings" />
+            android:text="@string/enablenfc_dialog_confirm" />
 
     </LinearLayout>
 

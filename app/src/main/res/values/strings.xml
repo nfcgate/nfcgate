@@ -25,4 +25,9 @@
     <string name="token_dialog_hint">Enter token here</string>
     <string name="token_dialog_cancel">Cancel</string>
     <string name="token_dialog_submit">Submit Token</string>
+
+    <string name="title_dialog_enablenfc">NFC required</string>
+    <string name="enablenfc_dialog_text">To use this application, you need to enable your NFC chip. If you want, we can take you directly to the settings.</string>
+    <string name="enablenfc_dialog_cancel">Ignore</string>
+    <string name="enablenfc_dialog_confirm">Go to settings</string>
 </resources>
