@@ -44,7 +44,7 @@ import tud.seemuh.nfcgate.util.sink.SinkInitException;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
 
 public class RelayFragment extends Fragment
-        implements OnClickListener, EnablenfcDialog.NFCNoticeDialogListener, TokenDialog.NoticeDialogListener{
+        implements OnClickListener, TokenDialog.NoticeDialogListener{
 
     private final static String TAG = "RelayFragment";
 
@@ -431,18 +431,6 @@ public class RelayFragment extends Fragment
         mConnectionClient.connect(mIP.getText().toString(), port);
     }
 
-    @Override
-    public void onNFCDialogPositiveClick() {
-        // User touched the dialog's goto settings button
-        Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
-        startActivity(intent);
-    }
-
-    @Override
-    public void onNFCDialogNegativeClick() {
-        // User touched the dialog's cancel button
-        Toast.makeText(v.getContext(), "Caution! The app can't do something useful without NFC enabled -> please enable NFC in your phone settings", Toast.LENGTH_LONG).show();
-    }
 
     public void showTokenDialog() {
         // Create an instance of the dialog fragment and show it

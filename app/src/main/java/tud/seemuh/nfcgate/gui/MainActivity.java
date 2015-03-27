@@ -11,6 +11,8 @@ import android.nfc.tech.IsoDep;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NfcA;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -20,13 +22,14 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.gui.fragments.EnablenfcDialog;
 import tud.seemuh.nfcgate.gui.fragments.RelayFragment;
 import tud.seemuh.nfcgate.gui.tabLayout.SlidingTabLayout;
 import tud.seemuh.nfcgate.gui.tabLogic.PagerAdapter;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
 
 public class MainActivity extends FragmentActivity
-        implements ReaderCallback {
+        implements ReaderCallback,EnablenfcDialog.NFCNoticeDialogListener {
         //implements token_dialog.NoticeDialogListener, enablenfc_dialog.NFCNoticeDialogListener, ReaderCallback{
 
     private NfcAdapter mAdapter;
@@ -37,28 +40,14 @@ public class MainActivity extends FragmentActivity
 
     private final static String TAG = "MainActivity";
 
-    //Connection Client
-    //protected HighLevelNetworkHandler mConnectionClient;
-
-    // NFC Manager
-    //public NfcManager mNfcManager;
-
     // Defined name of the Shared Preferences Buffer
     //TODO this is now DOUBLE DEFINED: here and in the RelayFragment
     public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
 
-
-
-    //private Callback mNetCallback = new ProtobufCallback();
-
-    // declares main functionality
-    //private Button mReset, mConnecttoSession, mAbort, mJoinSession;
-    //private TextView mConnStatus, mInfo, mDebuginfo, mIP, mPort, mPartnerDevice, mtoken;
-
     //FIXME double in RelayFragment
     public static String joinSessionMessage = "Join Session";
     public static String createSessionMessage = "Create Session";
-    public static String leaveSessionMessage = "Leave Session";
+    //public static String leaveSessionMessage = "Leave Session";
     public static String resetMessage = "Reset";
     public static String resetCardMessage = "Forget Card";
 
@@ -72,6 +61,11 @@ public class MainActivity extends FragmentActivity
         mAdapter = NfcAdapter.getDefaultAdapter(this);
         mIntentFilter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
 
+        if (!mAdapter.isEnabled()) {
+            // NFC is not enabled -> "Tell the user to enable NFC"
+            showEnableNFCDialog();
+        }
+
         ViewPager pager = (ViewPager) findViewById(R.id.viewpager);
         pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
 
@@ -79,11 +73,6 @@ public class MainActivity extends FragmentActivity
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setViewPager(pager);
 
-        if (!mAdapter.isEnabled()) {
-            // NFC is not enabled -> "Tell the user to enable NFC"
-            //FIXME NPE here
-            //RelayFragment.getInstance().showEnableNFCDialog();
-        }
 
         // Create a generic PendingIntent that will be delivered to this activity.
         // The NFC stack will fill in the intent with the details of the discovered tag before
@@ -266,7 +255,25 @@ public class MainActivity extends FragmentActivity
         }
     }
 
+    public void showEnableNFCDialog() {
+        // Create an instance of the dialog fragment and show it
+        DialogFragment dialog = EnablenfcDialog.getInstance(this);
+        dialog.show(this.getSupportFragmentManager(), "Enable NFC: ");
+    }
 
+
+    @Override
+    public void onNFCDialogPositiveClick() {
+        // User touched the dialog's goto settings button
+        Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onNFCDialogNegativeClick() {
+        // User touched the dialog's cancel button
+        Toast.makeText(this, "Caution! The app can't do something useful without NFC enabled -> please enable NFC in your phone settings", Toast.LENGTH_LONG).show();
+    }
 
 
 
