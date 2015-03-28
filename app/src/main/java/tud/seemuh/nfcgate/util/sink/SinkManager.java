@@ -37,6 +37,7 @@ public class SinkManager implements Runnable {
      * @param cSinkType The SinkType (from the enum above)
      */
     private void addSinkCommon(Sink cSink, SinkType cSinkType) {
+        Log.d(TAG, "addSinkCommon: Adding Sink type " + cSinkType);
         // Set up queue
         BlockingQueue<NfcComm> sharedQueue = new LinkedBlockingQueue<NfcComm>();
 
