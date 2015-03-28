@@ -11,6 +11,7 @@ import android.nfc.tech.IsoDep;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NfcA;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -43,10 +44,6 @@ public class MainActivity extends FragmentActivity
 
     private final static String TAG = "MainActivity";
 
-    // Defined name of the Shared Preferences Buffer
-    //TODO double RelayFragment -> move to Enum
-    public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
-
     //TODO double in RelayFragment -> move to Enum
     public static String joinSessionMessage = "Join Session";
     public static String createSessionMessage = "Create Session";
@@ -58,6 +55,7 @@ public class MainActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         setContentView(R.layout.activity_main);
 
         mAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -68,8 +66,8 @@ public class MainActivity extends FragmentActivity
             showEnableNFCDialog();
         }
 
-        final SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-        boolean neverShowAgain = preferences.getBoolean("mNeverWarnWorkaround", false);
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean neverShowAgain = preferences.getBoolean(getString(R.string.pref_key_workaroundWarn), false);
         if (BCM20793Workaround.workaroundNeeded() && !neverShowAgain) {
             WorkaroundDialog dialog = WorkaroundDialog.getInstance(this);
             dialog.show(this.getSupportFragmentManager(), "Known issues");
@@ -100,8 +98,6 @@ public class MainActivity extends FragmentActivity
                 new String[] {IsoDep.class.getName()}
                 //we could add all of the Types from the tech.xml here
         };
-
-
     }
 
     @Override
@@ -109,7 +105,7 @@ public class MainActivity extends FragmentActivity
         super.onResume();
 
         // Load values from the Shared Preferences Buffer
-        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (mAdapter != null && mAdapter.isEnabled()) {
             mAdapter.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
@@ -121,7 +117,7 @@ public class MainActivity extends FragmentActivity
         }
 
         //ReaderMode
-        boolean isReaderModeEnabled = preferences.getBoolean("mReaderModeEnabled", false);
+        boolean isReaderModeEnabled = preferences.getBoolean(getString(R.string.pref_key_readermode), false);
         if(isReaderModeEnabled) {
             //This cast to ReaderCallback seems unavoidable, stupid Java...
             mAdapter.enableReaderMode(this, this,
@@ -214,14 +210,14 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onWorkaroundPositiveClick(View v) {
-        final SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         CheckBox dontShowAgain = (CheckBox) v.findViewById(R.id.neverAgain);
         if (dontShowAgain.isChecked()) {
             Log.i(TAG, "onCreate: Don't show this again is checked");
             SharedPreferences.Editor editor = preferences.edit();
 
-            editor.putBoolean("mNeverWarnWorkaround", true);
+            editor.putBoolean(getString(R.string.pref_key_workaroundWarn), true);
             editor.apply();
         }
         startActivity(new Intent(MainActivity.this, AboutWorkaroundActivity.class));
@@ -230,14 +226,14 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onWorkaroundNegativeClick(View v) {
-        final SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         CheckBox dontShowAgain = (CheckBox) v.findViewById(R.id.neverAgain);
         if (dontShowAgain.isChecked()) {
             Log.i(TAG, "onCreate: Don't show this again is checked");
             SharedPreferences.Editor editor = preferences.edit();
 
-            editor.putBoolean("mNeverWarnWorkaround", true);
+            editor.putBoolean(getString(R.string.pref_key_workaroundWarn), true);
             editor.apply();
         }
 

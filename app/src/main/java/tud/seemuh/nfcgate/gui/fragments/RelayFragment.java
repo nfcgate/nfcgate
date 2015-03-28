@@ -2,6 +2,7 @@ package tud.seemuh.nfcgate.gui.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -36,9 +37,6 @@ public class RelayFragment extends Fragment
 
     //single instance of this class
     private static RelayFragment mFragment;
-
-    // Defined name of the Shared Preferences Buffer
-    public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
 
     //Connection Client
     protected HighLevelNetworkHandler mConnectionClient;
@@ -117,6 +115,15 @@ public class RelayFragment extends Fragment
         mConnectionClient.setNfcManager(mNfcManager);
         mConnectionClient.setCallback(mNetCallback);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mRelayView.getContext());
+
+        ip = preferences.getString(getString(R.string.pref_key_ip), "192.168.178.31");
+        port = preferences.getInt(getString(R.string.pref_key_port), 5566);
+        globalPort = port;
+
+        mIP.setText(ip);
+        mPort.setText(String.valueOf(port));
+
         return mRelayView;
     }
 
@@ -126,37 +133,13 @@ public class RelayFragment extends Fragment
         Log.i(TAG, "onResume(): intent: " + getActivity().getIntent().getAction());
 
         // Load values from the Shared Preferences Buffer
-        SharedPreferences preferences = mRelayView.getContext().getSharedPreferences(PREF_FILE_NAME, mRelayView.getContext().MODE_PRIVATE);
-
-        ip = preferences.getString("ip", "192.168.178.31");
-        port = preferences.getInt("port", 5566);
-        globalPort = preferences.getInt("port", 5566);
-
-        //on start set the text values
-        if(mIP.getText().toString().trim().length() == 0) {
-            mIP.setText(ip);
-            mPort.setText(String.valueOf(port));
-        }
-
-        boolean chgsett;
-        chgsett = preferences.getBoolean("changed_settings", false);
-
-        if(chgsett) {
-            mIP.setText(ip);
-            mPort.setText(String.valueOf(port));
-
-            // reset the 'settings changed' flag
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("changed_settings", false);
-            editor.commit();
-        }
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mRelayView.getContext());
 
         // De- or Enables Debug Window
-        mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
+        mDevModeEnabled = preferences.getBoolean(getString(R.string.pref_key_debugWindow), false);
         mDebuginfo = (TextView) mRelayView.findViewById(R.id.editTextDevModeEnabledDebugging);
         if (mDevModeEnabled) {
             mDebuginfo.setVisibility(View.VISIBLE);
-            mDebuginfo.requestFocus();
         } else {
             mDebuginfo.setVisibility(View.GONE);  // View.invisible results in an error
         }
@@ -231,19 +214,19 @@ public class RelayFragment extends Fragment
                     mConnecttoSession.setEnabled(true);
 
                     // Load values from the Shared Preferences Buffer
-                    SharedPreferences preferences = getActivity().getSharedPreferences(PREF_FILE_NAME, v.getContext().MODE_PRIVATE);
-                    mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mRelayView.getContext());
+                    mDevModeEnabled = preferences.getBoolean(getString(R.string.pref_key_debugWindow), false);
+
                     // De- or Enables Debug Window
                     if (mDevModeEnabled) {
                         mDebuginfo.setVisibility(View.VISIBLE);
-                        mDebuginfo.requestFocus();
                     } else {
                         mDebuginfo.setVisibility(View.GONE);  // View.invisible results in an error
                     }
 
-                    ip = preferences.getString("ip", "192.168.178.31");
-                    port = preferences.getInt("port", 5566);
-                    globalPort = preferences.getInt("port", 5566);
+                    ip = preferences.getString(getString(R.string.pref_key_ip), "192.168.178.31");
+                    port = preferences.getInt(getString(R.string.pref_key_port), 5566);
+                    globalPort = port;
                     mIP.setText(ip);
                     mPort.setText(String.valueOf(port));
                 } else if (mReset.getText().equals(resetCardMessage)) {
@@ -334,7 +317,7 @@ public class RelayFragment extends Fragment
         networkConnectCommon();
 
         // Load token from the Shared Preferences Buffer
-        SharedPreferences preferences = mRelayView.getContext().getSharedPreferences(PREF_FILE_NAME, mRelayView.getContext().MODE_PRIVATE);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mRelayView.getContext());
         String token = preferences.getString("token", "000000");
 
         mConnectionClient.joinSession(token);

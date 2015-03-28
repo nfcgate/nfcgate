@@ -30,4 +30,32 @@
     <string name="enablenfc_dialog_text">To use this application, you need to enable your NFC chip. If you want, we can take you directly to the settings.</string>
     <string name="enablenfc_dialog_cancel">Ignore</string>
     <string name="enablenfc_dialog_confirm">Go to settings</string>
+
+    <!-- Strings for Settings Activity -->
+    <string name="pref_default_values">Default Values</string>
+    <string name="pref_default_values_ip">Server IP</string>
+    <string name="pref_default_values_ip_desc">Enter the IP where the NFCGate Server application will be running</string>
+    <string name="pref_default_values_port">Port</string>
+    <string name="pref_default_values_port_desc">Enter the default port for the NFCGate Server application (usually 5566)</string>
+
+    <string name="pref_switches">Advanced Options</string>
+    <string name="pref_switches_reader_mode">Enable NFC Reader Mode</string>
+    <string name="pref_switches_reader_mode_desc">Sets the device into Reader Mode, which disables Android Beam. However, this also prevents the phone from working as a Card Emulator.</string>
+    <string name="pref_switches_debug_window">Enable Debug Window</string>
+    <string name="pref_switches_debug_window_desc">Show a small window where all NFC traffic will be logged to</string>
+    <string name="pref_switches_workaround_warning">Hide workaround warning</string>
+    <string name="pref_switches_workaround_warning_desc">For some cards, a workaround is required. This setting hides the warning message on this topic</string>
+
+    <!-- Strings for preference keys-->
+    <string name="pref_key_ip">pref_ip</string>
+    <string name="pref_key_port">pref_port</string>
+    <string name="pref_key_debugWindow">pref_debugwindow</string>
+    <string name="pref_key_readermode">pref_readermode</string>
+    <string name="pref_key_workaroundWarn">pref_workaroundwarning</string>
+
+    <!-- Strings for preference error messages -->
+    <string name="pref_error_ip_title">Invalid IP</string>
+    <string name="pref_error_ip_text">The IP you entered was incorrect. Please enter a valid IP</string>
+    <string name="pref_error_port_title">Invalid Port</string>
+    <string name="pref_error_port_text">The port you entered was incorrect. Please enter a valid port</string>
 </resources>
