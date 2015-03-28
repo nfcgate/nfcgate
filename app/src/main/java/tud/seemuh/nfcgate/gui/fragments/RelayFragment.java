@@ -38,9 +38,6 @@ public class RelayFragment extends Fragment
     //single instance of this class
     private static RelayFragment mFragment;
 
-    // Defined name of the Shared Preferences Buffer
-    public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
-
     //Connection Client
     protected HighLevelNetworkHandler mConnectionClient;
 
@@ -118,6 +115,15 @@ public class RelayFragment extends Fragment
         mConnectionClient.setNfcManager(mNfcManager);
         mConnectionClient.setCallback(mNetCallback);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mRelayView.getContext());
+
+        ip = preferences.getString("ip", "192.168.178.31");
+        port = preferences.getInt("port", 5566);
+        globalPort = preferences.getInt("port", 5566);
+
+        mIP.setText(ip);
+        mPort.setText(String.valueOf(port));
+
         return mRelayView;
     }
 
@@ -129,35 +135,11 @@ public class RelayFragment extends Fragment
         // Load values from the Shared Preferences Buffer
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mRelayView.getContext());
 
-        ip = preferences.getString("ip", "192.168.178.31");
-        port = preferences.getInt("port", 5566);
-        globalPort = preferences.getInt("port", 5566);
-
-        //on start set the text values
-        if(mIP.getText().toString().trim().length() == 0) {
-            mIP.setText(ip);
-            mPort.setText(String.valueOf(port));
-        }
-
-        boolean chgsett;
-        chgsett = preferences.getBoolean("changed_settings", false);
-
-        if(chgsett) {
-            mIP.setText(ip);
-            mPort.setText(String.valueOf(port));
-
-            // reset the 'settings changed' flag
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("changed_settings", false);
-            editor.commit();
-        }
-
         // De- or Enables Debug Window
         mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
         mDebuginfo = (TextView) mRelayView.findViewById(R.id.editTextDevModeEnabledDebugging);
         if (mDevModeEnabled) {
             mDebuginfo.setVisibility(View.VISIBLE);
-            mDebuginfo.requestFocus();
         } else {
             mDebuginfo.setVisibility(View.GONE);  // View.invisible results in an error
         }
@@ -234,10 +216,10 @@ public class RelayFragment extends Fragment
                     // Load values from the Shared Preferences Buffer
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mRelayView.getContext());
                     mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
+                    
                     // De- or Enables Debug Window
                     if (mDevModeEnabled) {
                         mDebuginfo.setVisibility(View.VISIBLE);
-                        mDebuginfo.requestFocus();
                     } else {
                         mDebuginfo.setVisibility(View.GONE);  // View.invisible results in an error
                     }

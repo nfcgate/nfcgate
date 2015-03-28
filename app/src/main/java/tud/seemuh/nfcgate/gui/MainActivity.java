@@ -44,10 +44,6 @@ public class MainActivity extends FragmentActivity
 
     private final static String TAG = "MainActivity";
 
-    // Defined name of the Shared Preferences Buffer
-    //TODO double RelayFragment -> move to Enum
-    public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
-
     //TODO double in RelayFragment -> move to Enum
     public static String joinSessionMessage = "Join Session";
     public static String createSessionMessage = "Create Session";
