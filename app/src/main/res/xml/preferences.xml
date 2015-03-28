@@ -18,6 +18,21 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:title="@string/pref_logging"
+        android:key="pref_logging" >
+        <CheckBoxPreference
+            android:title="@string/pref_logging_debug_window"
+            android:summary="@string/pref_logging_debug_window_desc"
+            android:key="@string/pref_key_debugWindow"
+            android:defaultValue="true" />
+        <CheckBoxPreference
+            android:title="@string/pref_logging_file"
+            android:summary="@string/pref_logging_file_desc"
+            android:key="@string/pref_key_logfile"
+            android:defaultValue="false"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/pref_switches"
         android:key="pref_switches">
         <CheckBoxPreference
@@ -25,11 +40,6 @@
             android:summary="@string/pref_switches_reader_mode_desc"
             android:key="@string/pref_key_readermode"
             android:defaultValue="false" />
-        <CheckBoxPreference
-            android:title="@string/pref_switches_debug_window"
-            android:summary="@string/pref_switches_debug_window_desc"
-            android:key="@string/pref_key_debugWindow"
-            android:defaultValue="true" />
         <CheckBoxPreference
             android:title="@string/pref_switches_workaround_warning"
             android:summary="@string/pref_switches_workaround_warning_desc"

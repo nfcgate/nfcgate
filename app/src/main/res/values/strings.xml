@@ -38,11 +38,15 @@
     <string name="pref_default_values_port">Port</string>
     <string name="pref_default_values_port_desc">Enter the default port for the NFCGate Server application (usually 5566)</string>
 
+    <string name="pref_logging">Logging</string>
+    <string name="pref_logging_debug_window">Enable Debug Window</string>
+    <string name="pref_logging_debug_window_desc">Show a small window where all NFC traffic will be logged to</string>
+    <string name="pref_logging_file">Enable logging to file</string>
+    <string name="pref_logging_file_desc">Log Sessions to a file. Files are saved to /sdcard/nfcgate/logs/.</string>
+
     <string name="pref_switches">Advanced Options</string>
     <string name="pref_switches_reader_mode">Enable NFC Reader Mode</string>
     <string name="pref_switches_reader_mode_desc">Sets the device into Reader Mode, which disables Android Beam. However, this also prevents the phone from working as a Card Emulator.</string>
-    <string name="pref_switches_debug_window">Enable Debug Window</string>
-    <string name="pref_switches_debug_window_desc">Show a small window where all NFC traffic will be logged to</string>
     <string name="pref_switches_workaround_warning">Hide workaround warning</string>
     <string name="pref_switches_workaround_warning_desc">For some cards, a workaround is required. This setting hides the warning message on this topic</string>
 
@@ -52,6 +56,7 @@
     <string name="pref_key_debugWindow">pref_debugwindow</string>
     <string name="pref_key_readermode">pref_readermode</string>
     <string name="pref_key_workaroundWarn">pref_workaroundwarning</string>
+    <string name="pref_key_logfile">pref_logtofile</string>
 
     <!-- Strings for preference error messages -->
     <string name="pref_error_ip_title">Invalid IP</string>

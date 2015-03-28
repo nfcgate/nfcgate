@@ -14,6 +14,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
@@ -285,11 +288,28 @@ public class RelayFragment extends Fragment
         // FIXME For debugging purposes, hardcoded selecting of sinks happens here
         // This should be selectable by the user
 
-        // Initialize debug output sink
-        // TODO This should most definitely be solved in a more elegant fashion
+        // Initialize sinks
+        // Get Preference manager to determine which sinks are active
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        // Determine settings for sinks
+        boolean textViewSinkActive = prefs.getBoolean(getString(R.string.pref_key_debugWindow), false);
+        boolean logfileSinkActive  = prefs.getBoolean(getString(R.string.pref_key_logfile), false);
+
         try {
-            mSinkManager.addSink(SinkManager.SinkType.DISPLAY_TEXTVIEW, mDebuginfo);
-            mSinkManager.addSink(SinkManager.SinkType.FILE, "testFile.txt");
+            if (textViewSinkActive) {
+                // Debug window is active, activate the sink that collects data for it
+                mSinkManager.addSink(SinkManager.SinkType.DISPLAY_TEXTVIEW, mDebuginfo);
+            }
+            if (logfileSinkActive) {
+                // Logging to file is active. Generate filename from timestamp
+                SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+                Date now = new Date();
+                String strDate = sdfDate.format(now);
+
+                // Initialize File Sink
+                mSinkManager.addSink(SinkManager.SinkType.FILE, strDate + ".txt");
+            }
         } catch (SinkInitException e) {
             e.printStackTrace();
         }
