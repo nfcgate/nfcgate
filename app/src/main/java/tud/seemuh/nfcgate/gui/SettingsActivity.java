@@ -1,27 +1,26 @@
 package tud.seemuh.nfcgate.gui;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
-import android.nfc.NfcAdapter;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.gui.fragments.SettingsFragment;
 
 /**
  *
- * This activity creates the view for our settings section using the settings.xml file
+ * Activity containing the SettingsFragment.
  */
 public class SettingsActivity extends Activity{
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
+        // Display the fragment as the main content.
+        getFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new SettingsFragment())
+                .commit();
+    }
+
+/* Commented out old SettingsActivity code, as we are now using Androids default settings functions
     // Define whether Debugging Mode is enabled or not
     private CheckBox mDevMode;
     // Define ReaderMode (disables HCE)
@@ -178,4 +177,5 @@ public class SettingsActivity extends Activity{
         super.onPause();
         finish();
     }
+*/
 }

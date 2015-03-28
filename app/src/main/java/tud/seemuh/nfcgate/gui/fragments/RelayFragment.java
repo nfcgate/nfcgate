@@ -2,6 +2,7 @@ package tud.seemuh.nfcgate.gui.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -126,7 +127,7 @@ public class RelayFragment extends Fragment
         Log.i(TAG, "onResume(): intent: " + getActivity().getIntent().getAction());
 
         // Load values from the Shared Preferences Buffer
-        SharedPreferences preferences = mRelayView.getContext().getSharedPreferences(PREF_FILE_NAME, mRelayView.getContext().MODE_PRIVATE);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mRelayView.getContext());
 
         ip = preferences.getString("ip", "192.168.178.31");
         port = preferences.getInt("port", 5566);
@@ -231,7 +232,7 @@ public class RelayFragment extends Fragment
                     mConnecttoSession.setEnabled(true);
 
                     // Load values from the Shared Preferences Buffer
-                    SharedPreferences preferences = getActivity().getSharedPreferences(PREF_FILE_NAME, v.getContext().MODE_PRIVATE);
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mRelayView.getContext());
                     mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
                     // De- or Enables Debug Window
                     if (mDevModeEnabled) {
@@ -334,7 +335,7 @@ public class RelayFragment extends Fragment
         networkConnectCommon();
 
         // Load token from the Shared Preferences Buffer
-        SharedPreferences preferences = mRelayView.getContext().getSharedPreferences(PREF_FILE_NAME, mRelayView.getContext().MODE_PRIVATE);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mRelayView.getContext());
         String token = preferences.getString("token", "000000");
 
         mConnectionClient.joinSession(token);

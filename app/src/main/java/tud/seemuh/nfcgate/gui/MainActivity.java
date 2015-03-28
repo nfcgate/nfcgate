@@ -11,6 +11,7 @@ import android.nfc.tech.IsoDep;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NfcA;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -58,6 +59,7 @@ public class MainActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         setContentView(R.layout.activity_main);
 
         mAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -68,7 +70,7 @@ public class MainActivity extends FragmentActivity
             showEnableNFCDialog();
         }
 
-        final SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean neverShowAgain = preferences.getBoolean("mNeverWarnWorkaround", false);
         if (BCM20793Workaround.workaroundNeeded() && !neverShowAgain) {
             WorkaroundDialog dialog = WorkaroundDialog.getInstance(this);
@@ -109,7 +111,7 @@ public class MainActivity extends FragmentActivity
         super.onResume();
 
         // Load values from the Shared Preferences Buffer
-        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (mAdapter != null && mAdapter.isEnabled()) {
             mAdapter.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
@@ -214,7 +216,7 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onWorkaroundPositiveClick(View v) {
-        final SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         CheckBox dontShowAgain = (CheckBox) v.findViewById(R.id.neverAgain);
         if (dontShowAgain.isChecked()) {
@@ -230,7 +232,7 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onWorkaroundNegativeClick(View v) {
-        final SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         CheckBox dontShowAgain = (CheckBox) v.findViewById(R.id.neverAgain);
         if (dontShowAgain.isChecked()) {
