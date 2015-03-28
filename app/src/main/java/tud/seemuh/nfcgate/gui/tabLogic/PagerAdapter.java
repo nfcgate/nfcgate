@@ -56,6 +56,13 @@ public class PagerAdapter extends FragmentPagerAdapter {
      */
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((View) object);
+        // temporarily added a try catch block to catch rarely occurring errors :/  TODO check why these errors occur...
+        try {
+            container.removeView((View) object);
+        }
+        catch (Exception e)
+        {
+            // code which should not be reached    (at least ideally^^)
+        }
     }
 }
