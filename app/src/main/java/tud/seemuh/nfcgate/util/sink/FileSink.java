@@ -30,7 +30,7 @@ public class FileSink implements Sink {
         if (Environment.MEDIA_MOUNTED.equals(state)) {
             // We can read and write the media
             File sdcard = Environment.getExternalStorageDirectory();
-            File dir = new File(sdcard.getAbsolutePath() + "/nfcgate/dump");
+            File dir = new File(sdcard.getAbsolutePath() + "/nfcgate/logs");
             dir.mkdirs();
             mOutfile = new File(dir, filename);
         } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
