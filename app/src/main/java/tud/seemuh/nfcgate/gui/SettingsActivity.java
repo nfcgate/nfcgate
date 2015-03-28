@@ -59,7 +59,7 @@ public class SettingsActivity extends PreferenceActivity
                 editor.apply();
 
                 // Warn the user about the incorrect IP
-                AlertDialog notice = getNoticeDialog("Invalid IP", "The IP you entered was incorrect. Please enter a valid IP");
+                AlertDialog notice = getNoticeDialog(R.string.pref_error_ip_title, R.string.pref_error_port_text);
                 notice.show();
             }
         } else if (key.equals(getString(R.string.pref_key_port))) {
@@ -71,7 +71,7 @@ public class SettingsActivity extends PreferenceActivity
                 editor.apply();
 
                 // Warn the user about the incorrect IP
-                AlertDialog notice = getNoticeDialog("Invalid Port", "The port you entered was incorrect. Please enter a valid port.");
+                AlertDialog notice = getNoticeDialog(R.string.pref_error_port_title, R.string.pref_error_port_text);
                 notice.show();
             }
         }
@@ -93,7 +93,9 @@ public class SettingsActivity extends PreferenceActivity
         return port <= maxPort && port > 0;
     }
 
-    private AlertDialog getNoticeDialog(String title, String text) {
+    private AlertDialog getNoticeDialog(int titleID, int textID) {
+        String title = getString(titleID);
+        String text = getString(textID);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(text)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
