@@ -7,14 +7,14 @@
             android:title="@string/pref_default_values_ip"
             android:summary="@string/pref_default_values_ip_desc"
             android:defaultValue="192.168.1.1"
-            android:key="ip" />
+            android:key="@string/pref_key_ip" />
         <tud.seemuh.nfcgate.util.preference.IntEditTextPreference
             android:title="@string/pref_default_values_port"
             android:summary="@string/pref_default_values_port_desc"
             android:numeric="integer"
             android:maxLength="5"
             android:defaultValue="5566"
-            android:key="port"/>
+            android:key="@string/pref_key_port"/>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -23,17 +23,17 @@
         <CheckBoxPreference
             android:title="@string/pref_switches_reader_mode"
             android:summary="@string/pref_switches_reader_mode_desc"
-            android:key="mReaderModeEnabled"
+            android:key="@string/pref_key_readermode"
             android:defaultValue="false" />
         <CheckBoxPreference
             android:title="@string/pref_switches_debug_window"
             android:summary="@string/pref_switches_debug_window_desc"
-            android:key="mDevModeEnabled"
+            android:key="@string/pref_key_debugWindow"
             android:defaultValue="true" />
         <CheckBoxPreference
             android:title="@string/pref_switches_workaround_warning"
             android:summary="@string/pref_switches_workaround_warning_desc"
-            android:key="mNeverWarnWorkaround"
+            android:key="@string/pref_key_workaroundWarn"
             android:defaultValue="false" />
     </PreferenceCategory>
 </PreferenceScreen>

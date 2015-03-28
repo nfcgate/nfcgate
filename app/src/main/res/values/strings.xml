@@ -46,4 +46,10 @@
     <string name="pref_switches_workaround_warning">Hide workaround warning</string>
     <string name="pref_switches_workaround_warning_desc">For some cards, a workaround is required. This setting hides the warning message on this topic</string>
 
+    <!-- Strings for preference keys-->
+    <string name="pref_key_ip">pref_ip</string>
+    <string name="pref_key_port">pref_port</string>
+    <string name="pref_key_debugWindow">pref_debugwindow</string>
+    <string name="pref_key_readermode">pref_readermode</string>
+    <string name="pref_key_workaroundWarn">pref_workaroundwarning</string>
 </resources>

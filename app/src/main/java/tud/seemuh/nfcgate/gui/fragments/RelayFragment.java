@@ -117,9 +117,9 @@ public class RelayFragment extends Fragment
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mRelayView.getContext());
 
-        ip = preferences.getString("ip", "192.168.178.31");
-        port = preferences.getInt("port", 5566);
-        globalPort = preferences.getInt("port", 5566);
+        ip = preferences.getString(getString(R.string.pref_key_ip), "192.168.178.31");
+        port = preferences.getInt(getString(R.string.pref_key_port), 5566);
+        globalPort = port;
 
         mIP.setText(ip);
         mPort.setText(String.valueOf(port));
@@ -136,7 +136,7 @@ public class RelayFragment extends Fragment
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mRelayView.getContext());
 
         // De- or Enables Debug Window
-        mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
+        mDevModeEnabled = preferences.getBoolean(getString(R.string.pref_key_debugWindow), false);
         mDebuginfo = (TextView) mRelayView.findViewById(R.id.editTextDevModeEnabledDebugging);
         if (mDevModeEnabled) {
             mDebuginfo.setVisibility(View.VISIBLE);
@@ -215,8 +215,8 @@ public class RelayFragment extends Fragment
 
                     // Load values from the Shared Preferences Buffer
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mRelayView.getContext());
-                    mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
-                    
+                    mDevModeEnabled = preferences.getBoolean(getString(R.string.pref_key_debugWindow), false);
+
                     // De- or Enables Debug Window
                     if (mDevModeEnabled) {
                         mDebuginfo.setVisibility(View.VISIBLE);
@@ -224,9 +224,9 @@ public class RelayFragment extends Fragment
                         mDebuginfo.setVisibility(View.GONE);  // View.invisible results in an error
                     }
 
-                    ip = preferences.getString("ip", "192.168.178.31");
-                    port = preferences.getInt("port", 5566);
-                    globalPort = preferences.getInt("port", 5566);
+                    ip = preferences.getString(getString(R.string.pref_key_ip), "192.168.178.31");
+                    port = preferences.getInt(getString(R.string.pref_key_port), 5566);
+                    globalPort = port;
                     mIP.setText(ip);
                     mPort.setText(String.valueOf(port));
                 } else if (mReset.getText().equals(resetCardMessage)) {

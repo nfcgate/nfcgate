@@ -1,7 +1,8 @@
 package tud.seemuh.nfcgate.gui;
 
-import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 
 import tud.seemuh.nfcgate.gui.fragments.SettingsFragment;
 
@@ -9,7 +10,9 @@ import tud.seemuh.nfcgate.gui.fragments.SettingsFragment;
  *
  * Activity containing the SettingsFragment.
  */
-public class SettingsActivity extends Activity{
+public class SettingsActivity extends PreferenceActivity
+        implements SharedPreferences.OnSharedPreferenceChangeListener{
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,6 +21,11 @@ public class SettingsActivity extends Activity{
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        
     }
 
 /* Commented out old SettingsActivity code, as we are now using Androids default settings functions
