@@ -33,5 +33,11 @@ public final class SessionLoggingContract {
         public static final String COLUMN_NAME_ATQA = "atqa";
         public static final String COLUMN_NAME_SAK = "sak";
         public static final String COLUMN_NAME_HIST = "hist";
+        // Pre-Filter values, where changed
+        public static final String COLUMN_NAME_NFCDATA_PREFILTER = "nfcdata_pf";
+        public static final String COLUMN_NAME_UID_PREFILTER = "uid_pf";
+        public static final String COLUMN_NAME_ATQA_PREFILTER = "atqa_pf";
+        public static final String COLUMN_NAME_SAK_PREFILTER = "sak_pf";
+        public static final String COLUMN_NAME_HIST_PREFILTER = "hist_pf";
     }
 }

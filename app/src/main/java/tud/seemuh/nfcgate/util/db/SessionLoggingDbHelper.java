@@ -36,11 +36,22 @@ public class SessionLoggingDbHelper extends SQLiteOpenHelper {
             SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA + TYPE_BYTES + COMMA_SEP +
             SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK + TYPE_BYTES + COMMA_SEP +
             SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST + TYPE_BYTES + COMMA_SEP +
+            SessionLoggingContract.SessionEvent.COLUMN_NAME_NFCDATA_PREFILTER + TYPE_BYTES + COMMA_SEP +
+            SessionLoggingContract.SessionEvent.COLUMN_NAME_UID_PREFILTER + TYPE_BYTES + COMMA_SEP +
+            SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA_PREFILTER + TYPE_BYTES + COMMA_SEP +
+            SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK_PREFILTER + TYPE_BYTES + COMMA_SEP +
+            SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST_PREFILTER + TYPE_BYTES + COMMA_SEP +
             "FOREIGN KEY(" + SessionLoggingContract.SessionEvent.COLUMN_NAME_SESSION_ID + ") REFERENCES " +
             SessionLoggingContract.SessionMeta.TABLE_NAME + "(" + SessionLoggingContract.SessionMeta.COLUMN_NAME_SESSION_ID + ")" +
-            ");";
+            " ON DELETE CASCADE" + ");";
 
-    public static final int DATABASE_VERSION = 1;
+    private final String SQL_DROP_SESSIONMETA
+            = "DROP TABLE " + SessionLoggingContract.SessionMeta.TABLE_NAME + ";";
+
+    private final String SQL_DROP_SESSIONEVENT
+            = "DROP TABLE " + SessionLoggingContract.SessionEvent.TABLE_NAME + ";";
+
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "SessionLogging.db";
 
     public SessionLoggingDbHelper(Context context) {
@@ -64,6 +75,10 @@ public class SessionLoggingDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Nothing so far, as we have never changed the DB scheme.
+        if (oldVersion == 1 && newVersion == 2) {
+            db.execSQL(SQL_DROP_SESSIONEVENT);
+            db.execSQL(SQL_DROP_SESSIONMETA);
+            onCreate(db);
+        }
     }
 }
