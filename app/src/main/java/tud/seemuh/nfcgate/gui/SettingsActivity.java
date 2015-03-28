@@ -35,7 +35,7 @@ public class SettingsActivity extends PreferenceActivity
 
     @Override
     protected void onResume() {
-        super.onPause();
+        super.onResume();
         PreferenceManager.getDefaultSharedPreferences(this)
                 .registerOnSharedPreferenceChangeListener(this);
     }
