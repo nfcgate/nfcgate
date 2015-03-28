@@ -6,7 +6,7 @@
         <EditTextPreference
             android:title="@string/pref_default_values_ip"
             android:summary="@string/pref_default_values_ip_desc"
-            android:defaultValue="192.168.1.1"
+            android:defaultValue=""
             android:key="@string/pref_key_ip" />
         <tud.seemuh.nfcgate.util.preference.IntEditTextPreference
             android:title="@string/pref_default_values_port"

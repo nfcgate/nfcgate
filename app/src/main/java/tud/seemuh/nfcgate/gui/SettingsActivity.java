@@ -1,9 +1,16 @@
 package tud.seemuh.nfcgate.gui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.gui.fragments.SettingsFragment;
 
 /**
@@ -12,6 +19,9 @@ import tud.seemuh.nfcgate.gui.fragments.SettingsFragment;
  */
 public class SettingsActivity extends PreferenceActivity
         implements SharedPreferences.OnSharedPreferenceChangeListener{
+
+    private static final String regexIPpattern ="^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+    private static int maxPort = 65535;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,166 +34,75 @@ public class SettingsActivity extends PreferenceActivity
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        
-    }
-
-/* Commented out old SettingsActivity code, as we are now using Androids default settings functions
-    // Define whether Debugging Mode is enabled or not
-    private CheckBox mDevMode;
-    // Define ReaderMode (disables HCE)
-    private CheckBox mReaderMode;
-    // Workaround warning checkbox
-    private CheckBox mWorkaroundWarning;
-    private TextView supportedFeatures;
-    private boolean mDevModeEnabled;
-    private boolean mReaderModeEnabled;
-    private boolean mWorkaroundWarningEnabled;
-    private Button mbtnSaveSettings;
-
-    // Define IP:Port Settings
-    private TextView mIP,mPort;
-    private String ip;
-    private int port;
-
-    // Hardware features of the current smartphone
-    private NfcAdapter mAdapter;
-    private boolean nfcisActive;
-    private boolean hce;
-
-    // Defined name of the Shared Preferences Buffer
-    public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
-
-    // regex for IP checking
-    private static final String regexIPpattern ="^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
-
-    // max. port possible
-    private static int maxPort = 65535;
-    int globalPort = 0;
-
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.settings);
-        mDevMode = (CheckBox) findViewById(R.id.checkBoxDevMode);
-        mReaderMode = (CheckBox) findViewById(R.id.checkReaderMode);
-        mWorkaroundWarning = (CheckBox) findViewById(R.id.checkBoxWorkaroundWarning);
-        mIP = (TextView) findViewById(R.id.editIP);
-        mPort = (TextView) findViewById(R.id.editPort);
-        supportedFeatures = (TextView) findViewById(R.id.textViewSupportedFeatures);
-        mbtnSaveSettings = (Button) findViewById(R.id.btnSaveSettings);
-
-        // create Shared Preferences Buffer in private mode
-        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-
-        // retrieve mDevModeEnabled from the preferences buffer, if not found set to false
-        mDevModeEnabled = preferences.getBoolean("mDevModeEnabled", false);
-        // retrieve mReaderModeEnabled
-        mReaderModeEnabled = preferences.getBoolean("mReaderModeEnabled", false);
-        // Retrieve workaround warning setting
-        mWorkaroundWarningEnabled = preferences.getBoolean("mNeverWarnWorkaround", false);
-        // reload saved values & if not found set to default IP:Port (192.168.178.31:5566)
-        ip = preferences.getString("ip", "192.168.178.31");
-        port = preferences.getInt("port",5566);
-        globalPort = port;
-        // give the loaded (or default) values to the views
-        mIP.setText(ip);
-        mPort.setText(String.valueOf(port));
-        mDevMode.setChecked(mDevModeEnabled);
-        mReaderMode.setChecked(mReaderModeEnabled);
-        mWorkaroundWarning.setChecked(mWorkaroundWarningEnabled);
-
-        nfcisActive = false;
-        hce = getPackageManager().hasSystemFeature("android.hardware.nfc.hce");
-
-        mAdapter = NfcAdapter.getDefaultAdapter(this);
-        if (mAdapter != null && mAdapter.isEnabled()) {nfcisActive = true; }
-
-        String values = " NFC: ";
-        if (nfcisActive)
-        {
-            values = values + "is enabled";
-        }
-        else
-        {
-            values = values + "is not enabled";
-        }
-        values = values + "\n HCE: ";
-        if (hce)
-        {
-            values = values + "is available";
-        }
-        else
-        {
-            values = values + "is not available";
-        }
-        supportedFeatures.setText("\n Supported features by your smartphone: \n" + values);
-
-    }
-
-    public boolean checkIpPort(String ip, String port)
-    {
-        boolean validPort = false;
-        boolean gotException = false;
-        boolean validIp = false;
-        Pattern pattern = Pattern.compile(regexIPpattern);
-        Matcher matcher = pattern.matcher(ip);
-        int int_port = 0;
-        try {
-            int_port = Integer.parseInt(port.trim());
-        } catch (NumberFormatException e) {
-            gotException = true;
-        }
-        if (!gotException) {
-            if ((int_port > 0) && (int_port <= maxPort)) validPort = true;
-        }
-        validIp = matcher.matches();
-        if (validPort) globalPort = int_port;
-        return validPort && validIp;
-    }
-
-    public void btnSaveSettingsClicked(View view)
-    {
-        if (!checkIpPort(mIP.getText().toString(), mPort.getText().toString()))
-        {
-            Toast.makeText(this, "Please enter a valid ip & port", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        mDevModeEnabled = (((CheckBox) findViewById(R.id.checkBoxDevMode)).isChecked());
-        mReaderModeEnabled = (((CheckBox) findViewById(R.id.checkReaderMode)).isChecked());
-        mWorkaroundWarningEnabled = (((CheckBox) findViewById(R.id.checkBoxWorkaroundWarning)).isChecked());
-
-        // create Shared Preferences Buffer in private mode
-        SharedPreferences preferences = getSharedPreferences(PREF_FILE_NAME, MODE_PRIVATE);
-
-        // Store some of the application settings in the preferences buffer
-        SharedPreferences.Editor editor = preferences.edit();
-        // save mDevModeEnabled into the to the preferences buffer
-        editor.putBoolean("mDevModeEnabled", mDevModeEnabled);
-        // save mReaderModeEnabled...
-        editor.putBoolean("mReaderModeEnabled", mReaderModeEnabled);
-        // save mWorkaroundWarning
-        editor.putBoolean("mNeverWarnWorkaround", mWorkaroundWarningEnabled);
-        // save ip into the to the preferences buffer
-        editor.putString("ip", mIP.getText().toString());
-        // save port into the to the preferences buffer
-        editor.putInt("port", globalPort);
-
-        // the config has changed, save that
-        Log.i("SettingsActivity", "set 'changed_settings' to 'true'");
-        editor.putBoolean("changed_settings", true);
-
-        editor.commit();
-
-        // sent the user back to the main activity
-        Toast.makeText(this, "Settings saved!", Toast.LENGTH_SHORT).show();
-        finish();
-    }
-
-    protected void onPause()
-    {
+    protected void onResume() {
         super.onPause();
-        finish();
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .registerOnSharedPreferenceChangeListener(this);
     }
-*/
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.pref_key_ip))) {
+
+            String ip = sharedPreferences.getString(getString(R.string.pref_key_ip), "");
+            if (!isValidIP(ip)) {
+                // Reset IP to an empty String
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(getString(R.string.pref_key_ip), "");
+                editor.apply();
+
+                // Warn the user about the incorrect IP
+                AlertDialog notice = getNoticeDialog("Invalid IP", "The IP you entered was incorrect. Please enter a valid IP");
+                notice.show();
+            }
+        } else if (key.equals(getString(R.string.pref_key_port))) {
+            int port = sharedPreferences.getInt(getString(R.string.pref_key_port), 0);
+            if (!isValidPort(port)) {
+                // Reset Port to default value
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt(getString(R.string.pref_key_port), 5566);
+                editor.apply();
+
+                // Warn the user about the incorrect IP
+                AlertDialog notice = getNoticeDialog("Invalid Port", "The port you entered was incorrect. Please enter a valid port.");
+                notice.show();
+            }
+        }
+    }
+
+    private boolean isValidIP(String ip) {
+        if (ip.equals("")) return true;
+        // Compile RegEx pattern
+        Pattern pattern = Pattern.compile(regexIPpattern);
+
+        // Get matcher
+        Matcher matcher = pattern.matcher(ip);
+
+        // Check if IP matches pattern and return
+        return matcher.matches();
+    }
+
+    private boolean isValidPort(int port) {
+        return port <= maxPort && port > 0;
+    }
+
+    private AlertDialog getNoticeDialog(String title, String text) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(text)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                })
+                .setTitle(title);
+        // Create the AlertDialog object and return it
+        return builder.create();
+    }
 }
