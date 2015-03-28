@@ -29,13 +29,13 @@ public class LoggingFragment extends Fragment implements AdapterView.OnItemSelec
         Spinner mCommandsOfSession = (Spinner) v.findViewById(R.id.commandsOfSelectedSession);
 
         // items to be filled with sink data at a later point  TODO @Max: insert your data into the array using getter / setter (see below)
-        String[] mSessionItems = new String[]{"dummy1","dummy2","dummy3"};  // dummy test data
+        mSessionItems = new String[]{"dummy1","dummy2","dummy3"};  // dummy test data
         ArrayAdapter<String> sessionAdapter = new ArrayAdapter<String>(v.getContext(),android.R.layout.simple_spinner_item,mSessionItems);
         sessionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSession.setAdapter(sessionAdapter);
         mSession.setOnItemSelectedListener(this);
 
-        String[] mCommandsOfSessionItems = new String[]{"dummy4","dummy5","dummy6"};
+        mCommandsOfSessionItems = new String[]{"dummy4","dummy5","dummy6"};
         ArrayAdapter<String> commandsOfSessionAdapter = new ArrayAdapter<String>(v.getContext(),android.R.layout.simple_spinner_item,mCommandsOfSessionItems);
         commandsOfSessionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mCommandsOfSession.setAdapter(commandsOfSessionAdapter);
