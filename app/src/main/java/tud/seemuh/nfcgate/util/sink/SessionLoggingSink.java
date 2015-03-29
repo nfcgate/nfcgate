@@ -39,7 +39,9 @@ public class SessionLoggingSink implements Sink {
         SessionLoggingDbHelper helper = new SessionLoggingDbHelper(mContext);
         mDB = helper.getWritableDatabase();
 
+        Log.i(TAG, "run: Starting");
         long sessionID = openNewSession();
+        Log.i(TAG, "run: New Session created: " + sessionID);
 
         // Main loop
         while (!Thread.currentThread().isInterrupted()) {
@@ -85,9 +87,12 @@ public class SessionLoggingSink implements Sink {
         }
 
         // Main loop terminated, clean up
+        Log.i(TAG, "run: Closing Session");
         closeSession(sessionID);
         mDB.close();
+        Log.i(TAG, "run: Stopping");
     }
+
 
     private long openNewSession() {
         // Prepare values object
@@ -102,6 +107,7 @@ public class SessionLoggingSink implements Sink {
                 null,
                 values);
     }
+
 
     private void closeSession(long sessionid) {
         // Prepare values
