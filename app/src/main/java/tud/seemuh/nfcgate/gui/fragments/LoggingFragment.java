@@ -1,7 +1,9 @@
 package tud.seemuh.nfcgate.gui.fragments;
 
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +59,6 @@ public class LoggingFragment extends Fragment{
             }
         });
 
-
         return v;
     }
 
@@ -83,6 +84,30 @@ public class LoggingFragment extends Fragment{
             mlistAdapter.notifyDataSetChanged();
         }
     }
+ /*
+    @Override
+    public void onResume() {
+
+        super.onResume();
+        getActivity().getSupportFragmentManager().popBackStack();
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
+
+                    // handle back button
+
+                    return true;
+
+                }
+
+                return false;
+            }
+        });
+    } */
 
     protected boolean onLongListItemClick(View v, int pos, long id) {
         // Warning: item gets immediately deleted !without warning! on long click  TODO improve, maybe by displaying a warning before removing the item

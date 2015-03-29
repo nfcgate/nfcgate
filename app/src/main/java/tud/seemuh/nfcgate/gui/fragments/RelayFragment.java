@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -148,6 +149,21 @@ public class RelayFragment extends Fragment
         }
 
         mConnecttoSession.requestFocus();
+         /*
+        getActivity().getSupportFragmentManager().popBackStack();
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+        @Override
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+            if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
+            // handle back button
+                return true;
+            }
+                return false;
+            }
+        }); */
+
     }
 
 

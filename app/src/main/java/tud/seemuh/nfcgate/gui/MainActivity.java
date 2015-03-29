@@ -1,5 +1,6 @@
 package tud.seemuh.nfcgate.gui;
 
+import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -80,6 +81,8 @@ public class MainActivity extends FragmentActivity
         mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setViewPager(pager);
 
+       //  FragmentTransaction mFragmentTransaction = getFragmentManager().beginTransaction();
+       //  mFragmentTransaction.addToBackStack(null);
 
         // Create a generic PendingIntent that will be delivered to this activity.
         // The NFC stack will fill in the intent with the details of the discovered tag before
@@ -124,6 +127,14 @@ public class MainActivity extends FragmentActivity
                     NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
         } else {
             mAdapter.disableReaderMode(this);
+        }
+    }
+
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            this.finish();
+        } else {
+            getFragmentManager().popBackStack();
         }
     }
 
