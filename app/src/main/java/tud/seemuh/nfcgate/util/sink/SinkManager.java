@@ -17,6 +17,7 @@ public class SinkManager implements Runnable {
     public enum SinkType {
         FILE,
         DISPLAY_TEXTVIEW,
+        SESSION_LOG
     }
 
     // BlockingQueue linked to the HighLevelProtobufHandler
@@ -56,7 +57,14 @@ public class SinkManager implements Runnable {
     public void addSink(SinkType sinkIdentifier) throws SinkInitException {
         // Currently, there are no sinks that can be added without any parameters
         // If there ever are any, put them here
-        Log.e(TAG, "addSink: passed Enum not handled with these parameters.");
+        Sink newSink;
+        if (sinkIdentifier == SinkType.SESSION_LOG) {
+            newSink = new SessionLoggingSink();
+        } else {
+            Log.e(TAG, "addSink: passed Enum not handled with these parameters.");
+            return;
+        }
+        addSinkCommon(newSink, sinkIdentifier);
     }
 
     /**
