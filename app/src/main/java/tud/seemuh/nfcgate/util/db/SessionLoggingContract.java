@@ -10,14 +10,16 @@ public final class SessionLoggingContract {
     public SessionLoggingContract() {}
 
     // Table that saves meta information about a Session
-    public static abstract class SessionMeta{
+    public static abstract class SessionMeta implements BaseColumns {
         public static final String TABLE_NAME = "session_meta";
-        public static final String COLUMN_NAME_SESSION_ID = "sessionID";
         // Finished is set to 1 once the session is done, so we can detect unfinished sessions
         public static final String COLUMN_NAME_FINISHED = "finished";
         // Name may be null, can be set by the user later
         public static final String COLUMN_NAME_NAME = "name";
         public static final String COLUMN_NAME_DATE = "timestamp";
+
+        public static final int VALUE_FINISHED_FALSE = 0;
+        public static final int VALUE_FINISHED_TRUE = 1;
     }
 
     // Table that saves actual events inside of a session

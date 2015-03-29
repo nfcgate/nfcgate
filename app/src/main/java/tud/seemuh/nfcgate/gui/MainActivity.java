@@ -59,7 +59,7 @@ public class MainActivity extends FragmentActivity
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         setContentView(R.layout.activity_main);
 
-        // Start an AsyncTask to create / update the database scheme
+        // Start an AsyncTask to create / update the database scheme, if needed.
         new DbInitTask().execute(this);
 
         mAdapter = NfcAdapter.getDefaultAdapter(this);
