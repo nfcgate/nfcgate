@@ -93,6 +93,9 @@ public class LoggingFragment extends Fragment{
         return true;
     }
 
+    public void onBackPressed() {
+        this.onListItemClick(getView(),0,0);
+    }
 
     public void setmItems(String[] newItems)
     {
