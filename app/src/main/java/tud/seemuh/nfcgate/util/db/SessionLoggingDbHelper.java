@@ -12,10 +12,12 @@ public class SessionLoggingDbHelper extends SQLiteOpenHelper {
     private static final String TYPE_TEXT = " TEXT";
     private static final String TYPE_INT = " INTEGER";
     private static final String TYPE_BYTES = " BLOB";
+    private static final String TYPE_DATETIME = " DATETIME";
     private static final String OPT_PRIMARY_KEY = " PRIMARY KEY";
     private static final String OPT_AUTO_INCREMENT = " AUTOINCREMENT";
     private static final String OPT_NOT_NULL = " NOT NULL";
     private static final String OPT_DEFAULT_ZERO = " DEFAULT 0";
+    private static final String OPT_DEFAULT_NOW = " DEFAULT CURRENT_TIMESTAMP";
     private static final String COMMA_SEP = ",";
 
     private static final String SQL_CREATE_ENTRIES_SESSIONMETA
@@ -23,14 +25,14 @@ public class SessionLoggingDbHelper extends SQLiteOpenHelper {
             SessionLoggingContract.SessionMeta.COLUMN_NAME_SESSION_ID + TYPE_INT + OPT_PRIMARY_KEY + OPT_AUTO_INCREMENT + COMMA_SEP +
             SessionLoggingContract.SessionMeta.COLUMN_NAME_FINISHED + TYPE_INT + OPT_DEFAULT_ZERO + COMMA_SEP +
             SessionLoggingContract.SessionMeta.COLUMN_NAME_NAME + TYPE_TEXT + COMMA_SEP +
-            SessionLoggingContract.SessionMeta.COLUMN_NAME_DATE + TYPE_INT + OPT_NOT_NULL +
+            SessionLoggingContract.SessionMeta.COLUMN_NAME_DATE + TYPE_DATETIME + OPT_DEFAULT_NOW +
             ");";
 
     private static final String SQL_CREATE_ENTRIES_SESSIONEVENT
             = "CREATE TABLE " + SessionLoggingContract.SessionEvent.TABLE_NAME + " (" +
             SessionLoggingContract.SessionEvent._ID + TYPE_INT + OPT_PRIMARY_KEY + COMMA_SEP +
             SessionLoggingContract.SessionEvent.COLUMN_NAME_SESSION_ID + TYPE_INT + OPT_NOT_NULL + COMMA_SEP +
-            SessionLoggingContract.SessionEvent.COLUMN_NAME_DATE + TYPE_INT + OPT_NOT_NULL + COMMA_SEP +
+            SessionLoggingContract.SessionEvent.COLUMN_NAME_DATE + TYPE_DATETIME + OPT_DEFAULT_NOW + COMMA_SEP +
             SessionLoggingContract.SessionEvent.COLUMN_NAME_SOURCE + TYPE_INT + OPT_NOT_NULL + COMMA_SEP +
             SessionLoggingContract.SessionEvent.COLUMN_NAME_TYPE + TYPE_INT + OPT_NOT_NULL + COMMA_SEP +
             SessionLoggingContract.SessionEvent.COLUMN_NAME_NFCDATA + TYPE_BYTES + COMMA_SEP +
