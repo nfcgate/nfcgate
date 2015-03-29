@@ -15,11 +15,13 @@ public class SessionLoggingDbHelper extends SQLiteOpenHelper {
     private static final String OPT_PRIMARY_KEY = " PRIMARY KEY";
     private static final String OPT_AUTO_INCREMENT = " AUTOINCREMENT";
     private static final String OPT_NOT_NULL = " NOT NULL";
+    private static final String OPT_DEFAULT_ZERO = " DEFAULT 0";
     private static final String COMMA_SEP = ",";
 
     private static final String SQL_CREATE_ENTRIES_SESSIONMETA
             = "CREATE TABLE " + SessionLoggingContract.SessionMeta.TABLE_NAME + " (" +
             SessionLoggingContract.SessionMeta.COLUMN_NAME_SESSION_ID + TYPE_INT + OPT_PRIMARY_KEY + OPT_AUTO_INCREMENT + COMMA_SEP +
+            SessionLoggingContract.SessionMeta.COLUMN_NAME_FINISHED + TYPE_INT + OPT_DEFAULT_ZERO + COMMA_SEP +
             SessionLoggingContract.SessionMeta.COLUMN_NAME_NAME + TYPE_TEXT + COMMA_SEP +
             SessionLoggingContract.SessionMeta.COLUMN_NAME_DATE + TYPE_INT + OPT_NOT_NULL +
             ");";
@@ -51,7 +53,7 @@ public class SessionLoggingDbHelper extends SQLiteOpenHelper {
     private final String SQL_DROP_SESSIONEVENT
             = "DROP TABLE " + SessionLoggingContract.SessionEvent.TABLE_NAME + ";";
 
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "SessionLogging.db";
 
     public SessionLoggingDbHelper(Context context) {
@@ -75,10 +77,9 @@ public class SessionLoggingDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion == 1 && newVersion == 2) {
-            db.execSQL(SQL_DROP_SESSIONEVENT);
-            db.execSQL(SQL_DROP_SESSIONMETA);
-            onCreate(db);
-        }
+        // TODO Proper update code as soon as we go into production with this
+        db.execSQL(SQL_DROP_SESSIONEVENT);
+        db.execSQL(SQL_DROP_SESSIONMETA);
+        onCreate(db);
     }
 }
