@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,9 +23,11 @@ public class LoggingFragment extends Fragment{
     private static LoggingFragment mFragment;
 
     private ListView mListView;
-    private ArrayAdapter<String> mlistAdapterSession;
+    private ArrayAdapter<String> mlistAdapter;
 
-    private String[] mSessionItems;
+    // items to be filled with sink data at a later point
+    // TODO @MAX -> insert proper values from db here (using getter/setter)
+    private String[] mItems = new String[] {"dummy1","dummy2","dummy3","dummy4"};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -33,15 +35,12 @@ public class LoggingFragment extends Fragment{
 
         mListView = (ListView) v.findViewById(R.id.sessionList);
 
-        // items to be filled with sink data at a later point  TODO @Max: insert your data into the array using the getter/setters below
-        mSessionItems = new String[] {"dummy1","dummy2","dummy3","dummy4"};  // dummy test data
-
         ArrayList<String> mSessionItemsList = new ArrayList<String>();
-        mSessionItemsList.addAll(Arrays.asList(mSessionItems));
+        mSessionItemsList.addAll(Arrays.asList(mItems));
 
-        mlistAdapterSession = new ArrayAdapter<String>(v.getContext(), R.layout.fragment_logging_row, mSessionItemsList);
+        mlistAdapter = new ArrayAdapter<String>(v.getContext(), R.layout.fragment_logging_row, mSessionItemsList);
 
-        mListView.setAdapter(mlistAdapterSession);
+        mListView.setAdapter(mlistAdapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -54,7 +53,7 @@ public class LoggingFragment extends Fragment{
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> av, View v, int pos, long id) {
-                return onLongListItemClick(v,pos,id);
+                return onLongListItemClick(v, pos, id);
             }
         });
 
@@ -64,22 +63,45 @@ public class LoggingFragment extends Fragment{
 
     protected void onListItemClick(View v, int pos, long id) {
         // start a new activity here to display the details of the clicked list element
+        if (mlistAdapter.getItem(0) == "go back" && pos == 0)
+        {
+            //reload session overview  (e.g go back to previous screen)
+            String[] temp = new String[] {"dummy1","dummy2","dummy3","dummy4"};
+            this.setmItems(temp);
+            mlistAdapter.clear();
+            mlistAdapter.addAll(this.getmItems());
+            mlistAdapter.notifyDataSetChanged();
+        }
+        else
+        {
+            // load the specific session the clicked on into the array
+            // temporarily used dummy text
+            // TODO @MAX -> insert proper values from db here
+            this.setmItems(new String[] {"go back","test1","test2","test3"});
+            mlistAdapter.clear();
+            mlistAdapter.addAll(this.getmItems());
+            mlistAdapter.notifyDataSetChanged();
+        }
     }
 
     protected boolean onLongListItemClick(View v, int pos, long id) {
-        // display delete button for the clicked list element
+        // Warning: item gets immediately deleted !without warning! on long click  TODO improve, maybe by displaying a warning before removing the item
+        String selectedItem = mlistAdapter.getItem(pos);
+        mlistAdapter.remove(selectedItem);
+        mlistAdapter.notifyDataSetChanged();
+        Toast.makeText(getActivity(), "Item " + pos + " removed!", Toast.LENGTH_LONG).show();
         return true;
     }
 
 
-    public void setmSessionItems(String[] newItems)
+    public void setmItems(String[] newItems)
     {
-        System.arraycopy(newItems,0,mSessionItems,0,newItems.length);
+        System.arraycopy(newItems,0, mItems,0,newItems.length);
     }
 
-    public String[] getmSessionItems()
+    public String[] getmItems()
     {
-        return this.mSessionItems;
+        return this.mItems;
     }
 
     public static LoggingFragment getInstance() {
