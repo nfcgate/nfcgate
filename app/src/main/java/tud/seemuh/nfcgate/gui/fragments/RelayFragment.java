@@ -310,6 +310,8 @@ public class RelayFragment extends Fragment
                 // Initialize File Sink
                 mSinkManager.addSink(SinkManager.SinkType.FILE, strDate + ".txt");
             }
+            // TODO Make this configurable in a setting
+            mSinkManager.addSink(SinkManager.SinkType.SESSION_LOG, getActivity());
         } catch (SinkInitException e) {
             e.printStackTrace();
         }
