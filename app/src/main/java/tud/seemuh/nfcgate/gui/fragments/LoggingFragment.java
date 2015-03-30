@@ -19,8 +19,11 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.util.NfcComm;
+import tud.seemuh.nfcgate.util.NfcSession;
 import tud.seemuh.nfcgate.util.db.SessionLoggingContract;
 import tud.seemuh.nfcgate.util.db.SessionLoggingDbHelper;
 
@@ -32,11 +35,10 @@ public class LoggingFragment extends Fragment{
     private static LoggingFragment mFragment;
 
     private ListView mListView;
-    private ArrayAdapter<String> mlistAdapter;
+    private ArrayAdapter<NfcSession> mListAdapter;
 
-    // items to be filled with sink data at a later point
-    // TODO @MAX -> insert proper values from db here (using getter/setter)
-    private String[] mItems = new String[] {"dummy1","dummy2","dummy3","dummy4"};
+    // List of Session objects
+    private List<NfcSession> mSessions = new ArrayList<NfcSession>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,12 +46,9 @@ public class LoggingFragment extends Fragment{
 
         mListView = (ListView) v.findViewById(R.id.sessionList);
 
-        ArrayList<String> mSessionItemsList = new ArrayList<String>();
-        mSessionItemsList.addAll(Arrays.asList(mItems));
+        mListAdapter = new ArrayAdapter<NfcSession>(v.getContext(), R.layout.fragment_logging_row);
 
-        mlistAdapter = new ArrayAdapter<String>(v.getContext(), R.layout.fragment_logging_row, mSessionItemsList);
-
-        mListView.setAdapter(mlistAdapter);
+        mListView.setAdapter(mListAdapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -71,25 +70,35 @@ public class LoggingFragment extends Fragment{
 
     protected void onListItemClick(View v, int pos, long id) {
         // start a new activity here to display the details of the clicked list element
-        if (mlistAdapter.getItem(0).equals("go back") && pos == 0)
+        if (mListAdapter.getItem(0).equals("go back") && pos == 0)
         {
             //reload session overview  (e.g go back to previous screen)
-            String[] temp = new String[] {"dummy1","dummy2","dummy3","dummy4"};
-            this.setmItems(temp);
-            mlistAdapter.clear();
-            mlistAdapter.addAll(this.getmItems());
-            mlistAdapter.notifyDataSetChanged();
+            // TODO
+//            String[] temp = new String[] {"dummy1","dummy2","dummy3","dummy4"};
+//            this.setmItems(temp);
+//            mlistAdapter.clear();
+//            mlistAdapter.addAll(this.getmItems());
+//            mlistAdapter.notifyDataSetChanged();
         }
         else
         {
             // load the specific session the clicked on into the array
             // temporarily used dummy text
-            // TODO @MAX -> insert proper values from db here
-            this.setmItems(new String[] {"go back","test1","test2","test3"});
-            mlistAdapter.clear();
-            mlistAdapter.addAll(this.getmItems());
-            mlistAdapter.notifyDataSetChanged();
+            // TODO
+//            this.setmItems(new String[] {"go back","test1","test2","test3"});
+//            mlistAdapter.clear();
+//            mlistAdapter.addAll(this.getmItems());
+//            mlistAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onResume() {
+        // TODO This is a little hack-y
+        super.onResume();
+        mSessions.clear();
+        mListAdapter.clear();
+        new AsyncSessionLoader().execute();
     }
  /*
     @Override
@@ -118,10 +127,12 @@ public class LoggingFragment extends Fragment{
 
     protected boolean onLongListItemClick(View v, int pos, long id) {
         // Warning: item gets immediately deleted !without warning! on long click  TODO improve, maybe by displaying a warning before removing the item
-        String selectedItem = mlistAdapter.getItem(pos);
-        mlistAdapter.remove(selectedItem);
-        mlistAdapter.notifyDataSetChanged();
-        Toast.makeText(getActivity(), "Item " + pos + " removed!", Toast.LENGTH_LONG).show();
+//        String selectedItem = mlistAdapter.getItem(pos);
+//        mlistAdapter.remove(selectedItem);
+//        mlistAdapter.notifyDataSetChanged();
+//        Toast.makeText(getActivity(), "Item " + pos + " removed!", Toast.LENGTH_LONG).show();
+//        return true;
+        // TODO
         return true;
     }
 
@@ -129,14 +140,13 @@ public class LoggingFragment extends Fragment{
         this.onListItemClick(getView(),0,0);
     }
 
-    public void setmItems(String[] newItems)
-    {
-        System.arraycopy(newItems,0, mItems,0,newItems.length);
+    public void addSession(NfcSession session) {
+        mSessions.add(session);
     }
 
-    public String[] getmItems()
-    {
-        return this.mItems;
+    public void updateSessionView() {
+        mListAdapter.addAll(mSessions);
+        mListAdapter.notifyDataSetChanged();
     }
 
     public static LoggingFragment getInstance() {
@@ -149,12 +159,14 @@ public class LoggingFragment extends Fragment{
 
     private class AsyncSessionLoader extends AsyncTask<Void, Void, Cursor> {
         private final String TAG = "AsyncSessionLoader";
+
+        private SQLiteDatabase mDB;
         @Override
         protected Cursor doInBackground(Void... voids) {
             Log.d(TAG, "doInBackground: Started");
             // Get a DB object
             SessionLoggingDbHelper dbHelper = new SessionLoggingDbHelper(getActivity());
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            mDB = dbHelper.getReadableDatabase();
 
             // Construct query
             // Define Projection
@@ -172,8 +184,8 @@ public class LoggingFragment extends Fragment{
 
             // Perform query
             Log.d(TAG, "doInBackground: Performing query");
-            Cursor c = db.query(
-                    SessionLoggingContract.SessionEvent.TABLE_NAME,  // Target Table
+            Cursor c = mDB.query(
+                    SessionLoggingContract.SessionMeta.TABLE_NAME,  // Target Table
                     projection,    // Which fields are we interested in?
                     selection,     // Selection clause
                     selectionArgs, // Arguments to clause
@@ -182,9 +194,7 @@ public class LoggingFragment extends Fragment{
                     sortorder      // Sort order
             );
 
-            // Close connection to the database
-            Log.d(TAG, "doInBackground: Closing database and returning");
-            db.close();
+            Log.d(TAG, "doInBackground: Query done, returning");
             return c;
         }
 
@@ -192,13 +202,26 @@ public class LoggingFragment extends Fragment{
         protected void onPostExecute(Cursor c) {
             // Move to the first element of the cursor
             Log.d(TAG, "onPostExecute: Beginning processing of Sessions");
-            c.moveToFirst();
+            if (!c.moveToFirst()) {
+                Log.i(TAG, "onPostExecute: Cursor empty, doing nothing.");
+                // TODO Signal GUI that the cursor is empty
+                return;
+            }
             do {
-                // TODO Process data from cursor, insert into List
+                // prepare session object
+                int ID = c.getInt(c.getColumnIndexOrThrow(SessionLoggingContract.SessionMeta._ID));
+                String name = c.getString(c.getColumnIndexOrThrow(SessionLoggingContract.SessionMeta.COLUMN_NAME_NAME));
+                String date = c.getString(c.getColumnIndexOrThrow(SessionLoggingContract.SessionMeta.COLUMN_NAME_DATE));
+                NfcSession session = new NfcSession(date, ID, name);
+
+                // Add session object
+                addSession(session);
             } while (c.moveToNext()); // Iterate until all elements of the cursor have been processed
             // Close the cursor, freeing the used memory
-            Log.d(TAG, "onPostExecute: Closing cursor and finishing");
+            updateSessionView();
+            Log.d(TAG, "onPostExecute: Closing connection and finishing");
             c.close();
+            mDB.close();
         }
     }
 }

@@ -53,7 +53,7 @@ public class SessionLoggingDbHelper extends SQLiteOpenHelper {
     private final String SQL_DROP_SESSIONEVENT
             = "DROP TABLE " + SessionLoggingContract.SessionEvent.TABLE_NAME + ";";
 
-    public static final int DATABASE_VERSION = 5;
+    public static final int DATABASE_VERSION = 6;
     public static final String DATABASE_NAME = "SessionLogging.db";
 
     public SessionLoggingDbHelper(Context context) {

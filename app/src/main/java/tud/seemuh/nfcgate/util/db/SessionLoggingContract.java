@@ -15,7 +15,7 @@ public final class SessionLoggingContract {
         // Finished is set to 1 once the session is done, so we can detect unfinished sessions
         public static final String COLUMN_NAME_FINISHED = "finished";
         // Name may be null, can be set by the user later
-        public static final String COLUMN_NAME_NAME = "name";
+        public static final String COLUMN_NAME_NAME = "sessionName";
         public static final String COLUMN_NAME_DATE = "timestamp";
 
         public static final int VALUE_FINISHED_FALSE = 0;
