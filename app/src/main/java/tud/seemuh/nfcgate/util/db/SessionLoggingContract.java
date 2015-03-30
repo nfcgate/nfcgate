@@ -29,7 +29,6 @@ public final class SessionLoggingContract {
         public static final String COLUMN_NAME_SESSION_ID = "sessionID";
         // Meta information about the message
         public static final String COLUMN_NAME_DATE = "timestamp";
-        public static final String COLUMN_NAME_SOURCE = "source";
         public static final String COLUMN_NAME_TYPE = "type";
         // The actual data. Either nfcdata or the other fields may be set
         public static final String COLUMN_NAME_NFCDATA = "nfcdata";
@@ -44,11 +43,9 @@ public final class SessionLoggingContract {
         public static final String COLUMN_NAME_SAK_PREFILTER = "sak_pf";
         public static final String COLUMN_NAME_HIST_PREFILTER = "hist_pf";
 
-        // Constants - Data source
-        public static final int VALUE_SOURCE_HCE = 0;
-        public static final int VALUE_SOURCE_CARD = 1;
         // Constants - Data type
-        public static final int VALUE_TYPE_NFC = 0;
-        public static final int VALUE_TYPE_ANTICOL = 1;
+        public static final int VALUE_TYPE_ANTICOL = 0;
+        public static final int VALUE_TYPE_HCE = 1;
+        public static final int VALUE_TYPE_CARD = 2;
     }
 }

@@ -32,7 +32,6 @@ public class SessionLoggingDbHelper extends SQLiteOpenHelper {
             SessionLoggingContract.SessionEvent._ID + TYPE_INT + OPT_PRIMARY_KEY + COMMA_SEP +
             SessionLoggingContract.SessionEvent.COLUMN_NAME_SESSION_ID + TYPE_INT + OPT_NOT_NULL + COMMA_SEP +
             SessionLoggingContract.SessionEvent.COLUMN_NAME_DATE + TYPE_DATETIME + OPT_DEFAULT_NOW + COMMA_SEP +
-            SessionLoggingContract.SessionEvent.COLUMN_NAME_SOURCE + TYPE_INT + OPT_NOT_NULL + COMMA_SEP +
             SessionLoggingContract.SessionEvent.COLUMN_NAME_TYPE + TYPE_INT + OPT_NOT_NULL + COMMA_SEP +
             SessionLoggingContract.SessionEvent.COLUMN_NAME_NFCDATA + TYPE_BYTES + COMMA_SEP +
             SessionLoggingContract.SessionEvent.COLUMN_NAME_UID + TYPE_BYTES + COMMA_SEP +
@@ -54,7 +53,7 @@ public class SessionLoggingDbHelper extends SQLiteOpenHelper {
     private final String SQL_DROP_SESSIONEVENT
             = "DROP TABLE " + SessionLoggingContract.SessionEvent.TABLE_NAME + ";";
 
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 5;
     public static final String DATABASE_NAME = "SessionLogging.db";
 
     public SessionLoggingDbHelper(Context context) {

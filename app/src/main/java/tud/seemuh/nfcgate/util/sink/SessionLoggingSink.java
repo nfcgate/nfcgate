@@ -24,6 +24,8 @@ public class SessionLoggingSink implements Sink {
     private SQLiteDatabase mDB;
     private Context mContext;
 
+    private long mSessionID;
+
     public SessionLoggingSink(Context ctx) throws SinkInitException {
         mContext = ctx;
     }
@@ -40,8 +42,8 @@ public class SessionLoggingSink implements Sink {
         mDB = helper.getWritableDatabase();
 
         Log.i(TAG, "run: Starting");
-        long sessionID = openNewSession();
-        Log.i(TAG, "run: New Session created: " + sessionID);
+        openNewSession();
+        Log.i(TAG, "run: New Session created: " + mSessionID);
 
         // Main loop
         while (!Thread.currentThread().isInterrupted()) {
@@ -51,29 +53,16 @@ public class SessionLoggingSink implements Sink {
 
                 if (msg.getType() == NfcComm.Type.AnticolBytes) {
                     // We are dealing with an Anticol message
-                    if (msg.isChanged()) {
-                        // TODO
-                    } else {
-                        // TODO
-                    }
-
+                    addAnticolMessage(msg);
 
                 } else if (msg.getType() == NfcComm.Type.NFCBytes) {
                     // We are dealing with regular NFC traffic.
                     if (msg.getSource() == NfcComm.Source.CARD) {
                         // Write out NFC data sent by card
-                        if (msg.isChanged()) {
-                            // TODO
-                        } else {
-                            // TODO
-                        }
+                        addCardMessage(msg);
                     } else if (msg.getSource() == NfcComm.Source.HCE) {
                         // Write out NFC data sent by reader
-                        if (msg.isChanged()) {
-                            // TODO
-                        } else {
-                            // TODO
-                        }
+                        addHCEMessage(msg);
                     } else {
                         Log.e(TAG, "run: Unhandled message source, doing nothing");
                     }
@@ -88,13 +77,13 @@ public class SessionLoggingSink implements Sink {
 
         // Main loop terminated, clean up
         Log.i(TAG, "run: Closing Session");
-        closeSession(sessionID);
+        closeSession();
         mDB.close();
         Log.i(TAG, "run: Stopping");
     }
 
 
-    private long openNewSession() {
+    private void openNewSession() {
         // Prepare values object
         ContentValues values = new ContentValues();
         // We only set the FINISHED column to false, as all other columns are set correctly
@@ -103,13 +92,13 @@ public class SessionLoggingSink implements Sink {
                 SessionLoggingContract.SessionMeta.VALUE_FINISHED_FALSE);
 
         // Insert new session object and return the ID
-        return mDB.insert(SessionLoggingContract.SessionMeta.TABLE_NAME,
+        mSessionID = mDB.insert(SessionLoggingContract.SessionMeta.TABLE_NAME,
                 null,
                 values);
     }
 
 
-    private void closeSession(long sessionid) {
+    private void closeSession() {
         // Prepare values
         ContentValues values = new ContentValues();
         values.put(SessionLoggingContract.SessionMeta.COLUMN_NAME_FINISHED,
@@ -118,12 +107,66 @@ public class SessionLoggingSink implements Sink {
         // Selection String
         String selection = SessionLoggingContract.SessionMeta._ID + " LIKE ?";
         // Selection arg
-        String[] valueArg = { String.valueOf(sessionid) };
+        String[] valueArg = { String.valueOf(mSessionID) };
 
         // perform the update
         mDB.update(SessionLoggingContract.SessionMeta.TABLE_NAME,
                 values,
                 selection,
                 valueArg);
+    }
+
+    private void addHCEMessage(NfcComm msg) {
+        addNFCMessageCommon(msg, SessionLoggingContract.SessionEvent.VALUE_TYPE_HCE);
+    }
+
+    private void addCardMessage(NfcComm msg) {
+        addNFCMessageCommon(msg, SessionLoggingContract.SessionEvent.VALUE_TYPE_CARD);
+    }
+
+    private void addNFCMessageCommon(NfcComm msg, int type) {
+        // Init ContentValues object
+        ContentValues values = new ContentValues();
+
+        // Add values
+        // Meta values
+        values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_SESSION_ID, mSessionID);
+        values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_TYPE, type);
+        // Content values
+        values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_NFCDATA, msg.getData());
+        if (msg.isChanged()) {
+            values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_NFCDATA_PREFILTER, msg.getOldData());
+        }
+
+        // Commit to database
+        mDB.insert(SessionLoggingContract.SessionEvent.TABLE_NAME,
+                null,
+                values);
+    }
+
+    private void addAnticolMessage(NfcComm msg) {
+        // Init ContentValues object
+        ContentValues values = new ContentValues();
+
+        // Add values
+        // Meta values
+        values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_SESSION_ID, mSessionID);
+        values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_TYPE, SessionLoggingContract.SessionEvent.VALUE_TYPE_ANTICOL);
+        // Content Values
+        values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_UID, msg.getUid());
+        values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA, msg.getAtqa());
+        values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK, msg.getSak());
+        values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST, msg.getHist());
+        if (msg.isChanged()) {
+            values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_UID_PREFILTER, msg.getOldUid());
+            values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA_PREFILTER, msg.getOldAtqa());
+            values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK_PREFILTER, msg.getOldSak());
+            values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST_PREFILTER, msg.getOldHist());
+        }
+
+        // Commit to database
+        mDB.insert(SessionLoggingContract.SessionEvent.TABLE_NAME,
+                null,
+                values);
     }
 }
