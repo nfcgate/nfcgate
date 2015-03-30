@@ -1,6 +1,10 @@
 package tud.seemuh.nfcgate.gui.fragments;
 
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
@@ -16,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.util.db.SessionLoggingContract;
+import tud.seemuh.nfcgate.util.db.SessionLoggingDbHelper;
 
 /**
  * Created by Tom on 28.03.2015.
@@ -47,8 +53,8 @@ public class LoggingFragment extends Fragment{
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> arg0, View v, int pos,long id) {
-                onListItemClick(v,pos,id);
+            public void onItemClick(AdapterView<?> arg0, View v, int pos, long id) {
+                onListItemClick(v, pos, id);
             }
         });
 
@@ -64,7 +70,7 @@ public class LoggingFragment extends Fragment{
 
     protected void onListItemClick(View v, int pos, long id) {
         // start a new activity here to display the details of the clicked list element
-        if (mlistAdapter.getItem(0) == "go back" && pos == 0)
+        if (mlistAdapter.getItem(0).equals("go back") && pos == 0)
         {
             //reload session overview  (e.g go back to previous screen)
             String[] temp = new String[] {"dummy1","dummy2","dummy3","dummy4"};
@@ -138,5 +144,55 @@ public class LoggingFragment extends Fragment{
             mFragment = new LoggingFragment();
         }
         return mFragment;
+    }
+
+    private class AsyncSessionLoader extends AsyncTask<Void, Void, Cursor> {
+
+        @Override
+        protected Cursor doInBackground(Void... voids) {
+            // Get a DB object
+            SessionLoggingDbHelper dbHelper = new SessionLoggingDbHelper(getActivity());
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+            // Construct query
+            // Define Projection
+            String[] projection = {
+                    SessionLoggingContract.SessionMeta._ID,
+                    SessionLoggingContract.SessionMeta.COLUMN_NAME_NAME,
+                    SessionLoggingContract.SessionMeta.COLUMN_NAME_DATE,
+            };
+            // Define Sort order
+            String sortorder = SessionLoggingContract.SessionMeta.COLUMN_NAME_DATE + " DESC";
+            // Define Selection
+            String selection = SessionLoggingContract.SessionMeta.COLUMN_NAME_FINISHED + " LIKE ?";
+            // Define Selection Arguments
+            String[] selectionArgs = { String.valueOf(SessionLoggingContract.SessionMeta.VALUE_FINISHED_TRUE) };
+
+            // Perform query
+            Cursor c = db.query(
+                    SessionLoggingContract.SessionEvent.TABLE_NAME,  // Target Table
+                    projection,    // Which fields are we interested in?
+                    selection,     // Selection clause
+                    selectionArgs, // Arguments to clause
+                    null,          // Grouping (not desired in this case)
+                    null,          // Filtering (not desired in this case)
+                    sortorder      // Sort order
+            );
+
+            // Close connection to the database
+            db.close();
+            return c;
+        }
+
+        @Override
+        protected void onPostExecute(Cursor c) {
+            // Move to the first element of the cursor
+            c.moveToFirst();
+            do {
+                // TODO Process data from cursor, insert into List
+            } while (c.moveToNext()); // Iterate until all elements of the cursor have been processed
+            // Close the cursor, freeing the used memory
+            c.close();
+        }
     }
 }
