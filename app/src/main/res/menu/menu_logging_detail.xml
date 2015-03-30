@@ -1,0 +1,5 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="tud.seemuh.nfcgate.gui.LoggingDetailActivity">
+    <!-- TODO Add buttons (delete, potentially edit) -->
+</menu>

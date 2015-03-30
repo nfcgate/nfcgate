@@ -1,13 +1,11 @@
 package tud.seemuh.nfcgate.gui.fragments;
 
-import android.content.Intent;
+import android.app.Fragment;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,48 +20,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tud.seemuh.nfcgate.R;
-import tud.seemuh.nfcgate.gui.LoggingDetailActivity;
+import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.NfcSession;
 import tud.seemuh.nfcgate.util.db.SessionLoggingContract;
 import tud.seemuh.nfcgate.util.db.SessionLoggingDbHelper;
 
 /**
- * Display the session log
+ * Fragment that contains the list of events in a specific session
  */
-public class LoggingFragment extends Fragment{
-
-    private static LoggingFragment mFragment;
-
+public class LoggingDetailFragment extends Fragment {
     private ListView mListView;
-    private ArrayAdapter<NfcSession> mListAdapter;
+    private ArrayAdapter<NfcComm> mListAdapter;
 
-    // List of Session objects
-    private List<NfcSession> mSessions = new ArrayList<NfcSession>();
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-        menuInflater.inflate(R.menu.menu_log, menu);
-    }
+    private List<NfcComm> mEventList = new ArrayList<NfcComm>();
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
-        switch (item.getItemId()) {
-            case R.id.action_refresh:
-                refreshSessionList();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_logging_detail, container, false);
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_logging_list, container, false);
+        mListView = (ListView) v.findViewById(R.id.sessionDetailList);
 
-        mListView = (ListView) v.findViewById(R.id.sessionList);
-
-        mListAdapter = new ArrayAdapter<NfcSession>(v.getContext(), R.layout.fragment_logging_row);
+        mListAdapter = new ArrayAdapter<NfcComm>(v.getContext(), R.layout.fragment_logging_detail);
 
         mListView.setAdapter(mListAdapter);
 
@@ -82,90 +60,56 @@ public class LoggingFragment extends Fragment{
             }
         });
 
-        // We want to introduce our own icons to the Action bar => Set HasOptionsMenu to true
+
+        // Notify System that we would like to add an options menu.
         this.setHasOptionsMenu(true);
 
         return v;
     }
 
-    protected void onListItemClick(View v, int pos, long id) {
-        // start a new activity here to display the details of the clicked list element
-        NfcSession selectedSession = mListAdapter.getItem(pos);
-        Intent intent = new Intent(getActivity(), LoggingDetailActivity.class);
-        intent.putExtra("SessionID", selectedSession.getID());
-        startActivity(intent);
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menuInflater.inflate(R.menu.menu_logging_detail, menu);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        refreshSessionList();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            // TODO
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
-
-    private void refreshSessionList() {
-        // TODO This is a little hack-y
-        mSessions.clear();
-        mListAdapter.clear();
-        new AsyncSessionLoader().execute();
-    }
- /*
-    @Override
-    public void onResume() {
-
-        super.onResume();
-        getActivity().getSupportFragmentManager().popBackStack();
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-
-                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
-
-                    // handle back button
-
-                    return true;
-
-                }
-
-                return false;
-            }
-        });
-    } */
 
     protected boolean onLongListItemClick(View v, int pos, long id) {
         // TODO Create and show menu to delete, rename, ...
         return true;
     }
 
-    public void onBackPressed() {
-        this.onListItemClick(getView(),0,0);
+    protected void onListItemClick(View v, int pos, long id) {
+        // start a new activity here to display the details of the clicked list element
+        // TODO
     }
 
-    public void addSession(NfcSession session) {
-        mSessions.add(session);
+    protected void addNfcEvent(NfcComm nfccomm) {
+        mEventList.add(nfccomm);
     }
 
-    public void updateSessionView() {
-        mListAdapter.addAll(mSessions);
+    protected void updateSessionView() {
+        mListAdapter.addAll(mEventList);
         mListAdapter.notifyDataSetChanged();
     }
 
-    public static LoggingFragment getInstance() {
-
-        if(mFragment == null) {
-            mFragment = new LoggingFragment();
-        }
-        return mFragment;
-    }
-
-    private class AsyncSessionLoader extends AsyncTask<Void, Void, Cursor> {
-        private final String TAG = "AsyncSessionLoader";
+    private class AsyncDetailLoader extends AsyncTask<Void, Void, Cursor> {
+        private final String TAG = "AsyncDetailLoader";
 
         private SQLiteDatabase mDB;
 
         @Override
         protected Cursor doInBackground(Void... voids) {
+            // TODO Update
             Log.d(TAG, "doInBackground: Started");
             // Get a DB object
             SessionLoggingDbHelper dbHelper = new SessionLoggingDbHelper(getActivity());
@@ -212,13 +156,7 @@ public class LoggingFragment extends Fragment{
             }
             do {
                 // prepare session object
-                int ID = c.getInt(c.getColumnIndexOrThrow(SessionLoggingContract.SessionMeta._ID));
-                String name = c.getString(c.getColumnIndexOrThrow(SessionLoggingContract.SessionMeta.COLUMN_NAME_NAME));
-                String date = c.getString(c.getColumnIndexOrThrow(SessionLoggingContract.SessionMeta.COLUMN_NAME_DATE));
-                NfcSession session = new NfcSession(date, ID, name);
-
-                // Add session object
-                addSession(session);
+                // TODO Do stuff
             } while (c.moveToNext()); // Iterate until all elements of the cursor have been processed
             // Close the cursor, freeing the used memory
             updateSessionView();

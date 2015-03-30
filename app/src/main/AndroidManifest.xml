@@ -27,8 +27,8 @@
         <activity
             android:name=".gui.MainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="tud.seemuh.nfcgate.main" />
 
@@ -80,11 +80,12 @@
         <activity
             android:name=".gui.AboutActivity"
             android:label="@string/title_activity_about"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".gui.MainActivity">
+            android:parentActivityName=".gui.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".gui.MainActivity" />
+
             <intent-filter>
                 <action android:name="tud.seemuh.nfcgate.about" />
 
@@ -94,12 +95,13 @@
         <activity
             android:name=".gui.SettingsActivity"
             android:label="Settings"
+            android:parentActivityName=".gui.MainActivity"
             android:screenOrientation="portrait"
-            android:targetActivity="MainActivity"
-            android:parentActivityName=".gui.MainActivity">
+            android:targetActivity="MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".gui.MainActivity" />
+
             <intent-filter>
                 <action android:name="tud.seemuh.nfcgate.settings" />
 
@@ -113,6 +115,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".gui.MainActivity" />
+        </activity>
+        <activity
+            android:name=".gui.LoggingDetailActivity"
+            android:label="@string/title_activity_logging_detail"
+            android:parentActivityName=".gui.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="tud.seemuh.nfcgate.gui.MainActivity" />
         </activity>
     </application>
 
