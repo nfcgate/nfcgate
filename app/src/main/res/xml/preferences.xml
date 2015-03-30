@@ -30,6 +30,11 @@
             android:summary="@string/pref_logging_file_desc"
             android:key="@string/pref_key_logfile"
             android:defaultValue="false"/>
+        <CheckBoxPreference
+            android:title="@string/pref_logging_session"
+            android:summary="@string/pref_logging_session_desc"
+            android:key="@string/pref_key_sessionlogging"
+            android:defaultValue="true" />
     </PreferenceCategory>
 
     <PreferenceCategory
