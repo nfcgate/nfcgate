@@ -1,7 +1,7 @@
 package tud.seemuh.nfcgate.util;
 
 /**
- * Created by max on 30.03.15.
+ * Data container for Session Data.
  */
 public class NfcSession {
     private String mDate;
