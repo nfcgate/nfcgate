@@ -1,8 +1,8 @@
 package tud.seemuh.nfcgate.gui.fragments;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +20,6 @@ public class TokenDialog extends DialogFragment {
         public void onTokenDialogPositiveClick();
         public void onTokenDialogNegativeClick();
     }
-
-    public static final String PREF_FILE_NAME = "SeeMoo.NFCGate.Prefs";
 
     // Use this instance of the interface to deliver action events
     private static NoticeDialogListener mListener;
@@ -60,7 +58,8 @@ public class TokenDialog extends DialogFragment {
                 String token = tempToken.getText().toString();
 
                 // create Shared Preferences Buffer in private mode
-                SharedPreferences preferences = getActivity().getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
+                //SharedPreferences preferences = getActivity().getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getView().getContext());
                 // Store the token in the preferences buffer for later usage
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("token", token);
@@ -72,54 +71,6 @@ public class TokenDialog extends DialogFragment {
 
         return view;
     }
-
-    /*
-    // Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        // Verify that the host activity implements the callback interface
-        try {
-            // Instantiate the NoticeDialogListener so we can send events to the host
-            mListener = (NoticeDialogListener) activity;
-        } catch (ClassCastException e) {
-            // The activity doesn't implement the interface, throw exception
-            throw new ClassCastException(activity.toString()
-                    + " must implement NoticeDialogListener");
-        }
-    }
-
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // Build the dialog and set up the button click handlers
-        final View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_token, null);
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setView(view)
-                .setMessage("Enter Token")
-                .setPositiveButton("Submit Token", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // get user input (e.g. token) from the textview
-                        TextView tempToken = (TextView) view.findViewById(R.id.token);
-                        String token = tempToken.getText().toString();
-
-                        // create Shared Preferences Buffer in private mode
-                        SharedPreferences preferences = getActivity().getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
-                        // Store the token in the preferences buffer for later usage
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString("token", token);
-                        editor.commit();
-                        mListener.onTokenDialogPositiveClick(TokenDialog.this);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // Send the negative button event back to the host activity
-                        mListener.onTokenDialogNegativeClick(TokenDialog.this);
-                    }
-                });
-        return builder.create();
-    }
-    */
 
 
 }
