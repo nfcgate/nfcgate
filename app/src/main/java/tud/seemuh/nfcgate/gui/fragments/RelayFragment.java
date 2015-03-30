@@ -293,8 +293,9 @@ public class RelayFragment extends Fragment
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         // Determine settings for sinks
-        boolean textViewSinkActive = prefs.getBoolean(getString(R.string.pref_key_debugWindow), false);
-        boolean logfileSinkActive  = prefs.getBoolean(getString(R.string.pref_key_logfile), false);
+        boolean textViewSinkActive   = prefs.getBoolean(getString(R.string.pref_key_debugWindow), false);
+        boolean logfileSinkActive    = prefs.getBoolean(getString(R.string.pref_key_logfile), false);
+        boolean logSessionSinkActive = prefs.getBoolean(getString(R.string.pref_key_sessionlogging), false);
 
         try {
             if (textViewSinkActive) {
@@ -310,8 +311,9 @@ public class RelayFragment extends Fragment
                 // Initialize File Sink
                 mSinkManager.addSink(SinkManager.SinkType.FILE, strDate + ".txt");
             }
-            // TODO Make this configurable in a setting
-            mSinkManager.addSink(SinkManager.SinkType.SESSION_LOG, getActivity());
+            if (logSessionSinkActive) {
+                mSinkManager.addSink(SinkManager.SinkType.SESSION_LOG, getActivity());
+            }
         } catch (SinkInitException e) {
             e.printStackTrace();
         }

@@ -43,6 +43,8 @@
     <string name="pref_logging_debug_window_desc">Show a small window where all NFC traffic will be logged to</string>
     <string name="pref_logging_file">Enable logging to file</string>
     <string name="pref_logging_file_desc">Log Sessions to a file. Files are saved to /sdcard/nfcgate/logs/.</string>
+    <string name="pref_logging_session">Enable internal Logging</string>
+    <string name="pref_logging_session_desc">Logs sessions to an internal database, allowing for inspection of logs from within the app.</string>
 
     <string name="pref_switches">Advanced Options</string>
     <string name="pref_switches_reader_mode">Enable NFC Reader Mode</string>
@@ -57,6 +59,7 @@
     <string name="pref_key_readermode">pref_readermode</string>
     <string name="pref_key_workaroundWarn">pref_workaroundwarning</string>
     <string name="pref_key_logfile">pref_logtofile</string>
+    <string name="pref_key_sessionlogging">pref_logtosqlite</string>
 
     <!-- Strings for preference error messages -->
     <string name="pref_error_ip_title">Invalid IP</string>

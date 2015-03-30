@@ -77,6 +77,7 @@ public class SessionLoggingSink implements Sink {
 
         // Main loop terminated, clean up
         Log.i(TAG, "run: Closing Session");
+        // TODO Check if no session events occured and delete the session in that case
         closeSession();
         mDB.close();
         Log.i(TAG, "run: Stopping");
