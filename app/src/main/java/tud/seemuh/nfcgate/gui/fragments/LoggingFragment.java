@@ -1,7 +1,5 @@
 package tud.seemuh.nfcgate.gui.fragments;
 
-import android.app.FragmentTransaction;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -10,25 +8,25 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import tud.seemuh.nfcgate.R;
-import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.NfcSession;
 import tud.seemuh.nfcgate.util.db.SessionLoggingContract;
 import tud.seemuh.nfcgate.util.db.SessionLoggingDbHelper;
 
 /**
- * Created by Tom on 28.03.2015.
+ * Display the session log
  */
 public class LoggingFragment extends Fragment{
 
@@ -39,6 +37,23 @@ public class LoggingFragment extends Fragment{
 
     // List of Session objects
     private List<NfcSession> mSessions = new ArrayList<NfcSession>();
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        menuInflater.inflate(R.menu.menu_log, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_refresh:
+                refreshSessionList();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,6 +79,9 @@ public class LoggingFragment extends Fragment{
                 return onLongListItemClick(v, pos, id);
             }
         });
+
+        // We want to introduce our own icons to the Action bar => Set HasOptionsMenu to true
+        this.setHasOptionsMenu(true);
 
         return v;
     }
@@ -94,8 +112,12 @@ public class LoggingFragment extends Fragment{
 
     @Override
     public void onResume() {
-        // TODO This is a little hack-y
         super.onResume();
+        refreshSessionList();
+    }
+
+    private void refreshSessionList() {
+        // TODO This is a little hack-y
         mSessions.clear();
         mListAdapter.clear();
         new AsyncSessionLoader().execute();
@@ -161,6 +183,7 @@ public class LoggingFragment extends Fragment{
         private final String TAG = "AsyncSessionLoader";
 
         private SQLiteDatabase mDB;
+
         @Override
         protected Cursor doInBackground(Void... voids) {
             Log.d(TAG, "doInBackground: Started");
