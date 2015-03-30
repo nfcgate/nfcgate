@@ -12,12 +12,14 @@ import android.util.Log;
  */
 public class DbInitTask extends AsyncTask<Context, Void, Void> {
     private final String TAG = "DbInitTask";
+
     @Override
     protected Void doInBackground(Context... ctx) {
         if (ctx.length == 0) return null;
         SessionLoggingDbHelper dbh = new SessionLoggingDbHelper(ctx[0]);
         Log.d(TAG, "doInBackground: Init DB - started");
         dbh.getWritableDatabase();
+        // TODO Verify and fix contents of database (inconsistent session etc)
         Log.d(TAG, "doInBackground: Init DB - done");
         return null;
     }

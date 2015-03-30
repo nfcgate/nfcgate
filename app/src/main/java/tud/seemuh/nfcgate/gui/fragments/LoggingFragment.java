@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -147,9 +148,10 @@ public class LoggingFragment extends Fragment{
     }
 
     private class AsyncSessionLoader extends AsyncTask<Void, Void, Cursor> {
-
+        private final String TAG = "AsyncSessionLoader";
         @Override
         protected Cursor doInBackground(Void... voids) {
+            Log.d(TAG, "doInBackground: Started");
             // Get a DB object
             SessionLoggingDbHelper dbHelper = new SessionLoggingDbHelper(getActivity());
             SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -169,6 +171,7 @@ public class LoggingFragment extends Fragment{
             String[] selectionArgs = { String.valueOf(SessionLoggingContract.SessionMeta.VALUE_FINISHED_TRUE) };
 
             // Perform query
+            Log.d(TAG, "doInBackground: Performing query");
             Cursor c = db.query(
                     SessionLoggingContract.SessionEvent.TABLE_NAME,  // Target Table
                     projection,    // Which fields are we interested in?
@@ -180,6 +183,7 @@ public class LoggingFragment extends Fragment{
             );
 
             // Close connection to the database
+            Log.d(TAG, "doInBackground: Closing database and returning");
             db.close();
             return c;
         }
@@ -187,11 +191,13 @@ public class LoggingFragment extends Fragment{
         @Override
         protected void onPostExecute(Cursor c) {
             // Move to the first element of the cursor
+            Log.d(TAG, "onPostExecute: Beginning processing of Sessions");
             c.moveToFirst();
             do {
                 // TODO Process data from cursor, insert into List
             } while (c.moveToNext()); // Iterate until all elements of the cursor have been processed
             // Close the cursor, freeing the used memory
+            Log.d(TAG, "onPostExecute: Closing cursor and finishing");
             c.close();
         }
     }
