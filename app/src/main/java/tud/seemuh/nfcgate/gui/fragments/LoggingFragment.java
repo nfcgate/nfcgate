@@ -88,26 +88,7 @@ public class LoggingFragment extends Fragment{
 
     protected void onListItemClick(View v, int pos, long id) {
         // start a new activity here to display the details of the clicked list element
-        if (mListAdapter.getItem(0).equals("go back") && pos == 0)
-        {
-            //reload session overview  (e.g go back to previous screen)
-            // TODO
-//            String[] temp = new String[] {"dummy1","dummy2","dummy3","dummy4"};
-//            this.setmItems(temp);
-//            mlistAdapter.clear();
-//            mlistAdapter.addAll(this.getmItems());
-//            mlistAdapter.notifyDataSetChanged();
-        }
-        else
-        {
-            // load the specific session the clicked on into the array
-            // temporarily used dummy text
-            // TODO
-//            this.setmItems(new String[] {"go back","test1","test2","test3"});
-//            mlistAdapter.clear();
-//            mlistAdapter.addAll(this.getmItems());
-//            mlistAdapter.notifyDataSetChanged();
-        }
+        // TODO
     }
 
     @Override
@@ -148,13 +129,7 @@ public class LoggingFragment extends Fragment{
     } */
 
     protected boolean onLongListItemClick(View v, int pos, long id) {
-        // Warning: item gets immediately deleted !without warning! on long click  TODO improve, maybe by displaying a warning before removing the item
-//        String selectedItem = mlistAdapter.getItem(pos);
-//        mlistAdapter.remove(selectedItem);
-//        mlistAdapter.notifyDataSetChanged();
-//        Toast.makeText(getActivity(), "Item " + pos + " removed!", Toast.LENGTH_LONG).show();
-//        return true;
-        // TODO
+        // TODO Create and show menu to delete, rename, ...
         return true;
     }
 
