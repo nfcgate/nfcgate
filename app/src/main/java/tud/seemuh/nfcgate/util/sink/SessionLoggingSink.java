@@ -45,11 +45,14 @@ public class SessionLoggingSink implements Sink {
         openNewSession();
         Log.i(TAG, "run: New Session created: " + mSessionID);
 
+        int msgCount = 0;
+
         // Main loop
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 // Get a new message
                 NfcComm msg = mQueue.take();
+                msgCount += 1;
 
                 if (msg.getType() == NfcComm.Type.AnticolBytes) {
                     // We are dealing with an Anticol message
@@ -76,9 +79,13 @@ public class SessionLoggingSink implements Sink {
         }
 
         // Main loop terminated, clean up
-        Log.i(TAG, "run: Closing Session");
-        // TODO Check if no session events occured and delete the session in that case
-        closeSession();
+        if (msgCount > 0) {
+            Log.i(TAG, "run: Closing Session");
+            closeSession();
+        } else {
+            Log.i(TAG, "run: No messages processed, deleting session");
+            deleteSession();
+        }
         mDB.close();
         Log.i(TAG, "run: Stopping");
     }
@@ -115,6 +122,18 @@ public class SessionLoggingSink implements Sink {
                 values,
                 selection,
                 valueArg);
+    }
+
+    private void deleteSession() {
+        // Selection String
+        String selection = SessionLoggingContract.SessionMeta._ID + " LIKE ?";
+        // Selection Args
+        String[] selectArgs = { String.valueOf(mSessionID) };
+
+        // Execute the delete
+        mDB.delete(SessionLoggingContract.SessionMeta.TABLE_NAME,
+                selection,
+                selectArgs);
     }
 
     private void addHCEMessage(NfcComm msg) {
