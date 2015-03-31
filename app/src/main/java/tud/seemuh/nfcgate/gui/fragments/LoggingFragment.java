@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,6 +109,12 @@ public class LoggingFragment extends Fragment{
         mListAdapter.clear();
         new AsyncSessionLoader().execute();
     }
+
+    // Private helper function to notify the GUI thread if no sessions exist
+    private void notifyNoSessions() {
+        Toast.makeText(getActivity(), "No Session found", Toast.LENGTH_LONG).show();
+    }
+
  /*
     @Override
     public void onResume() {
@@ -207,7 +214,7 @@ public class LoggingFragment extends Fragment{
             Log.d(TAG, "onPostExecute: Beginning processing of Sessions");
             if (!c.moveToFirst()) {
                 Log.i(TAG, "onPostExecute: Cursor empty, doing nothing.");
-                // TODO Signal GUI that the cursor is empty
+                notifyNoSessions();
                 return;
             }
             do {
