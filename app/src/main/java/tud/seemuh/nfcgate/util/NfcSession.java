@@ -6,14 +6,14 @@ package tud.seemuh.nfcgate.util;
 public class NfcSession {
     private String mDate;
     private String mName;
-    private int mID;
+    private long mID;
 
-    public NfcSession(String date, int id) {
+    public NfcSession(String date, long id) {
         mDate = date;
         mID = id;
     }
 
-    public NfcSession(String date, int id, String name) {
+    public NfcSession(String date, long id, String name) {
         mDate = date;
         mName = name;
         mID = id;
@@ -28,7 +28,7 @@ public class NfcSession {
         }
     }
 
-    public int getID() {
+    public long getID() {
         return mID;
     }
 

@@ -175,12 +175,12 @@ public class SessionLoggingSink implements Sink {
         // Content Values
         values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_UID, msg.getUid());
         values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA, msg.getAtqa());
-        values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK, msg.getSak());
+        values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK, new byte[] {msg.getSak()});
         values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST, msg.getHist());
         if (msg.isChanged()) {
             values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_UID_PREFILTER, msg.getOldUid());
             values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA_PREFILTER, msg.getOldAtqa());
-            values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK_PREFILTER, msg.getOldSak());
+            values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK_PREFILTER, new byte[] {msg.getOldSak()});
             values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST_PREFILTER, msg.getOldHist());
         }
 

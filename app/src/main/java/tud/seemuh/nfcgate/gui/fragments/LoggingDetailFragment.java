@@ -31,6 +31,8 @@ public class LoggingDetailFragment extends Fragment {
     private ListView mListView;
     private ArrayAdapter<NfcComm> mListAdapter;
 
+    private long mSessionID;
+
     private List<NfcComm> mEventList = new ArrayList<NfcComm>();
 
     @Override
@@ -40,7 +42,7 @@ public class LoggingDetailFragment extends Fragment {
 
         mListView = (ListView) v.findViewById(R.id.sessionDetailList);
 
-        mListAdapter = new ArrayAdapter<NfcComm>(v.getContext(), R.layout.fragment_logging_detail);
+        mListAdapter = new ArrayAdapter<NfcComm>(v.getContext(), R.layout.fragment_logging_row);
 
         mListView.setAdapter(mListAdapter);
 
@@ -59,11 +61,28 @@ public class LoggingDetailFragment extends Fragment {
             }
         });
 
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            mSessionID = bundle.getLong("SessionID");
+        }
 
         // Notify System that we would like to add an options menu.
         this.setHasOptionsMenu(true);
 
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshEventList();
+    }
+
+    private void refreshEventList() {
+        // TODO This is a little hack-y
+        mEventList.clear();
+        mListAdapter.clear();
+        new AsyncDetailLoader().execute(mSessionID);
     }
 
     @Override
@@ -101,13 +120,13 @@ public class LoggingDetailFragment extends Fragment {
         mListAdapter.notifyDataSetChanged();
     }
 
-    private class AsyncDetailLoader extends AsyncTask<Integer, Void, Cursor> {
+    private class AsyncDetailLoader extends AsyncTask<Long, Void, Cursor> {
         private final String TAG = "AsyncDetailLoader";
 
         private SQLiteDatabase mDB;
 
         @Override
-        protected Cursor doInBackground(Integer... SessionID) {
+        protected Cursor doInBackground(Long... SessionID) {
             // TODO Update
             Log.d(TAG, "doInBackground: Started");
             // Get a DB object
@@ -137,6 +156,7 @@ public class LoggingDetailFragment extends Fragment {
             // Define Selection
             String selection = SessionLoggingContract.SessionEvent.COLUMN_NAME_SESSION_ID + " LIKE ?";
             // Define Selection Arguments
+            Log.i(TAG, "doInBackground: SessionID = " + SessionID[0]);
             String[] selectionArgs = { String.valueOf(SessionID[0]) };
 
             // Perform query

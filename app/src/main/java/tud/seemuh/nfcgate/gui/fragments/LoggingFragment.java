@@ -212,7 +212,7 @@ public class LoggingFragment extends Fragment{
             }
             do {
                 // prepare session object
-                int ID = c.getInt(c.getColumnIndexOrThrow(SessionLoggingContract.SessionMeta._ID));
+                long ID = c.getLong(c.getColumnIndexOrThrow(SessionLoggingContract.SessionMeta._ID));
                 String name = c.getString(c.getColumnIndexOrThrow(SessionLoggingContract.SessionMeta.COLUMN_NAME_NAME));
                 String date = c.getString(c.getColumnIndexOrThrow(SessionLoggingContract.SessionMeta.COLUMN_NAME_DATE));
                 NfcSession session = new NfcSession(date, ID, name);
