@@ -21,7 +21,6 @@ import java.util.List;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.util.NfcComm;
-import tud.seemuh.nfcgate.util.NfcSession;
 import tud.seemuh.nfcgate.util.db.SessionLoggingContract;
 import tud.seemuh.nfcgate.util.db.SessionLoggingDbHelper;
 
@@ -102,13 +101,13 @@ public class LoggingDetailFragment extends Fragment {
         mListAdapter.notifyDataSetChanged();
     }
 
-    private class AsyncDetailLoader extends AsyncTask<Void, Void, Cursor> {
+    private class AsyncDetailLoader extends AsyncTask<Integer, Void, Cursor> {
         private final String TAG = "AsyncDetailLoader";
 
         private SQLiteDatabase mDB;
 
         @Override
-        protected Cursor doInBackground(Void... voids) {
+        protected Cursor doInBackground(Integer... SessionID) {
             // TODO Update
             Log.d(TAG, "doInBackground: Started");
             // Get a DB object
@@ -118,21 +117,32 @@ public class LoggingDetailFragment extends Fragment {
             // Construct query
             // Define Projection
             String[] projection = {
-                    SessionLoggingContract.SessionMeta._ID,
-                    SessionLoggingContract.SessionMeta.COLUMN_NAME_NAME,
-                    SessionLoggingContract.SessionMeta.COLUMN_NAME_DATE,
+                    SessionLoggingContract.SessionEvent._ID,
+                    SessionLoggingContract.SessionEvent.COLUMN_NAME_SESSION_ID,
+                    SessionLoggingContract.SessionEvent.COLUMN_NAME_DATE,
+                    SessionLoggingContract.SessionEvent.COLUMN_NAME_TYPE,
+                    SessionLoggingContract.SessionEvent.COLUMN_NAME_NFCDATA,
+                    SessionLoggingContract.SessionEvent.COLUMN_NAME_UID,
+                    SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA,
+                    SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK,
+                    SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST,
+                    SessionLoggingContract.SessionEvent.COLUMN_NAME_NFCDATA_PREFILTER,
+                    SessionLoggingContract.SessionEvent.COLUMN_NAME_UID_PREFILTER,
+                    SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA_PREFILTER,
+                    SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK_PREFILTER,
+                    SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST_PREFILTER,
             };
             // Define Sort order
-            String sortorder = SessionLoggingContract.SessionMeta.COLUMN_NAME_DATE + " DESC";
+            String sortorder = SessionLoggingContract.SessionEvent._ID + " ASC";
             // Define Selection
-            String selection = SessionLoggingContract.SessionMeta.COLUMN_NAME_FINISHED + " LIKE ?";
+            String selection = SessionLoggingContract.SessionEvent.COLUMN_NAME_SESSION_ID + " LIKE ?";
             // Define Selection Arguments
-            String[] selectionArgs = { String.valueOf(SessionLoggingContract.SessionMeta.VALUE_FINISHED_TRUE) };
+            String[] selectionArgs = { String.valueOf(SessionID[0]) };
 
             // Perform query
             Log.d(TAG, "doInBackground: Performing query");
             Cursor c = mDB.query(
-                    SessionLoggingContract.SessionMeta.TABLE_NAME,  // Target Table
+                    SessionLoggingContract.SessionEvent.TABLE_NAME,  // Target Table
                     projection,    // Which fields are we interested in?
                     selection,     // Selection clause
                     selectionArgs, // Arguments to clause
@@ -155,8 +165,45 @@ public class LoggingDetailFragment extends Fragment {
                 return;
             }
             do {
-                // prepare session object
-                // TODO Do stuff
+                // prepare NfcComm object
+                NfcComm comm;
+                String date = c.getString(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_DATE));
+                int type    = c.getInt(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_TYPE));
+                if (type == SessionLoggingContract.SessionEvent.VALUE_TYPE_ANTICOL) {
+                    // Anticol
+                    byte[] uid     = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_UID));
+                    byte[] atqa    = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA));
+                    byte[] sak     = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK));
+                    byte[] hist    = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST));
+                    byte[] uid_pf  = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_UID_PREFILTER));
+                    byte[] atqa_pf = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA_PREFILTER));
+                    byte[] sak_pf  = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK_PREFILTER));
+                    byte[] hist_pf = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST_PREFILTER));
+                    if (uid_pf != null) {
+                        // Saving prefilter data is all-or-nothing: If one value is changed, all are saved
+                        // We now need to properly initialize the NfcComm object.
+                        comm = new NfcComm(atqa, sak[0], hist, uid, atqa_pf, sak_pf[0], hist_pf, uid_pf);
+                    } else {
+                        comm = new NfcComm(atqa, sak[0], hist, uid);
+                    }
+
+                } else {
+                    // NFC Data
+                    byte[] bytes    = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_NFCDATA));
+                    byte[] bytes_pf = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_NFCDATA_PREFILTER));
+                    NfcComm.Source source;
+                    if (type == SessionLoggingContract.SessionEvent.VALUE_TYPE_CARD) {
+                        source = NfcComm.Source.CARD;
+                    } else {
+                        source = NfcComm.Source.HCE;
+                    }
+                    if (bytes_pf != null) {
+                        comm = new NfcComm(source, bytes, bytes_pf);
+                    } else {
+                        comm = new NfcComm(source, bytes);
+                    }
+                }
+                addNfcEvent(comm);
             } while (c.moveToNext()); // Iterate until all elements of the cursor have been processed
             // Close the cursor, freeing the used memory
             updateSessionView();

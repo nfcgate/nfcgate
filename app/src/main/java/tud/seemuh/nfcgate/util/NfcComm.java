@@ -49,6 +49,21 @@ public class NfcComm {
     }
 
     /**
+     * Instantiate an NfcComm object for regular NFC Traffic
+     * @param source The source of the NFC data, as chosen from the Enum
+     * @param data The raw data itself
+     * @param data_pf The raw data, before it was changed by a filter
+     */
+    public NfcComm (Source source, byte[] data, byte[] data_pf) {
+        mSource = source;
+        mType = Type.NFCBytes;
+        mBytes = data;
+        mBytes_prefilter = data_pf;
+
+        filterChanged = true;
+    }
+
+    /**
      * Instantiate an NfcComm object for Anticollision data
      * @param atqa Anticol protocol ATQA data
      * @param sak Anticol protocol sak data
@@ -62,6 +77,34 @@ public class NfcComm {
         mSak = mSak_prefilter = sak;
         mHist = mHist_prefilter = hist;
         mUid = mUid_prefilter = uid;
+    }
+
+    /**
+     * Instantiate an NfcComm object for Anticollision data
+     * @param atqa Anticol protocol ATQA data
+     * @param sak Anticol protocol sak data
+     * @param hist Antocol protocol Historical byte
+     * @param uid Anticol protocol UID
+     * @param atqa_pf Anticol protocol ATQA data, before change by filter
+     * @param sak_pf Anticol protocol sak data, before change by filter
+     * @param hist_pf Antocol protocol Historical byte, before change by filter
+     * @param uid_pf Anticol protocol UID, before change by filter
+     */
+    public NfcComm(byte[] atqa, byte sak, byte[] hist, byte[] uid,
+                   byte[] atqa_pf, byte sak_pf, byte[] hist_pf, byte[] uid_pf) {
+        mSource = Source.CARD;
+        mType   = Type.AnticolBytes;
+        mAtqa   = atqa;
+        mSak    = sak;
+        mHist   = hist;
+        mUid    = uid;
+
+        mAtqa_prefilter = atqa_pf;
+        mSak_prefilter  = sak_pf;
+        mHist_prefilter = hist_pf;
+        mUid_prefilter  = uid_pf;
+
+        filterChanged = true;
     }
 
     // Setters for postfilter data
