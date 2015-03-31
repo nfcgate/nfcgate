@@ -34,6 +34,9 @@ public class NfcComm {
     private byte[] mHist_prefilter;
     private byte[] mUid_prefilter;
 
+    // Date (needed for Session logging display)
+    private String mDate;
+
     private boolean filterChanged = false;
 
     /**
@@ -107,8 +110,10 @@ public class NfcComm {
         filterChanged = true;
     }
 
+    public void setDate(String date) {
+        mDate = date;
+    }
     // Setters for postfilter data
-    // TODO Make sure these are all set properly
     public void setData(byte[] data) {
         mBytes = data;
         filterChanged = true;
@@ -188,5 +193,41 @@ public class NfcComm {
 
     public byte[] getOldUid() {
         return mUid_prefilter;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (mType == Type.NFCBytes) {
+            if (mSource == Source.HCE) {
+                sb.append("R: ");
+            } else {
+                sb.append("C: ");
+            }
+            if (isChanged()) {
+                sb.append(Utils.bytesToHex(mBytes) + " (" + Utils.bytesToHex(mBytes_prefilter) + ")");
+            } else {
+                sb.append(Utils.bytesToHex(mBytes));
+            }
+        } else {
+            if (isChanged()) {
+                sb.append("Card data: UID: ");
+                sb.append(Utils.bytesToHex(mUid));
+                sb.append(" (" + Utils.bytesToHex(mUid_prefilter) + ") - SAK: ");
+                sb.append(Utils.bytesToHex(mSak) + " (" + Utils.bytesToHex(mSak_prefilter) + ") - ATQA: ");
+                sb.append(Utils.bytesToHex(mAtqa) + " (" + Utils.bytesToHex(mAtqa_prefilter) + ") - Hist: ");
+                sb.append(Utils.bytesToHex(mHist) + " (" + Utils.bytesToHex(mHist_prefilter) + ")");
+            } else {
+                sb.append("Card data: UID: ");
+                sb.append(Utils.bytesToHex(mUid));
+                sb.append(" - SAK: ");
+                sb.append(Utils.bytesToHex(mSak));
+                sb.append(" - ATQA: ");
+                sb.append(Utils.bytesToHex(mAtqa));
+                sb.append(" - Hist: ");
+                sb.append(Utils.bytesToHex(mHist));
+            }
+        }
+        return sb.toString();
     }
 }
