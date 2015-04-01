@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.util.db.DbInitTask;
 
 /**
  *
@@ -16,6 +17,10 @@ public class Splash extends Activity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
+
+        // Start an AsyncTask to create / update the database scheme, if needed.
+        new DbInitTask().execute(this);
+
         Thread wait = new Thread()
         {
             public void run()

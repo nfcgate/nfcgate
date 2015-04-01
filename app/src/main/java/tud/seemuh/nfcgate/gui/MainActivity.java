@@ -33,7 +33,6 @@ import tud.seemuh.nfcgate.gui.tabLayout.SlidingTabLayout;
 import tud.seemuh.nfcgate.gui.tabLogic.PagerAdapter;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.nfc.reader.BCM20793Workaround;
-import tud.seemuh.nfcgate.util.db.DbInitTask;
 
 public class MainActivity extends FragmentActivity
         implements ReaderCallback,EnablenfcDialog.NFCNoticeDialogListener, WorkaroundDialog.WorkaroundDialogListener {
@@ -59,9 +58,6 @@ public class MainActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         setContentView(R.layout.activity_main);
-
-        // Start an AsyncTask to create / update the database scheme, if needed.
-        new DbInitTask().execute(this);
 
         mAdapter = NfcAdapter.getDefaultAdapter(this);
         mIntentFilter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
