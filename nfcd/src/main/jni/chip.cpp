@@ -126,12 +126,14 @@ static void uploadConfig(const struct s_chip_config config) {
     cfg[i++] = config.uid_len;
 
     memcpy(cfg+i, config.uid, config.uid_len);
+    i += config.uid_len;
 
     cfg[i++] = CFG_TYPE_HIST;
     cfg[i++] = config.hist_len;
     memcpy(cfg+i, config.hist, config.hist_len);
+    i += config.hist_len;
 
-    nci_NfcSetConfig(i+config.uid_len+config.hist_len, cfg);
+    nci_NfcSetConfig(i, cfg);
     loghex("Upload:", cfg, i+config.uid_len+config.hist_len);
 }
 
