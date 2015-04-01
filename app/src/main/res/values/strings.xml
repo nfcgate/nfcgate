@@ -37,6 +37,12 @@
     <string name="enablenfc_dialog_cancel">Ignore</string>
     <string name="enablenfc_dialog_confirm">Go to settings</string>
 
+    <string name="title_dialog_delete">Confirm deletion</string>
+    <string name="deletion_dialog_text">Please confirm that you want to delete this record.</string>
+    <string name="deletion_dialog_confirm">Delete</string>
+    <string name="deletion_dialog_cancel">Cancel</string>
+    <string name="deletion_done">Session deleted</string>
+
     <!-- Strings for Settings Activity -->
     <string name="pref_default_values">Default Values</string>
     <string name="pref_default_values_ip">Server IP</string>

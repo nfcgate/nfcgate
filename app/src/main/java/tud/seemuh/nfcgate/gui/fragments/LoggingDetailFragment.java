@@ -1,6 +1,8 @@
 package tud.seemuh.nfcgate.gui.fragments;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -16,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +32,7 @@ import tud.seemuh.nfcgate.util.db.SessionLoggingDbHelper;
 /**
  * Fragment that contains the list of events in a specific session
  */
-public class LoggingDetailFragment extends Fragment {
+public class LoggingDetailFragment extends Fragment implements DialogInterface.OnClickListener {
     private ListView mListView;
     private ArrayAdapter<NfcComm> mListAdapter;
 
@@ -110,7 +113,7 @@ public class LoggingDetailFragment extends Fragment {
                 // TODO
                 return true;
             case R.id.action_delete:
-                // TODO
+                deleteSession();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -125,6 +128,32 @@ public class LoggingDetailFragment extends Fragment {
     protected void onListItemClick(View v, int pos, long id) {
         // start a new activity here to display the details of the clicked list element
         // TODO
+    }
+
+    protected void deleteSession() {
+        getDeleteConfirmationDialog().show();
+    }
+
+    private AlertDialog getDeleteConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(getString(R.string.deletion_dialog_text))
+                .setPositiveButton(getString(R.string.deletion_dialog_confirm), this)
+                .setNegativeButton(R.string.deletion_dialog_cancel, this)
+                .setTitle(getString(R.string.title_dialog_delete));
+        // Create the AlertDialog object and return it
+        return builder.create();
+    }
+
+    @Override
+    public void onClick(DialogInterface dialogInterface, int which) {
+        if (which == DialogInterface.BUTTON_POSITIVE) {
+            new AsyncSessionDeleter().execute(mSessionID);
+        }
+    }
+
+    protected void confirmDelete() {
+        Toast.makeText(getActivity(), getString(R.string.deletion_done), Toast.LENGTH_LONG).show();
+        getActivity().finish();
     }
 
     protected void addNfcEvent(NfcComm nfccomm) {
@@ -320,6 +349,43 @@ public class LoggingDetailFragment extends Fragment {
             Log.d(TAG, "onPostExecute: Closing connection and finishing");
             c.close();
             mDB.close();
+        }
+    }
+
+    private class AsyncSessionDeleter extends AsyncTask<Long, Void, Void> {
+        private final String TAG = "AsyncSessionDeleter";
+
+        private SQLiteDatabase mDB;
+
+        @Override
+        protected Void doInBackground(Long... longs) {
+            Log.d(TAG, "doInBackground: Started");
+            // Get a DB object
+            SessionLoggingDbHelper dbHelper = new SessionLoggingDbHelper(getActivity());
+            mDB = dbHelper.getWritableDatabase();
+
+            // Construct query
+            // Define Selection
+            String selection = SessionLoggingContract.SessionMeta._ID + " LIKE ?";
+            // Define Selection Arguments
+            String[] selectionArgs = { String.valueOf(longs[0]) };
+
+            // Perform query
+            Log.d(TAG, "doInBackground: Performing deletion");
+            mDB.delete(
+                    SessionLoggingContract.SessionMeta.TABLE_NAME,
+                    selection,
+                    selectionArgs
+            );
+
+            Log.d(TAG, "doInBackground: Deletion done, returning");
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            mDB.close();
+            confirmDelete();
         }
     }
 }
