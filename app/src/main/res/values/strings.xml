@@ -78,4 +78,10 @@
     <string name="pref_error_ip_text">The IP you entered was incorrect. Please enter a valid IP</string>
     <string name="pref_error_port_title">Invalid Port</string>
     <string name="pref_error_port_text">The port you entered was incorrect. Please enter a valid port</string>
+
+    <!-- Array for action select menu in Log overview -->
+    <string-array name="array_log_menu">
+        <item>Rename</item>
+        <item>Delete</item>
+    </string-array>
 </resources>

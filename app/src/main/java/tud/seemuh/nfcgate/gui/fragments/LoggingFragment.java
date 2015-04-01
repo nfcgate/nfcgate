@@ -40,7 +40,7 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
     private ListView mListView;
     private ArrayAdapter<NfcSession> mListAdapter;
 
-    private long mDeletionSessionID;
+    private long mActionSessionID;
 
     // List of Session objects
     private List<NfcSession> mSessions = new ArrayList<NfcSession>();
@@ -90,6 +90,9 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
         // We want to introduce our own icons to the Action bar => Set HasOptionsMenu to true
         this.setHasOptionsMenu(true);
 
+        // Load values from the database
+        refreshSessionList();
+
         return v;
     }
 
@@ -101,15 +104,10 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
         startActivity(intent);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        refreshSessionList();
-    }
-
     private void refreshSessionList() {
         // TODO This is a little hack-y
         mSessions.clear();
+        mListAdapter.clear();
         new AsyncSessionLoader().execute();
     }
 
@@ -118,33 +116,9 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
         Toast.makeText(getActivity(), "No logged sessions found", Toast.LENGTH_LONG).show();
     }
 
- /*
-    @Override
-    public void onResume() {
-
-        super.onResume();
-        getActivity().getSupportFragmentManager().popBackStack();
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-
-                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
-
-                    // handle back button
-
-                    return true;
-
-                }
-
-                return false;
-            }
-        });
-    } */
-
     protected boolean onLongListItemClick(View v, int pos, long id) {
-        // TODO Create and show menu to delete, rename, ...
+        NfcSession sess = mListAdapter.getItem(pos);
+        getLongPressMenu(sess.getID()).show();
         return true;
     }
 
@@ -157,7 +131,6 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
     }
 
     public void updateSessionView() {
-        mListAdapter.clear();
         mListAdapter.addAll(mSessions);
         mListAdapter.notifyDataSetChanged();
     }
@@ -171,7 +144,7 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
     }
 
     private AlertDialog getDeleteConfirmationDialog(long sessionID) {
-        mDeletionSessionID = sessionID;
+        mActionSessionID = sessionID;
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(getString(R.string.deletion_dialog_text))
                 .setPositiveButton(getString(R.string.deletion_dialog_confirm), this)
@@ -181,10 +154,21 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
         return builder.create();
     }
 
+    private AlertDialog getLongPressMenu(long sessionID) {
+        mActionSessionID = sessionID;
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setItems(R.array.array_log_menu, this);
+        return builder.create();
+    }
+
     @Override
     public void onClick(DialogInterface dialogInterface, int which) {
         if (which == DialogInterface.BUTTON_POSITIVE) {
-            new AsyncSessionDeleter().execute(mDeletionSessionID);
+            new AsyncSessionDeleter().execute(mActionSessionID);
+        } else if (which == 0) { // List-Interface - Rename
+            Toast.makeText(getActivity(), "Rename not yet implemented", Toast.LENGTH_LONG).show();
+        } else if (which == 1) { // List-Interface - Delete
+            getDeleteConfirmationDialog(mActionSessionID).show();
         }
     }
 
@@ -295,6 +279,7 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
         @Override
         protected void onPostExecute(Void v) {
             mDB.close();
+            refreshSessionList();
         }
     }
 }
