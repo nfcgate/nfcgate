@@ -167,6 +167,7 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
             new AsyncSessionDeleter().execute(mActionSessionID);
         } else if (which == 0) { // List-Interface - Rename
             Toast.makeText(getActivity(), "Rename not yet implemented", Toast.LENGTH_LONG).show();
+            // TODO
         } else if (which == 1) { // List-Interface - Delete
             getDeleteConfirmationDialog(mActionSessionID).show();
         }
@@ -279,7 +280,7 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
         @Override
         protected void onPostExecute(Void v) {
             mDB.close();
-            refreshSessionList();
+            confirmSessionDelete();
         }
     }
 }
