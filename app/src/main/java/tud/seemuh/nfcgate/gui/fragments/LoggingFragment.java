@@ -106,13 +106,12 @@ public class LoggingFragment extends Fragment{
     private void refreshSessionList() {
         // TODO This is a little hack-y
         mSessions.clear();
-        mListAdapter.clear();
         new AsyncSessionLoader().execute();
     }
 
     // Private helper function to notify the GUI thread if no sessions exist
     private void notifyNoSessions() {
-        Toast.makeText(getActivity(), "No Session found", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "No logged sessions found", Toast.LENGTH_LONG).show();
     }
 
  /*
@@ -154,6 +153,7 @@ public class LoggingFragment extends Fragment{
     }
 
     public void updateSessionView() {
+        mListAdapter.clear();
         mListAdapter.addAll(mSessions);
         mListAdapter.notifyDataSetChanged();
     }

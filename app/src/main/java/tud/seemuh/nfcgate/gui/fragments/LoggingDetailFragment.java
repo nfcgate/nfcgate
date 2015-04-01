@@ -81,7 +81,6 @@ public class LoggingDetailFragment extends Fragment {
     private void refreshEventList() {
         // TODO This is a little hack-y
         mEventList.clear();
-        mListAdapter.clear();
         new AsyncDetailLoader().execute(mSessionID);
     }
 
@@ -95,7 +94,12 @@ public class LoggingDetailFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
-            // TODO
+            case R.id.action_edit:
+                // TODO
+                return true;
+            case R.id.action_delete:
+                // TODO
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -116,6 +120,7 @@ public class LoggingDetailFragment extends Fragment {
     }
 
     protected void updateSessionView() {
+        mListAdapter.clear();
         mListAdapter.addAll(mEventList);
         mListAdapter.notifyDataSetChanged();
     }
@@ -127,7 +132,6 @@ public class LoggingDetailFragment extends Fragment {
 
         @Override
         protected Cursor doInBackground(Long... SessionID) {
-            // TODO Update
             Log.d(TAG, "doInBackground: Started");
             // Get a DB object
             SessionLoggingDbHelper dbHelper = new SessionLoggingDbHelper(getActivity());
