@@ -14,5 +14,5 @@ public class DaemonConfiguration {
     public native void enablePatch();
     public native void disablePatch();
     public native boolean isPatchEnabled();
-    public native void uploadConfiguration(byte atqa, byte sak, byte hist, byte[] uid);
+    public native void uploadConfiguration(byte atqa, byte sak, byte[] hist, byte[] uid);
 }

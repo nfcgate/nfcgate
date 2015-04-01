@@ -68,8 +68,13 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
             break;
             case CFG_TYPE_HIST:
                 needUpload = true;
-                origValues.hist = firstval;
-                LOGD("NfcSetConfig Read: HIST 0x%02x", firstval);
+                if(len > sizeof(origValues.hist)) {
+                    LOGE("cannot handle an hist with len=0x%02x", len);
+                } else {
+                    memcpy(origValues.hist, valbp, len);
+                    origValues.uid_len = len;
+                    loghex("NfcSetConfig Read: HIST", valbp, len);
+                }
             break;
             case CFG_TYPE_UID:
                 needUpload = true;
@@ -114,16 +119,22 @@ static void uploadConfig(const struct s_chip_config config) {
     uint8_t cfg[80];
     uint8_t i=0;
     pushcfg(cfg, i, CFG_TYPE_SAK,  config.sak);
-    pushcfg(cfg, i, CFG_TYPE_HIST, config.hist);
+    //pushcfg(cfg, i, CFG_TYPE_HIST, config.hist);
     pushcfg(cfg, i, CFG_TYPE_ATQA, config.atqa);
 
     cfg[i++] = CFG_TYPE_UID;
     cfg[i++] = config.uid_len;
 
     memcpy(cfg+i, config.uid, config.uid_len);
+    i += config.uid_len;
 
-    nci_NfcSetConfig(i+config.uid_len, cfg);
-    loghex("Upload:", cfg, i+config.uid_len);
+    cfg[i++] = CFG_TYPE_HIST;
+    cfg[i++] = config.hist_len;
+    memcpy(cfg+i, config.hist, config.hist_len);
+    i += config.hist_len;
+
+    nci_NfcSetConfig(i, cfg);
+    loghex("Upload:", cfg, i+config.uid_len+config.hist_len);
 }
 
 /**

@@ -23,7 +23,7 @@ extern "C" {
     JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_nfc_hce_DaemonConfiguration_enablePatch(JNIEnv* env, jobject javaThis);
     JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_nfc_hce_DaemonConfiguration_disablePatch(JNIEnv* env, jobject javaThis);
     JNIEXPORT jboolean JNICALL Java_tud_seemuh_nfcgate_nfc_hce_DaemonConfiguration_isPatchEnabled(JNIEnv* env, jobject javaThis);
-    JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_nfc_hce_DaemonConfiguration_uploadConfiguration(JNIEnv* env, jobject javaThis, jbyte atqa, jbyte sak, jbyte hist, jbyteArray uid);
+    JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_nfc_hce_DaemonConfiguration_uploadConfiguration(JNIEnv* env, jobject javaThis, jbyte atqa, jbyte sak, jbyteArray hist, jbyteArray uid);
 }
 
 void sendPacket(const ipcpacket p);
@@ -69,23 +69,27 @@ JNIEXPORT jboolean JNICALL Java_tud_seemuh_nfcgate_nfc_hce_DaemonConfiguration_i
 /**
  * send the new chip configuration
  */
-JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_nfc_hce_DaemonConfiguration_uploadConfiguration(JNIEnv* env, jobject javaThis, jbyte atqa, jbyte sak, jbyte hist, jbyteArray _uid) {
+JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_nfc_hce_DaemonConfiguration_uploadConfiguration(JNIEnv* env, jobject javaThis, jbyte atqa, jbyte sak, jbyteArray _hist, jbyteArray _uid) {
     LOGI("uploadConfiguration");
-    jsize len = env->GetArrayLength(_uid);
-    if(len > sizeof(ipcpacket::uid)) {
+    jsize len_uid = env->GetArrayLength(_uid);
+    jsize len_hist = env->GetArrayLength(_hist);
+    if(len_uid > sizeof(ipcpacket::uid) || len_hist > sizeof(ipcpacket::hist)) {
         jclass Exception = env->FindClass("java/lang/Exception");
-        env->ThrowNew(Exception, "uid bigger than buffer");
+        env->ThrowNew(Exception, "uid or hist bigger than buffer");
     }
     // build an ipcpacket with all values and transmit it
     ipcpacket p;
     p.type = ipctype::CONFIGURE;
     p.atqa = atqa;
     p.sak = sak;
-    p.hist = hist;
-    p.uid_len = len;
+    p.uid_len = len_uid;
     jbyte* uid = env->GetByteArrayElements(_uid, 0);
-    memcpy(p.uid, uid, len);
+    memcpy(p.uid, uid, len_uid);
     env->ReleaseByteArrayElements(_uid, uid, 0);
+    p.hist_len = len_hist;
+    jbyte* hist = env->GetByteArrayElements(_hist, 0);
+    memcpy(p.hist, hist, len_hist);
+    env->ReleaseByteArrayElements(_hist, hist, 0);
     sendPacket(p);
 }
 
