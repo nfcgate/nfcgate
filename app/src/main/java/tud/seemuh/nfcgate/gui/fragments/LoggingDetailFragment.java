@@ -15,12 +15,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.util.NfcComm;
+import tud.seemuh.nfcgate.util.NfcSession;
 import tud.seemuh.nfcgate.util.db.SessionLoggingContract;
 import tud.seemuh.nfcgate.util.db.SessionLoggingDbHelper;
 
@@ -30,6 +32,9 @@ import tud.seemuh.nfcgate.util.db.SessionLoggingDbHelper;
 public class LoggingDetailFragment extends Fragment {
     private ListView mListView;
     private ArrayAdapter<NfcComm> mListAdapter;
+
+    private TextView mSessionTitle;
+    private TextView mSessionDate;
 
     private long mSessionID;
 
@@ -41,6 +46,8 @@ public class LoggingDetailFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_logging_detail, container, false);
 
         mListView = (ListView) v.findViewById(R.id.sessionDetailList);
+        mSessionTitle = (TextView) v.findViewById(R.id.loggingDetailsTitleTextView);
+        mSessionDate = (TextView) v.findViewById(R.id.loggingDetailsDateTextView);
 
         mListAdapter = new ArrayAdapter<NfcComm>(v.getContext(), R.layout.fragment_logging_row);
 
@@ -75,6 +82,7 @@ public class LoggingDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        refreshSessionInfo();
         refreshEventList();
     }
 
@@ -82,6 +90,10 @@ public class LoggingDetailFragment extends Fragment {
         // TODO This is a little hack-y
         mEventList.clear();
         new AsyncDetailLoader().execute(mSessionID);
+    }
+
+    private void refreshSessionInfo() {
+        new AsyncSessionLoader().execute(mSessionID);
     }
 
     @Override
@@ -123,6 +135,15 @@ public class LoggingDetailFragment extends Fragment {
         mListAdapter.clear();
         mListAdapter.addAll(mEventList);
         mListAdapter.notifyDataSetChanged();
+    }
+
+    protected void setSessionDetails(NfcSession sess) {
+        if (sess.getName() != null) {
+            mSessionTitle.setText("Session: " + sess.getName());
+        } else {
+            mSessionTitle.setText("Session " + sess.getID());
+        }
+        mSessionDate.setText("Recorded: " + sess.getDate());
     }
 
     private class AsyncDetailLoader extends AsyncTask<Long, Void, Cursor> {
@@ -231,6 +252,71 @@ public class LoggingDetailFragment extends Fragment {
             } while (c.moveToNext()); // Iterate until all elements of the cursor have been processed
             // Close the cursor, freeing the used memory
             updateSessionView();
+            Log.d(TAG, "onPostExecute: Closing connection and finishing");
+            c.close();
+            mDB.close();
+        }
+    }
+
+    private class AsyncSessionLoader extends AsyncTask<Long, Void, Cursor> {
+        private final String TAG = "AsyncSessionLoader";
+
+        private SQLiteDatabase mDB;
+
+        @Override
+        protected Cursor doInBackground(Long... longs) {
+            Log.d(TAG, "doInBackground: Started");
+            // Get a DB object
+            SessionLoggingDbHelper dbHelper = new SessionLoggingDbHelper(getActivity());
+            mDB = dbHelper.getReadableDatabase();
+
+            // Construct query
+            // Define Projection
+            String[] projection = {
+                    SessionLoggingContract.SessionMeta._ID,
+                    SessionLoggingContract.SessionMeta.COLUMN_NAME_NAME,
+                    SessionLoggingContract.SessionMeta.COLUMN_NAME_DATE,
+            };
+            // Define Sort order
+            String sortorder = SessionLoggingContract.SessionMeta.COLUMN_NAME_DATE + " DESC";
+            // Define Selection
+            String selection = SessionLoggingContract.SessionMeta._ID + " LIKE ?";
+            // Define Selection Arguments
+            String[] selectionArgs = {String.valueOf(longs[0])};
+
+            // Perform query
+            Log.d(TAG, "doInBackground: Performing query");
+            Cursor c = mDB.query(
+                    SessionLoggingContract.SessionMeta.TABLE_NAME,  // Target Table
+                    projection,    // Which fields are we interested in?
+                    selection,     // Selection clause
+                    selectionArgs, // Arguments to clause
+                    null,          // Grouping (not desired in this case)
+                    null,          // Filtering (not desired in this case)
+                    sortorder      // Sort order
+            );
+
+            Log.d(TAG, "doInBackground: Query done, returning");
+            return c;
+        }
+
+        @Override
+        protected void onPostExecute(Cursor c) {
+            // Move to the first element of the cursor
+            Log.d(TAG, "onPostExecute: Beginning processing of Sessions");
+            if (!c.moveToFirst()) {
+                Log.i(TAG, "onPostExecute: Cursor empty, doing nothing.");
+                return;
+            }
+
+            // prepare session object
+            long ID = c.getLong(c.getColumnIndexOrThrow(SessionLoggingContract.SessionMeta._ID));
+            String name = c.getString(c.getColumnIndexOrThrow(SessionLoggingContract.SessionMeta.COLUMN_NAME_NAME));
+            String date = c.getString(c.getColumnIndexOrThrow(SessionLoggingContract.SessionMeta.COLUMN_NAME_DATE));
+            NfcSession session = new NfcSession(date, ID, name);
+
+            // Update session information
+            setSessionDetails(session);
             Log.d(TAG, "onPostExecute: Closing connection and finishing");
             c.close();
             mDB.close();
