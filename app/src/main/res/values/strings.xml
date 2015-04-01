@@ -10,6 +10,8 @@
     <string name="action_delete">Delete</string>
     <string name="action_edit">Edit</string>
 
+    <string name="state_loading">Loading...</string>
+
     <string name="aboutpage">DISCLAIMER \n \n \nThis application was built solely for research purposes. Do NOT misuse this application for malicious activities. \n \nThis application is licensed under the TBD license.\nIt uses the following libraries:\n - Cydia Substrate (Licensed under the LGPLv3)\n - LibNFC (Licensed under the Apache License, v2.0)\n - Protobuf (Licensed under the BSD 3-Clause license) \n \nWe take no responsibility for, and will not be liable for, the application behaving silly due to technical issues beyond our control. \n \n \n \n NFCgate v1.0 </string>
 
     <string name="Yes">Yes</string>

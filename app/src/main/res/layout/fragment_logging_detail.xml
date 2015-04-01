@@ -16,7 +16,8 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/loggingDetailsTitleTextView"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:text="@string/state_loading" />
 
         <TextView
             android:layout_width="wrap_content"
