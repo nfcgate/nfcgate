@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,6 +46,7 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        // Inflate options menu
         menuInflater.inflate(R.menu.menu_log, menu);
     }
 
@@ -55,6 +55,7 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_refresh:
+                // Refresh button clicked
                 refreshSessionList();
                 return true;
             default:
@@ -64,14 +65,19 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate layout
         View v = inflater.inflate(R.layout.fragment_logging_list, container, false);
 
+        // Get our ListView
         mListView = (ListView) v.findViewById(R.id.sessionList);
 
+        // Create an ArrayAdapter to display our NFC Sessions
         mListAdapter = new ArrayAdapter<NfcSession>(v.getContext(), R.layout.fragment_logging_row);
 
+        // Attach the adapter
         mListView.setAdapter(mListAdapter);
 
+        // Set up onClick-Listeners
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -100,24 +106,30 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
         // start a new activity here to display the details of the clicked list element
         NfcSession selectedSession = mListAdapter.getItem(pos);
         Intent intent = new Intent(getActivity(), LoggingDetailActivity.class);
+        // Provide new activity with the SessionID via the Extras Bundle
         intent.putExtra("SessionID", selectedSession.getID());
         startActivity(intent);
     }
 
     private void refreshSessionList() {
         // TODO This is a little hack-y
+        // Clear existing session data
         mSessions.clear();
+        // Clear display
         mListAdapter.clear();
+        // Load new values
         new AsyncSessionLoader().execute();
     }
 
-    // Private helper function to notify the GUI thread if no sessions exist
+    // Helper function to notify the GUI thread if no sessions exist
     private void notifyNoSessions() {
         Toast.makeText(getActivity(), "No logged sessions found", Toast.LENGTH_LONG).show();
     }
 
     protected boolean onLongListItemClick(View v, int pos, long id) {
+        // Get the long-clicked Session object
         NfcSession sess = mListAdapter.getItem(pos);
+        // Show the long-press menu
         getLongPressMenu(sess.getID()).show();
         return true;
     }
@@ -131,12 +143,13 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
     }
 
     public void updateSessionView() {
+        // Add all items to the ArrayAdapter
         mListAdapter.addAll(mSessions);
+        // Notify the ArrayAdapter that the data has changed
         mListAdapter.notifyDataSetChanged();
     }
 
     public static LoggingFragment getInstance() {
-
         if(mFragment == null) {
             mFragment = new LoggingFragment();
         }
@@ -144,6 +157,7 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
     }
 
     private AlertDialog getDeleteConfirmationDialog(long sessionID) {
+        // Create an AlertDialog to confirm the deletion of a session
         mActionSessionID = sessionID;
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(getString(R.string.deletion_dialog_text))
@@ -155,6 +169,7 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
     }
 
     private AlertDialog getLongPressMenu(long sessionID) {
+        // Create an AlertDialog to display the long-press menu
         mActionSessionID = sessionID;
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setItems(R.array.array_log_menu, this);
@@ -163,7 +178,7 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
 
     @Override
     public void onClick(DialogInterface dialogInterface, int which) {
-        if (which == DialogInterface.BUTTON_POSITIVE) {
+        if (which == DialogInterface.BUTTON_POSITIVE) { // Delete dialog - delete confirmed
             new AsyncSessionDeleter().execute(mActionSessionID);
         } else if (which == 0) { // List-Interface - Rename
             Toast.makeText(getActivity(), "Rename not yet implemented", Toast.LENGTH_LONG).show();
@@ -174,6 +189,7 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
     }
 
     protected void confirmSessionDelete() {
+        // Session has been deleted. Notify the user and refresh session list
         Toast.makeText(getActivity(), getString(R.string.deletion_done), Toast.LENGTH_LONG).show();
         refreshSessionList();
     }

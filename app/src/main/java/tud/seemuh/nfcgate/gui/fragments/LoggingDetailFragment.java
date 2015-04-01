@@ -46,16 +46,21 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate the layout
         View v = inflater.inflate(R.layout.fragment_logging_detail, container, false);
 
+        // Get references to all used Views
         mListView = (ListView) v.findViewById(R.id.sessionDetailList);
         mSessionTitle = (TextView) v.findViewById(R.id.loggingDetailsTitleTextView);
         mSessionDate = (TextView) v.findViewById(R.id.loggingDetailsDateTextView);
 
+        // Create ArrayAdapter to display our NfcComm objects
         mListAdapter = new ArrayAdapter<NfcComm>(v.getContext(), R.layout.fragment_logging_row);
 
+        // Attach the adapter
         mListView.setAdapter(mListAdapter);
 
+        // Set up onClick-Listeners
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -71,9 +76,13 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
             }
         });
 
+        // Get the parameters
         Bundle bundle = getArguments();
         if (bundle != null) {
             mSessionID = bundle.getLong("SessionID");
+        } else {
+            // If we were not provided with a Bundle, exit (something is wrong)
+            getActivity().finish();
         }
 
         // Notify System that we would like to add an options menu.
@@ -85,7 +94,9 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
     @Override
     public void onResume() {
         super.onResume();
+        // Refresh information about the session...
         refreshSessionInfo();
+        // ...and its events
         refreshEventList();
     }
 
@@ -113,7 +124,7 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
                 // TODO
                 return true;
             case R.id.action_delete:
-                deleteSession();
+                deleteSession();  // Delete button pressed
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -121,13 +132,13 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
     }
 
     protected boolean onLongListItemClick(View v, int pos, long id) {
-        // TODO Create and show menu to delete, rename, ...
+        // Long-Press events. Currently not used.
         return true;
     }
 
     protected void onListItemClick(View v, int pos, long id) {
         // start a new activity here to display the details of the clicked list element
-        // TODO
+        // Currently not used
     }
 
     protected void deleteSession() {
@@ -135,6 +146,7 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
     }
 
     private AlertDialog getDeleteConfirmationDialog() {
+        // "Delete"-Confirmation dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(getString(R.string.deletion_dialog_text))
                 .setPositiveButton(getString(R.string.deletion_dialog_confirm), this)
@@ -152,7 +164,9 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
     }
 
     protected void confirmDelete() {
+        // Confirm that the session has been deleted
         Toast.makeText(getActivity(), getString(R.string.deletion_done), Toast.LENGTH_LONG).show();
+        // Exit from the activity, as the underlying session has been deleted
         getActivity().finish();
     }
 
@@ -161,12 +175,16 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
     }
 
     protected void updateSessionView() {
+        // Clear the display of the ArrayAdapter
         mListAdapter.clear();
+        // Add new information
         mListAdapter.addAll(mEventList);
+        // Notify that the contents have changed
         mListAdapter.notifyDataSetChanged();
     }
 
     protected void setSessionDetails(NfcSession sess) {
+        // Set the session details (called from an AsyncTask)
         if (sess.getName() != null) {
             mSessionTitle.setText("Session: " + sess.getName());
         } else {
