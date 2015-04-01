@@ -43,11 +43,12 @@ public class RelayFragment extends Fragment
     private static RelayFragment mFragment;
 
     //Connection Client
-    protected HighLevelNetworkHandler mConnectionClient;
+    //initialization on object creation needed
+    protected HighLevelNetworkHandler mConnectionClient = HighLevelProtobufHandler.getInstance();
 
     // NFC Manager
-    // should be able being set by activity
-    public NfcManager mNfcManager;
+    // initialization on object creation needed
+    public NfcManager mNfcManager = NfcManager.getInstance();
 
     // Sink Manager
     private SinkManager mSinkManager;
@@ -106,10 +107,6 @@ public class RelayFragment extends Fragment
         mPartnerDevice = (TextView) mRelayView.findViewById(R.id.editOtherDevice);
         mConnecttoSession.requestFocus();
         mtoken = (TextView) mRelayView.findViewById(R.id.token);
-
-        // Create connection client
-        mConnectionClient = HighLevelProtobufHandler.getInstance();
-        mNfcManager = NfcManager.getInstance();
 
         // Pass necessary references to ConnectionClient
         mConnectionClient.setDebugView(mDebuginfo);

@@ -283,6 +283,8 @@ public class NfcManager {
         byte sak    = mReader.getSak();
         byte[] hist = mReader.getHistoricalBytes();
 
+        Log.d(TAG, "getAnticolData: HIST: " + Utils.bytesToHex(hist));
+
         // Create NfcComm object
         NfcComm anticol = new NfcComm(atqa, sak, hist, uid);
 
@@ -305,8 +307,8 @@ public class NfcManager {
         byte[] a_atqa = anticol.getAtqa();
         byte atqa = a_atqa.length > 0 ? a_atqa[a_atqa.length-1] : 0;
 
-        byte[] a_hist = anticol.getHist();
-        byte hist = a_hist.length > 0 ? a_atqa[0] : 0;
+        byte[] hist = anticol.getHist();
+        //byte hist = a_hist.length > 0 ? a_atqa[0] : 0;
 
         byte sak = anticol.getSak();
         byte[] uid = anticol.getUid();
