@@ -1,5 +1,7 @@
 package tud.seemuh.nfcgate.gui.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -31,12 +33,14 @@ import tud.seemuh.nfcgate.util.db.SessionLoggingDbHelper;
 /**
  * Display the session log
  */
-public class LoggingFragment extends Fragment{
+public class LoggingFragment extends Fragment implements DialogInterface.OnClickListener {
 
     private static LoggingFragment mFragment;
 
     private ListView mListView;
     private ArrayAdapter<NfcSession> mListAdapter;
+
+    private long mDeletionSessionID;
 
     // List of Session objects
     private List<NfcSession> mSessions = new ArrayList<NfcSession>();
@@ -166,6 +170,29 @@ public class LoggingFragment extends Fragment{
         return mFragment;
     }
 
+    private AlertDialog getDeleteConfirmationDialog(long sessionID) {
+        mDeletionSessionID = sessionID;
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(getString(R.string.deletion_dialog_text))
+                .setPositiveButton(getString(R.string.deletion_dialog_confirm), this)
+                .setNegativeButton(getString(R.string.deletion_dialog_cancel), this)
+                .setTitle(getString(R.string.title_dialog_delete));
+        // Create the AlertDialog object and return it
+        return builder.create();
+    }
+
+    @Override
+    public void onClick(DialogInterface dialogInterface, int which) {
+        if (which == DialogInterface.BUTTON_POSITIVE) {
+            new AsyncSessionDeleter().execute(mDeletionSessionID);
+        }
+    }
+
+    protected void confirmSessionDelete() {
+        Toast.makeText(getActivity(), getString(R.string.deletion_done), Toast.LENGTH_LONG).show();
+        refreshSessionList();
+    }
+
     private class AsyncSessionLoader extends AsyncTask<Void, Void, Cursor> {
         private final String TAG = "AsyncSessionLoader";
 
@@ -231,6 +258,42 @@ public class LoggingFragment extends Fragment{
             updateSessionView();
             Log.d(TAG, "onPostExecute: Closing connection and finishing");
             c.close();
+            mDB.close();
+        }
+    }
+
+    private class AsyncSessionDeleter extends AsyncTask<Long, Void, Void> {
+        private final String TAG = "AsyncSessionDeleter";
+
+        private SQLiteDatabase mDB;
+
+        @Override
+        protected Void doInBackground(Long... longs) {
+            Log.d(TAG, "doInBackground: Started");
+            // Get a DB object
+            SessionLoggingDbHelper dbHelper = new SessionLoggingDbHelper(getActivity());
+            mDB = dbHelper.getWritableDatabase();
+
+            // Construct query
+            // Define Selection
+            String selection = SessionLoggingContract.SessionMeta._ID + " LIKE ?";
+            // Define Selection Arguments
+            String[] selectionArgs = { String.valueOf(longs[0]) };
+
+            // Perform query
+            Log.d(TAG, "doInBackground: Performing deletion");
+            mDB.delete(
+                    SessionLoggingContract.SessionMeta.TABLE_NAME,
+                    selection,
+                    selectionArgs
+            );
+
+            Log.d(TAG, "doInBackground: Deletion done, returning");
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
             mDB.close();
         }
     }
