@@ -141,8 +141,7 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
 
     protected boolean onLongListItemClick(View v, int pos, long id) {
         // Get the long-clicked Session object
-        NfcSession sess = mListAdapter.getItem(pos);
-        mActionSession = sess;
+        mActionSession = mListAdapter.getItem(pos);
         // Show the long-press menu
         getLongPressMenu().show();
         return true;
@@ -295,6 +294,7 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
             do {
                 // prepare session object
                 long ID = c.getLong(c.getColumnIndexOrThrow(SessionLoggingContract.SessionMeta._ID));
+                Log.d(TAG, "onPostExecute: Processing Session " + ID);
                 String name = c.getString(c.getColumnIndexOrThrow(SessionLoggingContract.SessionMeta.COLUMN_NAME_NAME));
                 String date = c.getString(c.getColumnIndexOrThrow(SessionLoggingContract.SessionMeta.COLUMN_NAME_DATE));
                 NfcSession session = new NfcSession(date, ID, name);
