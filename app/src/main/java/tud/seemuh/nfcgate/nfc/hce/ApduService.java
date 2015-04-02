@@ -28,6 +28,7 @@ public class ApduService extends HostApduService {
 
     public ApduService() {
         mNfcManager.setApduService(this);
+
     }
 
     /**

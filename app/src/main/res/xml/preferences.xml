@@ -50,5 +50,10 @@
             android:summary="@string/pref_switches_workaround_warning_desc"
             android:key="@string/pref_key_workaroundWarn"
             android:defaultValue="false" />
+        <CheckBoxPreference
+            android:title="@string/pref_switches_workaround_disable"
+            android:summary="@string/pref_switches_workaround_disable_desc"
+            android:key="@string/pref_key_workaround_off"
+            android:defaultValue="false" />
     </PreferenceCategory>
 </PreferenceScreen>
