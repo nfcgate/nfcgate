@@ -47,7 +47,7 @@ public class RelayFragment extends Fragment
 
     // NFC Manager
     // initialization on object creation needed
-    public NfcManager mNfcManager = NfcManager.getInstance();
+    public NfcManager mNfcManager;
 
     // Sink Manager
     private SinkManager mSinkManager;
@@ -106,6 +106,9 @@ public class RelayFragment extends Fragment
         mPartnerDevice = (TextView) mRelayView.findViewById(R.id.editOtherDevice);
         mConnecttoSession.requestFocus();
         mtoken = (TextView) mRelayView.findViewById(R.id.token);
+
+        // Get an NFC Manager
+        mNfcManager = new NfcManager(getActivity());
 
         // Pass necessary references to ConnectionClient
         mConnectionClient.setDebugView(mDebuginfo);

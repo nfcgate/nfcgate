@@ -1,10 +1,14 @@
 package tud.seemuh.nfcgate.nfc;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.nfc.Tag;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.concurrent.BlockingQueue;
 
+import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.nfc.hce.ApduService;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
@@ -43,17 +47,21 @@ public class NfcManager {
     private BCM20793Workaround mBroadcomWorkaroundRunnable;
     private Thread mBroadcomWorkaroundThread;
 
+    // Context
+    private Context mContext;
+
     private static NfcManager mInstance = null;
 
 
     // Constructor
-    public NfcManager () {
+    public NfcManager (Context ctx) {
         mInstance = this;
+        mContext = ctx;
     }
 
 
-    public static NfcManager getInstance() {
-        if (mInstance == null) mInstance = new NfcManager();
+    public static NfcManager getInstance() throws Exception {
+        if (mInstance == null) throw new Exception("getInstance without initialized NfcManager");
         return mInstance;
     }
 
@@ -332,8 +340,10 @@ public class NfcManager {
         // the keepalive function from running and thus prevents it from setting the mode of the card
         // Other devices work fine without this workaround, so we only activate it on bugged chipsets
         // TODO Only activate for DESFire cards
-        if (BCM20793Workaround.workaroundNeeded()) {
-            Log.i(TAG, "setTag: Problematic broadcom chip found, activate workaround");
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
+        boolean workaroundDisabled = pref.getBoolean(mContext.getString(R.string.pref_key_workaround_off), false);
+        if (BCM20793Workaround.workaroundNeeded() && !workaroundDisabled) {
+            Log.i(TAG, "StartWorkaround: Problematic broadcom chip found, activate workaround");
 
             // Initialize a runnable object
             mBroadcomWorkaroundRunnable = new BCM20793Workaround(mTag);
@@ -344,8 +354,10 @@ public class NfcManager {
 
             // Notify the Handler
             if (mNetworkHandler != null) mNetworkHandler.notifyCardWorkaroundConnected();
+        } else if (!BCM20793Workaround.workaroundNeeded()) {
+            Log.i(TAG, "StartWorkaround: No problematic broadcom chipset found, leaving workaround inactive");
         } else {
-            Log.i(TAG, "setTag: No problematic broadcom chipset found, leaving workaround inactive");
+            Log.i(TAG, "StartWorkaround: Workaround disabled in settings.");
         }
     }
 

@@ -49,6 +49,8 @@
     <string name="pref_switches_reader_mode_desc">Sets the device into Reader Mode, which disables Android Beam. However, this also prevents the phone from working as a Card Emulator.</string>
     <string name="pref_switches_workaround_warning">Hide workaround warning</string>
     <string name="pref_switches_workaround_warning_desc">For some cards, a workaround is required. This setting hides the warning message on this topic</string>
+    <string name="pref_switches_workaround_disable">Disable workaround</string>
+    <string name="pref_switches_workaround_disable_desc">Disable the Workaround (not recommended unless you experience problems)</string>
 
     <!-- Strings for preference keys-->
     <string name="pref_key_ip">pref_ip</string>
@@ -57,6 +59,7 @@
     <string name="pref_key_readermode">pref_readermode</string>
     <string name="pref_key_workaroundWarn">pref_workaroundwarning</string>
     <string name="pref_key_logfile">pref_logtofile</string>
+    <string name="pref_key_workaround_off">pref_workaroundoff</string>
 
     <!-- Strings for preference error messages -->
     <string name="pref_error_ip_title">Invalid IP</string>
