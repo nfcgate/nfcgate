@@ -2,6 +2,7 @@ package tud.seemuh.nfcgate.gui.fragments;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +42,7 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
     private TextView mSessionDate;
 
     private long mSessionID;
+    private NfcSession mSession;
 
     private List<NfcComm> mEventList = new ArrayList<NfcComm>();
 
@@ -121,7 +124,7 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_edit:
-                // TODO
+                renameSession();
                 return true;
             case R.id.action_delete:
                 deleteSession();  // Delete button pressed
@@ -145,6 +148,10 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
         getDeleteConfirmationDialog().show();
     }
 
+    protected void renameSession() {
+        getRenameSessionDialog().show();
+    }
+
     private AlertDialog getDeleteConfirmationDialog() {
         // "Delete"-Confirmation dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -156,6 +163,37 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
         return builder.create();
     }
 
+    private AlertDialog getRenameSessionDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        // Set up text
+        builder.setTitle(getText(R.string.title_dialog_rename));
+        builder.setMessage(getText(R.string.rename_dialog_text));
+
+        // Add input value
+        final EditText input = new EditText(getActivity());
+        if (mSession.getName() != null) {
+            input.setText(mSession.getName());
+        }
+        builder.setView(input);
+
+        builder.setPositiveButton(getString(R.string.rename_dialog_confirm), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                doSessionRename(input.getText().toString());
+            }
+        });
+
+        builder.setNegativeButton(getString(R.string.rename_dialog_cancel), this);
+
+        return builder.create();
+    }
+
+    private void doSessionRename(String name) {
+        mSession.setName(name);
+        new AsyncSessionRenamer().execute(mSession);
+    }
+
     @Override
     public void onClick(DialogInterface dialogInterface, int which) {
         if (which == DialogInterface.BUTTON_POSITIVE) {
@@ -165,9 +203,14 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
 
     protected void confirmDelete() {
         // Confirm that the session has been deleted
-        Toast.makeText(getActivity(), getString(R.string.deletion_done), Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), getString(R.string.deletion_done), Toast.LENGTH_SHORT).show();
         // Exit from the activity, as the underlying session has been deleted
         getActivity().finish();
+    }
+
+    protected void confirmSessionRename() {
+        Toast.makeText(getActivity(), getString(R.string.rename_done), Toast.LENGTH_SHORT).show();
+        refreshSessionInfo();
     }
 
     protected void addNfcEvent(NfcComm nfccomm) {
@@ -191,6 +234,7 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
             mSessionTitle.setText("Session " + sess.getID());
         }
         mSessionDate.setText("Recorded: " + sess.getDate());
+        mSession = sess;
     }
 
     private class AsyncDetailLoader extends AsyncTask<Long, Void, Cursor> {
@@ -404,6 +448,47 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
         protected void onPostExecute(Void v) {
             mDB.close();
             confirmDelete();
+        }
+    }
+
+    private class AsyncSessionRenamer extends AsyncTask<NfcSession, Void, Void> {
+        private final String TAG = "AsyncSessionRenamer";
+
+        private SQLiteDatabase mDB;
+
+        @Override
+        protected Void doInBackground(NfcSession... nfc) {
+            Log.d(TAG, "doInBackground: Started");
+            // Get a DB object
+            SessionLoggingDbHelper dbHelper = new SessionLoggingDbHelper(getActivity());
+            mDB = dbHelper.getWritableDatabase();
+
+            // Construct query
+            // Content values
+            ContentValues values = new ContentValues();
+            values.put(SessionLoggingContract.SessionMeta.COLUMN_NAME_NAME, nfc[0].getName());
+            // Define Selection
+            String selection = SessionLoggingContract.SessionMeta._ID + " LIKE ?";
+            // Define Selection Arguments
+            String[] selectionArgs = { String.valueOf(nfc[0].getID()) };
+
+            // Perform query
+            Log.d(TAG, "doInBackground: Performing update");
+            mDB.update(
+                    SessionLoggingContract.SessionMeta.TABLE_NAME,
+                    values,
+                    selection,
+                    selectionArgs
+            );
+
+            Log.d(TAG, "doInBackground: Update done, returning");
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            mDB.close();
+            confirmSessionRename();
         }
     }
 }
