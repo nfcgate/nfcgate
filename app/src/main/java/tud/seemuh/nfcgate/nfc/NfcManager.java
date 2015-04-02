@@ -54,15 +54,18 @@ public class NfcManager {
 
 
     // Constructor
-    public NfcManager (Context ctx) {
+    public NfcManager () {
         mInstance = this;
-        mContext = ctx;
     }
 
 
-    public static NfcManager getInstance() throws Exception {
-        if (mInstance == null) throw new Exception("getInstance without initialized NfcManager");
+    public static NfcManager getInstance() {
+        if (mInstance == null) mInstance = new NfcManager();
         return mInstance;
+    }
+
+    public void setContext(Context ctx) {
+        mContext = ctx;
     }
 
 

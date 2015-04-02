@@ -17,7 +17,7 @@ import tud.seemuh.nfcgate.util.Utils;
 public class ApduService extends HostApduService {
     private final static String TAG = "ApduService";
 
-    private NfcManager mNfcManager;
+    private NfcManager mNfcManager = NfcManager.getInstance();
 
     /**
      * empty apdu byte array
@@ -27,11 +27,6 @@ public class ApduService extends HostApduService {
     private final byte[] DONT_RESPOND = new byte[]{};
 
     public ApduService() {
-        try {
-            mNfcManager = NfcManager.getInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         mNfcManager.setApduService(this);
 
     }
