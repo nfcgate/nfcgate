@@ -107,6 +107,9 @@ public class RelayFragment extends Fragment
         mConnecttoSession.requestFocus();
         mtoken = (TextView) mRelayView.findViewById(R.id.token);
 
+        // Pass reference to Context to the NfcManager
+        mNfcManager.setContext(getActivity());
+
         // Pass necessary references to ConnectionClient
         mConnectionClient.setDebugView(mDebuginfo);
         mConnectionClient.setConnectionStatusView(mConnStatus);
