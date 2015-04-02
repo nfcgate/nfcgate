@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
 
     private ListView mListView;
     private ArrayAdapter<NfcSession> mListAdapter;
+    private TextView mNotifyTextView;
 
     private NfcSession mActionSession;
 
@@ -72,6 +74,8 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
 
         // Get our ListView
         mListView = (ListView) v.findViewById(R.id.sessionList);
+        // and our TextView
+        mNotifyTextView = (TextView) v.findViewById(R.id.loggingFragmentNotifyTextView);
 
         // Create an ArrayAdapter to display our NFC Sessions
         mListAdapter = new ArrayAdapter<NfcSession>(v.getContext(), R.layout.fragment_logging_row);
@@ -98,10 +102,14 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
         // We want to introduce our own icons to the Action bar => Set HasOptionsMenu to true
         this.setHasOptionsMenu(true);
 
+        return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         // Load values from the database
         refreshSessionList();
-
-        return v;
     }
 
     protected void onListItemClick(View v, int pos, long id) {
@@ -116,6 +124,8 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
     private void refreshSessionList() {
         // TODO This is a little hack-y
         // Clear existing session data
+        mNotifyTextView.setText("");
+        mNotifyTextView.setVisibility(TextView.GONE);
         mSessions.clear();
         // Clear display
         mListAdapter.clear();
@@ -125,7 +135,8 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
 
     // Helper function to notify the GUI thread if no sessions exist
     private void notifyNoSessions() {
-        Toast.makeText(getActivity(), "No logged sessions found", Toast.LENGTH_LONG).show();
+        mNotifyTextView.setText(getText(R.string.logging_no_sessions_found));
+        mNotifyTextView.setVisibility(View.VISIBLE);
     }
 
     protected boolean onLongListItemClick(View v, int pos, long id) {

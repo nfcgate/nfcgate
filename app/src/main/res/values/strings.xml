@@ -49,6 +49,9 @@
     <string name="rename_dialog_cancel">Cancel</string>
     <string name="rename_done">Session renamed</string>
 
+    <string name="logging_no_sessions_found">No sessions found.</string>
+    <string name="logging_notify_disabled">Session logging is disabled.</string>
+
     <!-- Strings for Settings Activity -->
     <string name="pref_default_values">Default Values</string>
     <string name="pref_default_values_ip">Server IP</string>
