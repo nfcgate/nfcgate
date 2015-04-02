@@ -1,6 +1,7 @@
 package tud.seemuh.nfcgate.gui.fragments;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -39,7 +41,7 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
     private ListView mListView;
     private ArrayAdapter<NfcSession> mListAdapter;
 
-    private long mActionSessionID;
+    private NfcSession mActionSession;
 
     // List of Session objects
     private List<NfcSession> mSessions = new ArrayList<NfcSession>();
@@ -129,8 +131,9 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
     protected boolean onLongListItemClick(View v, int pos, long id) {
         // Get the long-clicked Session object
         NfcSession sess = mListAdapter.getItem(pos);
+        mActionSession = sess;
         // Show the long-press menu
-        getLongPressMenu(sess.getID()).show();
+        getLongPressMenu().show();
         return true;
     }
 
@@ -156,9 +159,8 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
         return mFragment;
     }
 
-    private AlertDialog getDeleteConfirmationDialog(long sessionID) {
+    private AlertDialog getDeleteConfirmationDialog() {
         // Create an AlertDialog to confirm the deletion of a session
-        mActionSessionID = sessionID;
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(getString(R.string.deletion_dialog_text))
                 .setPositiveButton(getString(R.string.deletion_dialog_confirm), this)
@@ -168,9 +170,8 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
         return builder.create();
     }
 
-    private AlertDialog getLongPressMenu(long sessionID) {
+    private AlertDialog getLongPressMenu() {
         // Create an AlertDialog to display the long-press menu
-        mActionSessionID = sessionID;
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setItems(R.array.array_log_menu, this);
         return builder.create();
@@ -179,18 +180,53 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
     @Override
     public void onClick(DialogInterface dialogInterface, int which) {
         if (which == DialogInterface.BUTTON_POSITIVE) { // Delete dialog - delete confirmed
-            new AsyncSessionDeleter().execute(mActionSessionID);
+            new AsyncSessionDeleter().execute(mActionSession.getID());
         } else if (which == 0) { // List-Interface - Rename
-            Toast.makeText(getActivity(), "Rename not yet implemented", Toast.LENGTH_LONG).show();
-            // TODO
+            getRenameSessionDialog().show();
         } else if (which == 1) { // List-Interface - Delete
-            getDeleteConfirmationDialog(mActionSessionID).show();
+            getDeleteConfirmationDialog().show();
         }
+    }
+
+    private void renameSession(String name) {
+        mActionSession.setName(name);
+        new AsyncSessionRenamer().execute(mActionSession);
+    }
+
+    private AlertDialog getRenameSessionDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        // Set up text
+        builder.setTitle(getText(R.string.title_dialog_rename));
+        builder.setMessage(getText(R.string.rename_dialog_text));
+
+        // Add input value
+        final EditText input = new EditText(getActivity());
+        if (mActionSession.getName() != null) {
+            input.setText(mActionSession.getName());
+        }
+        builder.setView(input);
+
+        builder.setPositiveButton(getString(R.string.rename_dialog_confirm), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                renameSession(input.getText().toString());
+            }
+        });
+
+        builder.setNegativeButton(getString(R.string.rename_dialog_cancel), this);
+
+        return builder.create();
     }
 
     protected void confirmSessionDelete() {
         // Session has been deleted. Notify the user and refresh session list
-        Toast.makeText(getActivity(), getString(R.string.deletion_done), Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), getString(R.string.deletion_done), Toast.LENGTH_SHORT).show();
+        refreshSessionList();
+    }
+
+    protected void confirmSessionRename() {
+        Toast.makeText(getActivity(), getString(R.string.rename_done), Toast.LENGTH_SHORT).show();
         refreshSessionList();
     }
 
@@ -297,6 +333,47 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
         protected void onPostExecute(Void v) {
             mDB.close();
             confirmSessionDelete();
+        }
+    }
+
+    private class AsyncSessionRenamer extends AsyncTask<NfcSession, Void, Void> {
+        private final String TAG = "AsyncSessionRenamer";
+
+        private SQLiteDatabase mDB;
+
+        @Override
+        protected Void doInBackground(NfcSession... nfc) {
+            Log.d(TAG, "doInBackground: Started");
+            // Get a DB object
+            SessionLoggingDbHelper dbHelper = new SessionLoggingDbHelper(getActivity());
+            mDB = dbHelper.getWritableDatabase();
+
+            // Construct query
+            // Content values
+            ContentValues values = new ContentValues();
+            values.put(SessionLoggingContract.SessionMeta.COLUMN_NAME_NAME, nfc[0].getName());
+            // Define Selection
+            String selection = SessionLoggingContract.SessionMeta._ID + " LIKE ?";
+            // Define Selection Arguments
+            String[] selectionArgs = { String.valueOf(nfc[0].getID()) };
+
+            // Perform query
+            Log.d(TAG, "doInBackground: Performing update");
+            mDB.update(
+                    SessionLoggingContract.SessionMeta.TABLE_NAME,
+                    values,
+                    selection,
+                    selectionArgs
+            );
+
+            Log.d(TAG, "doInBackground: Update done, returning");
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            mDB.close();
+            confirmSessionRename();
         }
     }
 }

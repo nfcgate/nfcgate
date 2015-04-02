@@ -43,6 +43,12 @@
     <string name="deletion_dialog_cancel">Cancel</string>
     <string name="deletion_done">Session deleted</string>
 
+    <string name="title_dialog_rename">Rename Session</string>
+    <string name="rename_dialog_text">Enter a new Name for the session</string>
+    <string name="rename_dialog_confirm">Rename</string>
+    <string name="rename_dialog_cancel">Cancel</string>
+    <string name="rename_done">Session renamed</string>
+
     <!-- Strings for Settings Activity -->
     <string name="pref_default_values">Default Values</string>
     <string name="pref_default_values_ip">Server IP</string>

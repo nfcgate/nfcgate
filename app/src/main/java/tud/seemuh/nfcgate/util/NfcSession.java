@@ -39,4 +39,8 @@ public class NfcSession {
     public String getDate() {
         return mDate;
     }
+
+    public void setName(String name) {
+        mName = name;
+    }
 }
