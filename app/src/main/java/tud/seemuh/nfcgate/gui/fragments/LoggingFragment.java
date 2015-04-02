@@ -36,6 +36,7 @@ import tud.seemuh.nfcgate.util.db.SessionLoggingDbHelper;
  * Display the session log
  */
 public class LoggingFragment extends Fragment implements DialogInterface.OnClickListener {
+    private static final String TAG = "LoggingFragment";
 
     private static LoggingFragment mFragment;
 
@@ -46,7 +47,7 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
     private NfcSession mActionSession;
 
     // List of Session objects
-    private List<NfcSession> mSessions = new ArrayList<NfcSession>();
+    private ArrayList<NfcSession> mSessions = new ArrayList<NfcSession>();
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
@@ -156,8 +157,12 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
     }
 
     public void updateSessionView() {
+        for (NfcSession s : mSessions) {
+            Log.d(TAG, "updateSessionView: Session: " + s.toString());
+            mListAdapter.add(s);
+        }
         // Add all items to the ArrayAdapter
-        mListAdapter.addAll(mSessions);
+        // mListAdapter.addAll(mSessions);
         // Notify the ArrayAdapter that the data has changed
         mListAdapter.notifyDataSetChanged();
     }

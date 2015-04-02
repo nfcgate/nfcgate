@@ -87,6 +87,7 @@ public class SessionLoggingSink implements Sink {
             deleteSession();
         }
         mDB.close();
+        helper.close();
         Log.i(TAG, "run: Stopping");
     }
 
