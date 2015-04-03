@@ -95,10 +95,13 @@ public class SessionLoggingSink implements Sink {
     private void openNewSession() {
         // Prepare values object
         ContentValues values = new ContentValues();
-        // We only set the FINISHED column to false, as all other columns are set correctly
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        Date now = new Date();
+        String strDate = sdfDate.format(now);
+        // We only set the DATE column to the current date, as all other columns are set correctly
         // by default
-        values.put(SessionLoggingContract.SessionMeta.COLUMN_NAME_FINISHED,
-                SessionLoggingContract.SessionMeta.VALUE_FINISHED_FALSE);
+        values.put(SessionLoggingContract.SessionMeta.COLUMN_NAME_DATE,
+                strDate);
 
         // Insert new session object and return the ID
         mSessionID = mDB.insert(SessionLoggingContract.SessionMeta.TABLE_NAME,
@@ -151,8 +154,12 @@ public class SessionLoggingSink implements Sink {
 
         // Add values
         // Meta values
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        Date now = new Date();
+        String strDate = sdfDate.format(now);
         values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_SESSION_ID, mSessionID);
         values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_TYPE, type);
+        values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_DATE, strDate);
         // Content values
         values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_NFCDATA, msg.getData());
         if (msg.isChanged()) {
