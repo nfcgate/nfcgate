@@ -112,6 +112,8 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
         super.onResume();
         // Load values from the database
         // refreshSessionList();
+        mSessions.clear();
+        mListAdapter.clear();
         new AsyncSessionLoader().execute();
     }
 
