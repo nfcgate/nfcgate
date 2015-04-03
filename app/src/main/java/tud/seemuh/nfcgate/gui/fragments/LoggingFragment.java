@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -110,7 +111,8 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
     public void onResume() {
         super.onResume();
         // Load values from the database
-        refreshSessionList();
+        // refreshSessionList();
+        new AsyncSessionLoader().execute();
     }
 
     protected void onListItemClick(View v, int pos, long id) {
@@ -127,11 +129,15 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
         // Clear existing session data
         mNotifyTextView.setText("");
         mNotifyTextView.setVisibility(TextView.GONE);
+        mNotifyTextView.invalidate();
         mSessions.clear();
         // Clear display
         mListAdapter.clear();
-        // Load new values
-        new AsyncSessionLoader().execute();
+        // Reload Fragment, because Android is retarded.
+        FragmentTransaction tr = getFragmentManager().beginTransaction();
+        tr.detach(this);
+        tr.attach(this);
+        tr.commit();
     }
 
     // Helper function to notify the GUI thread if no sessions exist
@@ -157,12 +163,8 @@ public class LoggingFragment extends Fragment implements DialogInterface.OnClick
     }
 
     public void updateSessionView() {
-        for (NfcSession s : mSessions) {
-            Log.d(TAG, "updateSessionView: Session: " + s.toString());
-            mListAdapter.add(s);
-        }
         // Add all items to the ArrayAdapter
-        // mListAdapter.addAll(mSessions);
+        mListAdapter.addAll(mSessions);
         // Notify the ArrayAdapter that the data has changed
         mListAdapter.notifyDataSetChanged();
     }
