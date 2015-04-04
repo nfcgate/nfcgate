@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import tud.seemuh.nfcgate.gui.fragments.CloneFragment;
+import tud.seemuh.nfcgate.gui.fragments.LoggingFragment;
 import tud.seemuh.nfcgate.gui.fragments.RelayFragment;
 
 public class PagerAdapter extends FragmentPagerAdapter {
@@ -19,7 +20,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
      */
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 
 
@@ -29,7 +30,10 @@ public class PagerAdapter extends FragmentPagerAdapter {
             return "Relay Mode";
         } else if(position == 1) {
             return "Clone Mode";
-        } else {
+        } else if(position == 2) {
+        return "Logging";
+        }
+        else {
             return "Item " + (position + 1);
         }
     }
@@ -41,7 +45,8 @@ public class PagerAdapter extends FragmentPagerAdapter {
 
             case 0: return RelayFragment.getInstance();
             case 1: return CloneFragment.getInstance();
-            default: return CloneFragment.getInstance();
+            case 2: return LoggingFragment.getInstance();
+            default: return RelayFragment.getInstance();
         }
     }
 
@@ -51,6 +56,13 @@ public class PagerAdapter extends FragmentPagerAdapter {
      */
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((View) object);
+        // temporarily added a try catch block to catch rarely occurring errors :/  TODO check why these errors occur...
+        try {
+            container.removeView((View) object);
+        }
+        catch (Exception e)
+        {
+            // code which should not be reached    (at least ideally^^)
+        }
     }
 }

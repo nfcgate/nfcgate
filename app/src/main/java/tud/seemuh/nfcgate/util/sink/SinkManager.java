@@ -1,5 +1,6 @@
 package tud.seemuh.nfcgate.util.sink;
 
+import android.content.Context;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -17,6 +18,7 @@ public class SinkManager implements Runnable {
     public enum SinkType {
         FILE,
         DISPLAY_TEXTVIEW,
+        SESSION_LOG
     }
 
     // BlockingQueue linked to the HighLevelProtobufHandler
@@ -57,6 +59,17 @@ public class SinkManager implements Runnable {
         // Currently, there are no sinks that can be added without any parameters
         // If there ever are any, put them here
         Log.e(TAG, "addSink: passed Enum not handled with these parameters.");
+    }
+
+    public void addSink(SinkType sinkIdentifier, Context ctx) throws SinkInitException {
+        Sink newSink;
+        if (sinkIdentifier == SinkType.SESSION_LOG) {
+            newSink = new SessionLoggingSink(ctx);
+        } else {
+            Log.e(TAG, "addSink: passed Enum not handled with these parameters.");
+            return;
+        }
+        addSinkCommon(newSink, sinkIdentifier);
     }
 
     /**

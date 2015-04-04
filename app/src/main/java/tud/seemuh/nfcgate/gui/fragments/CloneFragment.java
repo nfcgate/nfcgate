@@ -2,6 +2,7 @@ package tud.seemuh.nfcgate.gui.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,4 +27,30 @@ public class CloneFragment extends Fragment {
 
         return mFragment;
     }
+
+    /*
+    @Override
+    public void onResume() {
+
+        super.onResume();
+        getActivity().getSupportFragmentManager().popBackStack();
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
+
+                    // handle back button
+
+                    return true;
+
+                }
+
+                return false;
+            }
+        });
+    } */
+
 }

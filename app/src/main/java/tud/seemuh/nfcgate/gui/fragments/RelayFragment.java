@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -148,6 +149,21 @@ public class RelayFragment extends Fragment
         }
 
         mConnecttoSession.requestFocus();
+         /*
+        getActivity().getSupportFragmentManager().popBackStack();
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+        @Override
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+            if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
+            // handle back button
+                return true;
+            }
+                return false;
+            }
+        }); */
+
     }
 
 
@@ -293,8 +309,9 @@ public class RelayFragment extends Fragment
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         // Determine settings for sinks
-        boolean textViewSinkActive = prefs.getBoolean(getString(R.string.pref_key_debugWindow), false);
-        boolean logfileSinkActive  = prefs.getBoolean(getString(R.string.pref_key_logfile), false);
+        boolean textViewSinkActive   = prefs.getBoolean(getString(R.string.pref_key_debugWindow), false);
+        boolean logfileSinkActive    = prefs.getBoolean(getString(R.string.pref_key_logfile), false);
+        boolean logSessionSinkActive = prefs.getBoolean(getString(R.string.pref_key_sessionlogging), false);
 
         try {
             if (textViewSinkActive) {
@@ -309,6 +326,9 @@ public class RelayFragment extends Fragment
 
                 // Initialize File Sink
                 mSinkManager.addSink(SinkManager.SinkType.FILE, strDate + ".txt");
+            }
+            if (logSessionSinkActive) {
+                mSinkManager.addSink(SinkManager.SinkType.SESSION_LOG, getActivity());
             }
         } catch (SinkInitException e) {
             e.printStackTrace();
