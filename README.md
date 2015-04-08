@@ -9,7 +9,7 @@ This application was developed for security research purposes by students of the
 ## Requirements
 - Two android phones with NFC Chips, running Android 4.4+ (API-Level 19+). Android 5 is not compatible with Substrate and will not work (see [#57](https://github.com/malexmave/nfcgate/issues/57) for the current state of our efforts to change that).
 - At least one of these devices needs to support HCE (Host Card Emulation). Most NFC-Enabled phones of the last few years should support that.
-- The HCE phone needs to use a Broadcom NFC chip (compatible phones include the Nexus 4 and 5).
+- The HCE phone needs to use `libnfc-nci` (compatible phones include the Nexus 4 and 5, more on that below).
 - The HCE phone needs to be rooted and have [Cydia Substrate](http://www.cydiasubstrate.com/) installed and enabled (see [here](https://github.com/malexmave/nfcgate/wiki/Cydia-Substrate) for help on how to get that done)
 - One server to proxy communication between the two phones (see [nfcgate-misc](https://github.com/malexmave/nfcgate-misc) repository for server code)
 
