@@ -16,7 +16,8 @@ typedef struct {
     ipctype type;
     uint8_t atqa;
     uint8_t sak;
-    uint8_t hist;
+    uint8_t hist[64];
+    uint8_t hist_len;
     uint8_t uid[64];
     uint8_t uid_len;
 } ipcpacket;

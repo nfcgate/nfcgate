@@ -14,6 +14,9 @@
     <uses-permission
         android:name="android.permission.INTERNET"
         android:required="true" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:required="true" />
 
     <!-- < / Wifi Direct > -->
     <application
@@ -22,8 +25,9 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".gui.MainActivity"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="tud.seemuh.nfcgate.main" />
@@ -32,7 +36,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Splash"
+            android:name=".gui.Splash"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -48,7 +52,7 @@
             android:name=".ActivityAlias"
             android:enabled="true"
             android:screenOrientation="portrait"
-            android:targetActivity=".MainActivity" >
+            android:targetActivity=".gui.MainActivity" >
             <intent-filter>
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
 
@@ -61,7 +65,7 @@
         </activity-alias>
 
         <service
-            android:name=".hce.ApduService"
+            android:name=".nfc.hce.ApduService"
             android:exported="true"
             android:permission="android.permission.BIND_NFC_SERVICE" >
             <intent-filter>
@@ -74,9 +78,14 @@
         </service>
 
         <activity
-            android:name=".AboutActivity"
+            android:name=".gui.AboutActivity"
             android:label="@string/title_activity_about"
+            android:parentActivityName=".gui.MainActivity"
             android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".gui.MainActivity" />
+
             <intent-filter>
                 <action android:name="tud.seemuh.nfcgate.about" />
 
@@ -84,10 +93,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".gui.SettingsActivity"
             android:label="Settings"
+            android:parentActivityName=".gui.MainActivity"
             android:screenOrientation="portrait"
             android:targetActivity="MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".gui.MainActivity" />
+
             <intent-filter>
                 <action android:name="tud.seemuh.nfcgate.settings" />
 
@@ -95,12 +109,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AboutWorkaroundActivity"
+            android:name=".gui.AboutWorkaroundActivity"
             android:label="@string/title_activity_about_workaround"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".gui.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="tud.seemuh.nfcgate.MainActivity" />
+                android:value=".gui.MainActivity" />
+        </activity>
+        <activity
+            android:name=".gui.LoggingDetailActivity"
+            android:label="@string/title_activity_logging_detail"
+            android:parentActivityName=".gui.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="tud.seemuh.nfcgate.gui.MainActivity" />
         </activity>
     </application>
 

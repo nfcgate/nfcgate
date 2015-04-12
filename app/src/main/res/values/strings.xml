@@ -2,22 +2,98 @@
 <resources>
 
     <string name="app_name">NFCgate</string>
+    <string name="title_activity_logging_detail">Session Details</string>
     <string name="action_settings">Settings</string>
     <string name="servicedesc">HostApdu</string>
     <string name="aiddescription">HostApdu Service</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+
+    <string name="state_loading">Loading...</string>
 
     <string name="aboutpage">DISCLAIMER \n \n \nThis application was built solely for research purposes. Do NOT misuse this application for malicious activities. \n \nThis application is licensed under the TBD license.\nIt uses the following libraries:\n - Cydia Substrate (Licensed under the LGPLv3)\n - LibNFC (Licensed under the Apache License, v2.0)\n - Protobuf (Licensed under the BSD 3-Clause license) \n \nWe take no responsibility for, and will not be liable for, the application behaving silly due to technical issues beyond our control. \n \n \n \n NFCgate v1.0 </string>
 
     <string name="Yes">Yes</string>
     <string name="No">No</string>
     <string name="BCMWarn"><![CDATA[
-    You are using a Broadcom BCM20793 chip, which has some known problems.
-    We are using a workaround to avoid these, but this has some side effects. Do you want to read more?
+    Android has some bugs which lead to problems with DESFire cards.
+    We are using a workaround to avoid some of these, but this has some side effects. Do you want to read more?
     ]]></string>
-    <string name="BCMWarnHeader">Device requires workaround</string>
+    <string name="BCMWarnHeader">Known issues</string>
     <string name="nevershowagain">Don\'t show this again</string>
     <string name="nevershowwarningsettings">Do not show workaround warning</string>
 
-    <string name="title_activity_about_workaround">NFCGate - Workaround Information</string>
+    <string name="title_activity_about_workaround">DESFire card information</string>
     <string name="title_activity_about">About NFCGate</string>
+
+    <string name="title_dialog_token">Enter Session Token</string>
+    <string name="token_dialog_hint">Enter token here</string>
+    <string name="token_dialog_cancel">Cancel</string>
+    <string name="token_dialog_submit">Submit Token</string>
+
+    <string name="title_dialog_enablenfc">NFC required</string>
+    <string name="enablenfc_dialog_text">To use this application, you need to enable your NFC chip. If you want, we can take you directly to the settings.</string>
+    <string name="enablenfc_dialog_cancel">Ignore</string>
+    <string name="enablenfc_dialog_confirm">Go to settings</string>
+
+    <string name="title_dialog_delete">Confirm deletion</string>
+    <string name="deletion_dialog_text">Please confirm that you want to delete this record.</string>
+    <string name="deletion_dialog_confirm">Delete</string>
+    <string name="deletion_dialog_cancel">Cancel</string>
+    <string name="deletion_done">Session deleted</string>
+
+    <string name="title_dialog_rename">Rename Session</string>
+    <string name="rename_dialog_text">Enter a new Name for the session</string>
+    <string name="rename_dialog_confirm">Rename</string>
+    <string name="rename_dialog_cancel">Cancel</string>
+    <string name="rename_done">Session renamed</string>
+
+    <string name="logging_no_sessions_found">No sessions found.</string>
+    <string name="logging_notify_disabled">Session logging is disabled.</string>
+
+    <!-- Strings for Settings Activity -->
+    <string name="pref_default_values">Default Values</string>
+    <string name="pref_default_values_ip">Server IP</string>
+    <string name="pref_default_values_ip_desc">Enter the IP where the NFCGate Server application will be running</string>
+    <string name="pref_default_values_port">Port</string>
+    <string name="pref_default_values_port_desc">Enter the default port for the NFCGate Server application (usually 5566)</string>
+
+    <string name="pref_logging">Logging</string>
+    <string name="pref_logging_debug_window">Enable Debug Window</string>
+    <string name="pref_logging_debug_window_desc">Show a small window where all NFC traffic will be logged to</string>
+    <string name="pref_logging_file">Enable logging to file</string>
+    <string name="pref_logging_file_desc">Log Sessions to a file. Files are saved to /sdcard/nfcgate/logs/.</string>
+    <string name="pref_logging_session">Enable internal Logging</string>
+    <string name="pref_logging_session_desc">Logs sessions to an internal database, allowing for inspection of logs from within the app.</string>
+
+    <string name="pref_switches">Advanced Options</string>
+    <string name="pref_switches_reader_mode">Enable NFC Reader Mode</string>
+    <string name="pref_switches_reader_mode_desc">Sets the device into Reader Mode, which disables Android Beam. However, this also prevents the phone from working as a Card Emulator.</string>
+    <string name="pref_switches_workaround_warning">Hide workaround warning</string>
+    <string name="pref_switches_workaround_warning_desc">For some cards, a workaround is required. This setting hides the warning message on this topic</string>
+    <string name="pref_switches_workaround_disable">Disable workaround</string>
+    <string name="pref_switches_workaround_disable_desc">Disable the Workaround (not recommended unless you experience problems)</string>
+
+    <!-- Strings for preference keys-->
+    <string name="pref_key_ip">pref_ip</string>
+    <string name="pref_key_port">pref_port</string>
+    <string name="pref_key_debugWindow">pref_debugwindow</string>
+    <string name="pref_key_readermode">pref_readermode</string>
+    <string name="pref_key_workaroundWarn">pref_workaroundwarning</string>
+    <string name="pref_key_logfile">pref_logtofile</string>
+    <string name="pref_key_sessionlogging">pref_logtosqlite</string>
+    <string name="pref_key_workaround_off">pref_workaroundoff</string>
+
+    <!-- Strings for preference error messages -->
+    <string name="pref_error_ip_title">Invalid IP</string>
+    <string name="pref_error_ip_text">The IP you entered was incorrect. Please enter a valid IP</string>
+    <string name="pref_error_port_title">Invalid Port</string>
+    <string name="pref_error_port_text">The port you entered was incorrect. Please enter a valid port</string>
+
+    <!-- Array for action select menu in Log overview -->
+    <string-array name="array_log_menu">
+        <item>Rename</item>
+        <item>Delete</item>
+    </string-array>
 </resources>

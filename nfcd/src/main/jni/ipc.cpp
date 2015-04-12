@@ -46,12 +46,13 @@ static void handleClient(int sock) {
                 LOGIPC("CONFIGURE");
                 patchValues.atqa = p.atqa;
                 patchValues.sak = p.sak;
-                patchValues.hist = p.hist;
+                patchValues.hist_len = p.hist_len;
                 patchValues.uid_len = p.uid_len;
-                if(p.uid_len > sizeof(patchValues.uid)) {
+                if(p.uid_len > sizeof(patchValues.uid) || p.hist_len > sizeof(patchValues.hist)) {
                     LOGIPC("E invalid ipc packet");
                 }
                 memcpy(patchValues.uid, p.uid, p.uid_len);
+                memcpy(patchValues.hist, p.hist, p.hist_len);
             break;
         }
     }
