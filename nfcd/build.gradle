@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.1.0"
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 19
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
         ndk {
@@ -16,6 +16,11 @@ android {
             abiFilters "armeabi"
         }
     }
+
+    sourceSets.main {
+        jniLibs.srcDir 'src/main/libs'
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -23,9 +28,6 @@ android {
         }
     }
     productFlavors {
-    }
-    sourceSets.main {
-        jniLibs.srcDir 'src/main/libs'
     }
 }
 
