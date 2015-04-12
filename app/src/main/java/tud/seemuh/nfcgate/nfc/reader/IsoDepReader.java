@@ -6,6 +6,9 @@ import android.nfc.tech.NfcA;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.Arrays;
+
+import tud.seemuh.nfcgate.util.Utils;
 
 /**
  * Implements an NFCTagReader using the IsoDep technology
@@ -26,6 +29,7 @@ public class IsoDepReader implements NFCTagReader {
         try {
             // Connect to the NFC card
             mAdapter.connect();
+            mAdapter.setTimeout(5000);
         } catch (Exception e) {
             Log.e(TAG, "Constructor: Encountered Exception: ", e);
         }
@@ -40,8 +44,9 @@ public class IsoDepReader implements NFCTagReader {
     public byte[] sendCmd(byte[] command) {
         try {
             // Transceive command and store reply
+            Log.d(TAG, "sendCmd: R-APDU-OUT: " + Utils.bytesToHex(command));
             byte[] retval = mAdapter.transceive(command);
-            Log.d(TAG, "sendCmd: Transceived successfully");
+            Log.d(TAG, "sendCmd: R-APDU-IN: " + Utils.bytesToHex(retval));
 
             return retval;
         } catch(IOException e) {
@@ -59,6 +64,7 @@ public class IsoDepReader implements NFCTagReader {
      * unusable from this
      */
     public void closeConnection() {
+        Log.d(TAG, "closeConnection was called!");
         try{
             mAdapter.close();
         } catch(IOException e) {
