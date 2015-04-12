@@ -1,6 +1,5 @@
 package tud.seemuh.nfcgate.gui;
 
-import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -32,7 +31,7 @@ import tud.seemuh.nfcgate.gui.fragments.WorkaroundDialog;
 import tud.seemuh.nfcgate.gui.tabLayout.SlidingTabLayout;
 import tud.seemuh.nfcgate.gui.tabLogic.PagerAdapter;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
-import tud.seemuh.nfcgate.nfc.reader.BCM20793Workaround;
+import tud.seemuh.nfcgate.nfc.reader.DesfireWorkaround;
 
 public class MainActivity extends FragmentActivity
         implements ReaderCallback,EnablenfcDialog.NFCNoticeDialogListener, WorkaroundDialog.WorkaroundDialogListener {
@@ -69,7 +68,7 @@ public class MainActivity extends FragmentActivity
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean neverShowAgain = preferences.getBoolean(getString(R.string.pref_key_workaroundWarn), false);
-        if (BCM20793Workaround.workaroundNeeded() && !neverShowAgain) {
+        if (DesfireWorkaround.workaroundNeeded() && !neverShowAgain) {
             WorkaroundDialog dialog = WorkaroundDialog.getInstance(this);
             dialog.show(this.getSupportFragmentManager(), "Known issues");
         }

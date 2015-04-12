@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
  * The way we use them, the only effect should be that the Keepalive-Timer is reset every time we
  * call the connect()-Function in the loop below.
  */
-public class BCM20793Workaround implements Runnable {
+public class DesfireWorkaround implements Runnable {
     public static boolean workaroundNeeded() {
         // File bcmdevice = new File("/dev/bcm2079x-i2c");
         // return bcmdevice.exists();
@@ -32,7 +32,7 @@ public class BCM20793Workaround implements Runnable {
     private String TAG = "BCM20793Workaround";
     private Tag mTag;
 
-    public BCM20793Workaround(Tag tag) {
+    public DesfireWorkaround(Tag tag) {
         mTag = tag;
     }
 

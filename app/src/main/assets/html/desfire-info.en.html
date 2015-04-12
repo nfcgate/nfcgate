@@ -1,15 +1,10 @@
 <html>
 <body style="background-color: #E5FDFC;">
-<h3>Broadcom BCM20793 - Known Bugs</h3>
-<p>You are using a device running a Broadcom BCM20793 NFC chip. This chip has some known issues
-which you should be aware of while using this application.</p>
-<ul>
-    <li><a href="#reader">Card Reader Limitations</a></li>
-    <li><a href="#hce">Card Emulation Limitations</a></li>
-</ul>
+<h3>DESFire cards - Known Bugs</h3>
+<p>Android has a bug which interferes with DESFire cards, a popular card for payment systems.
+We have built a workaround, but that workaround comes with some limitations of its own. Please
+read this page carefully in order to avoid problems.</p>
 <h4 id="reader">Reader limitations</h4>
-<p>The BCM20793 chip has a bug which make it impossible to properly read MiFare DESFire cards with
-our application.</p>
 <p>In order to enable you to read DESFire cards, we are using a workaround. However, this
 workaround also breaks Android's method of detecting if a card has been removed. This means that
 you will have to manually tell Android if you remove the card.</p>
@@ -22,8 +17,8 @@ details, read on.</p>
 <h5>Technical details</h5>
 <p>Android periodically communicates with attached NFC tags in order to make sure that they are
 still present. For this, it sends a command to the card and checks if it receives a reply. These
-commands are usually NOPs ("No OPeration", commands that don't do anything).</p>
-<p>However, Android devices using the Broadcom BCM20793 chip seem to have a bug that leads to them
+commands are usually NOPs ("<b>N</b>o <b>OP</b>eration", commands that don't do anything).</p>
+<p>However, the Android NFC libraries seem to have a bug that leads to them
 sending commands to DESFire cards which lock the card into a specific mode. Once a card is locked
 into a mode, it will not accept messages using other modes and will reply with an error (0x6e00).
 </p>
@@ -35,18 +30,5 @@ is active. Accordingly, we have to kill the watchdog thread to allow Android to 
 removal of a card. For this, we use the button mentioned above: All it does is to kill the workaround
 thread. After that has happened, the Android watchdog thread will resume operation and detect the
 removal of the card.</p>
-
-<h4 id="hce">Emulation limitations</h4>
-<p>When using this device to communicate with a Card reader, the first read may fail. If this
-happens, just remove the phone from the reader, wait a second, and re-attach it. Now, everything
-should work as expected.</p>
-<h5>Technical details</h5>
-<p>When the phone communicating with the card is first attached to the card, it collects some
-information and passes it to the emulator device. That device then uses that information to
-initialize our patch to the native code of android.</p>
-<p>For some reason, our changes are only recognized <i>after</i> the first attempt to read that data,
-meaning that the first attempt uses incorrect data, which the reader will reject. As the correct
-data is laoded afterwards, this isn't a big deal - just try again. But you should be aware of this
-problem in order to not be surprised when it happens to you.</p>
 </body>
 </html>

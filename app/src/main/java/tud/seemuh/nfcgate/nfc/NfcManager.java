@@ -12,7 +12,7 @@ import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.nfc.hce.ApduService;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
-import tud.seemuh.nfcgate.nfc.reader.BCM20793Workaround;
+import tud.seemuh.nfcgate.nfc.reader.DesfireWorkaround;
 import tud.seemuh.nfcgate.nfc.reader.IsoDepReader;
 import tud.seemuh.nfcgate.nfc.reader.NFCTagReader;
 import tud.seemuh.nfcgate.nfc.reader.NfcAReader;
@@ -44,7 +44,7 @@ public class NfcManager {
     private HighLevelNetworkHandler mNetworkHandler;
 
     // Workaround
-    private BCM20793Workaround mBroadcomWorkaroundRunnable;
+    private DesfireWorkaround mBroadcomWorkaroundRunnable;
     private Thread mBroadcomWorkaroundThread;
 
     // Context
@@ -345,11 +345,11 @@ public class NfcManager {
         // TODO Only activate for DESFire cards
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
         boolean workaroundDisabled = pref.getBoolean(mContext.getString(R.string.pref_key_workaround_off), false);
-        if (BCM20793Workaround.workaroundNeeded() && !workaroundDisabled) {
+        if (DesfireWorkaround.workaroundNeeded() && !workaroundDisabled) {
             Log.i(TAG, "StartWorkaround: Problematic broadcom chip found, activate workaround");
 
             // Initialize a runnable object
-            mBroadcomWorkaroundRunnable = new BCM20793Workaround(mTag);
+            mBroadcomWorkaroundRunnable = new DesfireWorkaround(mTag);
 
             // Start up a new thread
             mBroadcomWorkaroundThread = new Thread(mBroadcomWorkaroundRunnable);
@@ -357,7 +357,7 @@ public class NfcManager {
 
             // Notify the Handler
             if (mNetworkHandler != null) mNetworkHandler.notifyCardWorkaroundConnected();
-        } else if (!BCM20793Workaround.workaroundNeeded()) {
+        } else if (!DesfireWorkaround.workaroundNeeded()) {
             Log.i(TAG, "StartWorkaround: No problematic broadcom chipset found, leaving workaround inactive");
         } else {
             Log.i(TAG, "StartWorkaround: Workaround disabled in settings.");
