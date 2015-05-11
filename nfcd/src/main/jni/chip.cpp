@@ -134,7 +134,7 @@ static void uploadConfig(const struct s_chip_config config) {
     i += config.hist_len;
 
     nci_NfcSetConfig(i, cfg);
-    loghex("Upload:", cfg, i+config.uid_len+config.hist_len);
+    loghex("Upload:", cfg, i);
 }
 
 /**
