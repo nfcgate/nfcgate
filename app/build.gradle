@@ -11,7 +11,7 @@ android {
         versionCode 2
         versionName "1.1"
         ndk {
-            moduleName "nfcipc"
+            moduleName "nfcgate-ipc"
             cFlags "-std=c++11 -fexceptions"
             ldLibs "log"
             abiFilters "armeabi"
@@ -26,8 +26,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':nfcd')
     compile files('libs/protobuf-java-2.6.1.jar')
     compile 'com.android.support:support-v4:22.0.0'
+    compile files('libs/XposedBridgeApi-20150213.jar')
 }

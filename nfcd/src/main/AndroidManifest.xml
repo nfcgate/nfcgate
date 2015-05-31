@@ -2,6 +2,4 @@
     package="tud.seemuh.nfcgate.nfcd">
 
 
-    <uses-permission android:name="cydia.permission.SUBSTRATE"/>
-
 </manifest>

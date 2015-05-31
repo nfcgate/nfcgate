@@ -6,7 +6,7 @@ package tud.seemuh.nfcgate.nfc.hce;
  */
 public class DaemonConfiguration {
     static {
-        System.loadLibrary("nfcipc");
+        System.loadLibrary("nfcgate-ipc");
         mInstance = new DaemonConfiguration();
     }
     static DaemonConfiguration mInstance;

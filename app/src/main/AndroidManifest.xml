@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tud.seemuh.nfcgate" >
 
-    <uses-permission android:name="android.permission.NFC" />
-
-    <!-- < Wifi Direct > -->
+    <uses-permission
+        android:name="android.permission.NFC"
+        android:required="true" />
     <uses-permission
         android:name="android.permission.ACCESS_WIFI_STATE"
         android:required="true" />
@@ -18,12 +18,23 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:required="true" />
 
-    <!-- < / Wifi Direct > -->
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true" />
+        <meta-data
+            android:name="xposeddescription"
+            android:value="Modules for NFCGate code hooks" />
+        <meta-data
+            android:name="xposedminversion"
+            android:value="58" />
+
         <activity
             android:name=".gui.MainActivity"
             android:label="@string/app_name"

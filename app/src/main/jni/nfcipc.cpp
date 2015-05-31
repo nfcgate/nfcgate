@@ -97,6 +97,7 @@ JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_nfc_hce_DaemonConfiguration_uploa
  * connect to the nfc daemon
  */
 void connect() {
+    LOGI("connect");
     sock = socket(AF_UNIX, SOCK_STREAM, 0);
     if (sock == -1) {
         LOGE("E socket: %s", strerror(errno));

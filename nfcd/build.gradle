@@ -10,9 +10,9 @@ android {
         versionCode 1
         versionName "1.0"
         ndk {
-            moduleName "nfc.cy"
+            moduleName "nfcgate-native"
             cFlags "-std=c++11 -fexceptions"
-            ldLibs "log", "substrate-dvm", "substrate -L${project.buildDir}/../src/main/libs/armeabi"
+            ldLibs "log"
             abiFilters "armeabi"
         }
     }

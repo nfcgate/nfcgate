@@ -1,6 +1,7 @@
 
 
 #include "nfcd.h"
+#include <cstring>
 /**
  * Commands of the broadcom configuration interface
  */

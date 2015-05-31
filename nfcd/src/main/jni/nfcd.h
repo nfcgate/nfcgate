@@ -1,9 +1,11 @@
 #ifndef __ANDROID__
 #define __ANDROID__
 #endif
+
+
 #include <android/log.h>
 #include <jni.h>
-#include "vendor/substrate.h"
+#include <stdint.h>
 #include "vendor/libnfc.h"
 
 #define LOG_TAG "NATIVENFC"
