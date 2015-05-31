@@ -26,9 +26,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    //compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':nfcd')
     compile files('libs/protobuf-java-2.6.1.jar')
     compile 'com.android.support:support-v4:22.0.0'
-    compile files('libs/XposedBridgeApi-20150213.jar')
+    provided files('libs/XposedBridgeApi-20150213.jar')
 }

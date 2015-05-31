@@ -33,7 +33,7 @@
             android:value="Modules for NFCGate code hooks" />
         <meta-data
             android:name="xposedminversion"
-            android:value="58" />
+            android:value="54" />
 
         <activity
             android:name=".gui.MainActivity"

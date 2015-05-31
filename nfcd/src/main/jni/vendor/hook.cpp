@@ -235,7 +235,7 @@ uint32_t do_hook(const char *module_path, uint32_t hook_func, const char *symbol
     LOGD("[+] got entry addr: 0x%x", entry_addr);
     LOGD("[+] original addr: 0x%x", original_addr);
 
-    uint32_t page_size = getpagesize();
+    uint32_t page_size = sysconf(_SC_PAGESIZE);
     uint32_t entry_page_start = PAGE_START(entry_addr, page_size);
     LOGD("[+] page size: 0x%x", page_size);
     LOGD("[+] entry page start: 0x%x", entry_page_start);
