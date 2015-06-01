@@ -24,6 +24,7 @@ tCE_CB *ce_cb;
  * call the original function, but modify the control structure if the patch is enabled
  */
 void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
+    LOGD("hook_SetRfCback");
     nci_SetRfCback(p_cback);
     if(p_cback != NULL && patchEnabled) {
         // fake that the default aid is selected
@@ -40,7 +41,7 @@ void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
  */
 tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
 
-    //loghex("NfcSetConfig", tlv, size);
+    loghex("NfcSetConfig", tlv, size);
     uint8_t i = 0;
     bool needUpload = false;
     // read the configuration bytestream and extract the values that we indent to override
