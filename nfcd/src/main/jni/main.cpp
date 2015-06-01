@@ -24,7 +24,7 @@ void onModuleLoad() {
     LOGI("onModuleLoad::end");
 }
 
-JNIEXPORT jboolean JNICALL Java_tud_seemuh_nfcgate_xposed_Hooks_isPatchEnabled(JNIEnv* env, jobject javaThis) {
+extern "C" JNIEXPORT jboolean JNICALL Java_tud_seemuh_nfcgate_xposed_Hooks_isPatchEnabled(JNIEnv* env, jobject javaThis) {
     return patchEnabled;
 }
 
