@@ -1,7 +1,7 @@
 
 
 #include "nfcd.h"
-#include "vendor/hook.h"
+#include "vendor/adbi/hook.h"
 #include <dlfcn.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -9,6 +9,8 @@
 
 
 bool patchEnabled = false;
+struct hook_t hook_config;
+struct hook_t hook_rfcback;
 
 static void onHostEmulationLoad(JNIEnv *jni, jclass _class, void *data);
 static void hookNative();
@@ -31,11 +33,17 @@ extern "C" JNIEXPORT jboolean JNICALL Java_tud_seemuh_nfcgate_xposed_Hooks_isPat
 /**
  * find a native symbol and hook it
  */
-static void findAndHook(void* handle, const char *symbol, void* hook, void **original) {
+static void findAndHook(struct hook_t* eph, void* handle, const char *symbol, void* hookf, void **original) {
     *original = dlsym(handle, symbol);
-    do_hook(hooklibfile, (uint32_t)hook, symbol);
+    hook(eph, (unsigned int)*original, hookf, hookf);
     LOGI("hooked: %s", symbol);
 }
+/*
+static void hookLibnfc(struct hook_t* eph, char *symbol, void* func, void **original) {
+    hook(eph, getpid(), "libnfc-nci.", symbol, func, func);
+    *original = (void*)eph->orig;
+}
+*/
 /**
  * hook into native functions of the libnfc-nci broadcom nfc driver
  */
@@ -47,8 +55,11 @@ static void hookNative() {
     void *handle = dlopen(hooklibfile, 0);
 
     //findAndHook(handle, "dummy", (void*)&hook_NfcSetConfig, (void**)&nci_NfcSetConfig);
-    findAndHook(handle, "NFC_SetConfig", (void*)&hook_NfcSetConfig, (void**)&nci_NfcSetConfig);
-    findAndHook(handle, "NFC_SetStaticRfCback", (void*)&hook_SetRfCback, (void**)&nci_SetRfCback);
+    findAndHook(&hook_config,  handle, "NFC_SetConfig",        (void*)&hook_NfcSetConfig, (void**)&nci_NfcSetConfig);
+    hook_precall(&hook_config);
+    //findAndHook(&hook_rfcback, handle, "NFC_SetStaticRfCback", (void*)&hook_SetRfCback,   (void**)&nci_SetRfCback);
+    //hookLibnfc(&hook_config, "NFC_SetConfig", (void*)&hook_NfcSetConfig, (void**)&nci_NfcSetConfig);
+    //hook(&hook_config, getpid(), "libnfc-nci.", "NFC_SetStaticRfCback", (void*)&hook_NfcSetConfig, (void*)&hook_NfcSetConfig);
 
 
     if(nci_NfcSetConfig == hook_NfcSetConfig) LOGI("original missing");

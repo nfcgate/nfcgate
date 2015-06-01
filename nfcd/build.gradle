@@ -1,3 +1,4 @@
+import org.apache.tools.ant.taskdefs.condition.Os
 apply plugin: 'com.android.library'
 
 android {
@@ -15,10 +16,6 @@ android {
             ldLibs "log"
             abiFilters "armeabi"
         }
-    }
-
-    sourceSets.main {
-        jniLibs.srcDir 'src/main/libs'
     }
 
     buildTypes {

@@ -1,6 +1,7 @@
 
 
 #include "nfcd.h"
+#include "vendor/adbi/hook.h"
 #include <cstring>
 /**
  * Commands of the broadcom configuration interface
@@ -25,7 +26,9 @@ tCE_CB *ce_cb;
  */
 void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
     LOGD("hook_SetRfCback");
+    hook_precall(&hook_rfcback);
     nci_SetRfCback(p_cback);
+    hook_postcall(&hook_rfcback);
     if(p_cback != NULL && patchEnabled) {
         // fake that the default aid is selected
         ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_CC_FILE_SELECTED);
@@ -90,7 +93,9 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
             break;
         }
     }
+    hook_precall(&hook_config);
     tNFC_STATUS r = nci_NfcSetConfig(size, tlv);
+    hook_postcall(&hook_config);
 
     if(needUpload && patchEnabled) {
         // any of our values got modified and we are active -> reupload

@@ -38,10 +38,16 @@ tNFC_STATUS hook_NfcSetConfig (UINT8 tlv_size, UINT8 *p_param_tlvs);
 void hook_SetRfCback(tNFC_CONN_CBACK *p_cback);
 void uploadPatchConfig();
 void uploadOriginalConfig();
+
+void hook_SetRfCback_arm(tNFC_CONN_CBACK *p_cback);
+tNFC_STATUS hook_NfcSetConfig_arm (uint8_t size, uint8_t *tlv);
+
 extern NFC_SetStaticRfCback *nci_SetRfCback;
 extern NFC_SetConfig *nci_NfcSetConfig;
 extern tCE_CB *ce_cb;
 extern struct s_chip_config patchValues;
+extern struct hook_t hook_config;
+extern struct hook_t hook_rfcback;
 
 // ipc.cpp
 void ipc_prepare();
