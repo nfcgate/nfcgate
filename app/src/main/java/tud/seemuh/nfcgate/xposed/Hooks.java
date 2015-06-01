@@ -1,6 +1,7 @@
 package tud.seemuh.nfcgate.xposed;
 
 
+import android.nfc.tech.TagTechnology;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -36,6 +37,19 @@ public class Hooks implements IXposedHookLoadPackage, IXposedHookZygoteInit {
                     // setting a result will prevent the original method to run.
                     // F0010203040506 is a aid registered by the nfcgate hce service
                     param.setResult("F0010203040506");
+                }
+            }
+        });
+
+        // support extended length apdus
+        // see http://stackoverflow.com/questions/25913480/what-are-the-requirements-for-support-of-extended-length-apdus-and-which-smartph
+        findAndHookMethod("com.android.nfc.dhimpl.NativeNfcManager", lpparam.classLoader, "getMaxTransceiveLength", int.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+
+                int technology = (int)param.args[0];
+                if(technology == 3 /* 3=TagTechnology.ISO_DEP */) {
+                    param.setResult(2462);
                 }
             }
         });
