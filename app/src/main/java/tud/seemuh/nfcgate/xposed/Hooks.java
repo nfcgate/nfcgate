@@ -22,10 +22,8 @@ public class Hooks implements IXposedHookLoadPackage, IXposedHookZygoteInit {
         if(!"com.android.nfc".equals(lpparam.packageName))
             return;
 
-        Log.i("NATIVENFC", "load...");
         //System.loadLibrary("nfcgate-native");
         System.load("/data/data/tud.seemuh.nfcgate/lib/libnfcgate-native.so");
-        Log.i("NATIVENFC", "loaded...");
 
         findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager", lpparam.classLoader, "findSelectAid", byte[].class, new XC_MethodHook() {
             @Override

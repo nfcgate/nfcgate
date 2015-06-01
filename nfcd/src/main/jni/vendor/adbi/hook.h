@@ -26,5 +26,5 @@ struct hook_t {
 void hook_cacheflush(unsigned int begin, unsigned int end);	
 void hook_precall(struct hook_t *h);
 void hook_postcall(struct hook_t *h);
-int hook(struct hook_t *h, unsigned int addr, void *hookf_arm, void *hookf_thumb);
+int hook(struct hook_t *h, unsigned int addr, void *hookf);
 void unhook(struct hook_t *h);

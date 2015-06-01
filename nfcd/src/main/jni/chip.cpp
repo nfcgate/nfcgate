@@ -16,9 +16,22 @@ static void uploadConfig(const s_chip_config config);
 struct s_chip_config origValues = { 0 };
 struct s_chip_config patchValues = { 0 };
 
-NFC_SetStaticRfCback *nci_SetRfCback;
-NFC_SetConfig *nci_NfcSetConfig;
+NFC_SetStaticRfCback *nci_orig_SetRfCback;
+NFC_SetConfig *nci_orig_NfcSetConfig;
 tCE_CB *ce_cb;
+
+void nci_SetRfCback(tNFC_CONN_CBACK *p_cback) {
+    hook_precall(&hook_rfcback);
+    nci_orig_SetRfCback(p_cback);
+    hook_postcall(&hook_rfcback);
+}
+
+tNFC_STATUS nci_NfcSetConfig (uint8_t size, uint8_t *tlv) {
+    hook_precall(&hook_config);
+    tNFC_STATUS r = nci_orig_NfcSetConfig(size, tlv);
+    hook_postcall(&hook_config);
+    return r;
+}
 
 /**
  * hooked SetRfCback implementation.
@@ -26,9 +39,7 @@ tCE_CB *ce_cb;
  */
 void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
     LOGD("hook_SetRfCback");
-    hook_precall(&hook_rfcback);
     nci_SetRfCback(p_cback);
-    hook_postcall(&hook_rfcback);
     if(p_cback != NULL && patchEnabled) {
         // fake that the default aid is selected
         ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_CC_FILE_SELECTED);
@@ -93,9 +104,8 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
             break;
         }
     }
-    hook_precall(&hook_config);
+
     tNFC_STATUS r = nci_NfcSetConfig(size, tlv);
-    hook_postcall(&hook_config);
 
     if(needUpload && patchEnabled) {
         // any of our values got modified and we are active -> reupload

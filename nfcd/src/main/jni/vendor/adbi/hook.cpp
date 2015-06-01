@@ -31,22 +31,23 @@ void inline hook_cacheflush(unsigned int begin, unsigned int end)
 		);
 }
 
-int hook(struct hook_t *h, unsigned int addr, void *hookf_arm, void *hookf_thumb)
+int hook(struct hook_t *h, unsigned int addr, void *hookf)
 {
 	int i;
 	
 	log("addr  = %x\n", (unsigned int)addr)
-	log("hookf_arm = %x\n", (unsigned int)hookf_arm)
-	log("hookf_thumb = %x\n", (unsigned int)hookf_thumb)
+	log("hookf = %x\n", (unsigned int)hookf)
 
-	if ((addr % 4 == 0 && (unsigned int)hookf_arm % 4 != 0) || (addr % 4 != 0 && (unsigned int)hookf_arm % 4 == 0))
-		log("addr 0x%x and hook 0x%x\n don't match!\n", (unsigned int)addr, (unsigned int)hookf_arm)
+	if ((addr % 4 == 0 && (unsigned int)hookf % 4 != 0) || (addr % 4 != 0 && (unsigned int)hookf % 4 == 0)) {
+		log("addr 0x%x and hook 0x%x\n don't match!\n", (unsigned int)addr, (unsigned int)hookf);
+		return -1;
+	}
 
     // change the property of current page to writeable
 
     unsigned int page_size = sysconf(_SC_PAGESIZE);
     unsigned int entry_page_start = ~((page_size) - 1) & (addr);
-    if(mprotect((void*)entry_page_start, page_size, PROT_READ | PROT_WRITE) != 0) {
+    if(mprotect((void*)entry_page_start, page_size, PROT_READ | PROT_WRITE | PROT_EXEC) != 0) {
     	log("mprotect: %u", errno);
     	return -1;
     }
@@ -54,7 +55,7 @@ int hook(struct hook_t *h, unsigned int addr, void *hookf_arm, void *hookf_thumb
 	if (addr % 4 == 0) {
 		log("ARM\n")
 		h->thumb = 0;
-		h->patch = (unsigned int)hookf_arm;
+		h->patch = (unsigned int)hookf;
 		h->orig = addr;
 		log("orig = %x\n", h->orig)
 		h->jump[0] = 0xe59ff000; // LDR pc, [pc, #0]
@@ -68,7 +69,7 @@ int hook(struct hook_t *h, unsigned int addr, void *hookf_arm, void *hookf_thumb
 	else {
 		log("THUMB")
 		h->thumb = 1;
-		h->patch = (unsigned int)hookf_thumb;
+		h->patch = (unsigned int)hookf;
 		h->orig = addr;
 		h->jumpt[1] = 0xb4;
 		h->jumpt[0] = 0x60; // push {r5,r6}

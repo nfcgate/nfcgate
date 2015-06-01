@@ -35,15 +35,11 @@ extern "C" JNIEXPORT jboolean JNICALL Java_tud_seemuh_nfcgate_xposed_Hooks_isPat
  */
 static void findAndHook(struct hook_t* eph, void* handle, const char *symbol, void* hookf, void **original) {
     *original = dlsym(handle, symbol);
-    hook(eph, (unsigned int)*original, hookf, hookf);
-    LOGI("hooked: %s", symbol);
+    if(hook(eph, (unsigned int)*original, hookf) != -1) {
+        LOGI("hooked: %s", symbol);
+    }
 }
-/*
-static void hookLibnfc(struct hook_t* eph, char *symbol, void* func, void **original) {
-    hook(eph, getpid(), "libnfc-nci.", symbol, func, func);
-    *original = (void*)eph->orig;
-}
-*/
+
 /**
  * hook into native functions of the libnfc-nci broadcom nfc driver
  */
@@ -54,15 +50,11 @@ static void hookNative() {
     }
     void *handle = dlopen(hooklibfile, 0);
 
-    //findAndHook(handle, "dummy", (void*)&hook_NfcSetConfig, (void**)&nci_NfcSetConfig);
-    findAndHook(&hook_config,  handle, "NFC_SetConfig",        (void*)&hook_NfcSetConfig, (void**)&nci_NfcSetConfig);
-    hook_precall(&hook_config);
-    //findAndHook(&hook_rfcback, handle, "NFC_SetStaticRfCback", (void*)&hook_SetRfCback,   (void**)&nci_SetRfCback);
-    //hookLibnfc(&hook_config, "NFC_SetConfig", (void*)&hook_NfcSetConfig, (void**)&nci_NfcSetConfig);
-    //hook(&hook_config, getpid(), "libnfc-nci.", "NFC_SetStaticRfCback", (void*)&hook_NfcSetConfig, (void*)&hook_NfcSetConfig);
+    findAndHook(&hook_config,  handle, "NFC_SetConfig",        (void*)&hook_NfcSetConfig, (void**)&nci_orig_NfcSetConfig);
+    findAndHook(&hook_rfcback, handle, "NFC_SetStaticRfCback", (void*)&hook_SetRfCback,   (void**)&nci_orig_SetRfCback);
 
 
-    if(nci_NfcSetConfig == hook_NfcSetConfig) LOGI("original missing");
+    if(nci_orig_NfcSetConfig == hook_NfcSetConfig) LOGI("original missing");
 
     // find pointer to ce_t4t control structure
     ce_cb = (tCE_CB*)dlsym(handle, "ce_cb");

@@ -12,7 +12,7 @@ android {
         versionName "1.0"
         ndk {
             moduleName "nfcgate-native"
-            cFlags "-std=c++11 -fexceptions"
+            cFlags "-std=c++11 -fexceptions -marm"
             ldLibs "log"
             abiFilters "armeabi"
         }
