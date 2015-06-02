@@ -11,7 +11,7 @@ This application was developed for security research purposes by students of the
 - At least one of these devices needs to support HCE (Host Card Emulation). Most NFC-Enabled phones of the last few years should support that.
 - The HCE phone needs to use `libnfc-nci` (compatible phones include the Nexus 4 and 5, more on that below).
 - The HCE phone needs to be rooted and have [Xposed](http://repo.xposed.info/) installed and enabled
-- One server to proxy communication between the two phones (see [nfcgate-misc](https://github.com/malexmave/nfcgate-misc) repository for server code)
+- One server to proxy communication between the two phones (see [server](https://github.com/nfcgate/server) repository for relevant code)
 
 ## Requirements for compilation
 - Android Studio
