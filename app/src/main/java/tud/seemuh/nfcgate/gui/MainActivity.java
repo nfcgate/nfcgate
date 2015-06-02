@@ -25,6 +25,7 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.gui.fragments.CloneFragment;
 import tud.seemuh.nfcgate.gui.fragments.EnablenfcDialog;
 import tud.seemuh.nfcgate.gui.fragments.RelayFragment;
 import tud.seemuh.nfcgate.gui.fragments.WorkaroundDialog;
@@ -140,7 +141,16 @@ public class MainActivity extends FragmentActivity
     private void onTagDiscoveredCommon(Tag tag) {
         // Pass reference to NFC Manager
         Log.d(TAG, "onTagDiscoveredCommon");
+
         RelayFragment.getInstance().mNfcManager.setTag(tag);
+
+        //get and set the anticol data on the same device, if clone mode is enabled
+        boolean enabled = CloneFragment.getInstance().isCloneModeEnabled();
+        Log.d(TAG, "clone status: " + enabled);
+        if(enabled) {
+            //this call notifies the TextSink 2x: ok here, we override it anyway
+            RelayFragment.getInstance().mNfcManager.setAnticolData(RelayFragment.getInstance().mNfcManager.getAnticolData());
+        }
     }
 
     /**

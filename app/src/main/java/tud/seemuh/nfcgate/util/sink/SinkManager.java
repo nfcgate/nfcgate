@@ -77,10 +77,10 @@ public class SinkManager implements Runnable {
      * @param sinkIdentifier Identifier for the type of Sink.
      * @param tView TextView the Sink requires
      */
-    public void addSink(SinkType sinkIdentifier, TextView tView) throws SinkInitException {
+    public void addSink(SinkType sinkIdentifier, TextView tView, boolean overrideText) throws SinkInitException {
         Sink newSink;
         if (sinkIdentifier == SinkType.DISPLAY_TEXTVIEW) {
-            newSink = new TextViewSink(tView);
+            newSink = new TextViewSink(tView, overrideText);
         } else {
             Log.e(TAG, "addSink: passed Enum not handled with these parameters.");
             return;

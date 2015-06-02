@@ -161,6 +161,7 @@ public class NfcManager {
             startWorkaround();
 
             mNetworkHandler.sendAnticol(getAnticolData());
+
             // Notify partner about the newly detected card
             // This may lead to error messages if we are not already in a session
             mNetworkHandler.notifyCardFound();
@@ -199,6 +200,10 @@ public class NfcManager {
     public void setSinkManager(SinkManager sinkManager, BlockingQueue<NfcComm> smq) {
         mSinkManager = sinkManager;
         mSinkManagerQueue = smq;
+    }
+
+    public SinkManager getSinkManager() {
+        return mSinkManager;
     }
 
 
@@ -395,8 +400,12 @@ public class NfcManager {
      * Start up the NfcManager and related services.
      */
     public void start() {
-        Log.i(TAG, "start: Starting SinkManager Thread");
-        mSinkManagerThread = new Thread(mSinkManager);
-        mSinkManagerThread.start();
+        if(mSinkManagerThread == null) {
+            Log.i(TAG, "start: Starting SinkManager Thread");
+            mSinkManagerThread = new Thread(mSinkManager);
+            mSinkManagerThread.start();
+        } else {
+            Log.i(TAG, "start: SinkManager Thread already started");
+        }
     }
 }

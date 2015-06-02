@@ -5,12 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--TODO put stuff here -->
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enable Clone Mode"
+        android:id="@+id/btnSwitchCloneMode"
+        android:layout_gravity="center_horizontal" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="My name is Bob and Im the new one"
-        android:id="@+id/dummyText"
+        android:text="Currently set UID:"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No specific"
+        android:id="@+id/cloned_uid"
         android:layout_gravity="center" />
 </LinearLayout>
