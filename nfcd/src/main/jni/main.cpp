@@ -22,13 +22,9 @@ static void onModuleLoad() __attribute__((constructor));
 void onModuleLoad() {
     LOGI("onModuleLoad::begin");
     hookNative();
-    ipc_init();
     LOGI("onModuleLoad::end");
 }
 
-extern "C" JNIEXPORT jboolean JNICALL Java_tud_seemuh_nfcgate_xposed_Hooks_isPatchEnabled(JNIEnv* env, jobject javaThis) {
-    return patchEnabled;
-}
 
 /**
  * find a native symbol and hook it
