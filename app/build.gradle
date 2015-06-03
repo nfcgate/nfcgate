@@ -10,12 +10,6 @@ android {
         targetSdkVersion 22
         versionCode 2
         versionName "1.1"
-        ndk {
-            moduleName "nfcgate-ipc"
-            cFlags "-std=c++11 -fexceptions"
-            ldLibs "log"
-            abiFilters "armeabi"
-        }
     }
     buildTypes {
         release {
@@ -26,9 +20,9 @@ android {
 }
 
 dependencies {
+    //This must NOT be included
     //compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':nfcd')
     compile files('libs/protobuf-java-2.6.1.jar')
     compile 'com.android.support:support-v4:22.0.0'
-    provided files('libs/XposedBridgeApi-20150213.jar')
 }
