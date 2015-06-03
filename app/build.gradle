@@ -20,6 +20,7 @@ android {
 }
 
 dependencies {
+    //This must NOT be included
     //compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':nfcd')
     compile files('libs/protobuf-java-2.6.1.jar')
