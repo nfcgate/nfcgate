@@ -35,6 +35,9 @@ import tud.seemuh.nfcgate.gui.tabLayout.SlidingTabLayout;
 import tud.seemuh.nfcgate.gui.tabLogic.PagerAdapter;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.nfc.reader.DesfireWorkaround;
+import tud.seemuh.nfcgate.util.NfcComm;
+import tud.seemuh.nfcgate.util.db.CloneListItem;
+import tud.seemuh.nfcgate.util.db.CloneListStorage;
 
 public class MainActivity extends FragmentActivity
         implements ReaderCallback,EnablenfcDialog.NFCNoticeDialogListener, WorkaroundDialog.WorkaroundDialogListener {
@@ -155,13 +158,7 @@ public class MainActivity extends FragmentActivity
 
         RelayFragment.getInstance().mNfcManager.setTag(tag);
 
-        //get and set the anticol data on the same device, if clone mode is enabled
-        boolean enabled = CloneFragment.getInstance().isCloneModeEnabled();
-        Log.d(TAG, "clone status: " + enabled);
-        if(enabled) {
-            //this call notifies the TextSink 2x: ok here, we override it anyway
-            RelayFragment.getInstance().mNfcManager.setAnticolData(RelayFragment.getInstance().mNfcManager.getAnticolData());
-        }
+        CloneFragment.getInstance().onTagDiscoveredCommon(tag);
     }
 
     /**
