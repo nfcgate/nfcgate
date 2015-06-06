@@ -27,6 +27,7 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.gui.fragments.CloneFragment;
 import tud.seemuh.nfcgate.gui.fragments.EnablenfcDialog;
 import tud.seemuh.nfcgate.gui.fragments.RelayFragment;
 import tud.seemuh.nfcgate.gui.fragments.WorkaroundDialog;
@@ -34,6 +35,9 @@ import tud.seemuh.nfcgate.gui.tabLayout.SlidingTabLayout;
 import tud.seemuh.nfcgate.gui.tabLogic.PagerAdapter;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.nfc.reader.DesfireWorkaround;
+import tud.seemuh.nfcgate.util.NfcComm;
+import tud.seemuh.nfcgate.util.db.CloneListItem;
+import tud.seemuh.nfcgate.util.db.CloneListStorage;
 
 public class MainActivity extends FragmentActivity
         implements ReaderCallback,EnablenfcDialog.NFCNoticeDialogListener, WorkaroundDialog.WorkaroundDialogListener {
@@ -151,7 +155,10 @@ public class MainActivity extends FragmentActivity
     private void onTagDiscoveredCommon(Tag tag) {
         // Pass reference to NFC Manager
         Log.d(TAG, "onTagDiscoveredCommon");
+
         RelayFragment.getInstance().mNfcManager.setTag(tag);
+
+        CloneFragment.getInstance().onTagDiscoveredCommon(tag);
     }
 
     /**

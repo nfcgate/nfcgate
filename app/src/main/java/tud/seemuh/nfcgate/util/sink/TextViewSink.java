@@ -18,13 +18,15 @@ public class TextViewSink implements Sink {
 
     private TextView mDebugView;
     private BlockingQueue<NfcComm> mQueue;
+    private boolean mOverrideText = false;
 
     /**
      * Constructor. Expects a TextView to which he can append debug output
      * @param dView The output TextView
      */
-    public TextViewSink(TextView dView) {
+    public TextViewSink(TextView dView, boolean override) {
         mDebugView = dView;
+        mOverrideText = override;
     }
 
     /**
@@ -37,7 +39,11 @@ public class TextViewSink implements Sink {
     }
 
     private void UpdateTextView(String text) {
-        new UpdateUI(mDebugView, UpdateUI.UpdateMethod.appendTextView).execute(text + "\n");
+        if(mOverrideText) {
+            new UpdateUI(mDebugView, UpdateUI.UpdateMethod.setTextTextView).execute(text);
+        } else {
+            new UpdateUI(mDebugView, UpdateUI.UpdateMethod.appendTextView).execute(text + "\n");
+        }
     }
 
     @Override

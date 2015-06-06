@@ -1,22 +1,21 @@
 package tud.seemuh.nfcgate.xposed;
 
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.util.Log;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import de.robv.android.xposed.IXposedHookLoadPackage;
-import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class Hooks implements IXposedHookLoadPackage {
 
-    private final String IPC_SOCK_DIR = "/data/data/tud.seemuh.nfcgate/ipc";
     private IPCBroadcastReceiver mReceiver;
 
+    @SuppressLint("SdCardPath")
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
         if(!"com.android.nfc".equals(lpparam.packageName))
             return;
@@ -26,7 +25,7 @@ public class Hooks implements IXposedHookLoadPackage {
 
 
         // hook construtor to catch application context
-        XposedHelpers.findAndHookConstructor("com.android.nfc.NfcService", lpparam.classLoader, Application.class, new XC_MethodHook() {
+        findAndHookConstructor("com.android.nfc.NfcService", lpparam.classLoader, Application.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 Log.i("HOOKNFC", "constructor");
@@ -36,7 +35,7 @@ public class Hooks implements IXposedHookLoadPackage {
         });
 
         // hook findSelectAid to route all APDUs to our app
-        XposedHelpers.findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager", lpparam.classLoader, "findSelectAid", byte[].class, new XC_MethodHook() {
+        findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager", lpparam.classLoader, "findSelectAid", byte[].class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
 
@@ -52,7 +51,7 @@ public class Hooks implements IXposedHookLoadPackage {
 
         // support extended length apdus
         // see http://stackoverflow.com/questions/25913480/what-are-the-requirements-for-support-of-extended-length-apdus-and-which-smartph
-        XposedHelpers.findAndHookMethod("com.android.nfc.dhimpl.NativeNfcManager", lpparam.classLoader, "getMaxTransceiveLength", int.class, new XC_MethodHook() {
+        findAndHookMethod("com.android.nfc.dhimpl.NativeNfcManager", lpparam.classLoader, "getMaxTransceiveLength", int.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
 
