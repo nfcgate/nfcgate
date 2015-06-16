@@ -59,21 +59,6 @@ public class CloneFragment extends Fragment implements OnClickListener {
         mToggleCloneMode = (Switch) v.findViewById(R.id.btnSwitchCloneMode);
         mToggleCloneMode.setOnClickListener(this);
 
-        try{
-            //singManager could already be set by relayFragment, if not to it here
-            if(mNfcManager.getSinkManager() == null) {
-                mSinkManager = new SinkManager(mSinkManagerQueue);
-                mNfcManager.setSinkManager(mSinkManager, mSinkManagerQueue);
-            }
-            mNfcManager.getSinkManager().addSink(SinkManager.SinkType.DISPLAY_TEXTVIEW, mCurrUID, true);
-
-            //the start method knows when there is already a thread running
-            mNfcManager.start();
-
-        } catch (SinkInitException e) {
-            e.printStackTrace();
-        }
-
         mListView = (ListView) v.findViewById(R.id.savedList);
 
         mSaveButton = (Button) v.findViewById(R.id.saveButton);
@@ -167,8 +152,22 @@ public class CloneFragment extends Fragment implements OnClickListener {
                 boolean on = ((Switch) v).isChecked();
 
                 if (on) {
+                    //set sink
+                    try {
+                        mSinkManager = new SinkManager(mSinkManagerQueue);
+                        mNfcManager.setSinkManager(mSinkManager, mSinkManagerQueue);
+                        mNfcManager.getSinkManager().addSink(SinkManager.SinkType.DISPLAY_TEXTVIEW, mCurrUID, true);
+
+                        //the start method knows when there is already a thread running
+                        mNfcManager.start();
+                    } catch (SinkInitException e) {
+                        // Do nothing.
+                    }
                     mCloneModeEnabled = true;
                 } else {
+                    //remove + reset sink
+                    mNfcManager.unsetSinkManager();
+                    mNfcManager.shutdown();
                     mCloneModeEnabled = false;
                 }
 
@@ -182,30 +181,4 @@ public class CloneFragment extends Fragment implements OnClickListener {
             mSaveButton.setVisibility(View.VISIBLE);
         }
     }
-
-    /*
-    @Override
-    public void onResume() {
-
-        super.onResume();
-        getActivity().getSupportFragmentManager().popBackStack();
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-
-                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
-
-                    // handle back button
-
-                    return true;
-
-                }
-
-                return false;
-            }
-        });
-    } */
-
 }

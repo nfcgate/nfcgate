@@ -150,20 +150,6 @@ public class RelayFragment extends Fragment
         }
 
         mConnecttoSession.requestFocus();
-         /*
-        getActivity().getSupportFragmentManager().popBackStack();
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-        @Override
-        public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
-            // handle back button
-                return true;
-            }
-                return false;
-            }
-        }); */
 
     }
 

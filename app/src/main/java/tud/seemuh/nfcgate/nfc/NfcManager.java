@@ -227,6 +227,11 @@ public class NfcManager {
         mSinkManagerQueue = smq;
     }
 
+    public void unsetSinkManager() {
+        mSinkManager = null;
+        mSinkManagerQueue = null;
+    }
+
     public SinkManager getSinkManager() {
         return mSinkManager;
     }
