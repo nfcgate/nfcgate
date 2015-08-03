@@ -6,6 +6,8 @@ NFCGate is an Android application meant to relay communication between an NFC re
 ## Notice
 This application was developed for security research purposes by students of the [TU Darmstadt](https://www.tu-darmstadt.de/), [Secure Mobile Networking Lab](https://www.seemoo.tu-darmstadt.de/). Please do not use this application for malicious purposes.
 
+This application was presented at WiSec 2015. The extended Abstract (slightly outdated by now) and poster (pretty up-to-date) can be found on the [website](https://blog.velcommuta.de/publications/) of one of the authors.
+
 ## Requirements
 - Two android phones with NFC Chips, running Android 4.4+ (API-Level 19+).
 - At least one of these devices needs to support HCE (Host Card Emulation). Most NFC-Enabled phones of the last few years should support that.
