@@ -20,9 +20,9 @@ const char *hooklibfile = "/system/lib/libnfc-nci.so";
 static void onModuleLoad() __attribute__((constructor));
 
 void onModuleLoad() {
-    //LOGI("onModuleLoad::begin");
+    LOGI("onModuleLoad::begin");
     hookNative();
-    //LOGI("onModuleLoad::end");
+    LOGI("onModuleLoad::end");
 }
 
 
