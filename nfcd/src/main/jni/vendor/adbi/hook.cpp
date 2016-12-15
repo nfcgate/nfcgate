@@ -23,7 +23,7 @@ void inline hook_cacheflush(unsigned int begin, unsigned int end)
 		"mov	 r0, %0\n"			
 		"mov	 r1, %1\n"
 		"mov	 r7, %2\n"
-		"mov     r2, #0x0\n"
+		"movs     r2, #0x0\n"
 		"svc     0x00000000\n"
 		:
 		:	"r" (begin), "r" (end), "r" (syscall)
@@ -48,7 +48,7 @@ int hook(struct hook_t *h, unsigned int addr, void *hookf)
     unsigned int page_size = sysconf(_SC_PAGESIZE);
     unsigned int entry_page_start = ~((page_size) - 1) & (addr);
     if(mprotect((void*)entry_page_start, page_size, PROT_READ | PROT_WRITE | PROT_EXEC) != 0) {
-    	log("mprotect: %u", errno);
+    	// log("mprotect: %u", errno);
     	return -1;
     }
 
