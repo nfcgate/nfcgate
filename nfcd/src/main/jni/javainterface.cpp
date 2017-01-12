@@ -24,7 +24,7 @@ JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_xposed_Native_setEnabled(JNIEnv* 
 JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_xposed_Native_uploadConfiguration(JNIEnv* env, jobject javaThis, jbyte atqa, jbyte sak, jbyteArray _hist, jbyteArray _uid) {
     jsize uid_len = env->GetArrayLength(_uid);
     jsize hist_len = env->GetArrayLength(_hist);
-    if(uid_len > sizeof(s_chip_config::uid) || hist_len > sizeof(s_chip_config::hist)) {
+    if(uid_len > sizeof(s_chip_config().uid) || hist_len > sizeof(s_chip_config().hist)) {
         jclass Exception = env->FindClass("java/lang/Exception");
         env->ThrowNew(Exception, "uid or hist bigger than buffer");
     }

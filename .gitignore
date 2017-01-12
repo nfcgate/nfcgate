@@ -7,3 +7,4 @@
 /app/manifest-merger-release-report.txt
 *.iml
 *.log
+nfcd/.externalNativeBuild/
