@@ -36,5 +36,7 @@ android {
 dependencies {
     //This must NOT be included
     //compile fileTree(include: ['*.jar'], dir: 'libs')
-    provided files('libs/XposedBridgeApi-20150213.jar')
+    // provided files('libs/XposedBridgeApi-20150213.jar')
+    provided 'de.robv.android.xposed:api:82'
+    provided 'de.robv.android.xposed:api:82:sources'
 }
