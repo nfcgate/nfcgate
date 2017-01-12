@@ -17,29 +17,31 @@
 
 
 void inline hook_cacheflush(unsigned int begin, unsigned int end)
-{	
+{
+	log("HOOKNFC: hook_cacheflush() ENTER");
 	const int syscall = 0xf0002;
 	__asm __volatile (
 		"mov	 r0, %0\n"			
 		"mov	 r1, %1\n"
 		"mov	 r7, %2\n"
-		"movs     r2, #0x0\n"
+		"movs    r2, #0x0\n"
 		"svc     0x00000000\n"
 		:
 		:	"r" (begin), "r" (end), "r" (syscall)
 		:	"r0", "r1", "r7"
 		);
+	log("HOOKNFC: hook_cacheflush() LEAVE");
 }
 
 int hook(struct hook_t *h, unsigned int addr, void *hookf)
 {
 	int i;
 	
-	log("addr  = %x\n", (unsigned int)addr)
-	log("hookf = %x\n", (unsigned int)hookf)
+	log("HOOKNFC: addr  = %x\n", (unsigned int)addr);
+	log("HOOKNFC: hookf = %x\n", (unsigned int)hookf);
 
 	if ((addr % 4 == 0 && (unsigned int)hookf % 4 != 0) || (addr % 4 != 0 && (unsigned int)hookf % 4 == 0)) {
-		log("addr 0x%x and hook 0x%x\n don't match!\n", (unsigned int)addr, (unsigned int)hookf);
+		log("HOOKNFC: addr 0x%x and hook 0x%x\n don't match!\n", (unsigned int)addr, (unsigned int)hookf);
 		return -1;
 	}
 
@@ -53,11 +55,11 @@ int hook(struct hook_t *h, unsigned int addr, void *hookf)
     }
 
 	if (addr % 4 == 0) {
-		log("ARM\n")
+		log("ARM\n");
 		h->thumb = 0;
 		h->patch = (unsigned int)hookf;
 		h->orig = addr;
-		log("orig = %x\n", h->orig)
+		log("orig = %x\n", h->orig);
 		h->jump[0] = 0xe59ff000; // LDR pc, [pc, #0]
 		h->jump[1] = h->patch;
 		h->jump[2] = h->patch;
@@ -67,7 +69,7 @@ int hook(struct hook_t *h, unsigned int addr, void *hookf)
 			((int*)h->orig)[i] = h->jump[i];
 	}
 	else {
-		log("THUMB")
+		log("THUMB");
 		h->thumb = 1;
 		h->patch = (unsigned int)hookf;
 		h->orig = addr;
@@ -100,6 +102,7 @@ int hook(struct hook_t *h, unsigned int addr, void *hookf)
 
 void hook_precall(struct hook_t *h)
 {
+	log("HOOKNFC: hook_precall() ENTER");
 	int i;
 	
 	if (h->thumb) {
@@ -113,6 +116,7 @@ void hook_precall(struct hook_t *h)
 			((int*)h->orig)[i] = h->store[i];
 	}	
 	hook_cacheflush((unsigned int)h->orig, (unsigned int)h->orig+sizeof(h->jumpt));
+	log("HOOKNFC: hook_precall() LEAVE");
 }
 
 void hook_postcall(struct hook_t *h)
