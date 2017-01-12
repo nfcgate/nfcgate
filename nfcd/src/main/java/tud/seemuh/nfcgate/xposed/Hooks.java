@@ -20,8 +20,20 @@ public class Hooks implements IXposedHookLoadPackage {
         if(!"com.android.nfc".equals(lpparam.packageName))
             return;
 
-        //System.loadLibrary("nfcgate-native");
-        System.load("/data/data/tud.seemuh.nfcgate/lib/libnfcgate-native.so");
+        //Runtime.getRuntime().loadLibrary("nfcgate-native");
+        //System.load("/data/app-lib/tud.seemuh.nfcgate/libnfcgate-native.so");
+        try {
+            System.load("/data/app/tud.seemuh.nfcgate-1/lib/arm/libnfcgate-native.so");
+        } catch(UnsatisfiedLinkError e) {
+            try {
+                System.load("/data/app/tud.seemuh.nfcgate-2/lib/arm/libnfcgate-native.so");
+            } catch (UnsatisfiedLinkError f) {
+                Log.e("HOOKNFC", "Could not load libnfcgate-native library - catching fire.");
+                return;
+            }
+        }
+        Log.d("HOOKNFC", "Loaded library successfully");
+        //System.load("/sdcard/libnfcgate-native.so");
 
 
         // hook construtor to catch application context
