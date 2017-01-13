@@ -25,4 +25,6 @@
         <item>@color/darkred</item>
         <item>@color/black</item>
     </integer-array>
+
+    <color name="black_overlay">#66000000</color>
 </resources>

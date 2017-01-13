@@ -52,6 +52,9 @@
     <string name="logging_no_sessions_found">No sessions found.</string>
     <string name="logging_notify_disabled">Session logging is disabled.</string>
 
+    <string name="simpleclone_touch_card">TOUCH TO CARD</string>
+    <string name="simpleclone_touch_lock">TOUCH TO LOCK</string>
+
     <!-- Strings for Settings Activity -->
     <string name="pref_default_values">Default Values</string>
     <string name="pref_default_values_ip">Server IP</string>
@@ -96,4 +99,8 @@
         <item>Rename</item>
         <item>Delete</item>
     </string-array>
+
+    <string name="title_activity_basic_clone">BasicCloneActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
