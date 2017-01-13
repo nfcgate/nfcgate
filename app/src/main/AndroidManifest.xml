@@ -135,7 +135,8 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_basic_clone"
             android:theme="@style/FullscreenTheme"
-            android:hardwareAccelerated="false">
+            android:hardwareAccelerated="false"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
