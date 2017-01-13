@@ -7,23 +7,17 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
-import android.widget.TextSwitcher;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ViewSwitcher;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.gui.animation.CircleAngleAnimation;
@@ -207,6 +201,21 @@ public class BasicCloneActivity extends Activity {
     }
 
     private void animSetCardDiscovered() {
+        /*
+        This is a pretty god-awful implementation, but it works.
+        It roughly works like this:
+        Upon first being called, it animates the circle filling with green to signify that the
+        card was successfully scanned.
+        After the circle has been filled, it starts a countdown of 30 seconds, which is signified
+        by the green part of the circle retracting and revealing the (newly recolored) red
+        background of the circle.
+        Once the countdown has expired, the cloned card is evicted and a dummy card with UID
+        00000000000000 is loaded to replace it. The background of the circle is animated back to
+        the default white color.
+        Afterwards, the whole process can start over again if a new card is scanned.
+        If a card is scanned before the countdown expires, the countdown resets.
+        */
+
         // Animate circle
         CircleAngleAnimation animation = new CircleAngleAnimation(mCircleView, 360);
         animation.setDuration(1000);
@@ -221,7 +230,7 @@ public class BasicCloneActivity extends Activity {
                 mCircleView.setCircleBackgroundColor(Color.RED);
                 CircleAngleAnimation anim2 = new CircleAngleAnimation(mCircleView, 0);
                 anim2.setInterpolator(new LinearInterpolator());
-                anim2.setDuration(10000);
+                anim2.setDuration(30000);
                 anim2.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
