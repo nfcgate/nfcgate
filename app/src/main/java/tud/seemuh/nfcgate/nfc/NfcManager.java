@@ -29,6 +29,8 @@ import tud.seemuh.nfcgate.util.sink.SinkManager;
 public class NfcManager {
     private final String TAG = "NfcManager";
 
+    // State
+    private boolean mCloneModeEnabled = false;
     // NFC Objects
     private Tag mTag;
     private NFCTagReader mReader;
@@ -79,7 +81,7 @@ public class NfcManager {
         }
 
         //we only want to see AntiCol data in clone mode, discard everything else
-        if ( ! CloneFragment.getInstance().isCloneModeEnabled()) {
+        if ( !mCloneModeEnabled && !CloneFragment.getInstance().isCloneModeEnabled()) {
             try {
                 mSinkManagerQueue.add(nfcdata);
             } catch (IllegalStateException e) {
@@ -198,9 +200,17 @@ public class NfcManager {
     public void setApduService(ApduService apduService) {
         mApduService = apduService;
         //we dont want the network active, when clone mode is on
-        if( ! CloneFragment.getInstance().isCloneModeEnabled()) {
+        if( !mCloneModeEnabled && !CloneFragment.getInstance().isCloneModeEnabled()) {
             mNetworkHandler.notifyReaderFound();
         }
+    }
+
+    public void setCloneModeEnabled() {
+        mCloneModeEnabled = true;
+    }
+
+    public void setCloneModeDisabled() {
+        mCloneModeEnabled = false;
     }
 
 
@@ -211,7 +221,7 @@ public class NfcManager {
         mApduService = null;
 
         //we dont want the network active, when clone mode is on
-        if( ! CloneFragment.getInstance().isCloneModeEnabled()) {
+        if( !mCloneModeEnabled && !CloneFragment.getInstance().isCloneModeEnabled()) {
             mNetworkHandler.notifyReaderRemoved();
         }
     }
@@ -315,7 +325,7 @@ public class NfcManager {
         nfcdata = handleHceDataCommon(nfcdata);
 
         //we dont want the network active, when clone mode is on
-        if( ! CloneFragment.getInstance().isCloneModeEnabled()) {
+        if( !mCloneModeEnabled && !CloneFragment.getInstance().isCloneModeEnabled()) {
             mNetworkHandler.sendAPDUMessage(nfcdata);
         }
     }
