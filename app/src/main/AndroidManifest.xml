@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="tud.seemuh.nfcgate" >
+    package="tud.seemuh.nfcgate">
 
     <uses-permission
         android:name="android.permission.NFC"
@@ -22,9 +22,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
-
-
+        android:theme="@style/AppTheme">
         <meta-data
             android:name="xposedmodule"
             android:value="true" />
@@ -39,7 +37,7 @@
             android:name=".gui.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="tud.seemuh.nfcgate.main" />
 
@@ -49,12 +47,9 @@
         <activity
             android:name=".gui.Splash"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="tud.seemuh.nfcgate.splash" />
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
@@ -63,22 +58,22 @@
             android:name=".ActivityAlias"
             android:enabled="true"
             android:screenOrientation="portrait"
-            android:targetActivity=".gui.MainActivity" >
+            android:targetActivity=".gui.MainActivity">
             <intent-filter>
-                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+                <!-- <action android:name="android.nfc.action.TECH_DISCOVERED" /> -->
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
-            <meta-data
+            <!-- <meta-data
                 android:name="android.nfc.action.TECH_DISCOVERED"
-                android:resource="@xml/tech" />
+                android:resource="@xml/tech" /> !-->
         </activity-alias>
 
         <service
             android:name=".nfc.hce.ApduService"
             android:exported="true"
-            android:permission="android.permission.BIND_NFC_SERVICE" >
+            android:permission="android.permission.BIND_NFC_SERVICE">
             <intent-filter>
                 <action android:name="android.nfc.cardemulation.action.HOST_APDU_SERVICE" />
             </intent-filter>
@@ -92,7 +87,7 @@
             android:name=".gui.AboutActivity"
             android:label="@string/title_activity_about"
             android:parentActivityName=".gui.MainActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".gui.MainActivity" />
@@ -108,7 +103,7 @@
             android:label="Settings"
             android:parentActivityName=".gui.MainActivity"
             android:screenOrientation="portrait"
-            android:targetActivity="MainActivity" >
+            android:targetActivity="MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".gui.MainActivity" />
@@ -122,7 +117,7 @@
         <activity
             android:name=".gui.AboutWorkaroundActivity"
             android:label="@string/title_activity_about_workaround"
-            android:parentActivityName=".gui.MainActivity" >
+            android:parentActivityName=".gui.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".gui.MainActivity" />
@@ -130,11 +125,28 @@
         <activity
             android:name=".gui.LoggingDetailActivity"
             android:label="@string/title_activity_logging_detail"
-            android:parentActivityName=".gui.MainActivity" >
+            android:parentActivityName=".gui.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="tud.seemuh.nfcgate.gui.MainActivity" />
         </activity>
+        <activity
+            android:name=".gui.BasicCloneActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_basic_clone"
+            android:theme="@style/FullscreenTheme"
+            android:hardwareAccelerated="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/tech" />
+        </activity>
+
     </application>
 
 </manifest>
