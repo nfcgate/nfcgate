@@ -1,6 +1,8 @@
 package tud.seemuh.nfcgate.gui;
 
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -25,6 +27,7 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.gui.fragments.CloneFragment;
 import tud.seemuh.nfcgate.gui.fragments.EnablenfcDialog;
 import tud.seemuh.nfcgate.gui.fragments.RelayFragment;
 import tud.seemuh.nfcgate.gui.fragments.WorkaroundDialog;
@@ -32,6 +35,9 @@ import tud.seemuh.nfcgate.gui.tabLayout.SlidingTabLayout;
 import tud.seemuh.nfcgate.gui.tabLogic.PagerAdapter;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.nfc.reader.DesfireWorkaround;
+import tud.seemuh.nfcgate.util.NfcComm;
+import tud.seemuh.nfcgate.util.db.CloneListItem;
+import tud.seemuh.nfcgate.util.db.CloneListStorage;
 
 public class MainActivity extends FragmentActivity
         implements ReaderCallback,EnablenfcDialog.NFCNoticeDialogListener, WorkaroundDialog.WorkaroundDialogListener {
@@ -54,6 +60,15 @@ public class MainActivity extends FragmentActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        DaemonConfiguration.Init(this);
+
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Toast.makeText(context, intent.getStringExtra("text"), Toast.LENGTH_LONG).show();
+            }
+        }, new IntentFilter("tud.seemuh.nfcgate.toaster"));
+
         super.onCreate(savedInstanceState);
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         setContentView(R.layout.activity_main);
@@ -140,7 +155,10 @@ public class MainActivity extends FragmentActivity
     private void onTagDiscoveredCommon(Tag tag) {
         // Pass reference to NFC Manager
         Log.d(TAG, "onTagDiscoveredCommon");
+
         RelayFragment.getInstance().mNfcManager.setTag(tag);
+
+        CloneFragment.getInstance().onTagDiscoveredCommon(tag);
     }
 
     /**
@@ -187,11 +205,12 @@ public class MainActivity extends FragmentActivity
                 startActivity(new Intent(MainActivity.this, AboutActivity.class));
                 return true;
             case R.id.action_getpatchstate:
-                Toast.makeText(this, "Patch state: " + (DaemonConfiguration.getInstance().isPatchEnabled() ? "Active" : "Inactive"), Toast.LENGTH_LONG).show();
+                DaemonConfiguration.getInstance().requestPatchState();
                 return true;
             case R.id.action_disablepatch:
                 DaemonConfiguration.getInstance().disablePatch();
                 Toast.makeText(this, "Patch disabled", Toast.LENGTH_LONG).show();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

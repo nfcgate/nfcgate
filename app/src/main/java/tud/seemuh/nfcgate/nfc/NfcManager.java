@@ -9,6 +9,8 @@ import android.util.Log;
 import java.util.concurrent.BlockingQueue;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.gui.fragments.CloneFragment;
+import tud.seemuh.nfcgate.gui.fragments.RelayFragment;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.nfc.hce.ApduService;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
@@ -75,10 +77,20 @@ public class NfcManager {
             Log.e(TAG, "notifySinkManager: Trying to notify, but Queue is still null. Ignoring.");
             return;
         }
-        try {
-            mSinkManagerQueue.add(nfcdata);
-        } catch (IllegalStateException e) {
-            Log.e(TAG, "notifySinkManager: Tried to notify sm, but queue is full. Ignoring.");
+
+        //we only want to see AntiCol data in clone mode, discard everything else
+        if ( ! CloneFragment.getInstance().isCloneModeEnabled()) {
+            try {
+                mSinkManagerQueue.add(nfcdata);
+            } catch (IllegalStateException e) {
+                Log.e(TAG, "notifySinkManager: Tried to notify sm, but queue is full. Ignoring.");
+            }
+        } else if(nfcdata.getType().equals(NfcComm.Type.AnticolBytes)) {
+            try {
+                mSinkManagerQueue.add(nfcdata);
+            } catch (IllegalStateException e) {
+                Log.e(TAG, "notifySinkManager: Tried to notify sm, but queue is full. Ignoring.");
+            }
         }
     }
 
@@ -92,7 +104,9 @@ public class NfcManager {
         if (mFilterManager != null) {
             nfcdata = mFilterManager.filterAnticolData(nfcdata);
         }
+
         notifySinkManager(nfcdata);
+
         Log.d(TAG, "handleAnticolDataCommon: Post-Filter: " +
                 Utils.bytesToHex(nfcdata.getUid())  + " - " +
                 Utils.bytesToHex(nfcdata.getAtqa()) + " - " +
@@ -108,7 +122,9 @@ public class NfcManager {
         if (mFilterManager != null) {
             nfcdata = mFilterManager.filterHCEData(nfcdata);
         }
+
         notifySinkManager(nfcdata);
+
         Log.d(TAG, "handleHceDataCommon: Post-Filter: " +
                 Utils.bytesToHex(nfcdata.getData()));
         return nfcdata;
@@ -121,7 +137,9 @@ public class NfcManager {
         if (mFilterManager != null) {
             nfcdata = mFilterManager.filterCardData(nfcdata);
         }
+
         notifySinkManager(nfcdata);
+
         Log.d(TAG, "handleCardDataCommon: Post-Filter: " +
                 Utils.bytesToHex(nfcdata.getData()));
         return nfcdata;
@@ -161,6 +179,7 @@ public class NfcManager {
             startWorkaround();
 
             mNetworkHandler.sendAnticol(getAnticolData());
+
             // Notify partner about the newly detected card
             // This may lead to error messages if we are not already in a session
             mNetworkHandler.notifyCardFound();
@@ -178,7 +197,10 @@ public class NfcManager {
      */
     public void setApduService(ApduService apduService) {
         mApduService = apduService;
-        mNetworkHandler.notifyReaderFound();
+        //we dont want the network active, when clone mode is on
+        if( ! CloneFragment.getInstance().isCloneModeEnabled()) {
+            mNetworkHandler.notifyReaderFound();
+        }
     }
 
 
@@ -187,7 +209,11 @@ public class NfcManager {
      */
     public void unsetApduService() {
         mApduService = null;
-        mNetworkHandler.notifyReaderRemoved();
+
+        //we dont want the network active, when clone mode is on
+        if( ! CloneFragment.getInstance().isCloneModeEnabled()) {
+            mNetworkHandler.notifyReaderRemoved();
+        }
     }
 
 
@@ -199,6 +225,15 @@ public class NfcManager {
     public void setSinkManager(SinkManager sinkManager, BlockingQueue<NfcComm> smq) {
         mSinkManager = sinkManager;
         mSinkManagerQueue = smq;
+    }
+
+    public void unsetSinkManager() {
+        mSinkManager = null;
+        mSinkManagerQueue = null;
+    }
+
+    public SinkManager getSinkManager() {
+        return mSinkManager;
     }
 
 
@@ -278,7 +313,11 @@ public class NfcManager {
     public void handleHCEData(NfcComm nfcdata) {
         Log.d(TAG, "handleHCEData: Got data from ApduService");
         nfcdata = handleHceDataCommon(nfcdata);
-        mNetworkHandler.sendAPDUMessage(nfcdata);
+
+        //we dont want the network active, when clone mode is on
+        if( ! CloneFragment.getInstance().isCloneModeEnabled()) {
+            mNetworkHandler.sendAPDUMessage(nfcdata);
+        }
     }
 
 
@@ -395,8 +434,12 @@ public class NfcManager {
      * Start up the NfcManager and related services.
      */
     public void start() {
-        Log.i(TAG, "start: Starting SinkManager Thread");
-        mSinkManagerThread = new Thread(mSinkManager);
-        mSinkManagerThread.start();
+        if(mSinkManagerThread == null) {
+            Log.i(TAG, "start: Starting SinkManager Thread");
+            mSinkManagerThread = new Thread(mSinkManager);
+            mSinkManagerThread.start();
+        } else {
+            Log.i(TAG, "start: SinkManager Thread already started");
+        }
     }
 }

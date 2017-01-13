@@ -27,9 +27,11 @@ void nci_SetRfCback(tNFC_CONN_CBACK *p_cback) {
 }
 
 tNFC_STATUS nci_NfcSetConfig (uint8_t size, uint8_t *tlv) {
+    log("HOOKNFC: nci_NfcSetConfig() ENTER");
     hook_precall(&hook_config);
     tNFC_STATUS r = nci_orig_NfcSetConfig(size, tlv);
     hook_postcall(&hook_config);
+    log("HOOKNFC: nci_NfcSetConfig() LEAVE");
     return r;
 }
 

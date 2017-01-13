@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -149,20 +150,6 @@ public class RelayFragment extends Fragment
         }
 
         mConnecttoSession.requestFocus();
-         /*
-        getActivity().getSupportFragmentManager().popBackStack();
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-        @Override
-        public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
-            // handle back button
-                return true;
-            }
-                return false;
-            }
-        }); */
 
     }
 
@@ -316,7 +303,7 @@ public class RelayFragment extends Fragment
         try {
             if (textViewSinkActive) {
                 // Debug window is active, activate the sink that collects data for it
-                mSinkManager.addSink(SinkManager.SinkType.DISPLAY_TEXTVIEW, mDebuginfo);
+                mSinkManager.addSink(SinkManager.SinkType.DISPLAY_TEXTVIEW, mDebuginfo, false);
             }
             if (logfileSinkActive) {
                 // Logging to file is active. Generate filename from timestamp
