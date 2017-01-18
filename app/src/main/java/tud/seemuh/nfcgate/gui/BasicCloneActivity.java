@@ -54,7 +54,7 @@ public class BasicCloneActivity extends Activity {
     // animation duration to fill the circle with green
     private static final int UI_GREEN_FILL_MILLIS = 1000;
     // animation duration for retreating green circle until reset
-    private static final int UI_RESET_COUNTDOWN_MILLIS = 10000;
+    private static final int UI_RESET_COUNTDOWN_MILLIS = 30000;
     // animation duration to recolor the background from red to white
     private static final int UI_RECOLOR_BACKGROUND_MILLIS = 500;
 
