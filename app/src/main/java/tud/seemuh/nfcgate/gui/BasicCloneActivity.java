@@ -50,6 +50,14 @@ public class BasicCloneActivity extends Activity {
      * and a change of the status and navigation bar.
      */
     private static final int UI_ANIMATION_DELAY = 300;
+
+    // animation duration to fill the circle with green
+    private static final int UI_GREEN_FILL_MILLIS = 1000;
+    // animation duration for retreating green circle until reset
+    private static final int UI_RESET_COUNTDOWN_MILLIS = 10000;
+    // animation duration to recolor the background from red to white
+    private static final int UI_RECOLOR_BACKGROUND_MILLIS = 500;
+
     private final Handler mHideHandler = new Handler();
     private View mContentView;
     private CircleView mCircleView;
@@ -218,7 +226,7 @@ public class BasicCloneActivity extends Activity {
 
         // Animate circle
         CircleAngleAnimation animation = new CircleAngleAnimation(mCircleView, 360);
-        animation.setDuration(1000);
+        animation.setDuration(UI_GREEN_FILL_MILLIS);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -230,7 +238,7 @@ public class BasicCloneActivity extends Activity {
                 mCircleView.setCircleBackgroundColor(Color.RED);
                 CircleAngleAnimation anim2 = new CircleAngleAnimation(mCircleView, 0);
                 anim2.setInterpolator(new LinearInterpolator());
-                anim2.setDuration(30000);
+                anim2.setDuration(UI_RESET_COUNTDOWN_MILLIS);
                 anim2.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
@@ -249,7 +257,7 @@ public class BasicCloneActivity extends Activity {
 
                         // Animate color change of circle
                         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), Color.RED, Color.WHITE);
-                        colorAnimation.setDuration(500);
+                        colorAnimation.setDuration(UI_RECOLOR_BACKGROUND_MILLIS);
                         colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                             @Override
                             public void onAnimationUpdate(ValueAnimator valueAnimator) {

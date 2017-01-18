@@ -156,9 +156,10 @@ public class MainActivity extends FragmentActivity
         // Pass reference to NFC Manager
         Log.d(TAG, "onTagDiscoveredCommon");
 
-        RelayFragment.getInstance().mNfcManager.setTag(tag);
+        // TODO For the time being, ignore new intents, because fuck that.
+        // RelayFragment.getInstance().mNfcManager.setTag(tag);
 
-        CloneFragment.getInstance().onTagDiscoveredCommon(tag);
+        // CloneFragment.getInstance().onTagDiscoveredCommon(tag);
     }
 
     /**
