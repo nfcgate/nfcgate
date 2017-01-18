@@ -10,15 +10,28 @@
          TextureView, etc. -->
     <TextView
         android:id="@+id/fullscreen_content"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:keepScreenOn="true"
         android:text="@string/simpleclone_touch_card"
         android:textColor="#4fc3f7"
         android:textSize="50sp"
         android:textStyle="bold"
-        android:layout_marginTop="350dp"
+        android:layout_marginTop="300dp"
         android:gravity="center" />
+
+    <TextView
+        android:text=""
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#4fc3f7"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:id="@+id/simpleui_additional_text"
+        android:layout_marginTop="450dp"
+        android:gravity="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
 
     <LinearLayout
         android:orientation="vertical"

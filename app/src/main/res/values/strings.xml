@@ -52,8 +52,9 @@
     <string name="logging_no_sessions_found">No sessions found.</string>
     <string name="logging_notify_disabled">Session logging is disabled.</string>
 
-    <string name="simpleclone_touch_card">TOUCH TO CARD</string>
-    <string name="simpleclone_touch_lock">TOUCH TO LOCK</string>
+    <string name="simpleclone_touch_card">Bitte Karte berühren</string>
+    <string name="simpleclone_touch_lock">Bitte Schloss berühren</string>
+    <string name="simpleclone_touch_reset">Das Exponat wird in 30 Sekunden für die nächsten Besucher zurückgesetzt.</string>
 
     <!-- Strings for Settings Activity -->
     <string name="pref_default_values">Default Values</string>
