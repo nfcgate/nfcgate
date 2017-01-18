@@ -65,6 +65,8 @@ public class BasicCloneActivity extends Activity {
     private CircleView mCircleView;
     private TextView mAdditionalTextView;
 
+    private Handler mCountdownHandler;
+
     private PendingIntent mPendingIntent;
     private NfcAdapter mAdapter;
 
@@ -213,21 +215,6 @@ public class BasicCloneActivity extends Activity {
     }
 
     private void animSetCardDiscovered() {
-        /*
-        This is a pretty god-awful implementation, but it works.
-        It roughly works like this:
-        Upon first being called, it animates the circle filling with green to signify that the
-        card was successfully scanned.
-        After the circle has been filled, it starts a countdown of 30 seconds, which is signified
-        by the green part of the circle retracting and revealing the (newly recolored) red
-        background of the circle.
-        Once the countdown has expired, the cloned card is evicted and a dummy card with UID
-        00000000000000 is loaded to replace it. The background of the circle is animated back to
-        the default white color.
-        Afterwards, the whole process can start over again if a new card is scanned.
-        If a card is scanned before the countdown expires, the countdown resets.
-        */
-
         // Animate circle
         CircleAngleAnimation animation = new CircleAngleAnimation(mCircleView, 360);
         animation.setDuration(UI_GREEN_FILL_MILLIS);
@@ -240,58 +227,14 @@ public class BasicCloneActivity extends Activity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                // End of circle turning green
-                mCircleView.setCircleBackgroundColor(Color.RED);
-                // Wait 30 seconds before starting the reset countdown
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
+                mCircleView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
-                    public void run() {
-                        mAdditionalTextView.setText(R.string.simpleclone_touch_reset);
-                        CircleAngleAnimation anim2 = new CircleAngleAnimation(mCircleView, 0);
-                        anim2.setInterpolator(new LinearInterpolator());
-                        // Start reset countdown
-                        anim2.setDuration(UI_RESET_COUNTDOWN_MILLIS);
-                        anim2.setAnimationListener(new Animation.AnimationListener() {
-                            @Override
-                            public void onAnimationStart(Animation animation) {
-                                // Do nothing
-                            }
-
-                            @Override
-                            public void onAnimationEnd(Animation animation) {
-                                // Reset emulated anticol values
-                                mNfcManager.setAnticolData(new NfcComm(
-                                        new byte[] {(byte)0x44, (byte)0x03},
-                                        (byte) 0x20,
-                                        new byte[] {(byte)0x80},
-                                        new byte[] {(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00}
-                                ));
-
-                                // Animate color change of circle
-                                ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), Color.RED, Color.WHITE);
-                                colorAnimation.setDuration(UI_RECOLOR_BACKGROUND_MILLIS);
-                                colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                                    @Override
-                                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                                        mCircleView.setCircleBackgroundColor((int) valueAnimator.getAnimatedValue());
-                                        mCircleView.invalidate();
-                                    }
-                                });
-                                colorAnimation.start();
-                                ((TextView)mContentView).setText(R.string.simpleclone_touch_card);
-                                mAdditionalTextView.setText("");
-                            }
-
-                            @Override
-                            public void onAnimationRepeat(Animation animation) {
-                                // Do nothing
-                            }
-                        });
-                        mCircleView.startAnimation(anim2);
+                    public boolean onLongClick(View view) {
+                        animResetCardStatus();
+                        return false;
                     }
-                }, UI_WAIT_COUNTDOWN_MILLIS);
-
+                });
+                animWaitForCountdown();
             }
 
             @Override
@@ -302,6 +245,80 @@ public class BasicCloneActivity extends Activity {
         mCircleView.startAnimation(animation);
 
         ((TextView)mContentView).setText(R.string.simpleclone_touch_lock);
+    }
+
+    private void animWaitForCountdown() {
+        // End of circle turning green
+        mCircleView.setCircleBackgroundColor(Color.RED);
+        // Wait 30 seconds before starting the reset countdown
+        mCountdownHandler = new Handler();
+        mCountdownHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                animStartCountdown();
+            }
+        }, UI_WAIT_COUNTDOWN_MILLIS);
+
+    }
+
+    private void animStartCountdown() {
+        // Set description text
+        mAdditionalTextView.setText(R.string.simpleclone_touch_reset);
+        // Prepare animation
+        CircleAngleAnimation anim2 = new CircleAngleAnimation(mCircleView, 0);
+        anim2.setInterpolator(new LinearInterpolator());
+        // Start reset countdown
+        anim2.setDuration(UI_RESET_COUNTDOWN_MILLIS);
+        anim2.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                // Do nothing
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                animResetCardStatus();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                // Do nothing
+            }
+        });
+        mCircleView.startAnimation(anim2);
+    }
+
+    private void animResetCardStatus() {
+        // Cancel all pending animations
+        mCircleView.animate().cancel();
+        mCircleView.clearAnimation();
+        // Reset angle to zero
+        mCircleView.setAngle(0.0f);
+        // Stop any pending delayed operations
+        mCountdownHandler.removeCallbacksAndMessages(null);
+
+        // Reset emulated anticol values
+        mNfcManager.setAnticolData(new NfcComm(
+                new byte[] {(byte)0x44, (byte)0x03},
+                (byte) 0x20,
+                new byte[] {(byte)0x80},
+                new byte[] {(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00}
+        ));
+
+        // Animate color change of circle
+        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), Color.RED, Color.WHITE);
+        colorAnimation.setDuration(UI_RECOLOR_BACKGROUND_MILLIS);
+        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                mCircleView.setCircleBackgroundColor((int) valueAnimator.getAnimatedValue());
+                mCircleView.invalidate();
+            }
+        });
+        colorAnimation.start();
+        // Set description texts correctly
+        ((TextView)mContentView).setText(R.string.simpleclone_touch_card);
+        mAdditionalTextView.setText("");
     }
 
     private void toggle() {
