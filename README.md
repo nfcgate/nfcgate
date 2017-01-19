@@ -3,6 +3,9 @@ nfcgate
 
 NFCGate is an Android application meant to relay communication between an NFC reader and a card. That way, NFC cards can be read over longer distances (we successfully read a card in Hamburg with a reader in Darmstadt). This also allows eavesdropping on the communication between card and reader, in order to reverse engineer the protocol, or modifying the traffic to test the security of the implementation, for example.
 
+## Warning
+This branch contains a version of NFCGate that has received a pretty UI for a special presentation and exhibition. **However**, it only has a very reduced set of functionality, and is designed to work on the Nexus 5 only. Do not use this version for "serious" work. Instead, use the version from the "dev" branch.
+
 ## Notice
 This application was developed for security research purposes by students of the [TU Darmstadt](https://www.tu-darmstadt.de/), [Secure Mobile Networking Lab](https://www.seemoo.tu-darmstadt.de/). Please do not use this application for malicious purposes.
 
