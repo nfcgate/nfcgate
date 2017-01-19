@@ -8,6 +8,9 @@ import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -15,8 +18,11 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import tud.seemuh.nfcgate.R;
@@ -64,8 +70,10 @@ public class BasicCloneActivity extends Activity {
     private View mContentView;
     private CircleView mCircleView;
     private TextView mAdditionalTextView;
+    private ImageView mBrandingView;
 
     private Handler mCountdownHandler;
+    private AnimationDrawable mAnimDrawable;
 
     private PendingIntent mPendingIntent;
     private NfcAdapter mAdapter;
@@ -138,6 +146,7 @@ public class BasicCloneActivity extends Activity {
 
         mCircleView = (CircleView) findViewById(R.id.circleView);
         mAdditionalTextView = (TextView) findViewById(R.id.simpleui_additional_text);
+        mBrandingView = (ImageView) findViewById(R.id.branding_view);
 
         mNfcManager = NfcManager.getInstance();
         mNfcManager.setContext(this);
@@ -151,6 +160,18 @@ public class BasicCloneActivity extends Activity {
                 //toggle();
             }
         });
+
+        // Cycle through branding images
+        mAnimDrawable = new AnimationDrawable();
+        mAnimDrawable.addFrame(getResources().getDrawable(R.drawable.crisp_negative), 5000);
+        mAnimDrawable.addFrame(getResources().getDrawable(R.drawable.tud_negative), 5000);
+        mAnimDrawable.addFrame(getResources().getDrawable(R.drawable.cysec_negative), 5000);
+        mAnimDrawable.setEnterFadeDuration(1000);
+        mAnimDrawable.setExitFadeDuration(1000);
+        mAnimDrawable.setOneShot(false);
+        mBrandingView.setImageDrawable(mAnimDrawable);
+
+
 
         // Prepare PendingIntent to catch NFC intents if the app is already running
         // Based on https://developer.android.com/guide/topics/connectivity/nfc/advanced-nfc.html#foreground-dispatch
@@ -176,6 +197,9 @@ public class BasicCloneActivity extends Activity {
             Log.i(TAG, "onResume(): starting onNewIntent()...");
             this.onNewIntent(this.getIntent());
         }
+
+        // Start branding image cycler
+        mAnimDrawable.start();
     }
 
     @Override
@@ -262,8 +286,35 @@ public class BasicCloneActivity extends Activity {
     }
 
     private void animStartCountdown() {
-        // Set description text
+        // Set description text and hide branding view
         mAdditionalTextView.setText(R.string.simpleclone_touch_reset);
+        Animation fadein = new AlphaAnimation(0, 1);
+        fadein.setDuration(1000);
+        mAdditionalTextView.startAnimation(fadein);
+
+        Animation fadeout = new AlphaAnimation(1, 0);
+        fadeout.setInterpolator(new LinearInterpolator());
+        fadeout.setStartOffset(0);
+        fadeout.setDuration(1000);
+        fadeout.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                // Do nothing
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mBrandingView.setVisibility(View.GONE);
+                mAnimDrawable.stop();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                // Do nothing
+            }
+        });
+        mBrandingView.startAnimation(fadeout);
+
         // Prepare animation
         CircleAngleAnimation anim2 = new CircleAngleAnimation(mCircleView, 0);
         anim2.setInterpolator(new LinearInterpolator());
@@ -318,7 +369,46 @@ public class BasicCloneActivity extends Activity {
         colorAnimation.start();
         // Set description texts correctly
         ((TextView)mContentView).setText(R.string.simpleclone_touch_card);
-        mAdditionalTextView.setText("");
+        Animation fadeout = new AlphaAnimation(1, 0);
+        fadeout.setDuration(1000);
+        fadeout.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                // Do nothing
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mAdditionalTextView.setText("");
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        mAdditionalTextView.startAnimation(fadeout);
+        mBrandingView.setVisibility(View.VISIBLE);
+        Animation fadein = new AlphaAnimation(0, 1);
+        fadein.setDuration(1000);
+        fadein.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                // Do nothing
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mAnimDrawable.start();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                // Do nothing
+            }
+        });
+        mBrandingView.startAnimation(fadein);
+
     }
 
     private void toggle() {

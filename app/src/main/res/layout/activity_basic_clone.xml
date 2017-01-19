@@ -33,6 +33,14 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp" />
 
+    <ImageView
+
+        android:layout_width="840px"
+        android:layout_gravity="center_horizontal"
+        android:layout_height="296px"
+        android:id="@+id/branding_view"
+        android:layout_marginTop="470dp"/>
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
