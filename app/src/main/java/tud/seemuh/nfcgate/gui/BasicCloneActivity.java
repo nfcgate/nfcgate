@@ -167,6 +167,7 @@ public class BasicCloneActivity extends Activity {
         mAnimDrawable.addFrame(getResources().getDrawable(R.drawable.crisp_negative), 5000);
         mAnimDrawable.addFrame(getResources().getDrawable(R.drawable.tud_negative), 5000);
         mAnimDrawable.addFrame(getResources().getDrawable(R.drawable.cysec_negative), 5000);
+        mAnimDrawable.addFrame(getResources().getDrawable(R.drawable.seemoo_negative), 5000);
         mAnimDrawable.setEnterFadeDuration(1000);
         mAnimDrawable.setExitFadeDuration(1000);
         mAnimDrawable.setOneShot(false);
