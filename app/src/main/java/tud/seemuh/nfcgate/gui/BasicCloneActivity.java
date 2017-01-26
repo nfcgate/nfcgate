@@ -16,6 +16,7 @@ import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -224,7 +225,7 @@ public class BasicCloneActivity extends Activity {
         Log.i(TAG, "onNewIntent(): started");
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction()) ||
                 NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
-            Log.i(TAG,"Discovered tag with intent: " + intent);
+            Log.i(TAG, "Discovered tag with intent: " + intent);
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
             mNfcManager.setTag(tag);

@@ -101,7 +101,7 @@
         <item>Delete</item>
     </string-array>
 
-    <string name="title_activity_basic_clone">BasicCloneActivity</string>
+    <string name="title_activity_basic_clone">NFCGate</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
