@@ -23,7 +23,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import tud.seemuh.nfcgate.R;
@@ -49,6 +51,7 @@ public class MainActivity extends FragmentActivity
     private String[][] mTechLists;
 
     private final static String TAG = "MainActivity";
+
 
     //TODO double in RelayFragment -> move to Enum
     public static String joinSessionMessage = "Join Session";
@@ -115,6 +118,7 @@ public class MainActivity extends FragmentActivity
                 new String[] {IsoDep.class.getName()}
                 //we could add all of the Types from the tech.xml here
         };
+
     }
 
     @Override
@@ -175,8 +179,13 @@ public class MainActivity extends FragmentActivity
     @Override
     public void onNewIntent(Intent intent) {
         Log.i(TAG, "onNewIntent(): started");
+
+        if(CloneFragment.getInstance().isPinUID()) {
+            return;
+        }
+
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())) {
-            Log.i(TAG,"Discovered tag with intent: " + intent);
+            Log.i(TAG, "Discovered tag with intent: " + intent);
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
             onTagDiscoveredCommon(tag);

@@ -43,6 +43,8 @@ public class CloneFragment extends Fragment implements OnClickListener {
 
     private TextView mCurrUID;
     private Switch mToggleCloneMode;
+    private Switch mPinUID;
+
     private Context mContext;
     private Button mSaveButton;
     private ListView mListView;
@@ -58,6 +60,8 @@ public class CloneFragment extends Fragment implements OnClickListener {
         mCurrUID = (TextView) v.findViewById(R.id.cloned_uid);
         mToggleCloneMode = (Switch) v.findViewById(R.id.btnSwitchCloneMode);
         mToggleCloneMode.setOnClickListener(this);
+
+        mPinUID = (Switch) v.findViewById(R.id.btnSwitchPinUID);
 
         mListView = (ListView) v.findViewById(R.id.savedList);
 
@@ -134,6 +138,10 @@ public class CloneFragment extends Fragment implements OnClickListener {
 
     public boolean isCloneModeEnabled() {
         return mCloneModeEnabled;
+    }
+
+    public boolean isPinUID() {
+        return mPinUID.isChecked();
     }
 
     public static CloneFragment getInstance() {

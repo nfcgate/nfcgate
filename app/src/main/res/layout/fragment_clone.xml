@@ -12,6 +12,13 @@
         android:id="@+id/btnSwitchCloneMode"
         android:layout_gravity="center_horizontal" />
 
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pin UID"
+        android:id="@+id/btnSwitchPinUID"
+        android:layout_gravity="center_horizontal" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
