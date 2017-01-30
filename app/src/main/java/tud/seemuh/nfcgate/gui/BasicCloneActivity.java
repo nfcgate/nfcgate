@@ -355,7 +355,7 @@ public class BasicCloneActivity extends Activity {
                 new byte[] {(byte)0x44, (byte)0x03},
                 (byte) 0x20,
                 new byte[] {(byte)0x80},
-                new byte[] {(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00}
+                new byte[] {(byte)0x13, (byte)0x37, (byte)0x13, (byte)0x37, (byte)0x13, (byte)0x37, (byte)0x42}
         ));
 
         // Animate color change of circle
