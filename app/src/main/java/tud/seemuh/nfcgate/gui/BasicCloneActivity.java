@@ -225,7 +225,8 @@ public class BasicCloneActivity extends Activity {
         super.onNewIntent(intent);
         Log.i(TAG, "onNewIntent(): started");
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction()) ||
-                NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
+                NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction()) ||
+                NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
             Log.i(TAG, "Discovered tag with intent: " + intent);
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
