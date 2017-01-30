@@ -26,11 +26,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.nfc.NfcManager;
+import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.db.CloneListItem;
 import tud.seemuh.nfcgate.util.db.CloneListStorage;
 import tud.seemuh.nfcgate.util.sink.SinkInitException;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
+import tud.seemuh.nfcgate.xposed.Native;
 
 public class CloneFragment extends Fragment implements OnClickListener {
 
@@ -62,6 +64,7 @@ public class CloneFragment extends Fragment implements OnClickListener {
         mToggleCloneMode.setOnClickListener(this);
 
         mPinUID = (Switch) v.findViewById(R.id.btnSwitchPinUID);
+        mPinUID.setOnClickListener(this);
         mPinUID.setClickable(false);
 
         mListView = (ListView) v.findViewById(R.id.savedList);
@@ -156,9 +159,11 @@ public class CloneFragment extends Fragment implements OnClickListener {
 
     @Override
     public void onClick(View v) {
+        boolean on;
+
         switch(v.getId()) {
             case R.id.btnSwitchCloneMode:
-                boolean on = ((Switch) v).isChecked();
+                on = ((Switch) v).isChecked();
 
                 if (on) {
                     //set sink
@@ -186,6 +191,17 @@ public class CloneFragment extends Fragment implements OnClickListener {
                 }
 
                 break;
+            case R.id.btnSwitchPinUID:
+                on = ((Switch) v).isChecked();
+
+                if(on) {
+                    Log.i(TAG, "onClick(): PinUID on");
+                    DaemonConfiguration.getInstance().disablePolling();
+                } else {
+                    Log.i(TAG, "onClick(): PinUID off");
+                    DaemonConfiguration.getInstance().enablePolling();
+                }
+
         }
     }
     public void onTagDiscoveredCommon(Tag tag) {

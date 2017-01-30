@@ -24,6 +24,14 @@ public class DaemonConfiguration {
         sendSimple("ENABLE");
     }
 
+    public void enablePolling() {
+        sendSimple("ENABLE_POLLING");
+    }
+
+    public void disablePolling() {
+        sendSimple("DISABLE_POLLING");
+    }
+
     public void disablePatch() {
         sendSimple("DISABLE");
     }

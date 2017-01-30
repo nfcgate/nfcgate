@@ -81,6 +81,8 @@ typedef UINT8 tUSERIAL_PORT;
 
 typedef UINT8 tNFC_DISCOVERY_TYPE;
 
+typedef UINT8 tNFA_TECHNOLOGY_MASK;
+
 #define NCI_NFCID1_MAX_LEN    10
 #define NCI_T1T_HR_LEN        2
 
@@ -173,6 +175,13 @@ typedef void HAL_NfcWrite (UINT16 data_len, UINT8 *p_data);
 typedef UINT16  USERIAL_Write(tUSERIAL_PORT port, UINT8 *p_data, UINT16 len);
 typedef tNFA_STATUS nfa_dm_set_rf_listen_mode_config (tNFA_DM_DISC_TECH_PROTO_MASK tech_proto_mask);
 typedef tNFC_STATUS NFC_SetConfig (UINT8     tlv_size, UINT8    *p_param_tlvs);
+typedef tNFC_STATUS NFC_SendData(UINT8       conn_id,  BT_HDR     *p_data);
+typedef tNFC_STATUS NFC_Deactivate (UINT8 deactivate_type);
+
+typedef tNFA_STATUS NFA_StartRfDiscovery ();
+typedef tNFA_STATUS NFA_EnablePolling (tNFA_TECHNOLOGY_MASK poll_mask);
+typedef tNFA_STATUS NFA_StopRfDiscovery();
+typedef tNFA_STATUS NFA_DisablePolling();
 
 /***************************************************/
 

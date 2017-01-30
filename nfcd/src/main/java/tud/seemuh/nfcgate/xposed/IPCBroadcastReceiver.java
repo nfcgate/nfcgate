@@ -30,6 +30,12 @@ public class IPCBroadcastReceiver extends BroadcastReceiver {
         else if("DISABLE".equals(action)) {
             Native.Instance.setEnabled(false);
         }
+        else if("ENABLE_POLLING".equals(action)) {
+            Native.Instance.enablePolling();
+        }
+        else if("DISABLE_POLLING".equals(action)) {
+            Native.Instance.disablePolling();
+        }
         else if("UPLOAD".equals(action)) {
             Native.Instance.uploadConfiguration(
                     intent.getByteExtra("atqa", (byte)0),

@@ -18,7 +18,6 @@
 
 void inline hook_cacheflush(unsigned int begin, unsigned int end)
 {
-	log("HOOKNFC: hook_cacheflush() ENTER");
 	const int syscall = 0xf0002;
 	__asm __volatile (
 		"mov	 r0, %0\n"			
@@ -30,7 +29,6 @@ void inline hook_cacheflush(unsigned int begin, unsigned int end)
 		:	"r" (begin), "r" (end), "r" (syscall)
 		:	"r0", "r1", "r7"
 		);
-	log("HOOKNFC: hook_cacheflush() LEAVE");
 }
 
 int hook(struct hook_t *h, unsigned int addr, void *hookf)
@@ -102,7 +100,6 @@ int hook(struct hook_t *h, unsigned int addr, void *hookf)
 
 void hook_precall(struct hook_t *h)
 {
-	log("HOOKNFC: hook_precall() ENTER");
 	int i;
 	
 	if (h->thumb) {
@@ -116,7 +113,6 @@ void hook_precall(struct hook_t *h)
 			((int*)h->orig)[i] = h->store[i];
 	}	
 	hook_cacheflush((unsigned int)h->orig, (unsigned int)h->orig+sizeof(h->jumpt));
-	log("HOOKNFC: hook_precall() LEAVE");
 }
 
 void hook_postcall(struct hook_t *h)
