@@ -62,6 +62,7 @@ public class CloneFragment extends Fragment implements OnClickListener {
         mToggleCloneMode.setOnClickListener(this);
 
         mPinUID = (Switch) v.findViewById(R.id.btnSwitchPinUID);
+        mPinUID.setClickable(false);
 
         mListView = (ListView) v.findViewById(R.id.savedList);
 
@@ -172,11 +173,16 @@ public class CloneFragment extends Fragment implements OnClickListener {
                         // Do nothing.
                     }
                     mCloneModeEnabled = true;
+
+                    mPinUID.setClickable(true);
                 } else {
                     //remove + reset sink
                     mNfcManager.unsetSinkManager();
                     mNfcManager.shutdown();
                     mCloneModeEnabled = false;
+
+                    mPinUID.setChecked(false);
+                    mPinUID.setClickable(false);
                 }
 
                 break;
