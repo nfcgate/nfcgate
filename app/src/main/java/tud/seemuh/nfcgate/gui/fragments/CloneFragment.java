@@ -186,6 +186,7 @@ public class CloneFragment extends Fragment implements OnClickListener {
                     mNfcManager.shutdown();
                     mCloneModeEnabled = false;
 
+                    DaemonConfiguration.getInstance().enablePolling();
                     mPinUID.setChecked(false);
                     mPinUID.setClickable(false);
                 }

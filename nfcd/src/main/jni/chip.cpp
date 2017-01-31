@@ -216,6 +216,7 @@ static void uploadConfig(const struct s_chip_config config) {
 void disablePolling() {
     log("HOOKNFC disable polling");
     hook_NfaDisablePolling();
+    hook_NfcDeactivate(0);
 }
 
 void enablePolling() {
