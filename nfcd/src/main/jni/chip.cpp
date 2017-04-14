@@ -1,5 +1,3 @@
-
-
 #include "nfcd.h"
 #include "vendor/adbi/hook.h"
 #include <cstring>
@@ -18,6 +16,14 @@ struct s_chip_config patchValues = { 0 };
 
 NFC_SetStaticRfCback *nci_orig_SetRfCback;
 NFC_SetConfig *nci_orig_NfcSetConfig;
+NFC_SendData  *nfc_orig_sendData;
+NFC_Deactivate  *nfc_orig_deactivate;
+
+NFA_StopRfDiscovery  *nfa_orig_stop_rf_discovery;
+NFA_DisablePolling *nfa_orig_disable_polling;
+NFA_StartRfDiscovery *nfa_orig_start_rf_discovery;
+NFA_EnablePolling *nfa_orig_enable_polling;
+
 tCE_CB *ce_cb;
 
 void nci_SetRfCback(tNFC_CONN_CBACK *p_cback) {
@@ -52,12 +58,62 @@ void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
     }
 }
 
+tNFC_STATUS hook_NfcDeactivate(UINT8 deactivate_type) {
+    hook_precall(&hook_deactivate);
+    tNFC_STATUS r;
+    log("HOOKNFC deactivate(), we got %d", deactivate_type);
+    r = nfc_orig_deactivate(deactivate_type);
+    hook_postcall(&hook_deactivate);
+    return r;
+}
+
+tNFC_STATUS hook_NfcSenddata(UINT8 conn_id, BT_HDR *p_data) {
+    hook_precall(&hook_senddata);
+    log("HOOKNFC senddata() offset: %d, len: %d", p_data->offset, p_data->len);
+    loghex("HOOKNFC data:",  ((UINT8 *)(p_data + 1) + p_data->offset), 16);
+    tNFC_STATUS r = nfc_orig_sendData(conn_id, p_data);
+    hook_postcall(&hook_senddata);
+    return r;
+}
+
+tNFA_STATUS  hook_NfaStopRfDiscovery(void) {
+    hook_precall(&hook_nfa_stop_rf_discovery);
+    log("HOOKNFC hook_NfaStopRfDiscovery()");
+    tNFA_STATUS r = nfa_orig_stop_rf_discovery();
+    hook_postcall(&hook_nfa_stop_rf_discovery);
+    return r;
+}
+
+tNFA_STATUS  hook_NfaDisablePolling(void) {
+    hook_precall(&hook_nfa_disable_polling);
+    log("HOOKNFC hook_nfa_disable_polling()");
+    tNFA_STATUS r = nfa_orig_disable_polling();
+    hook_postcall(&hook_nfa_disable_polling);
+    return r;
+}
+
+tNFA_STATUS hook_NfaStartRfDiscovery() {
+    hook_precall(&hook_nfa_start_rf_discovery);
+    log("HOOKNFC hook_NfaStartRfDiscovery()")
+    tNFA_STATUS r = nfa_orig_start_rf_discovery();
+    hook_postcall(&hook_nfa_start_rf_discovery);
+    return r;
+}
+
+tNFA_STATUS hook_NfaEnablePolling(tNFA_TECHNOLOGY_MASK poll_mask) {
+    hook_precall(&hook_nfa_enable_polling);
+    log("HOOKNFC hook_NfaEnablePolling() 0x%x", poll_mask);
+    tNFA_STATUS r = nfa_orig_enable_polling(poll_mask);
+    hook_postcall(&hook_nfa_enable_polling);
+    return r;
+}
+
 /**
  * hooked NfcSetConfig implementation
  */
 tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
 
-    loghex("NfcSetConfig", tlv, size);
+    loghex("HOOKNFC NfcSetConfig", tlv, size);
     uint8_t i = 0;
     bool needUpload = false;
     // read the configuration bytestream and extract the values that we indent to override
@@ -113,6 +169,7 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
         // any of our values got modified and we are active -> reupload
         uploadPatchConfig();
     }
+
     return r;
 }
 
@@ -153,7 +210,20 @@ static void uploadConfig(const struct s_chip_config config) {
     i += config.hist_len;
 
     nci_NfcSetConfig(i, cfg);
-    loghex("Upload:", cfg, i);
+    loghex("HOOKNFC Upload:", cfg, i);
+}
+
+void disablePolling() {
+    log("HOOKNFC disable polling");
+    hook_NfaDisablePolling();
+    hook_NfcDeactivate(0);
+}
+
+void enablePolling() {
+    log("HOOKNFC enablePolling()");
+    hook_NfcDeactivate(3);
+    hook_NfaStartRfDiscovery();
+    hook_NfaEnablePolling(0xff);
 }
 
 /**

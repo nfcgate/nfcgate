@@ -28,6 +28,7 @@ public class Hooks implements IXposedHookLoadPackage {
             try {
                 System.load("/data/app/tud.seemuh.nfcgate-2/lib/arm/libnfcgate-native.so");
             } catch (UnsatisfiedLinkError f) {
+                f.printStackTrace();
                 Log.e("HOOKNFC", "Could not load libnfcgate-native library - catching fire.");
                 return;
             }
