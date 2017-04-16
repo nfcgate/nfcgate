@@ -42,6 +42,8 @@ Our patch to the android NFC Daemon only works with devices using a Broadcom NFC
 
 The patch is also only compatible with devices that can run Xposed. For Android 4.4.X, this requires a rooted device. Android 5.X devices do not need root, but the installation procedure is more complex and requires flashing the device.
 
+We currently use the "Android Dynamic Binary Instrumentation Toolkit" (see below) for our native code patches. ADBI does not support ARM64 at the moment. This means that our patches do not work on smartphones with an ARM64 CPU (like the Nexus 5X). Maybe [this](https://github.com/Samsung/ADBI) is an alternative for the future. 
+
 ### DESFire workaround
 The Android NFC Libraries contain a bug which makes it impossible to use our application with MiFare DESFire cards (a common NFC card for payment systems). We are using a workaround to enable us to still read these cards, but that workaround has some side effects. When you start the application, you will get a warning. Please read the information carefully.
 
@@ -64,3 +66,4 @@ This application uses the following external libraries:
 - [Xposed](http://repo.xposed.info/) (Licensed under the [Apache License v2.0](http://opensource.org/licenses/Apache-2.0))
 - [LibNFC](https://android.googlesource.com/platform/external/libnfc-nci/) (Licensed under the [Apache License v2.0](http://opensource.org/licenses/Apache-2.0))
 - [Protobuf](https://code.google.com/p/protobuf/) (Licensed under the [BSD 3-Clause license](http://opensource.org/licenses/BSD-3-Clause))
+- [ADBI](https://github.com/crmulliner/adbi) (no licence available)
