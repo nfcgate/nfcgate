@@ -13,6 +13,7 @@
 #include <sys/mman.h>
 #include <cstring>
 #include <dlfcn.h>
+#include <unistd.h>
 
 /**
  * find a native symbol and hook it
@@ -22,6 +23,25 @@ void findAndHook(struct hook_t* eph, void* handle, const char *symbol, void* hoo
 
     /*if(hook(eph, *original, hookf) != -1)
         log("HOOKNFC hooked: %s", symbol);*/
+}
+
+void unprotectPages(void *target, size_t size) {
+    long page_size = sysconf(_SC_PAGESIZE);
+
+    long first_page = ~(page_size - 1) & (long)target;
+    long last_page = ~(page_size - 1) & ((long)target + size);
+
+    int ret = mprotect((void*)first_page, page_size + (last_page - first_page), PROT_READ | PROT_WRITE | PROT_EXEC);
+
+    if (ret != 0)
+        log("Error unprotecting pages %lu to %lu (failed with %d)", first_page, last_page, ret);
+}
+
+void swapTrampoline(void *target, const void *trampoline, void *original, size_t size) {
+	if (original != nullptr)
+    	memcpy(original, target, size);
+
+    memcpy(target, trampoline, size);
 }
 
 #ifdef __arm__
@@ -53,15 +73,6 @@ int hook(struct hook_t *h, void *addr_ptr, void *hookf_ptr)
 		return -1;
 	}
 
-    // change the property of current page to writeable
-
-    unsigned int page_size = sysconf(_SC_PAGESIZE);
-    unsigned int entry_page_start = ~((page_size) - 1) & (addr);
-    if(mprotect((void*)entry_page_start, page_size, PROT_READ | PROT_WRITE | PROT_EXEC) != 0) {
-    	// log("mprotect: %u", errno);
-    	return -1;
-    }
-
 	if (addr % 4 == 0) {
 		log("ARM\n");
 
@@ -75,10 +86,13 @@ int hook(struct hook_t *h, void *addr_ptr, void *hookf_ptr)
 		h->jump.arm[1] = h->patch;
 		h->jump.arm[2] = h->patch;
 
-		for (i = 0; i < 3; i++)
+		/*for (i = 0; i < 3; i++)
 			h->store.arm[i] = ((int*)h->orig)[i];
 		for (i = 0; i < 3; i++)
-			((int*)h->orig)[i] = h->jump.arm[i];
+			((int*)h->orig)[i] = h->jump.arm[i];*/
+
+		unprotectPages(addr_ptr, 3 * sizeof(int));
+		swapTrampoline(addr_ptr, h->jump.arm, h->store.arm, 3 * sizeof(int));
 	}
 	else {
 		log("THUMB\n");
@@ -129,8 +143,10 @@ void hook_precall(struct hook_t *h)
 		}
 	}
 	else {
-		for (i = 0; i < 3; i++)
-			((int*)h->orig)[i] = h->store.arm[i];
+		/*for (i = 0; i < 3; i++)
+			((int*)h->orig)[i] = h->store.arm[i];*/
+
+		swapTrampoline((void*)h->orig, h->store.arm, nullptr, 3 * sizeof(int));
 	}
 
 	hook_cacheflush(h->orig, h->orig + sizeof(h->jump.thumb));
@@ -146,8 +162,9 @@ void hook_postcall(struct hook_t *h)
 			((unsigned char*)orig)[i] = h->jump.thumb[i];
 	}
 	else {
-		for (i = 0; i < 3; i++)
-			((int*)h->orig)[i] = h->jump.arm[i];
+		/*for (i = 0; i < 3; i++)
+			((int*)h->orig)[i] = h->jump.arm[i];*/
+        swapTrampoline((void*)h->orig, h->jump.arm, nullptr, 3 * sizeof(int));
 	}
 
 	hook_cacheflush(h->orig, h->orig + sizeof(h->jump.thumb));
@@ -195,11 +212,14 @@ int hook(struct hook_t *h, void *addr_ptr, void *hookf_ptr)
         h->jump.arm64[11] = h->patch & 0xffffffff; //store patch address
         h->jump.arm64[12] = (h->patch >> 32) & 0xffffffff;
 
-        for (i = 0; i < 13; i++)
+        /*for (i = 0; i < 13; i++)
             h->store.arm64[i] = ((int*)h->orig)[i];
 
         for (i = 0; i < 13; i++)
-            ((int*)h->orig)[i] = h->jump.arm64[i];
+            ((int*)h->orig)[i] = h->jump.arm64[i];*/
+
+        unprotectPages(addr_ptr, 13 * sizeof(int));
+        swapTrampoline(addr_ptr, h->jump.arm64, h->store.arm64, 13 * sizeof(int));
     }
 
     hook_cacheflush(h->orig, h->orig + sizeof(h->jump.arm64));
@@ -208,17 +228,19 @@ int hook(struct hook_t *h, void *addr_ptr, void *hookf_ptr)
 
 void hook_precall(struct hook_t *h)
 {
-    for (int i = 0; i < 13; i++)
-        ((int*)h->orig)[i] = h->store.arm64[i];
+    /*for (int i = 0; i < 13; i++)
+        ((int*)h->orig)[i] = h->store.arm64[i];*/
 
+    swapTrampoline((void*)h->orig, h->store.arm64, nullptr, 13 * sizeof(int));
     hook_cacheflush(h->orig, h->orig + sizeof(h->jump.arm64));
 }
 
 void hook_postcall(struct hook_t *h)
 {
-    for (int i = 0; i < 13; i++)
-        ((int*)h->orig)[i] = h->jump.arm64[i];
+    /*for (int i = 0; i < 13; i++)
+        ((int*)h->orig)[i] = h->jump.arm64[i];*/
 
+    swapTrampoline((void*)h->orig, h->jump.arm64, nullptr, 13 * sizeof(int));
     hook_cacheflush(h->orig, h->orig+sizeof(h->jump.arm64));
 }
 
