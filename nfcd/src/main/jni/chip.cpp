@@ -96,7 +96,7 @@ tNFA_STATUS  hook_NfaDisablePolling(void) {
 
 tNFA_STATUS hook_NfaStartRfDiscovery() {
     hook_precall(&hook_nfa_start_rf_discovery);
-    log("HOOKNFC hook_NfaStartRfDiscovery()")
+    log("HOOKNFC hook_NfaStartRfDiscovery()");
     tNFA_STATUS r = nfa_orig_start_rf_discovery();
     hook_postcall(&hook_nfa_start_rf_discovery);
     return r;
