@@ -190,7 +190,7 @@ bool construct_trampoline(struct hook_t *h) {
         adbi_log("ARM64\n");
         h->thumb = false;
 
-        unsigned int trampoline[13];
+        /*unsigned int trampoline[13];
 
         trampoline[0] = 0xd10083ff; //          sub     sp, sp, #0x20
         trampoline[1] = 0xa9017bfd; //          stp     x29, x30, [sp, #0x10]
@@ -206,7 +206,16 @@ bool construct_trampoline(struct hook_t *h) {
 
         // insert hook address
         trampoline[11] = hook & 0xffffffff;
-        trampoline[12] = (hook >> 32) & 0xffffffff;
+        trampoline[12] = (hook >> 32) & 0xffffffff;*/
+
+        unsigned int trampoline[4];
+
+        trampoline[0] = 0x58000050; // ldr x16, #8  -> x16 is IP0, load hook address
+        trampoline[1] = 0xD61F0200; // br  x16      -> branch to register without modifying any regs
+
+        // insert hook address
+        trampoline[2] = hook & 0xffffffff;
+        trampoline[3] = (hook >> 32) & 0xffffffff;
 
         // store trampoline
         h->size = sizeof(trampoline);

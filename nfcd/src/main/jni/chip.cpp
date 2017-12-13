@@ -211,7 +211,7 @@ static void uploadConfig(const struct s_chip_config config) {
     memcpy(cfg+i, config.hist, config.hist_len);
     i += config.hist_len;
 
-    //nci_NfcSetConfig(i, cfg);
+    nci_NfcSetConfig(i, cfg);
     loghex("HOOKNFC Upload:", cfg, i);
 }
 
