@@ -2,6 +2,8 @@
 #include "vendor/adbi/hook.h"
 #include <dlfcn.h>
 
+#include "symbols.h"
+
 bool patchEnabled = false;
 struct hook_t hook_config;
 struct hook_t hook_rfcback;
@@ -12,6 +14,7 @@ struct hook_t hook_nfa_disable_polling;
 struct hook_t hook_nfa_start_rf_discovery;
 struct hook_t hook_nfa_enable_polling;
 
+SymbolTable *SymbolTable::mInstance;
 static void hookNative(const char *);
 static void onLoad() __attribute__((constructor));
 
@@ -20,13 +23,17 @@ void onLoad() {
 
 #ifdef __aarch64__
     LOGI("ARM64 detected!");
-    hookNative("/system/lib64/libnfc-nci.so");
+    const char *path = "/system/lib64/libnfc-nci.so";
+#elif __arm__
+    LOGI("ARM detected!");
+    const char *path = "/system/lib/libnfc-nci.so";
 #endif
 
-#ifdef __arm__
-    LOGI("ARM detected!");
-    hookNative("/system/lib/libnfc-nci.so");
-#endif
+    // create symbol mapping
+    SymbolTable::create(path);
+
+    // hook methods
+    hookNative(path);
 }
 
 /**

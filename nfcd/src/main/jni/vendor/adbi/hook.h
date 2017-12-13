@@ -11,7 +11,9 @@
 #include <android/log.h>
 #include <stdint.h>
 
-#define log(...) __android_log_print(ANDROID_LOG_DEBUG, "ADBI", __VA_ARGS__)
+#define adbi_log(...) __android_log_print(ANDROID_LOG_DEBUG, "ADBI", __VA_ARGS__)
+
+typedef unsigned long ulong;
 
 // maximum trampoline size
 #define TR_MAX_SIZE 52
@@ -23,13 +25,14 @@ struct hook_t {
     uint8_t store[TR_MAX_SIZE];
     // length of used bytes in jump and store
     size_t size;
+    // alignment size
+    ulong alignment;
     // original symbol, hook symbol
     void *orig, *hook;
     // thumb mode (unused for arm64)
     bool thumb;
 };
 
-typedef unsigned long ulong;
 
 void hook_symbol(struct hook_t *eph, void *handle, const char *symbol, void *hookf, void **original);
 void hook_precall(struct hook_t *h);
