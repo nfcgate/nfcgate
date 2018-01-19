@@ -1,9 +1,11 @@
 package tud.seemuh.nfcgate.xposed;
 
-
-import android.annotation.SuppressLint;
 import android.app.Application;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.util.Log;
+
+import java.lang.reflect.*;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
@@ -15,27 +17,9 @@ public class Hooks implements IXposedHookLoadPackage {
 
     private IPCBroadcastReceiver mReceiver;
 
-    @SuppressLint("SdCardPath")
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
         if(!"com.android.nfc".equals(lpparam.packageName))
             return;
-
-        //Runtime.getRuntime().loadLibrary("nfcgate-native");
-        //System.load("/data/app-lib/tud.seemuh.nfcgate/libnfcgate-native.so");
-        try {
-            System.load("/data/app/tud.seemuh.nfcgate-1/lib/arm/libnfcgate-native.so");
-        } catch(UnsatisfiedLinkError e) {
-            try {
-                System.load("/data/app/tud.seemuh.nfcgate-2/lib/arm/libnfcgate-native.so");
-            } catch (UnsatisfiedLinkError f) {
-                f.printStackTrace();
-                Log.e("HOOKNFC", "Could not load libnfcgate-native library - catching fire.");
-                return;
-            }
-        }
-        Log.d("HOOKNFC", "Loaded library successfully");
-        //System.load("/sdcard/libnfcgate-native.so");
-
 
         // hook construtor to catch application context
         findAndHookConstructor("com.android.nfc.NfcService", lpparam.classLoader, Application.class, new XC_MethodHook() {
@@ -44,6 +28,9 @@ public class Hooks implements IXposedHookLoadPackage {
                 Log.i("HOOKNFC", "constructor");
                 Application app = (Application) param.args[0];
                 mReceiver = new IPCBroadcastReceiver(app);
+
+                // using context, load our foreign native library
+                loadForeignLibrary(app, lpparam.classLoader, "tud.seemuh.nfcgate", "nfcgate");
             }
         });
 
@@ -74,5 +61,38 @@ public class Hooks implements IXposedHookLoadPackage {
                 }
             }
         });
+    }
+
+    private void loadForeignLibrary(Context ctx, ClassLoader cl, String foreignPkg, String name) {
+        PackageManager pm = ctx.getPackageManager();
+
+        // find foreign package library path and assemble libPath
+        String libPath;
+        try {
+            String dir = pm.getPackageInfo(foreignPkg, 0).applicationInfo.nativeLibraryDir;
+            libPath = combinePath(dir, "lib" + name + ".so");
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("HOOKNFC", "Failed to find package " + foreignPkg);
+            return;
+        }
+
+        // try to load the library
+        try {
+            Method m = Runtime.class.getDeclaredMethod("doLoad", String.class, ClassLoader.class);
+            m.setAccessible(true);
+            Object res = m.invoke(Runtime.getRuntime(), libPath, cl);
+
+            if (res != null)
+                Log.e("HOOKNFC", res.toString());
+        } catch (Exception e) {
+            Log.e("HOOKNFC", "Could not load nfcgate-native library at " + libPath, e);
+            return;
+        }
+
+        Log.d("HOOKNFC", "Loaded library successfully");
+    }
+
+    private String combinePath(String p1, String p2) {
+        return p1 + (p1.endsWith("/") ? "" : "/") + p2;
     }
 }
