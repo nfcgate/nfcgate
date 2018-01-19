@@ -3,6 +3,7 @@ package tud.seemuh.nfcgate.xposed;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
 
 import java.lang.reflect.*;
@@ -29,7 +30,9 @@ public class Hooks implements IXposedHookLoadPackage {
                 Application app = (Application) param.args[0];
 
                 // using context, inject our class into the nfc service class loader
-                mReceiver = injectClass(app, "tud.seemuh.nfcgate", lpparam.classLoader, "tud.seemuh.nfcgate.xposed.InjectionBroadcastWrapper");
+                mReceiver = loadOrInjectClass(app, "tud.seemuh.nfcgate",
+                                getClass().getClassLoader(), lpparam.classLoader,
+                                "tud.seemuh.nfcgate.xposed.InjectionBroadcastWrapper");
             }
         });
 
@@ -72,6 +75,27 @@ public class Hooks implements IXposedHookLoadPackage {
         return false;
     }
 
+    private Object loadOrInjectClass(Context ctx, String sourcePackage,
+                                     ClassLoader current, ClassLoader target,
+                                     String className) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            return injectClass(ctx, sourcePackage, target, className);
+        else
+            return loadClass(ctx, current, className);
+    }
+
+    private Object loadClass(Context ctx, ClassLoader target, String loadClass) {
+        // instantiate class in given class loader
+        try {
+            Class loaded = target.loadClass(loadClass);
+            return loaded.getConstructor(Context.class).newInstance(ctx);
+        } catch (Exception e) {
+            Log.e("HOOKNFC", "Failed to construct loaded class", e);
+        }
+        return null;
+    }
+
     private Object injectClass(Context ctx, String sourcePackage, ClassLoader target, String injectClass) {
         PackageManager pm = ctx.getPackageManager();
 
@@ -89,8 +113,8 @@ public class Hooks implements IXposedHookLoadPackage {
         try {
             Method adp = target.getClass().getMethod("addDexPath", String.class);
             adp.invoke(target, sourceDir);
-            Class loaded = target.loadClass(injectClass);
-            return loaded.getConstructor(Context.class).newInstance(ctx);
+
+            return loadClass(ctx, target, injectClass);
         } catch (Exception e) {
             Log.e("HOOKNFC", "Failed to construct injected class", e);
         }
