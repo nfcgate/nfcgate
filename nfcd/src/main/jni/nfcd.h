@@ -2,7 +2,6 @@
 #define __ANDROID__
 #endif
 
-
 #include <android/log.h>
 #include <jni.h>
 #include <stdint.h>
@@ -27,11 +26,6 @@ struct s_chip_config {
 
 // main.cpp
 extern bool patchEnabled;
-void loghex(const char *desc, const uint8_t *data, const int len);
-
-// java.cpp
-void hookJava(JNIEnv *jni, jclass _class);
-
 
 // chip.cpp
 tNFC_STATUS hook_NfcSetConfig (UINT8 tlv_size, UINT8 *p_param_tlvs);
@@ -67,7 +61,3 @@ extern struct hook_t hook_nfa_stop_rf_discovery;
 extern struct hook_t hook_nfa_disable_polling;
 extern struct hook_t hook_nfa_start_rf_discovery;
 extern struct hook_t hook_nfa_enable_polling;
-
-// ipc.cpp
-void ipc_prepare();
-void ipc_init();

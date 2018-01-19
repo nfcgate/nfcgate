@@ -1,8 +1,10 @@
 #include "nfcd.h"
+#include "config.h"
 #include "vendor/adbi/hook.h"
 #include <cstring>
+
 /**
- * Commands of the broadcom configuration interface
+ * Commands of the NCI configuration interface
  */
 #define CFG_TYPE_ATQA  0x31
 #define CFG_TYPE_SAK   0x32
@@ -114,54 +116,55 @@ tNFA_STATUS hook_NfaEnablePolling(tNFA_TECHNOLOGY_MASK poll_mask) {
  * hooked NfcSetConfig implementation
  */
 tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
-
+    /*
+     * read the config stream:
+     *      if we are enabled and a previously set value gets overridden,
+     *      then upload our configuration again afterwards
+     *
+     * in any case: save the values to allow re-uploading them when disabling the patch
+     */
     loghex("HOOKNFC NfcSetConfig", tlv, size);
-    uint8_t i = 0;
-    bool needUpload = false;
-    // read the configuration bytestream and extract the values that we indent to override
-    // if we are in an active mode and the value gets overridden, then upload our configuration afterwards
-    // in any case: safe the values to allow re-uploading when deaktivation the patch
-    while (size > i + 2) {
-        // first byte: type
-        // second byte: len (if len=0, then val=0)
-        // following bytes: value (length: len)
-        uint8_t type = *(tlv + i);
-        uint8_t len  = *(tlv + i + 1);
-        uint8_t *valbp = tlv + i + 2;
-        uint8_t firstval = len ? *valbp : 0;
-        i += 2 + len;
 
-        switch(type) {
+    Config cfg;
+    cfg.parse(size, tlv);
+
+    bool needUpload = false;
+
+    for (auto &opt : cfg.options()) {
+        switch(opt.type()) {
             case CFG_TYPE_ATQA:
                 needUpload = true;
-                origValues.atqa = firstval;
-                LOGD("NfcSetConfig Read: ATQA 0x%02x", firstval);
+                origValues.atqa = *opt.value();
+                LOGD("NfcSetConfig Read: ATQA 0x%02x 0x%02x", opt.value()[0], opt.value()[1]);
             break;
             case CFG_TYPE_SAK:
                 needUpload = true;
-                origValues.sak = firstval;
-                LOGD("NfcSetConfig Read: SAK  0x%02x", firstval);
+                origValues.sak = *opt.value();
+                LOGD("NfcSetConfig Read: SAK  0x%02x", *opt.value());
             break;
             case CFG_TYPE_HIST:
                 needUpload = true;
-                if(len > sizeof(origValues.hist)) {
-                    LOGE("cannot handle an hist with len=0x%02x", len);
-                } else {
-                    memcpy(origValues.hist, valbp, len);
-                    origValues.uid_len = len;
-                    loghex("NfcSetConfig Read: HIST", valbp, len);
+                if (opt.len() > sizeof(origValues.hist))
+                    LOGE("cannot handle an hist with len=0x%02x", opt.len());
+                else {
+                    memcpy(origValues.hist, opt.value(), opt.len());
+                    origValues.uid_len = opt.len();
+                    //loghex("NfcSetConfig Read: HIST", valbp, len);
                 }
             break;
             case CFG_TYPE_UID:
                 needUpload = true;
-                if(len > sizeof(origValues.uid)) {
-                    LOGE("cannot handle an uid with len=0x%02x", len);
-                } else {
-                    memcpy(origValues.uid, valbp, len);
-                    origValues.uid_len = len;
-                    loghex("NfcSetConfig Read: UID", valbp, len);
+                if (opt.len() > sizeof(origValues.uid))
+                    LOGE("cannot handle an uid with len=0x%02x", opt.len());
+                else {
+                    memcpy(origValues.uid, opt.value(), opt.len());
+                    origValues.uid_len = opt.len();
+                    //loghex("NfcSetConfig Read: UID", valbp, len);
                 }
-            break;
+                break;
+            default:
+                LOGD("NfcSetConfig Read: %x len %d", opt.type(), opt.len());
+                break;
         }
     }
 
@@ -176,43 +179,20 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
 }
 
 /**
- * write a single config value into a new configuration stream.
- * see uploadConfig()
- */
-static void pushcfg(uint8_t *cfg, uint8_t &i, uint8_t type, uint8_t value) {
-    cfg[i++] = type;
-    if(value) {
-      cfg[i++] = 1; // len
-      cfg[i++] = value;
-    } else {
-      cfg[i++] = 0;
-    }
-}
-
-/**
  * build a new configuration stream and upload it into the broadcom nfc controller
  */
 static void uploadConfig(const struct s_chip_config config) {
-    // cfg: type1, paramlen1, param1, type2, paramlen2....
-    uint8_t cfg[80];
-    uint8_t i=0;
-    pushcfg(cfg, i, CFG_TYPE_SAK,  config.sak);
-    //pushcfg(cfg, i, CFG_TYPE_HIST, config.hist);
-    pushcfg(cfg, i, CFG_TYPE_ATQA, config.atqa);
+    Config cfg;
+    cfg.add(CFG_TYPE_SAK, &config.sak);
+    cfg.add(CFG_TYPE_ATQA, &config.atqa);
+    cfg.add(CFG_TYPE_UID, config.uid, config.uid_len);
+    cfg.add(CFG_TYPE_HIST, config.hist, config.hist_len);
 
-    cfg[i++] = CFG_TYPE_UID;
-    cfg[i++] = config.uid_len;
+    config_ref bin_stream;
+    cfg.build(bin_stream);
 
-    memcpy(cfg+i, config.uid, config.uid_len);
-    i += config.uid_len;
-
-    cfg[i++] = CFG_TYPE_HIST;
-    cfg[i++] = config.hist_len;
-    memcpy(cfg+i, config.hist, config.hist_len);
-    i += config.hist_len;
-
-    nci_NfcSetConfig(i, cfg);
-    loghex("HOOKNFC Upload:", cfg, i);
+    nci_NfcSetConfig(cfg.total(), bin_stream.get());
+    //loghex("HOOKNFC Upload:", cfg, i);
 }
 
 void disablePolling() {
