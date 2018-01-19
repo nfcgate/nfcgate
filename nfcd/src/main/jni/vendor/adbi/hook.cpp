@@ -9,13 +9,11 @@
  *
  */
 
-
 #include "hook.h"
-#include <cstring>
 #include <sys/mman.h>
-#include <unistd.h>
+#include <cstring>
 
-
+#ifdef __arm__
 void inline hook_cacheflush(unsigned int begin, unsigned int end)
 {
 	const int syscall = 0xf0002;
@@ -31,15 +29,16 @@ void inline hook_cacheflush(unsigned int begin, unsigned int end)
 		);
 }
 
-int hook(struct hook_t *h, unsigned int addr, void *hookf)
+int hook(struct hook_t *h, void *addr_ptr, void *hookf_ptr)
 {
 	int i;
+	unsigned int addr = (unsigned int)addr_ptr, hookf = (unsigned int)hookf_ptr;
 	
-	log("HOOKNFC: addr  = %x\n", (unsigned int)addr);
-	log("HOOKNFC: hookf = %x\n", (unsigned int)hookf);
+	log("HOOKNFC: addr  = %p\n", addr_ptr);
+	log("HOOKNFC: hookf = %p\n", hookf_ptr);
 
-	if ((addr % 4 == 0 && (unsigned int)hookf % 4 != 0) || (addr % 4 != 0 && (unsigned int)hookf % 4 == 0)) {
-		log("HOOKNFC: addr 0x%x and hook 0x%x\n don't match!\n", (unsigned int)addr, (unsigned int)hookf);
+	if ((addr % 4 == 0 && hookf % 4 != 0) || (addr % 4 != 0 && hookf % 4 == 0)) {
+		log("HOOKNFC: addr %p and hook %p\n don't match!\n", addr_ptr, hookf_ptr);
 		return -1;
 	}
 
@@ -54,47 +53,57 @@ int hook(struct hook_t *h, unsigned int addr, void *hookf)
 
 	if (addr % 4 == 0) {
 		log("ARM\n");
-		h->thumb = 0;
-		h->patch = (unsigned int)hookf;
+
+		h->thumb = false;
+		h->patch = hookf;
 		h->orig = addr;
+
 		log("orig = %x\n", h->orig);
-		h->jump[0] = 0xe59ff000; // LDR pc, [pc, #0]
-		h->jump[1] = h->patch;
-		h->jump[2] = h->patch;
+
+		h->jump.arm[0] = 0xe59ff000; // LDR pc, [pc, #0]
+		h->jump.arm[1] = h->patch;
+		h->jump.arm[2] = h->patch;
+
 		for (i = 0; i < 3; i++)
-			h->store[i] = ((int*)h->orig)[i];
+			h->store.arm[i] = ((int*)h->orig)[i];
 		for (i = 0; i < 3; i++)
-			((int*)h->orig)[i] = h->jump[i];
+			((int*)h->orig)[i] = h->jump.arm[i];
 	}
 	else {
-		log("THUMB");
-		h->thumb = 1;
-		h->patch = (unsigned int)hookf;
+		log("THUMB\n");
+
+		h->thumb = true;
+		h->patch = hookf;
 		h->orig = addr;
-		h->jumpt[1] = 0xb4;
-		h->jumpt[0] = 0x60; // push {r5,r6}
-		h->jumpt[3] = 0xa5;
-		h->jumpt[2] = 0x03; // add r5, pc, #12
-		h->jumpt[5] = 0x68;
-		h->jumpt[4] = 0x2d; // ldr r5, [r5]
-		h->jumpt[7] = 0xb0;
-		h->jumpt[6] = 0x02; // add sp,sp,#8
-		h->jumpt[9] = 0xb4;
-		h->jumpt[8] = 0x20; // push {r5}
-		h->jumpt[11] = 0xb0;
-		h->jumpt[10] = 0x81; // sub sp,sp,#4
-		h->jumpt[13] = 0xbd;
-		h->jumpt[12] = 0x20; // pop {r5, pc}
-		h->jumpt[15] = 0x46;
-		h->jumpt[14] = 0xaf; // mov pc, r5 ; just to pad to 4 byte boundary
-		memcpy(&h->jumpt[16], (unsigned char*)&h->patch, sizeof(unsigned int));
+
+		h->jump.thumb[1] = 0xb4;
+		h->jump.thumb[0] = 0x60; // push {r5,r6}
+		h->jump.thumb[3] = 0xa5;
+		h->jump.thumb[2] = 0x03; // add r5, pc, #12
+		h->jump.thumb[5] = 0x68;
+		h->jump.thumb[4] = 0x2d; // ldr r5, [r5]
+		h->jump.thumb[7] = 0xb0;
+		h->jump.thumb[6] = 0x02; // add sp,sp,#8
+		h->jump.thumb[9] = 0xb4;
+		h->jump.thumb[8] = 0x20; // push {r5}
+		h->jump.thumb[11] = 0xb0;
+		h->jump.thumb[10] = 0x81; // sub sp,sp,#4
+		h->jump.thumb[13] = 0xbd;
+		h->jump.thumb[12] = 0x20; // pop {r5, pc}
+		h->jump.thumb[15] = 0x46;
+		h->jump.thumb[14] = 0xaf; // mov pc, r5 ; just to pad to 4 byte boundary
+
+		memcpy(&h->jump.thumb[16], (unsigned char*)&h->patch, sizeof(unsigned int));
+
 		unsigned int orig = addr - 1; // sub 1 to get real address
+
 		for (i = 0; i < 20; i++)
-			h->storet[i] = ((unsigned char*)orig)[i];
+			h->store.thumb[i] = ((unsigned char*)orig)[i];
 		for (i = 0; i < 20; i++)
-			((unsigned char*)orig)[i] = h->jumpt[i];
+			((unsigned char*)orig)[i] = h->jump.thumb[i];
 	}
-	hook_cacheflush((unsigned int)h->orig, (unsigned int)h->orig+sizeof(h->jumpt));
+
+	hook_cacheflush(h->orig, h->orig + sizeof(h->jump.thumb));
 	return 1;
 }
 
@@ -105,14 +114,15 @@ void hook_precall(struct hook_t *h)
 	if (h->thumb) {
 		unsigned int orig = h->orig - 1;
 		for (i = 0; i < 20; i++) {
-			((unsigned char*)orig)[i] = h->storet[i];
+			((unsigned char*)orig)[i] = h->store.thumb[i];
 		}
 	}
 	else {
 		for (i = 0; i < 3; i++)
-			((int*)h->orig)[i] = h->store[i];
-	}	
-	hook_cacheflush((unsigned int)h->orig, (unsigned int)h->orig+sizeof(h->jumpt));
+			((int*)h->orig)[i] = h->store.arm[i];
+	}
+
+	hook_cacheflush(h->orig, h->orig + sizeof(h->jump.thumb));
 }
 
 void hook_postcall(struct hook_t *h)
@@ -122,17 +132,89 @@ void hook_postcall(struct hook_t *h)
 	if (h->thumb) {
 		unsigned int orig = h->orig - 1;
 		for (i = 0; i < 20; i++)
-			((unsigned char*)orig)[i] = h->jumpt[i];
+			((unsigned char*)orig)[i] = h->jump.thumb[i];
 	}
 	else {
 		for (i = 0; i < 3; i++)
-			((int*)h->orig)[i] = h->jump[i];
+			((int*)h->orig)[i] = h->jump.arm[i];
 	}
-	hook_cacheflush((unsigned int)h->orig, (unsigned int)h->orig+sizeof(h->jumpt));	
+
+	hook_cacheflush(h->orig, h->orig + sizeof(h->jump.thumb));
 }
 
 void unhook(struct hook_t *h)
 {
-	log("unhooking %s = %x  hook = %x ", h->name, h->orig, h->patch)
+	log("unhooking %x , hook = %x ", h->orig, h->patch)
 	hook_precall(h);
 }
+
+#else
+
+void inline hook_cacheflush(unsigned long int begin, unsigned long int end)
+{
+    __builtin___clear_cache((char*)begin, (char*)end);
+}
+
+int hook(struct hook_t *h, void *addr_ptr, void *hookf_ptr)
+{
+    int i;
+    unsigned long int addr = (unsigned long int) addr_ptr;
+    unsigned long int hookf = (unsigned long int)hookf_ptr;
+
+    log("HOOKNFC: addr  = %p\n", addr_ptr);
+    log("HOOKNFC: hookf = %p\n", hookf_ptr);
+
+    if (addr % 4 == 0) {
+        log("ARM64\n");
+
+        h->patch = hookf;
+        h->orig = addr;
+
+        h->jump.arm64[0] = 0xd10083ff; // 				sub     sp, sp, #0x20
+        h->jump.arm64[1] = 0xa9017bfd; // 				stp     x29, x30, [sp, #0x10]
+        h->jump.arm64[2] = 0xa90023e7; //					stp     x7, x8, [sp]
+        h->jump.arm64[3] = 0x94000001; //					bl      label1
+        h->jump.arm64[4] = 0xaa1e03e7; // label1:	mov     x7, x30
+        h->jump.arm64[5] = 0xf841c0e8; // 				ldr     x8, [x7, #28]
+        h->jump.arm64[6] = 0xd63f0100; //					blr     x8
+        h->jump.arm64[7] = 0xa94023e7; //					ldp     x7, x8, [sp]
+        h->jump.arm64[8] = 0xa9417bfd; // 				ldp     x29, x30, [sp, #0x10]
+        h->jump.arm64[9] = 0x910083ff; // 				add     sp, sp, #0x20
+        h->jump.arm64[10] = 0xd65f03c0; //				ret
+        h->jump.arm64[11] = h->patch & 0xffffffff; //store patch address
+        h->jump.arm64[12] = (h->patch >> 32) & 0xffffffff;
+
+        for (i = 0; i < 13; i++)
+            h->store.arm64[i] = ((int*)h->orig)[i];
+
+        for (i = 0; i < 13; i++)
+            ((int*)h->orig)[i] = h->jump.arm64[i];
+    }
+
+    hook_cacheflush(h->orig, h->orig + sizeof(h->jump.arm64));
+    return 1;
+}
+
+void hook_precall(struct hook_t *h)
+{
+    for (int i = 0; i < 13; i++)
+        ((int*)h->orig)[i] = h->store.arm64[i];
+
+    hook_cacheflush(h->orig, h->orig + sizeof(h->jump.arm64));
+}
+
+void hook_postcall(struct hook_t *h)
+{
+    for (int i = 0; i < 13; i++)
+        ((int*)h->orig)[i] = h->jump.arm64[i];
+
+    hook_cacheflush(h->orig, h->orig+sizeof(h->jump.arm64));
+}
+
+void unhook(struct hook_t *h)
+{
+    log("unhooking %lx , hook = %lx \n", h->orig, h->patch)
+    hook_precall(h);
+}
+
+#endif

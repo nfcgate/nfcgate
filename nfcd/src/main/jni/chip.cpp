@@ -9,6 +9,8 @@
 #define CFG_TYPE_UID   0x33
 #define CFG_TYPE_HIST  0x59
 
+#define loghex(x, y, z)
+
 static void uploadConfig(const s_chip_config config);
 
 struct s_chip_config origValues = { 0 };

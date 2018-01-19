@@ -1,10 +1,6 @@
 #include "nfcd.h"
 #include "vendor/adbi/hook.h"
 #include <dlfcn.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <cstdlib>
-
 
 bool patchEnabled = false;
 struct hook_t hook_config;
@@ -16,44 +12,32 @@ struct hook_t hook_nfa_disable_polling;
 struct hook_t hook_nfa_start_rf_discovery;
 struct hook_t hook_nfa_enable_polling;
 
-static void onHostEmulationLoad(JNIEnv *jni, jclass _class, void *data);
-static void hookNative();
-const char *hooklibfile = "/system/lib/libnfc-nci.so";
+static void hookNative(const char *);
+static void onLoad() __attribute__((constructor));
 
+void onLoad() {
+    LOGI("onLoad");
 
-static void onModuleLoad() __attribute__((constructor));
+#ifdef __aarch64__
+    LOGI("ARM64 detected!");
+    hookNative("/system/lib64/libnfc-nci.so");
+#endif
 
-void onModuleLoad() {
-    LOGI("onModuleLoad::begin");
-    hookNative();
-    LOGI("onModuleLoad::end");
-}
-
-
-/**
- * find a native symbol and hook it
- */
-static void findAndHook(struct hook_t* eph, void* handle, const char *symbol, void* hookf, void **original) {
-    *original = dlsym(handle, symbol);
-    if(hook(eph, (unsigned int)*original, hookf) != -1) {
-        LOGI("HOOKNFC hooked: %s", symbol);
-    }
+#ifdef __arm__
+    LOGI("ARM detected!");
+    hookNative("/system/lib/libnfc-nci.so");
+#endif
 }
 
 /**
- * hook into native functions of the libnfc-nci broadcom nfc driver
+ * hook into native functions of the libnfc-nci nfc driver
  */
-static void hookNative() {
-    LOGI("HOOK NATIVE CALLED");
+static void hookNative(const char *libpath) {
+    // library should be already loaded -> get handle
+    void *handle = dlopen(libpath, RTLD_NOLOAD);
+    LOGI("Handle is %p", handle);
 
-    if(access(hooklibfile, F_OK) == -1) {
-        LOGE("could not access %s to load symbols", hooklibfile);
-        return;
-    }
-    void *handle = dlopen(hooklibfile, 0);
-    LOGI("HANDLE IS ", handle);
-
-    findAndHook(&hook_config,  handle, "NFC_SetConfig",        (void*)&hook_NfcSetConfig, (void**)&nci_orig_NfcSetConfig);
+    /*findAndHook(&hook_config,  handle, "NFC_SetConfig",        (void*)&hook_NfcSetConfig, (void**)&nci_orig_NfcSetConfig);
     findAndHook(&hook_rfcback, handle, "NFC_SetStaticRfCback", (void*)&hook_SetRfCback,   (void**)&nci_orig_SetRfCback);
 
     findAndHook(&hook_senddata, handle, "NFC_SendData", (void*)&hook_NfcSenddata, (void**)&nfc_orig_sendData);
@@ -65,18 +49,18 @@ static void hookNative() {
     findAndHook(&hook_nfa_enable_polling, handle, "NFA_EnablePolling", (void*) &hook_NfaEnablePolling, (void**) &nfa_orig_enable_polling);
 
     // find pointer to ce_t4t control structure
-    ce_cb = (tCE_CB*)dlsym(handle, "ce_cb");
+    ce_cb = (tCE_CB*)dlsym(handle, "ce_cb");*/
 }
 
+#if 0
+
 /**
- * simple logging function for byte buffers
+ * find a native symbol and hook it
  */
-void loghex(const char *desc, const uint8_t *data, const int len) {
-    int strlen = len * 3 + 1;
-    char *msg = (char *) malloc((size_t) strlen);
-    for (uint8_t i = 0; i < len; i++) {
-        sprintf(msg + i * 3, " %02x", (unsigned int) *(data + i));
+static void findAndHook(struct hook_t* eph, void* handle, const char *symbol, void* hookf, void **original) {
+    *original = dlsym(handle, symbol);
+    if(hook(eph, (unsigned int)*original, hookf) != -1) {
+        LOGI("HOOKNFC hooked: %s", symbol);
     }
-    LOGI("%s%s",desc, msg);
-    free(msg);
 }
+#endif
