@@ -1,11 +1,9 @@
-
-
 #include "nfcd.h"
 #include "vendor/adbi/hook.h"
 #include <dlfcn.h>
 #include <unistd.h>
 #include <stdio.h>
-
+#include <cstdlib>
 
 
 bool patchEnabled = false;
@@ -46,11 +44,14 @@ static void findAndHook(struct hook_t* eph, void* handle, const char *symbol, vo
  * hook into native functions of the libnfc-nci broadcom nfc driver
  */
 static void hookNative() {
+    LOGI("HOOK NATIVE CALLED");
+
     if(access(hooklibfile, F_OK) == -1) {
         LOGE("could not access %s to load symbols", hooklibfile);
         return;
     }
     void *handle = dlopen(hooklibfile, 0);
+    LOGI("HANDLE IS ", handle);
 
     findAndHook(&hook_config,  handle, "NFC_SetConfig",        (void*)&hook_NfcSetConfig, (void**)&nci_orig_NfcSetConfig);
     findAndHook(&hook_rfcback, handle, "NFC_SetStaticRfCback", (void*)&hook_SetRfCback,   (void**)&nci_orig_SetRfCback);
