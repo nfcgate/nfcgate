@@ -37,7 +37,7 @@ static void hookNative(const char *libpath) {
     void *handle = dlopen(libpath, RTLD_NOLOAD);
     LOGI("Handle is %p", handle);
 
-    /*findAndHook(&hook_config,  handle, "NFC_SetConfig",        (void*)&hook_NfcSetConfig, (void**)&nci_orig_NfcSetConfig);
+    findAndHook(&hook_config,  handle, "NFC_SetConfig",        (void*)&hook_NfcSetConfig, (void**)&nci_orig_NfcSetConfig);
     findAndHook(&hook_rfcback, handle, "NFC_SetStaticRfCback", (void*)&hook_SetRfCback,   (void**)&nci_orig_SetRfCback);
 
     findAndHook(&hook_senddata, handle, "NFC_SendData", (void*)&hook_NfcSenddata, (void**)&nfc_orig_sendData);
@@ -49,18 +49,5 @@ static void hookNative(const char *libpath) {
     findAndHook(&hook_nfa_enable_polling, handle, "NFA_EnablePolling", (void*) &hook_NfaEnablePolling, (void**) &nfa_orig_enable_polling);
 
     // find pointer to ce_t4t control structure
-    ce_cb = (tCE_CB*)dlsym(handle, "ce_cb");*/
+    ce_cb = (tCE_CB*)dlsym(handle, "ce_cb");
 }
-
-#if 0
-
-/**
- * find a native symbol and hook it
- */
-static void findAndHook(struct hook_t* eph, void* handle, const char *symbol, void* hookf, void **original) {
-    *original = dlsym(handle, symbol);
-    if(hook(eph, (unsigned int)*original, hookf) != -1) {
-        LOGI("HOOKNFC hooked: %s", symbol);
-    }
-}
-#endif

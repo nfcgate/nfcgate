@@ -36,3 +36,4 @@ void hook_precall(struct hook_t *h);
 void hook_postcall(struct hook_t *h);
 int hook(struct hook_t *h, void *addr, void *hookf);
 void unhook(struct hook_t *h);
+void findAndHook(struct hook_t* eph, void* handle, const char *symbol, void* hookf, void **original);

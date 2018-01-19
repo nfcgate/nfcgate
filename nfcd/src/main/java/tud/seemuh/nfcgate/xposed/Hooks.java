@@ -15,7 +15,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class Hooks implements IXposedHookLoadPackage {
 
-    private IPCBroadcastReceiver mReceiver;
+    private Object mReceiver;
 
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
         if(!"com.android.nfc".equals(lpparam.packageName))
@@ -27,10 +27,9 @@ public class Hooks implements IXposedHookLoadPackage {
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 Log.i("HOOKNFC", "constructor");
                 Application app = (Application) param.args[0];
-                mReceiver = new IPCBroadcastReceiver(app);
 
-                // using context, load our foreign native library
-                loadForeignLibrary(app, lpparam.classLoader, "tud.seemuh.nfcgate", "nfcgate");
+                // using context, inject our class into the nfc service class loader
+                mReceiver = injectClass(app, "tud.seemuh.nfcgate", lpparam.classLoader, "tud.seemuh.nfcgate.xposed.InjectionBroadcastWrapper");
             }
         });
 
@@ -40,7 +39,7 @@ public class Hooks implements IXposedHookLoadPackage {
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
 
                 Log.i("HOOKNFC", "beforeHookedMethod");
-                if (Native.Instance.isEnabled()) {
+                if (isNativeEnabled()) {
                     Log.i("HOOKNFC", "enabled");
                     // setting a result will prevent the original method to run.
                     // F0010203040506 is a aid registered by the nfcgate hce service
@@ -63,36 +62,39 @@ public class Hooks implements IXposedHookLoadPackage {
         });
     }
 
-    private void loadForeignLibrary(Context ctx, ClassLoader cl, String foreignPkg, String name) {
-        PackageManager pm = ctx.getPackageManager();
-
-        // find foreign package library path and assemble libPath
-        String libPath;
+    private boolean isNativeEnabled() {
         try {
-            String dir = pm.getPackageInfo(foreignPkg, 0).applicationInfo.nativeLibraryDir;
-            libPath = combinePath(dir, "lib" + name + ".so");
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.e("HOOKNFC", "Failed to find package " + foreignPkg);
-            return;
-        }
-
-        // try to load the library
-        try {
-            Method m = Runtime.class.getDeclaredMethod("doLoad", String.class, ClassLoader.class);
-            m.setAccessible(true);
-            Object res = m.invoke(Runtime.getRuntime(), libPath, cl);
-
-            if (res != null)
-                Log.e("HOOKNFC", res.toString());
+            return (boolean)mReceiver.getClass().getMethod("isEnabled").invoke(mReceiver);
         } catch (Exception e) {
-            Log.e("HOOKNFC", "Could not load nfcgate-native library at " + libPath, e);
-            return;
+            Log.e("HOOKNFC", "Failed to check native enabled", e);
         }
 
-        Log.d("HOOKNFC", "Loaded library successfully");
+        return false;
     }
 
-    private String combinePath(String p1, String p2) {
-        return p1 + (p1.endsWith("/") ? "" : "/") + p2;
+    private Object injectClass(Context ctx, String sourcePackage, ClassLoader target, String injectClass) {
+        PackageManager pm = ctx.getPackageManager();
+
+        // find our foreign source directory
+        String sourceDir;
+        try {
+            sourceDir = pm.getPackageInfo(sourcePackage, 0).applicationInfo.sourceDir;
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e("HOOKNFC", "Failed to find source package " + sourcePackage);
+            return null;
+        }
+
+        // add our sources to the target's class loader and
+        // create injected class using target loader and instance it with context
+        try {
+            Method adp = target.getClass().getMethod("addDexPath", String.class);
+            adp.invoke(target, sourceDir);
+            Class loaded = target.loadClass(injectClass);
+            return loaded.getConstructor(Context.class).newInstance(ctx);
+        } catch (Exception e) {
+            Log.e("HOOKNFC", "Failed to construct injected class", e);
+        }
+
+        return null;
     }
 }

@@ -12,6 +12,17 @@
 #include "hook.h"
 #include <sys/mman.h>
 #include <cstring>
+#include <dlfcn.h>
+
+/**
+ * find a native symbol and hook it
+ */
+void findAndHook(struct hook_t* eph, void* handle, const char *symbol, void* hookf, void **original) {
+    *original = dlsym(handle, symbol);
+
+    /*if(hook(eph, *original, hookf) != -1)
+        log("HOOKNFC hooked: %s", symbol);*/
+}
 
 #ifdef __arm__
 void inline hook_cacheflush(unsigned int begin, unsigned int end)
