@@ -354,9 +354,7 @@ public class NfcManager {
         anticol = handleAnticolDataCommon(anticol);
 
         // Parse data and transform to proper formats
-        byte[] a_atqa = anticol.getAtqa();
-        byte atqa = a_atqa.length > 0 ? a_atqa[a_atqa.length-1] : 0;
-
+        byte[] atqa = anticol.getAtqa();
         byte[] hist = anticol.getHist();
         //byte hist = a_hist.length > 0 ? a_atqa[0] : 0;
 
@@ -364,7 +362,7 @@ public class NfcManager {
         byte[] uid = anticol.getUid();
 
         // Enable the Native Code Patch
-        DaemonConfiguration.getInstance().uploadConfiguration(atqa, sak, hist, uid);
+        DaemonConfiguration.getInstance().uploadConfiguration(atqa[0], atqa[1], sak, hist, uid);
         DaemonConfiguration.getInstance().enablePatch();
 
         Log.i(TAG, "setAnticolData: Patch enabled");

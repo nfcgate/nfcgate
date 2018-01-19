@@ -6,10 +6,11 @@
 /**
  * Commands of the NCI configuration interface
  */
-#define CFG_TYPE_ATQA  0x31
-#define CFG_TYPE_SAK   0x32
-#define CFG_TYPE_UID   0x33
-#define CFG_TYPE_HIST  0x59
+#define LA_BIT_FRAME_SDD  0x30
+#define LA_PLATFORM_CONFIG  0x31
+#define LA_SEL_INFO   0x32
+#define LA_NFCID1   0x33
+#define LA_HIST_BY  0x59
 
 #define loghex(x, y, z)
 
@@ -132,17 +133,22 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
 
     for (auto &opt : cfg.options()) {
         switch(opt.type()) {
-            case CFG_TYPE_ATQA:
+            case LA_BIT_FRAME_SDD:
                 needUpload = true;
-                origValues.atqa = *opt.value();
-                LOGD("NfcSetConfig Read: ATQA 0x%02x 0x%02x", opt.value()[0], opt.value()[1]);
+                origValues.bit_frame_sdd = *opt.value();
+                LOGD("NfcSetConfig Read: BIT FRAME SDD 0x%02x", *opt.value());
             break;
-            case CFG_TYPE_SAK:
+            case LA_PLATFORM_CONFIG:
+                needUpload = true;
+                origValues.platform_config = *opt.value();
+                LOGD("NfcSetConfig Read: PLATFORM CONFIG 0x%02x", *opt.value());
+            break;
+            case LA_SEL_INFO:
                 needUpload = true;
                 origValues.sak = *opt.value();
                 LOGD("NfcSetConfig Read: SAK  0x%02x", *opt.value());
             break;
-            case CFG_TYPE_HIST:
+            case LA_HIST_BY:
                 needUpload = true;
                 if (opt.len() > sizeof(origValues.hist))
                     LOGE("cannot handle an hist with len=0x%02x", opt.len());
@@ -152,7 +158,7 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
                     //loghex("NfcSetConfig Read: HIST", valbp, len);
                 }
             break;
-            case CFG_TYPE_UID:
+            case LA_NFCID1:
                 needUpload = true;
                 if (opt.len() > sizeof(origValues.uid))
                     LOGE("cannot handle an uid with len=0x%02x", opt.len());
@@ -183,10 +189,11 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
  */
 static void uploadConfig(const struct s_chip_config config) {
     Config cfg;
-    cfg.add(CFG_TYPE_SAK, &config.sak);
-    cfg.add(CFG_TYPE_ATQA, &config.atqa);
-    cfg.add(CFG_TYPE_UID, config.uid, config.uid_len);
-    cfg.add(CFG_TYPE_HIST, config.hist, config.hist_len);
+    cfg.add(LA_SEL_INFO, &config.sak);
+    cfg.add(LA_BIT_FRAME_SDD, &config.bit_frame_sdd);
+    cfg.add(LA_PLATFORM_CONFIG, &config.platform_config);
+    cfg.add(LA_NFCID1, config.uid, config.uid_len);
+    cfg.add(LA_HIST_BY, config.hist, config.hist_len);
 
     config_ref bin_stream;
     cfg.build(bin_stream);
@@ -212,7 +219,14 @@ void enablePolling() {
  * upload the values we got from the ipc
  */
 void uploadPatchConfig() {
+    /*
+     * Note: Disable discovery before setting the config,
+     * because NFCID cannot be set during discovery according to the standard
+     * (even though broadcom permits it, nxp does not)
+     */
+    disablePolling();
     uploadConfig(patchValues);
+    enablePolling();
 }
 
 /**

@@ -46,7 +46,8 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
         }
         else if("UPLOAD".equals(action)) {
             Native.Instance.uploadConfiguration(
-                    intent.getByteExtra("atqa", (byte)0),
+                    intent.getByteExtra("bitf", (byte)0),
+                    intent.getByteExtra("plat", (byte)0),
                     intent.getByteExtra("sak", (byte)0),
                     intent.getByteArrayExtra("hist"),
                     intent.getByteArrayExtra("uid")

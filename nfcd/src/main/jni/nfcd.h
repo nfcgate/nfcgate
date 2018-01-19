@@ -16,7 +16,8 @@
  * all values we override in one struct
  */
 struct s_chip_config {
-    uint8_t atqa;
+    uint8_t bit_frame_sdd;
+    uint8_t platform_config;
     uint8_t sak;
     uint8_t hist[64];
     uint8_t hist_len;

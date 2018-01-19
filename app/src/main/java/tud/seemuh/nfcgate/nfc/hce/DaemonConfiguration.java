@@ -40,10 +40,11 @@ public class DaemonConfiguration {
         return false;
     }
 
-    public void uploadConfiguration(byte atqa, byte sak, byte[] hist, byte[] uid) {
+    public void uploadConfiguration(byte bitf, byte plat, byte sak, byte[] hist, byte[] uid) {
         Intent intent = new Intent();
         intent.putExtra("action", "UPLOAD");
-        intent.putExtra("atqa", atqa);
+        intent.putExtra("bitf", bitf);
+        intent.putExtra("plat", plat);
         intent.putExtra("sak", sak);
         intent.putExtra("hist", hist);
         intent.putExtra("uid", uid);
