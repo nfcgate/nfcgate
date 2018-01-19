@@ -12,6 +12,10 @@
 #include "hook.h"
 #include "symbols.h"
 
+#ifndef __arm__
+#include "arm64_cacheflush.h"
+#endif
+
 #include <sys/mman.h>
 #include <cstring>
 #include <dlfcn.h>
@@ -127,7 +131,7 @@ void hook_cacheflush(void *pbegin, size_t size) {
     :    "r0", "r1", "r7"
     );
 #else
-    __builtin___clear_cache((char *) pbegin, (char *) pend);
+    arm64_cacheflush(begin, size);
 #endif
 }
 
