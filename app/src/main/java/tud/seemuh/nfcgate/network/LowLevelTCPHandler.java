@@ -109,13 +109,22 @@ public class LowLevelTCPHandler implements LowLevelNetworkHandler {
 
                 //read answer from SOCKET
                 mRunnableComThread = new CommunicationThread(mSocket);
-                synchronized (mSendQueueSync) {
-                    commThread = new Thread(mRunnableComThread);
-                    commThread.start();
-                    for(byte[] msg : mSendQueue) {
-                        reallySendBytes(msg);
+                commThread = new Thread(mRunnableComThread);
+                commThread.start();
+
+                while (true) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                    mSendQueue.clear();
+
+                    synchronized (mSendQueueSync) {
+                        for (byte[] msg : mSendQueue) {
+                            reallySendBytes(msg);
+                        }
+                        mSendQueue.clear();
+                    }
                 }
 
             } catch (ConnectException e1) {
@@ -140,13 +149,8 @@ public class LowLevelTCPHandler implements LowLevelNetworkHandler {
 
         public void sendBytes(byte[] msg) {
             synchronized (mSendQueueSync) {
-                // If the communication Thread has not started up yet, save the message for later.
-                if(commThread == null) {
-                    mSendQueue.add(msg);
-                    return;
-                }
+                mSendQueue.add(msg);
             }
-            reallySendBytes(msg);
         }
 
         private void reallySendBytes(byte[] msg) {
