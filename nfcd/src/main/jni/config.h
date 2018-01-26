@@ -4,18 +4,23 @@ using config_ref = std::unique_ptr<uint8_t>;
 
 class Option {
 public:
-    Option(uint8_t type, const uint8_t *value, uint8_t len) : mType(type), mLen(len), mValue(value) {}
+    Option(uint8_t type, uint8_t *value, uint8_t len) : mType(type), mLen(len), mValue(value) {}
 
     uint8_t type() const {
         return mType;
     }
 
     uint8_t len() const {
-        return mLen + 2;
+        return mLen;
     }
 
     const uint8_t *value() const {
         return mValue;
+    }
+
+    void value(uint8_t *newValue, uint8_t newLen) {
+        mValue = newValue;
+        mLen = newLen;
     }
 
     void push(config_ref &config, uint8_t &offset) {
@@ -34,7 +39,7 @@ public:
 
 protected:
     uint8_t mType, mLen;
-    const uint8_t *mValue;
+    uint8_t *mValue;
 };
 
 class Config {
@@ -45,7 +50,7 @@ public:
         return mTotal;
     }
 
-    void add(uint8_t type, const uint8_t *value, uint8_t len = 1) {
+    void add(uint8_t type, uint8_t *value, uint8_t len = 1) {
         mOptions.emplace_back(type, value, len);
     }
 
@@ -58,7 +63,7 @@ public:
 
         // calculate total size of needed buffer
         for (auto &opt : mOptions)
-            mTotal += opt.len();
+            mTotal += opt.len() + 2;
 
         // allocate buffer
         config.reset(new uint8_t[mTotal]);
@@ -78,7 +83,7 @@ public:
         }
     }
 
-    const std::vector<Option> &options() const {
+    std::vector<Option> &options() {
         return mOptions;
     }
 

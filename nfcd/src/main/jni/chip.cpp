@@ -2,19 +2,11 @@
 #include "config.h"
 #include "vendor/adbi/hook.h"
 #include <cstring>
+#include <unistd.h>
 
 /**
  * Commands of the NCI configuration interface
  */
-#define LA_BIT_FRAME_SDD  0x30
-#define LA_PLATFORM_CONFIG  0x31
-#define LA_SEL_INFO   0x32
-#define LA_NFCID1   0x33
-#define LA_HIST_BY  0x59
-
-#define loghex(x, y, z)
-
-static void uploadConfig(const s_chip_config config);
 
 struct s_chip_config origValues = { 0 };
 struct s_chip_config patchValues = { 0 };
@@ -124,48 +116,53 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
      *
      * in any case: save the values to allow re-uploading them when disabling the patch
      */
-    loghex("HOOKNFC NfcSetConfig", tlv, size);
+    loghex("HOOKNFC NfcSetConfig IN", tlv, size);
+    LOGD("NfcSetConfig Enabled: %d", patchEnabled);
 
     Config cfg;
     cfg.parse(size, tlv);
 
-    bool needUpload = false;
-
     for (auto &opt : cfg.options()) {
         switch(opt.type()) {
-            case LA_BIT_FRAME_SDD:
-                needUpload = true;
+            case NFC_PMID_LA_BIT_FRAME_SDD:
                 origValues.bit_frame_sdd = *opt.value();
                 LOGD("NfcSetConfig Read: BIT FRAME SDD 0x%02x", *opt.value());
+                if (patchEnabled)
+                    opt.value(&patchValues.bit_frame_sdd, 1);
+                LOGD("NfcSetConfig NEW: BIT FRAME SDD 0x%02x %d", *opt.value(), opt.len());
             break;
-            case LA_PLATFORM_CONFIG:
-                needUpload = true;
+            case NFC_PMID_LA_PLATFORM_CONFIG:
                 origValues.platform_config = *opt.value();
                 LOGD("NfcSetConfig Read: PLATFORM CONFIG 0x%02x", *opt.value());
+                if (patchEnabled)
+                    opt.value(&patchValues.platform_config, 1);
             break;
-            case LA_SEL_INFO:
-                needUpload = true;
+            case NFC_PMID_LA_SEL_INFO:
                 origValues.sak = *opt.value();
                 LOGD("NfcSetConfig Read: SAK  0x%02x", *opt.value());
+                if (patchEnabled)
+                    opt.value(&patchValues.sak, 1);
             break;
-            case LA_HIST_BY:
-                needUpload = true;
+            case NFC_PMID_LA_HIST_BY:
                 if (opt.len() > sizeof(origValues.hist))
                     LOGE("cannot handle an hist with len=0x%02x", opt.len());
                 else {
                     memcpy(origValues.hist, opt.value(), opt.len());
                     origValues.uid_len = opt.len();
-                    //loghex("NfcSetConfig Read: HIST", valbp, len);
+                    loghex("NfcSetConfig Read: HIST", opt.value(), opt.len());
+                    if (patchEnabled)
+                        opt.value(patchValues.hist, patchValues.hist_len);
                 }
             break;
-            case LA_NFCID1:
-                needUpload = true;
+            case NFC_PMID_LA_NFCID1:
                 if (opt.len() > sizeof(origValues.uid))
                     LOGE("cannot handle an uid with len=0x%02x", opt.len());
                 else {
                     memcpy(origValues.uid, opt.value(), opt.len());
                     origValues.uid_len = opt.len();
-                    //loghex("NfcSetConfig Read: UID", valbp, len);
+                    loghex("NfcSetConfig Read: UID", opt.value(), opt.len());
+                    if (patchEnabled)
+                        opt.value(patchValues.uid, patchValues.uid_len);
                 }
                 break;
             default:
@@ -174,12 +171,11 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
         }
     }
 
-    tNFC_STATUS r = nci_NfcSetConfig(size, tlv);
-
-    if(needUpload && patchEnabled) {
-        // any of our values got modified and we are active -> reupload
-        uploadPatchConfig();
-    }
+    // any of our values got modified and we are active those values are already changed in stream
+    config_ref bin_stream;
+    cfg.build(bin_stream);
+    loghex("HOOKNFC NfcSetConfig OUT", bin_stream.get(), cfg.total());
+    tNFC_STATUS r = nci_NfcSetConfig(cfg.total(), bin_stream.get());
 
     return r;
 }
@@ -187,13 +183,13 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
 /**
  * build a new configuration stream and upload it into the broadcom nfc controller
  */
-static void uploadConfig(const struct s_chip_config config) {
+static void uploadConfig(struct s_chip_config config) {
     Config cfg;
-    cfg.add(LA_SEL_INFO, &config.sak);
-    cfg.add(LA_BIT_FRAME_SDD, &config.bit_frame_sdd);
-    cfg.add(LA_PLATFORM_CONFIG, &config.platform_config);
-    cfg.add(LA_NFCID1, config.uid, config.uid_len);
-    cfg.add(LA_HIST_BY, config.hist, config.hist_len);
+    cfg.add(NFC_PMID_LA_SEL_INFO, &config.sak);
+    cfg.add(NFC_PMID_LA_BIT_FRAME_SDD, &config.bit_frame_sdd);
+    cfg.add(NFC_PMID_LA_PLATFORM_CONFIG, &config.platform_config);
+    cfg.add(NFC_PMID_LA_NFCID1, config.uid, config.uid_len);
+    cfg.add(NFC_PMID_LA_HIST_BY, config.hist, config.hist_len);
 
     config_ref bin_stream;
     cfg.build(bin_stream);
@@ -204,15 +200,21 @@ static void uploadConfig(const struct s_chip_config config) {
 
 void disablePolling() {
     adbi_log("HOOKNFC disable polling");
+    hook_NfaStopRfDiscovery();
+    usleep(10000);
     hook_NfaDisablePolling();
-    hook_NfcDeactivate(0);
+    usleep(10000);
+    hook_NfaStartRfDiscovery();
+    usleep(10000);
 }
 
 void enablePolling() {
     adbi_log("HOOKNFC enablePolling()");
-    hook_NfcDeactivate(3);
-    hook_NfaStartRfDiscovery();
+    hook_NfaStopRfDiscovery();
+    usleep(10000);
     hook_NfaEnablePolling(0xff);
+    usleep(10000);
+    hook_NfaStartRfDiscovery();
 }
 
 /**
@@ -224,14 +226,16 @@ void uploadPatchConfig() {
      * because NFCID cannot be set during discovery according to the standard
      * (even though broadcom permits it, nxp does not)
      */
-    disablePolling();
+    hook_NfcDeactivate(0);
     uploadConfig(patchValues);
-    enablePolling();
+    hook_NfcDeactivate(3);
 }
 
 /**
  * upload the values we collected in  NfcSetConfig
  */
 void uploadOriginalConfig() {
+    hook_NfcDeactivate(0);
     uploadConfig(origValues);
+    hook_NfcDeactivate(3);
 }
