@@ -5,12 +5,23 @@
 #include <android/log.h>
 #include <jni.h>
 #include <stdint.h>
+#include <cstdlib>
 #include "vendor/libnfc.h"
 
 #define LOG_TAG "NATIVENFC"
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__ )
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__ )
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+
+inline void loghex(const char *desc, const uint8_t *data, const int len) {
+    int strlen = len * 3 + 1;
+    char *msg = (char *) malloc((size_t) strlen);
+    for (uint8_t i = 0; i < len; i++) {
+        sprintf(msg + i * 3, " %02x", (unsigned int) *(data + i));
+    }
+    LOGI("%s%s",desc, msg);
+    free(msg);
+}
 
 /**
  * all values we override in one struct
