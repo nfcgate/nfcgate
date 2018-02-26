@@ -1,4 +1,4 @@
-#include "nfcd.h"
+#include <nfcd/nfcd.h>
 #include <cstring>
 
 extern "C" {

@@ -9,17 +9,14 @@
  *
  */
 
-#include "hook.h"
-#include "symbols.h"
-
-#ifndef __arm__
-#include "arm64_cacheflush.h"
-#endif
-
-#include <sys/mman.h>
-#include <cstring>
 #include <dlfcn.h>
+#include <cstring>
 #include <unistd.h>
+#include <sys/mman.h>
+
+#include <nfcd/hook/hook.h>
+#include <nfcd/hook/arm64_cacheflush.h>
+#include <nfcd/helper/Symbol.h>
 
 /**
  * find a native symbol and hook it
@@ -193,24 +190,6 @@ bool construct_trampoline(struct hook_t *h) {
     if (!addr_is_thumb && !hook_is_thumb) {
         adbi_log("ARM64\n");
         h->thumb = false;
-
-        /*unsigned int trampoline[13];
-
-        trampoline[0] = 0xd10083ff; //          sub     sp, sp, #0x20
-        trampoline[1] = 0xa9017bfd; //          stp     x29, x30, [sp, #0x10]
-        trampoline[2] = 0xa90023e7; //          stp     x7, x8, [sp]
-        trampoline[3] = 0x94000001; //          bl      label1
-        trampoline[4] = 0xaa1e03e7; // label1:	mov     x7, x30
-        trampoline[5] = 0xf841c0e8; //          ldr     x8, [x7, #28]
-        trampoline[6] = 0xd63f0100; //          blr     x8
-        trampoline[7] = 0xa94023e7; //          ldp     x7, x8, [sp]
-        trampoline[8] = 0xa9417bfd; //          ldp     x29, x30, [sp, #0x10]
-        trampoline[9] = 0x910083ff; //          add     sp, sp, #0x20
-        trampoline[10] = 0xd65f03c0; //         ret
-
-        // insert hook address
-        trampoline[11] = hook & 0xffffffff;
-        trampoline[12] = (hook >> 32) & 0xffffffff;*/
 
         unsigned int trampoline[4];
 

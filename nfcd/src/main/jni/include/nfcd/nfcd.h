@@ -6,7 +6,8 @@
 #include <jni.h>
 #include <stdint.h>
 #include <cstdlib>
-#include "vendor/libnfc.h"
+
+#include <nfcd/libnfc-external.h>
 
 #define LOG_TAG "NATIVENFC"
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__ )
@@ -54,6 +55,18 @@ void uploadOriginalConfig();
 void enablePolling();
 void disablePolling();
 
+// define method signatures
+typedef tNFC_STATUS NFC_SetConfig (UINT8     tlv_size, UINT8    *p_param_tlvs);
+typedef tNFC_STATUS NFC_SendData(UINT8       conn_id,  BT_HDR     *p_data);
+typedef tNFC_STATUS NFC_Deactivate (UINT8 deactivate_type);
+typedef void NFC_SetStaticRfCback (tNFC_CONN_CBACK *p_cback);
+
+typedef tNFA_STATUS NFA_StartRfDiscovery ();
+typedef tNFA_STATUS NFA_EnablePolling (tNFA_TECHNOLOGY_MASK poll_mask);
+typedef tNFA_STATUS NFA_StopRfDiscovery();
+typedef tNFA_STATUS NFA_DisablePolling();
+
+// external original methods
 extern NFC_SetStaticRfCback *nci_orig_SetRfCback;
 extern NFC_SetConfig *nci_orig_NfcSetConfig;
 extern NFC_SendData *nfc_orig_sendData;
@@ -63,6 +76,7 @@ extern NFA_DisablePolling *nfa_orig_disable_polling;
 extern NFA_StartRfDiscovery *nfa_orig_start_rf_discovery;
 extern NFA_EnablePolling *nfa_orig_enable_polling;
 
+// hooks and symbols
 extern tCE_CB *ce_cb;
 extern struct s_chip_config patchValues;
 extern struct hook_t hook_config;

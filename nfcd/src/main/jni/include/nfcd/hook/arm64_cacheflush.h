@@ -1,8 +1,11 @@
 /**
  * Motivation for NOT using the builtin cacheflush:
  * http://www.mono-project.com/news/2016/09/12/arm64-icache/
- */
 
+
+ */
+
+#ifndef __arm__
 /**
  * Authors:
  *   Paolo Molaro (lupus@ximian.com)
@@ -47,3 +50,4 @@ void arm64_cacheflush(ulong p, size_t size)
     asm volatile ("dsb ish" : : : "memory");
     asm volatile ("isb" : : : "memory");
 }
+#endif

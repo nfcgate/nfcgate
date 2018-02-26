@@ -1,8 +1,8 @@
-#include "nfcd.h"
-#include "vendor/adbi/hook.h"
 #include <dlfcn.h>
 
-#include "symbols.h"
+#include <nfcd/nfcd.h>
+#include <nfcd/hook/hook.h>
+#include <nfcd/helper/Symbol.h>
 
 bool patchEnabled = false;
 struct hook_t hook_config;

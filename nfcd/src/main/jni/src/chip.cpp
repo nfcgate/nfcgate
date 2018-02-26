@@ -1,6 +1,6 @@
-#include "nfcd.h"
-#include "config.h"
-#include "vendor/adbi/hook.h"
+#include <nfcd/nfcd.h>
+#include <nfcd/helper/Config.h>
+#include <nfcd/hook/hook.h>
 #include <cstring>
 #include <unistd.h>
 
