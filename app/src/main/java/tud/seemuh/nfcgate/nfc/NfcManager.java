@@ -3,16 +3,20 @@ package tud.seemuh.nfcgate.nfc;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.nfc.Tag;
+import android.nfc.tech.NfcA;
+import android.nfc.tech.NfcB;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.gui.fragments.CloneFragment;
-import tud.seemuh.nfcgate.gui.fragments.RelayFragment;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
-import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
+import tud.seemuh.nfcgate.nfc.config.Technologies;
 import tud.seemuh.nfcgate.nfc.hce.ApduService;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.nfc.reader.DesfireWorkaround;
@@ -150,17 +154,29 @@ public class NfcManager {
     }
 
     NFCTagReader fromTag(Tag tag) {
-        for (String tech : tag.getTechList()) {
+        List<String> technologies = Arrays.asList(tag.getTechList());
+
+        // look for higher layer technology
+        if (technologies.contains(Technologies.IsoDep)) {
+            // an IsoDep tag can be backed by either NfcA or NfcB technology
+            if (technologies.contains(Technologies.A))
+                return new IsoDepReader(tag, NfcA.get(tag));
+            else if (technologies.contains(Technologies.B))
+                return new IsoDepReader(tag, NfcB.get(tag));
+            else
+                Log.e(TAG, "Unknown tag technology backing IsoDep" +
+                        TextUtils.join(", ", technologies));
+        }
+
+        for (String tech : technologies) {
             switch (tech) {
-                case "android.nfc.tech.IsoDep":
-                    return new IsoDepReader(tag);
-                case "android.nfc.tech.NfcA":
+                case Technologies.A:
                     return new NfcAReader(tag);
-                case "android.nfc.tech.NfcB":
+                case Technologies.B:
                     return new NfcBReader(tag);
-                case "android.nfc.tech.NfcF":
+                case Technologies.F:
                     return new NfcFReader(tag);
-                case "android.nfc.tech.NfcV":
+                case Technologies.V:
                     return new NfcVReader(tag);
             }
         }

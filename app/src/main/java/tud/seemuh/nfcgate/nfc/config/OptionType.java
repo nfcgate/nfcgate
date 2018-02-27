@@ -36,8 +36,11 @@ public enum OptionType {
 
     // LISTEN ISO-DEP
 
-        // Historical bytes
-        LA_HIST_BY(0x59);
+        // Historical bytes (NCI spec calls this LI_A_HIST_BY)
+        LA_HIST_BY(0x59),
+        // Higher layer response field
+        LB_H_INFO_RSP(0x5A),
+    ;
 
     // implementation details
     int value;
