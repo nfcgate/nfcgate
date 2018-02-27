@@ -98,8 +98,6 @@ public class IsoDepReader implements NFCTagReader {
     public ConfigBuilder getConfig() {
         ConfigBuilder builder = new ConfigBuilder();
 
-        IsoDep tagDep = IsoDep.get(mAdapter.getTag());
-
         // an IsoDep tag can be backed by either NfcA or NfcB technology, build config accordingly
         if (mUnderlyingTech instanceof NfcA) {
             final NfcA underlyingTag = (NfcA) this.mUnderlyingTech;
@@ -109,7 +107,7 @@ public class IsoDepReader implements NFCTagReader {
             builder.add(OptionType.LA_BIT_FRAME_SDD, underlyingTag.getAtqa()[0]);
             builder.add(OptionType.LA_PLATFORM_CONFIG, underlyingTag.getAtqa()[1]);
 
-            builder.add(OptionType.LA_HIST_BY, tagDep.getHistoricalBytes());
+            builder.add(OptionType.LA_HIST_BY, mAdapter.getHistoricalBytes());
         } else if (mUnderlyingTech instanceof NfcB) {
             final NfcB underlyingTag = (NfcB) this.mUnderlyingTech;
 
@@ -119,10 +117,9 @@ public class IsoDepReader implements NFCTagReader {
             builder.add(OptionType.LB_SENSB_INFO, underlyingTag.getProtocolInfo()[1]);
             builder.add(OptionType.LB_ADC_FO, underlyingTag.getProtocolInfo()[2]);
 
-            builder.add(OptionType.LB_H_INFO_RSP, tagDep.getHiLayerResponse());
+            builder.add(OptionType.LB_H_INFO_RSP, mAdapter.getHiLayerResponse());
         }
 
         return builder;
     }
-
 }
