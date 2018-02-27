@@ -1,3 +1,6 @@
+#ifndef NFCD_CONFIG
+#define NFCD_CONFIG
+
 #include <vector>
 
 using config_ref = std::unique_ptr<uint8_t>;
@@ -14,7 +17,7 @@ public:
         return mLen;
     }
 
-    const uint8_t *value() const {
+    uint8_t *value() {
         return mValue;
     }
 
@@ -74,6 +77,9 @@ public:
     }
 
     void parse(uint8_t size, uint8_t *stream) {
+        mOptions.clear();
+        mTotal = 0;
+
         for (uint8_t offset = 0; offset < size - 2; ) {
             uint8_t type = stream[offset + 0];
             uint8_t len = stream[offset + 1];
@@ -89,5 +95,8 @@ public:
 
 protected:
     uint8_t mTotal = 0;
+
     std::vector<Option> mOptions;
 };
+
+#endif //NFCD_CONFIG

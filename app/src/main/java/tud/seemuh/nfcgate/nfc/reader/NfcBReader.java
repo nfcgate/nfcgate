@@ -1,7 +1,7 @@
 package tud.seemuh.nfcgate.nfc.reader;
 
 import android.nfc.Tag;
-import android.nfc.tech.NfcA;
+import android.nfc.tech.NfcB;
 import android.util.Log;
 
 import java.io.IOException;
@@ -10,21 +10,21 @@ import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
 import tud.seemuh.nfcgate.nfc.config.OptionType;
 
 /**
- * Implements an NFCTagReader using the NfcA technology
+ * Implements an NFCTagReader using the NfcB technology
  *
  */
-public class NfcAReader implements NFCTagReader {
-    private final static String TAG = "NFC_READER_NFCA";
-    private NfcA mAdapter = null;
+public class NfcBReader implements NFCTagReader {
+    private final static String TAG = "NFC_READER_NFCB";
+    private NfcB mAdapter = null;
 
     /**
-     * Constructor of NfcAReader-Class, providing an NFC reader interface using the NfcA-Tech.
+     * Constructor of NfcBReader-Class, providing an NFC reader interface using the NfcB-Tech.
      *
      * @param tag: A tag using the NfcA technology.
      */
-    public NfcAReader(Tag tag) {
+    public NfcBReader(Tag tag) {
         // Create NFC Adapter to use
-        mAdapter = NfcA.get(tag);
+        mAdapter = NfcB.get(tag);
         try{
             // Connect the adapter to the NFC card
             mAdapter.connect();
@@ -76,7 +76,7 @@ public class NfcAReader implements NFCTagReader {
      */
     @Override
     public int getProtocol() {
-        return READER_NFC_A;
+        return READER_NFC_B;
     }
 
     @Override
@@ -86,10 +86,11 @@ public class NfcAReader implements NFCTagReader {
     public ConfigBuilder getConfig() {
         ConfigBuilder builder = new ConfigBuilder();
 
-        builder.add(OptionType.LA_SEL_INFO, (byte)mAdapter.getSak());
-        builder.add(OptionType.LA_BIT_FRAME_SDD, mAdapter.getAtqa()[0]);
-        builder.add(OptionType.LA_PLATFORM_CONFIG, mAdapter.getAtqa()[1]);
-        builder.add(OptionType.LA_NFCID1, mAdapter.getTag().getId());
+        builder.add(OptionType.LB_NFCID0, mAdapter.getTag().getId());
+        builder.add(OptionType.LB_APPLICATION_DATA, mAdapter.getApplicationData());
+        builder.add(OptionType.LB_SFGI, mAdapter.getProtocolInfo()[0]);
+        builder.add(OptionType.LB_SENSB_INFO, mAdapter.getProtocolInfo()[1]);
+        builder.add(OptionType.LB_ADC_FO, mAdapter.getProtocolInfo()[2]);
 
         return builder;
     }

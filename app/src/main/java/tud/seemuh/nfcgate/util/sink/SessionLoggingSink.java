@@ -180,8 +180,8 @@ public class SessionLoggingSink implements Sink {
         // Meta values
         values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_SESSION_ID, mSessionID);
         values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_TYPE, SessionLoggingContract.SessionEvent.VALUE_TYPE_ANTICOL);
-        // Content Values
-        values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_UID, msg.getUid());
+        // Content Values // FIXME database
+        /*values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_UID, msg.getUid());
         values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA, msg.getAtqa());
         values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK, new byte[] {msg.getSak()});
         values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST, msg.getHist());
@@ -190,7 +190,7 @@ public class SessionLoggingSink implements Sink {
             values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA_PREFILTER, msg.getOldAtqa());
             values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK_PREFILTER, new byte[] {msg.getOldSak()});
             values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST_PREFILTER, msg.getOldHist());
-        }
+        }*/
 
         // Commit to database
         mDB.insert(SessionLoggingContract.SessionEvent.TABLE_NAME,

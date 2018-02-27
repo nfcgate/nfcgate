@@ -49,21 +49,29 @@ public class StartsWith extends Conditional {
 
     @Override
     protected boolean checkUidData(NfcComm nfcdata) {
-        return isPrefix(nfcdata.getUid());
+        return false;
+        // FIXME
+        //return isPrefix(nfcdata.getUid());
     }
 
     @Override
     protected boolean checkAtqaData(NfcComm nfcdata) {
-        return isPrefix(nfcdata.getAtqa());
+        return false;
+        // FIXME
+        //return isPrefix(nfcdata.getAtqa());
     }
 
     @Override
     protected boolean checkHistData(NfcComm nfcdata) {
-        return isPrefix(nfcdata.getHist());
+        return false;
+        // FIXME
+        //return isPrefix(nfcdata.getHist());
     }
 
     @Override
     protected boolean checkSakData(NfcComm nfcdata) {
-        return isPrefix(nfcdata.getSak());
+        return false;
+        // FIXME
+        //return isPrefix(nfcdata.getSak());
     }
 }

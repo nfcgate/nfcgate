@@ -1,5 +1,4 @@
 #include <nfcd/nfcd.h>
-#include <nfcd/helper/Config.h>
 #include <nfcd/hook/hook.h>
 #include <cstring>
 #include <unistd.h>
@@ -8,8 +7,7 @@
  * Commands of the NCI configuration interface
  */
 
-struct s_chip_config origValues = { 0 };
-struct s_chip_config patchValues = { 0 };
+Config origValues, patchValues;
 
 NFC_SetStaticRfCback *nci_orig_SetRfCback;
 NFC_SetConfig *nci_orig_NfcSetConfig;
@@ -119,63 +117,29 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
     loghex("HOOKNFC NfcSetConfig IN", tlv, size);
     LOGD("NfcSetConfig Enabled: %d", patchEnabled);
 
-    Config cfg;
+    Config cfg, actual;
     cfg.parse(size, tlv);
 
     for (auto &opt : cfg.options()) {
-        switch(opt.type()) {
-            case NFC_PMID_LA_BIT_FRAME_SDD:
-                origValues.bit_frame_sdd = *opt.value();
-                LOGD("NfcSetConfig Read: BIT FRAME SDD 0x%02x", *opt.value());
-                if (patchEnabled)
-                    opt.value(&patchValues.bit_frame_sdd, 1);
-                LOGD("NfcSetConfig NEW: BIT FRAME SDD 0x%02x %d", *opt.value(), opt.len());
-            break;
-            case NFC_PMID_LA_PLATFORM_CONFIG:
-                origValues.platform_config = *opt.value();
-                LOGD("NfcSetConfig Read: PLATFORM CONFIG 0x%02x", *opt.value());
-                if (patchEnabled)
-                    opt.value(&patchValues.platform_config, 1);
-            break;
-            case NFC_PMID_LA_SEL_INFO:
-                origValues.sak = *opt.value();
-                LOGD("NfcSetConfig Read: SAK  0x%02x", *opt.value());
-                if (patchEnabled)
-                    opt.value(&patchValues.sak, 1);
-            break;
-            case NFC_PMID_LA_HIST_BY:
-                if (opt.len() > sizeof(origValues.hist))
-                    LOGE("cannot handle an hist with len=0x%02x", opt.len());
-                else {
-                    memcpy(origValues.hist, opt.value(), opt.len());
-                    origValues.uid_len = opt.len();
-                    loghex("NfcSetConfig Read: HIST", opt.value(), opt.len());
-                    if (patchEnabled)
-                        opt.value(patchValues.hist, patchValues.hist_len);
-                }
-            break;
-            case NFC_PMID_LA_NFCID1:
-                if (opt.len() > sizeof(origValues.uid))
-                    LOGE("cannot handle an uid with len=0x%02x", opt.len());
-                else {
-                    memcpy(origValues.uid, opt.value(), opt.len());
-                    origValues.uid_len = opt.len();
-                    loghex("NfcSetConfig Read: UID", opt.value(), opt.len());
-                    if (patchEnabled)
-                        opt.value(patchValues.uid, patchValues.uid_len);
-                }
-                break;
-            default:
-                LOGD("NfcSetConfig Read: %x len %d", opt.type(), opt.len());
-                break;
-        }
+        // if this option would override one of the patch options, prevent it
+        bool preventMe = false;
+
+        for (auto &patch_opt : patchValues.options())
+            if (patch_opt.type() == opt.type())
+                preventMe = true;
+
+        if (!preventMe)
+            actual.add(opt);
+        else
+            // keep for restore
+            origValues.add(opt);
     }
 
     // any of our values got modified and we are active those values are already changed in stream
     config_ref bin_stream;
-    cfg.build(bin_stream);
-    loghex("HOOKNFC NfcSetConfig OUT", bin_stream.get(), cfg.total());
-    tNFC_STATUS r = nci_NfcSetConfig(cfg.total(), bin_stream.get());
+    actual.build(bin_stream);
+    loghex("HOOKNFC NfcSetConfig OUT", bin_stream.get(), actual.total());
+    tNFC_STATUS r = nci_NfcSetConfig(actual.total(), bin_stream.get());
 
     return r;
 }
@@ -183,18 +147,11 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
 /**
  * build a new configuration stream and upload it into the broadcom nfc controller
  */
-static void uploadConfig(struct s_chip_config config) {
-    Config cfg;
-    cfg.add(NFC_PMID_LA_SEL_INFO, &config.sak);
-    cfg.add(NFC_PMID_LA_BIT_FRAME_SDD, &config.bit_frame_sdd);
-    cfg.add(NFC_PMID_LA_PLATFORM_CONFIG, &config.platform_config);
-    cfg.add(NFC_PMID_LA_NFCID1, config.uid, config.uid_len);
-    cfg.add(NFC_PMID_LA_HIST_BY, config.hist, config.hist_len);
-
+static void uploadConfig(Config &config) {
     config_ref bin_stream;
-    cfg.build(bin_stream);
+    config.build(bin_stream);
 
-    nci_NfcSetConfig(cfg.total(), bin_stream.get());
+    nci_NfcSetConfig(config.total(), bin_stream.get());
     //loghex("HOOKNFC Upload:", cfg, i);
 }
 

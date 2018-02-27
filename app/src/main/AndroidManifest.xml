@@ -43,7 +43,9 @@
             <intent-filter>
                 <action android:name="tud.seemuh.nfcgate.main" />
 
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
@@ -52,9 +54,7 @@
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="tud.seemuh.nfcgate.splash" />
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 

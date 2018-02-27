@@ -301,8 +301,8 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
                 return;
             }
             do {
-                // prepare NfcComm object
-                NfcComm comm;
+                // prepare NfcComm object //FIXME database
+                /*NfcComm comm;
                 String date = c.getString(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_DATE));
                 int type    = c.getInt(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_TYPE));
                 if (type == SessionLoggingContract.SessionEvent.VALUE_TYPE_ANTICOL) {
@@ -339,7 +339,7 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
                         comm = new NfcComm(source, bytes);
                     }
                 }
-                addNfcEvent(comm);
+                addNfcEvent(comm);*/
             } while (c.moveToNext()); // Iterate until all elements of the cursor have been processed
             // Close the cursor, freeing the used memory
             updateSessionView();

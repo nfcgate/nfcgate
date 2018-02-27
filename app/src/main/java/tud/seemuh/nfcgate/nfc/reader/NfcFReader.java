@@ -1,7 +1,7 @@
 package tud.seemuh.nfcgate.nfc.reader;
 
 import android.nfc.Tag;
-import android.nfc.tech.NfcA;
+import android.nfc.tech.NfcF;
 import android.util.Log;
 
 import java.io.IOException;
@@ -10,21 +10,21 @@ import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
 import tud.seemuh.nfcgate.nfc.config.OptionType;
 
 /**
- * Implements an NFCTagReader using the NfcA technology
+ * Implements an NFCTagReader using the NfcF technology
  *
  */
-public class NfcAReader implements NFCTagReader {
-    private final static String TAG = "NFC_READER_NFCA";
-    private NfcA mAdapter = null;
+public class NfcFReader implements NFCTagReader {
+    private final static String TAG = "NFC_READER_NFCF";
+    private NfcF mAdapter = null;
 
     /**
-     * Constructor of NfcAReader-Class, providing an NFC reader interface using the NfcA-Tech.
+     * Constructor of NfcFReader-Class, providing an NFC reader interface using the NfcF-Tech.
      *
-     * @param tag: A tag using the NfcA technology.
+     * @param tag: A tag using the NfcF technology.
      */
-    public NfcAReader(Tag tag) {
+    public NfcFReader(Tag tag) {
         // Create NFC Adapter to use
-        mAdapter = NfcA.get(tag);
+        mAdapter = NfcF.get(tag);
         try{
             // Connect the adapter to the NFC card
             mAdapter.connect();
@@ -76,7 +76,7 @@ public class NfcAReader implements NFCTagReader {
      */
     @Override
     public int getProtocol() {
-        return READER_NFC_A;
+        return READER_NFC_F;
     }
 
     @Override
@@ -86,12 +86,18 @@ public class NfcAReader implements NFCTagReader {
     public ConfigBuilder getConfig() {
         ConfigBuilder builder = new ConfigBuilder();
 
-        builder.add(OptionType.LA_SEL_INFO, (byte)mAdapter.getSak());
-        builder.add(OptionType.LA_BIT_FRAME_SDD, mAdapter.getAtqa()[0]);
-        builder.add(OptionType.LA_PLATFORM_CONFIG, mAdapter.getAtqa()[1]);
-        builder.add(OptionType.LA_NFCID1, mAdapter.getTag().getId());
+        // join systemcode and nfcid2
+        byte[] t3t_identifier_1 = new byte[10];
+        System.arraycopy(mAdapter.getSystemCode(), 0, t3t_identifier_1, 0, 2);
+        System.arraycopy(mAdapter.getTag().getId(), 0, t3t_identifier_1, 2, 8);
+
+        // set bit at index 1 to indicate activation of t3t_identifier_1
+        byte[] t3t_flags = new byte[] { 1, 0 };
+
+        builder.add(OptionType.LF_T3T_IDENTIFIERS_1, t3t_identifier_1);
+        builder.add(OptionType.LF_T3T_FLAGS, t3t_flags);
+        builder.add(OptionType.LF_T3T_PMM, mAdapter.getManufacturer());
 
         return builder;
     }
-
 }

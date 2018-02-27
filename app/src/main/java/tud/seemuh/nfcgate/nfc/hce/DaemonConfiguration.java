@@ -40,14 +40,10 @@ public class DaemonConfiguration {
         return false;
     }
 
-    public void uploadConfiguration(byte bitf, byte plat, byte sak, byte[] hist, byte[] uid) {
+    public void uploadConfiguration(byte[] config) {
         Intent intent = new Intent();
         intent.putExtra("action", "UPLOAD");
-        intent.putExtra("bitf", bitf);
-        intent.putExtra("plat", plat);
-        intent.putExtra("sak", sak);
-        intent.putExtra("hist", hist);
-        intent.putExtra("uid", uid);
+        intent.putExtra("config", config);
         send(intent);
     }
 
@@ -59,7 +55,6 @@ public class DaemonConfiguration {
 
     private void send(Intent intent) {
         intent.setAction("tud.seemuh.nfcgate.daemoncall");
-        intent.putExtra("test", "test");
         mContext.sendBroadcast(intent);
     }
 

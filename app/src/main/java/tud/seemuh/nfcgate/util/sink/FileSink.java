@@ -81,24 +81,7 @@ public class FileSink implements Sink {
                 if (msg.getType() == NfcComm.Type.AnticolBytes) {
                     String output = "";
                     // We are dealing with an Anticol message
-                    if (msg.isChanged()) {
-                        output = "Card data (pre-filter in bracket): "
-                                + "UID: " + Utils.bytesToHex(msg.getUid())
-                                + " (" + Utils.bytesToHex(msg.getOldUid()) + ")"
-                                + " - ATQA: " + Utils.bytesToHex(msg.getAtqa())
-                                + " (" + Utils.bytesToHex(msg.getOldAtqa()) + ")"
-                                + " - SAK: " + Utils.bytesToHex(msg.getSak())
-                                + " (" + Utils.bytesToHex(msg.getOldSak()) + ")"
-                                + " - Hist: " + Utils.bytesToHex(msg.getHist())
-                                + " (" + Utils.bytesToHex(msg.getOldHist()) + ")";
-                    } else {
-                        output = "Card data: "
-                                + "UID: " + Utils.bytesToHex(msg.getUid())
-                                + " - ATQA: " + Utils.bytesToHex(msg.getAtqa())
-                                + " - SAK: " + Utils.bytesToHex(msg.getSak())
-                                + " - Hist: " + Utils.bytesToHex(msg.getHist());
-                        // Write to file
-                    }
+                    output = msg.toString();
                     outStream.write(strDate + ": " + output + "\n");
 
                 } else if (msg.getType() == NfcComm.Type.NFCBytes) {

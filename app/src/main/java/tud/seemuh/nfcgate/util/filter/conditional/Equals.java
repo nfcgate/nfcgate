@@ -28,21 +28,29 @@ public class Equals extends Conditional {
 
     @Override
     protected boolean checkUidData(NfcComm nfcdata) {
-        return Arrays.equals(nfcdata.getUid(), mMatchPattern);
+        return false;
+        // FIXME
+        //return Arrays.equals(nfcdata.getUid(), mMatchPattern);
     }
 
     @Override
     protected boolean checkAtqaData(NfcComm nfcdata) {
-        return Arrays.equals(nfcdata.getAtqa(), mMatchPattern);
+        return false;
+        // FIXME
+        //return Arrays.equals(nfcdata.getAtqa(), mMatchPattern);
     }
 
     @Override
     protected boolean checkHistData(NfcComm nfcdata) {
-        return Arrays.equals(nfcdata.getHist(), mMatchPattern);
+        return false;
+        // FIXME
+        //return Arrays.equals(nfcdata.getHist(), mMatchPattern);
     }
 
     @Override
     protected boolean checkSakData(NfcComm nfcdata) {
-        return nfcdata.getSak() == mMatchByte;
+        return false;
+        // FIXME
+        //return nfcdata.getSak() == mMatchByte;
     }
 }

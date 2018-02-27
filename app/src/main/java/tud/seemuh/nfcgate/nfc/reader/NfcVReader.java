@@ -1,30 +1,29 @@
 package tud.seemuh.nfcgate.nfc.reader;
 
 import android.nfc.Tag;
-import android.nfc.tech.NfcA;
+import android.nfc.tech.NfcF;
 import android.util.Log;
 
 import java.io.IOException;
 
 import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
-import tud.seemuh.nfcgate.nfc.config.OptionType;
 
 /**
- * Implements an NFCTagReader using the NfcA technology
+ * Implements an NFCTagReader using the NfcV technology
  *
  */
-public class NfcAReader implements NFCTagReader {
-    private final static String TAG = "NFC_READER_NFCA";
-    private NfcA mAdapter = null;
+public class NfcVReader implements NFCTagReader {
+    private final static String TAG = "NFC_READER_NFCV";
+    private NfcF mAdapter = null;
 
     /**
-     * Constructor of NfcAReader-Class, providing an NFC reader interface using the NfcA-Tech.
+     * Constructor of NfcVReader-Class, providing an NFC reader interface using the NfcV-Tech.
      *
-     * @param tag: A tag using the NfcA technology.
+     * @param tag: A tag using the NfcV technology.
      */
-    public NfcAReader(Tag tag) {
+    public NfcVReader(Tag tag) {
         // Create NFC Adapter to use
-        mAdapter = NfcA.get(tag);
+        mAdapter = NfcF.get(tag);
         try{
             // Connect the adapter to the NFC card
             mAdapter.connect();
@@ -76,7 +75,7 @@ public class NfcAReader implements NFCTagReader {
      */
     @Override
     public int getProtocol() {
-        return READER_NFC_A;
+        return READER_NFC_V;
     }
 
     @Override
@@ -84,14 +83,7 @@ public class NfcAReader implements NFCTagReader {
 
     @Override
     public ConfigBuilder getConfig() {
-        ConfigBuilder builder = new ConfigBuilder();
-
-        builder.add(OptionType.LA_SEL_INFO, (byte)mAdapter.getSak());
-        builder.add(OptionType.LA_BIT_FRAME_SDD, mAdapter.getAtqa()[0]);
-        builder.add(OptionType.LA_PLATFORM_CONFIG, mAdapter.getAtqa()[1]);
-        builder.add(OptionType.LA_NFCID1, mAdapter.getTag().getId());
-
-        return builder;
+        // TODO: V tags cannot be emulated (yet)
+        return new ConfigBuilder();
     }
-
 }

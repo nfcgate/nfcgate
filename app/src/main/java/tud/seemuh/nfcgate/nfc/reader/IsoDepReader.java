@@ -6,8 +6,9 @@ import android.nfc.tech.NfcA;
 import android.util.Log;
 
 import java.io.IOException;
-import java.util.Arrays;
 
+import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
+import tud.seemuh.nfcgate.nfc.config.OptionType;
 import tud.seemuh.nfcgate.util.Utils;
 
 /**
@@ -41,6 +42,7 @@ public class IsoDepReader implements NFCTagReader {
      * @param command: byte[]-representation of the command to be sent
      * @return byte[]-representation of the answer of the NFC chip
      */
+    @Override
     public byte[] sendCmd(byte[] command) {
         try {
             // Transceive command and store reply
@@ -63,6 +65,7 @@ public class IsoDepReader implements NFCTagReader {
      * when no further communication with the adapter will follow, as the adapter will become
      * unusable from this
      */
+    @Override
     public void closeConnection() {
         Log.d(TAG, "closeConnection was called!");
         try{
@@ -78,26 +81,27 @@ public class IsoDepReader implements NFCTagReader {
      *
      * @return integer representation of the underlying NFC tag reader protocol
      */
+    @Override
     public int getProtocol() {
         return READER_ISODEP;
     }
 
+    @Override
     public boolean isConnected() { return mAdapter.isConnected(); }
 
-    public byte[] getAtqa() {
-        return NfcA.get(mAdapter.getTag()).getAtqa();
-    }
+    @Override
+    public ConfigBuilder getConfig() {
+        ConfigBuilder builder = new ConfigBuilder();
 
-    public byte getSak() {
-        return (byte)NfcA.get(mAdapter.getTag()).getSak();
-    }
+        NfcA tagA = NfcA.get(mAdapter.getTag());
 
-    public byte[] getUID() {
-        return mAdapter.getTag().getId();
-    }
+        builder.add(OptionType.LA_SEL_INFO, (byte)tagA.getSak());
+        builder.add(OptionType.LA_BIT_FRAME_SDD, tagA.getAtqa()[0]);
+        builder.add(OptionType.LA_PLATFORM_CONFIG, tagA.getAtqa()[1]);
+        builder.add(OptionType.LA_NFCID1, mAdapter.getTag().getId());
+        builder.add(OptionType.LA_HIST_BY, mAdapter.getHistoricalBytes());
 
-    public byte[] getHistoricalBytes() {
-        return mAdapter.getHistoricalBytes();
+        return builder;
     }
 
 }

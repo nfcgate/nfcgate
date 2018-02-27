@@ -55,7 +55,7 @@ public class TextViewSink implements Sink {
                 // Handle message
                 if (msg.getType() == NfcComm.Type.AnticolBytes) {
                     // We are dealing with an Anticol message
-                    if (msg.isChanged()) {
+                    /*if (msg.isChanged()) {
                         String output = "Card data (Pre-filter in Brackets):"
                                 + "\n  UID: " + Utils.bytesToHex(msg.getUid())
                                 + " (" + Utils.bytesToHex(msg.getOldUid()) + ")"
@@ -73,7 +73,8 @@ public class TextViewSink implements Sink {
                                 + "\n  SAK: "  + Utils.bytesToHex(msg.getSak())
                                 + "\n  Hist: " + Utils.bytesToHex(msg.getHist());
                         UpdateTextView(output);
-                    }
+                    }*/
+                    UpdateTextView(msg.getConfig().toString());
                 } else if (msg.getType() == NfcComm.Type.NFCBytes) {
                     // We are dealing with regular NFC traffic.
                     if (msg.getSource() == NfcComm.Source.CARD) {

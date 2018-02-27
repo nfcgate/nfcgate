@@ -8,6 +8,7 @@
 #include <cstdlib>
 
 #include <nfcd/libnfc-external.h>
+#include <nfcd/helper/Config.h>
 
 #define LOG_TAG "NATIVENFC"
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__ )
@@ -23,19 +24,6 @@ inline void loghex(const char *desc, const uint8_t *data, const int len) {
     LOGI("%s%s",desc, msg);
     free(msg);
 }
-
-/**
- * all values we override in one struct
- */
-struct s_chip_config {
-    uint8_t bit_frame_sdd;
-    uint8_t platform_config;
-    uint8_t sak;
-    uint8_t hist[64];
-    uint8_t hist_len;
-    uint8_t uid[64];
-    uint8_t uid_len;
-};
 
 // main.cpp
 extern bool patchEnabled;
@@ -78,7 +66,7 @@ extern NFA_EnablePolling *nfa_orig_enable_polling;
 
 // hooks and symbols
 extern tCE_CB *ce_cb;
-extern struct s_chip_config patchValues;
+extern Config patchValues;
 extern struct hook_t hook_config;
 extern struct hook_t hook_rfcback;
 extern struct hook_t hook_senddata;

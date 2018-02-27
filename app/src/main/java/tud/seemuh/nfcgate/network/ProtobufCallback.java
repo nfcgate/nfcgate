@@ -117,7 +117,8 @@ public class ProtobufCallback implements Callback {
     private void handleAnticol(C2C.Anticol msg) {
         Log.i(TAG, "handleAnticol: got anticol values");
 
-        byte[] a_atqa = msg.getATQA().toByteArray();
+        // FIXME network
+        /*byte[] a_atqa = msg.getATQA().toByteArray();
         byte atqa = a_atqa.length > 0 ? a_atqa[a_atqa.length-1] : 0;
 
         byte[] a_hist = msg.getHistoricalByte().toByteArray();
@@ -130,7 +131,7 @@ public class ProtobufCallback implements Callback {
 
         NfcComm anticol = new NfcComm(a_atqa, sak, a_hist, uid);
 
-        mNfcManager.setAnticolData(anticol);
+        mNfcManager.setAnticolData(anticol);*/
     }
 
 

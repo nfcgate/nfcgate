@@ -37,25 +37,26 @@ public class ReplaceBytes extends Action {
 
     @Override
     protected NfcComm modifyUidData(NfcComm nfcdata) {
-        nfcdata.setUid(doReplacement(nfcdata.getUid()));
+        // FIXME:
+        //nfcdata.setUid(doReplacement(nfcdata.getUid()));
         return nfcdata;
     }
 
     @Override
     protected NfcComm modifyAtqaData(NfcComm nfcdata) {
-        nfcdata.setAtqa(doReplacement(nfcdata.getAtqa()));
+        //nfcdata.setAtqa(doReplacement(nfcdata.getAtqa()));
         return nfcdata;
     }
 
     @Override
     protected NfcComm modifyHistData(NfcComm nfcdata) {
-        nfcdata.setHist(doReplacement(nfcdata.getHist()));
+        //nfcdata.setHist(doReplacement(nfcdata.getHist()));
         return nfcdata;
     }
 
     @Override
     protected NfcComm modifySakData(NfcComm nfcdata) {
-        nfcdata.setSak(mNewContentByte);
+        //nfcdata.setSak(mNewContentByte);
         return nfcdata;
     }
 }

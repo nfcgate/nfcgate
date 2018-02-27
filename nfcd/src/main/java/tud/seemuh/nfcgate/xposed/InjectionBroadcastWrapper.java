@@ -45,13 +45,7 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
             Native.Instance.disablePolling();
         }
         else if("UPLOAD".equals(action)) {
-            Native.Instance.uploadConfiguration(
-                    intent.getByteExtra("bitf", (byte)0),
-                    intent.getByteExtra("plat", (byte)0),
-                    intent.getByteExtra("sak", (byte)0),
-                    intent.getByteArrayExtra("hist"),
-                    intent.getByteArrayExtra("uid")
-            );
+            Native.Instance.uploadConfiguration(intent.getByteArrayExtra("config"));
         }
         else if("REQSTATE".equals(action)) {
             Intent toaster = new Intent("tud.seemuh.nfcgate.toaster");

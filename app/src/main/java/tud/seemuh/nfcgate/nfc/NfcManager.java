@@ -12,12 +12,16 @@ import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.gui.fragments.CloneFragment;
 import tud.seemuh.nfcgate.gui.fragments.RelayFragment;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
+import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
 import tud.seemuh.nfcgate.nfc.hce.ApduService;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
 import tud.seemuh.nfcgate.nfc.reader.DesfireWorkaround;
 import tud.seemuh.nfcgate.nfc.reader.IsoDepReader;
 import tud.seemuh.nfcgate.nfc.reader.NFCTagReader;
 import tud.seemuh.nfcgate.nfc.reader.NfcAReader;
+import tud.seemuh.nfcgate.nfc.reader.NfcBReader;
+import tud.seemuh.nfcgate.nfc.reader.NfcFReader;
+import tud.seemuh.nfcgate.nfc.reader.NfcVReader;
 import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.Utils;
 import tud.seemuh.nfcgate.util.filter.FilterManager;
@@ -96,22 +100,22 @@ public class NfcManager {
 
 
     private NfcComm handleAnticolDataCommon(NfcComm nfcdata) {
-        Log.d(TAG, "handleAnticolDataCommon: Pre-Filter: " +
+        /*Log.d(TAG, "handleAnticolDataCommon: Pre-Filter: " +
                 Utils.bytesToHex(nfcdata.getUid())  + " - " +
                 Utils.bytesToHex(nfcdata.getAtqa()) + " - " +
                 Utils.bytesToHex(nfcdata.getSak())  + " - " +
-                Utils.bytesToHex(nfcdata.getHist()));
+                Utils.bytesToHex(nfcdata.getHist()));*/
         if (mFilterManager != null) {
             nfcdata = mFilterManager.filterAnticolData(nfcdata);
         }
 
         notifySinkManager(nfcdata);
 
-        Log.d(TAG, "handleAnticolDataCommon: Post-Filter: " +
+        /*Log.d(TAG, "handleAnticolDataCommon: Post-Filter: " +
                 Utils.bytesToHex(nfcdata.getUid())  + " - " +
                 Utils.bytesToHex(nfcdata.getAtqa()) + " - " +
                 Utils.bytesToHex(nfcdata.getSak())  + " - " +
-                Utils.bytesToHex(nfcdata.getHist()));
+                Utils.bytesToHex(nfcdata.getHist()));*/
         return nfcdata;
     }
 
@@ -145,6 +149,24 @@ public class NfcManager {
         return nfcdata;
     }
 
+    NFCTagReader fromTag(Tag tag) {
+        for (String tech : tag.getTechList()) {
+            switch (tech) {
+                case "android.nfc.tech.IsoDep":
+                    return new IsoDepReader(tag);
+                case "android.nfc.tech.NfcA":
+                    return new NfcAReader(tag);
+                case "android.nfc.tech.NfcB":
+                    return new NfcBReader(tag);
+                case "android.nfc.tech.NfcF":
+                    return new NfcFReader(tag);
+                case "android.nfc.tech.NfcV":
+                    return new NfcVReader(tag);
+            }
+        }
+
+        return null;
+    }
 
     // Reference setters
     /**
@@ -153,28 +175,12 @@ public class NfcManager {
      */
     public void setTag(Tag tag) {
         mTag = tag;
+        mReader = fromTag(tag);
 
-        boolean found_supported_tag = false;
+        if (mReader != null)
+            Log.i(TAG, "setTag: Chose " + mReader.toString() + "technology");
 
-        // Identify tag type
-        for(String type: tag.getTechList()) {
-            Log.i(TAG, "setTag: Tag TechList: " + type);
-            if("android.nfc.tech.IsoDep".equals(type)) {
-                found_supported_tag = true;
-
-                mReader = new IsoDepReader(tag);
-                Log.d(TAG, "setTag: Chose IsoDep technology.");
-                break;
-            } else if("android.nfc.tech.NfcA".equals(type)) {
-                found_supported_tag = true;
-
-                mReader = new NfcAReader(tag);
-                Log.d(TAG, "setTag: Chose NfcA technology.");
-                break;
-            }
-        }
-
-        if (found_supported_tag && mNetworkHandler != null) {
+        if (mReader != null && mNetworkHandler != null) {
             // Start the workaround thread, if needed
             startWorkaround();
 
@@ -183,7 +189,7 @@ public class NfcManager {
             // Notify partner about the newly detected card
             // This may lead to error messages if we are not already in a session
             mNetworkHandler.notifyCardFound();
-        } else if (found_supported_tag) {
+        } else if (mReader != null) {
             Log.i(TAG, "setTag: Got supported tag, but no network handler is set. Doing nothing");
         } else {
             Log.e(TAG, "setTag: Tag not supported");
@@ -327,16 +333,7 @@ public class NfcManager {
      * @return NfcComm object with anticol data
      */
     public NfcComm getAnticolData() {
-        // Get Anticol data
-        byte[] uid  = mReader.getUID();
-        byte[] atqa = mReader.getAtqa();
-        byte sak    = mReader.getSak();
-        byte[] hist = mReader.getHistoricalBytes();
-
-        Log.d(TAG, "getAnticolData: HIST: " + Utils.bytesToHex(hist));
-
-        // Create NfcComm object
-        NfcComm anticol = new NfcComm(atqa, sak, hist, uid);
+        NfcComm anticol = new NfcComm(mReader.getConfig());
 
         // Pass NfcComm object through Filter
         anticol = handleAnticolDataCommon(anticol);
@@ -353,16 +350,8 @@ public class NfcManager {
     public void setAnticolData(NfcComm anticol) {
         anticol = handleAnticolDataCommon(anticol);
 
-        // Parse data and transform to proper formats
-        byte[] atqa = anticol.getAtqa();
-        byte[] hist = anticol.getHist();
-        //byte hist = a_hist.length > 0 ? a_atqa[0] : 0;
-
-        byte sak = anticol.getSak();
-        byte[] uid = anticol.getUid();
-
         // Enable the Native Code Patch
-        DaemonConfiguration.getInstance().uploadConfiguration(atqa[0], atqa[1], sak, hist, uid);
+        DaemonConfiguration.getInstance().uploadConfiguration(anticol.getConfig().build());
         DaemonConfiguration.getInstance().enablePatch();
 
         Log.i(TAG, "setAnticolData: Patch enabled");

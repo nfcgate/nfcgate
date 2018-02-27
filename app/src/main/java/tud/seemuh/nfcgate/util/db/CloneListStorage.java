@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 public class CloneListStorage  extends SQLiteOpenHelper {
@@ -26,10 +27,7 @@ public class CloneListStorage  extends SQLiteOpenHelper {
     // Table Columns names
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "name";
-    private static final String KEY_UID = "uid";
-    private static final String KEY_SAK = "sqk";
-    private static final String KEY_ATQA = "atqa";
-    private static final String KEY_HIST = "hist";
+    private static final String KEY_CONFIG = "config";
 
     public CloneListStorage(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -39,10 +37,7 @@ public class CloneListStorage  extends SQLiteOpenHelper {
         String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_NAME + "("
                 + KEY_ID + " INTEGER PRIMARY KEY,"
                 + KEY_NAME + " TEXT,"
-                + KEY_UID + " BLOB,"
-                + KEY_SAK + " BLOB,"
-                + KEY_ATQA + " BLOB,"
-                + KEY_HIST + " BLOB"
+                + KEY_CONFIG + " BLOB"
                 + ")";
         db.execSQL(CREATE_CONTACTS_TABLE);
     }
@@ -53,10 +48,7 @@ public class CloneListStorage  extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, item.toString());
         NfcComm ac = item.getAnticolData();
-        values.put(KEY_UID, ac.getUid());
-        values.put(KEY_SAK, new byte[]{ac.getSak()});
-        values.put(KEY_ATQA, ac.getAtqa());
-        values.put(KEY_HIST, ac.getHist());
+        values.put(KEY_CONFIG, ac.getConfig().build());
 
         // Inserting Row
         db.insert(TABLE_NAME, null, values);
@@ -94,12 +86,7 @@ public class CloneListStorage  extends SQLiteOpenHelper {
     }
 
     private CloneListItem createByCursor(Cursor c) {
-        NfcComm ac = new NfcComm(
-                c.getBlob(c.getColumnIndex(KEY_ATQA)),
-                c.getBlob(c.getColumnIndex(KEY_SAK))[0],
-                c.getBlob(c.getColumnIndex(KEY_HIST)),
-                c.getBlob(c.getColumnIndex(KEY_UID))
-        );
+        NfcComm ac = new NfcComm(new ConfigBuilder(c.getBlob(c.getColumnIndex(KEY_CONFIG))));
         return new CloneListItem(ac, c.getString(c.getColumnIndex(KEY_NAME)), c.getInt(c.getColumnIndex(KEY_ID)));
     }
 

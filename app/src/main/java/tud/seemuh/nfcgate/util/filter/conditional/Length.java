@@ -22,21 +22,29 @@ public class Length extends Conditional {
 
     @Override
     protected boolean checkUidData(NfcComm nfcdata) {
-        return nfcdata.getUid().length == mInteger;
+        return false;
+        // FIXME
+        //return nfcdata.getUid().length == mInteger;
     }
 
     @Override
     protected boolean checkAtqaData(NfcComm nfcdata) {
-        return nfcdata.getAtqa().length == mInteger;
+        return false;
+        // FIXME
+        //return nfcdata.getAtqa().length == mInteger;
     }
 
     @Override
     protected boolean checkHistData(NfcComm nfcdata) {
-        return nfcdata.getHist().length == mInteger;
+        return false;
+        // FIXME
+        //return nfcdata.getHist().length == mInteger;
     }
 
     @Override
     protected boolean checkSakData(NfcComm nfcdata) {
-        return mInteger == 1;
+        return false;
+        // FIXME
+        //return mInteger == 1;
     }
 }

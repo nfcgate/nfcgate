@@ -437,8 +437,8 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
             return;
         }
 
-        // Retrieve values
-        byte[] atqa = nfcdata.getAtqa();
+        // Retrieve values // FIXME network
+        /*byte[] atqa = nfcdata.getAtqa();
         byte sak = nfcdata.getSak();
         byte[] hist = nfcdata.getHist();
         byte[] uid = nfcdata.getUid();
@@ -453,7 +453,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
         // TODO If we aren't in a session, cache this and send it as soon as a session is established?
         // (And delete it if the card is removed in the meantime)
         sendMessage(b.build(), MessageCase.ANTICOL);
-        Log.d(TAG, "sendAnticol: Sent Anticol message");
+        Log.d(TAG, "sendAnticol: Sent Anticol message");*/
     }
 
     // Session status management

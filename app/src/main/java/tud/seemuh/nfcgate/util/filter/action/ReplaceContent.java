@@ -28,25 +28,25 @@ public class ReplaceContent extends Action {
 
     @Override
     protected NfcComm modifyUidData(NfcComm nfcdata) {
-        nfcdata.setUid(mNewContent);
+        //nfcdata.setUid(mNewContent); // FIXME:
         return nfcdata;
     }
 
     @Override
     protected NfcComm modifyAtqaData(NfcComm nfcdata) {
-        nfcdata.setAtqa(mNewContent);
+        //nfcdata.setAtqa(mNewContent);
         return nfcdata;
     }
 
     @Override
     protected NfcComm modifyHistData(NfcComm nfcdata) {
-        nfcdata.setHist(mNewContent);
+        //nfcdata.setHist(mNewContent);
         return nfcdata;
     }
 
     @Override
     protected NfcComm modifySakData(NfcComm nfcdata) {
-        nfcdata.setSak(mNewContentByte);
+        //nfcdata.setSak(mNewContentByte);
         return nfcdata;
     }
 }

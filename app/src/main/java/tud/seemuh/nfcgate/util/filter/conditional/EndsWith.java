@@ -52,21 +52,29 @@ public class EndsWith extends Conditional {
 
     @Override
     protected boolean checkUidData(NfcComm nfcdata) {
-        return isSuffix(nfcdata.getUid());
+        return false;
+        // FIXME
+        //return isSuffix(nfcdata.getUid());
     }
 
     @Override
     protected boolean checkAtqaData(NfcComm nfcdata) {
-        return isSuffix(nfcdata.getAtqa());
+        return false;
+        // FIXME
+        //return isSuffix(nfcdata.getAtqa());
     }
 
     @Override
     protected boolean checkHistData(NfcComm nfcdata) {
-        return isSuffix(nfcdata.getHist());
+        return false;
+        // FIXME
+        //return isSuffix(nfcdata.getHist());
     }
 
     @Override
     protected boolean checkSakData(NfcComm nfcdata) {
-        return isSuffix(nfcdata.getSak());
+        return false;
+        // FIXME
+        //return isSuffix(nfcdata.getSak());
     }
 }
