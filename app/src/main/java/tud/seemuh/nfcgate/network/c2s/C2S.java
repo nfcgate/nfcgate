@@ -6,122 +6,125 @@ package tud.seemuh.nfcgate.network.c2s;
 public final class C2S {
   private C2S() {}
   public static void registerAllExtensions(
+      com.google.protobuf.ExtensionRegistryLite registry) {
+  }
+
+  public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
+    registerAllExtensions(
+        (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface SessionOrBuilder extends
       // @@protoc_insertion_point(interface_extends:tud.seemuh.nfcgate.network.c2s.Session)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode opcode = 1;</code>
-     *
      * <pre>
      * Opcode
      * describes intent of the message
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode opcode = 1;</code>
      */
     boolean hasOpcode();
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode opcode = 1;</code>
-     *
      * <pre>
      * Opcode
      * describes intent of the message
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode opcode = 1;</code>
      */
     tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode getOpcode();
 
     /**
-     * <code>optional string session_secret = 2;</code>
-     *
      * <pre>
      * Session secret
      * Set by server on SESSION_CREATE_SUCCESS
      * Required for SESSION_JOIN, SESSION_LEAVE
      * </pre>
+     *
+     * <code>optional string session_secret = 2;</code>
      */
     boolean hasSessionSecret();
     /**
-     * <code>optional string session_secret = 2;</code>
-     *
      * <pre>
      * Session secret
      * Set by server on SESSION_CREATE_SUCCESS
      * Required for SESSION_JOIN, SESSION_LEAVE
      * </pre>
+     *
+     * <code>optional string session_secret = 2;</code>
      */
     java.lang.String getSessionSecret();
     /**
-     * <code>optional string session_secret = 2;</code>
-     *
      * <pre>
      * Session secret
      * Set by server on SESSION_CREATE_SUCCESS
      * Required for SESSION_JOIN, SESSION_LEAVE
      * </pre>
+     *
+     * <code>optional string session_secret = 2;</code>
      */
     com.google.protobuf.ByteString
         getSessionSecretBytes();
 
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
-     *
      * <pre>
      * Error code
      * Set by server on every message
      * Defaults to ERROR_NOERROR
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
      */
     boolean hasErrcode();
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
-     *
      * <pre>
      * Error code
      * Set by server on every message
      * Defaults to ERROR_NOERROR
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
      */
     tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode getErrcode();
   }
   /**
-   * Protobuf type {@code tud.seemuh.nfcgate.network.c2s.Session}
-   *
    * <pre>
    * Session management messages
    * </pre>
+   *
+   * Protobuf type {@code tud.seemuh.nfcgate.network.c2s.Session}
    */
-  public static final class Session extends
-      com.google.protobuf.GeneratedMessage implements
+  public  static final class Session extends
+      com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:tud.seemuh.nfcgate.network.c2s.Session)
       SessionOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use Session.newBuilder() to construct.
-    private Session(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private Session(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
-      this.unknownFields = builder.getUnknownFields();
     }
-    private Session(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final Session defaultInstance;
-    public static Session getDefaultInstance() {
-      return defaultInstance;
+    private Session() {
+      opcode_ = 0;
+      sessionSecret_ = "";
+      errcode_ = 0;
     }
 
-    public Session getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
+    getUnknownFields() {
       return this.unknownFields;
     }
     private Session(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -134,8 +137,8 @@ public final class C2S {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
                 done = true;
               }
               break;
@@ -147,7 +150,7 @@ public final class C2S {
                 unknownFields.mergeVarintField(1, rawValue);
               } else {
                 bitField0_ |= 0x00000001;
-                opcode_ = value;
+                opcode_ = rawValue;
               }
               break;
             }
@@ -164,7 +167,7 @@ public final class C2S {
                 unknownFields.mergeVarintField(3, rawValue);
               } else {
                 bitField0_ |= 0x00000004;
-                errcode_ = value;
+                errcode_ = rawValue;
               }
               break;
             }
@@ -174,7 +177,7 @@ public final class C2S {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
+            e).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -185,220 +188,215 @@ public final class C2S {
       return tud.seemuh.nfcgate.network.c2s.C2S.internal_static_tud_seemuh_nfcgate_network_c2s_Session_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return tud.seemuh.nfcgate.network.c2s.C2S.internal_static_tud_seemuh_nfcgate_network_c2s_Session_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               tud.seemuh.nfcgate.network.c2s.C2S.Session.class, tud.seemuh.nfcgate.network.c2s.C2S.Session.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<Session> PARSER =
-        new com.google.protobuf.AbstractParser<Session>() {
-      public Session parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Session(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<Session> getParserForType() {
-      return PARSER;
-    }
-
     /**
-     * Protobuf enum {@code tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode}
-     *
      * <pre>
      * Sent by:
      * </pre>
+     *
+     * Protobuf enum {@code tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode}
      */
     public enum SessionOpcode
         implements com.google.protobuf.ProtocolMessageEnum {
       /**
+       * <pre>
+       * Client
+       * </pre>
+       *
        * <code>SESSION_CREATE = 0;</code>
-       *
-       * <pre>
-       * Client
-       * </pre>
        */
-      SESSION_CREATE(0, 0),
+      SESSION_CREATE(0),
       /**
+       * <pre>
+       * Server
+       * </pre>
+       *
        * <code>SESSION_CREATE_SUCCESS = 1;</code>
-       *
+       */
+      SESSION_CREATE_SUCCESS(1),
+      /**
        * <pre>
        * Server
        * </pre>
-       */
-      SESSION_CREATE_SUCCESS(1, 1),
-      /**
+       *
        * <code>SESSION_CREATE_FAIL = 2;</code>
-       *
-       * <pre>
-       * Server
-       * </pre>
        */
-      SESSION_CREATE_FAIL(2, 2),
+      SESSION_CREATE_FAIL(2),
       /**
+       * <pre>
+       * Client
+       * </pre>
+       *
        * <code>SESSION_JOIN = 3;</code>
-       *
-       * <pre>
-       * Client
-       * </pre>
        */
-      SESSION_JOIN(3, 3),
+      SESSION_JOIN(3),
       /**
+       * <pre>
+       * Server
+       * </pre>
+       *
        * <code>SESSION_JOIN_SUCCESS = 4;</code>
-       *
+       */
+      SESSION_JOIN_SUCCESS(4),
+      /**
        * <pre>
        * Server
        * </pre>
-       */
-      SESSION_JOIN_SUCCESS(4, 4),
-      /**
+       *
        * <code>SESSION_JOIN_FAIL = 5;</code>
-       *
-       * <pre>
-       * Server
-       * </pre>
        */
-      SESSION_JOIN_FAIL(5, 5),
+      SESSION_JOIN_FAIL(5),
       /**
-       * <code>SESSION_LEAVE = 6;</code>
-       *
        * <pre>
        * Client
        * </pre>
+       *
+       * <code>SESSION_LEAVE = 6;</code>
        */
-      SESSION_LEAVE(6, 6),
+      SESSION_LEAVE(6),
       /**
+       * <pre>
+       * Server
+       * </pre>
+       *
        * <code>SESSION_LEAVE_SUCCESS = 7;</code>
-       *
+       */
+      SESSION_LEAVE_SUCCESS(7),
+      /**
        * <pre>
        * Server
        * </pre>
-       */
-      SESSION_LEAVE_SUCCESS(7, 7),
-      /**
+       *
        * <code>SESSION_LEAVE_FAIL = 8;</code>
-       *
+       */
+      SESSION_LEAVE_FAIL(8),
+      /**
        * <pre>
        * Server
        * </pre>
-       */
-      SESSION_LEAVE_FAIL(8, 8),
-      /**
+       *
        * <code>SESSION_PEER_JOINED = 9;</code>
-       *
-       * <pre>
-       * Server
-       * </pre>
        */
-      SESSION_PEER_JOINED(9, 9),
+      SESSION_PEER_JOINED(9),
       /**
-       * <code>SESSION_PEER_LEFT = 10;</code>
-       *
        * <pre>
        * Server
        * </pre>
+       *
+       * <code>SESSION_PEER_LEFT = 10;</code>
        */
-      SESSION_PEER_LEFT(10, 10),
+      SESSION_PEER_LEFT(10),
       ;
 
       /**
-       * <code>SESSION_CREATE = 0;</code>
-       *
        * <pre>
        * Client
        * </pre>
+       *
+       * <code>SESSION_CREATE = 0;</code>
        */
       public static final int SESSION_CREATE_VALUE = 0;
       /**
-       * <code>SESSION_CREATE_SUCCESS = 1;</code>
-       *
        * <pre>
        * Server
        * </pre>
+       *
+       * <code>SESSION_CREATE_SUCCESS = 1;</code>
        */
       public static final int SESSION_CREATE_SUCCESS_VALUE = 1;
       /**
-       * <code>SESSION_CREATE_FAIL = 2;</code>
-       *
        * <pre>
        * Server
        * </pre>
+       *
+       * <code>SESSION_CREATE_FAIL = 2;</code>
        */
       public static final int SESSION_CREATE_FAIL_VALUE = 2;
       /**
-       * <code>SESSION_JOIN = 3;</code>
-       *
        * <pre>
        * Client
        * </pre>
+       *
+       * <code>SESSION_JOIN = 3;</code>
        */
       public static final int SESSION_JOIN_VALUE = 3;
       /**
-       * <code>SESSION_JOIN_SUCCESS = 4;</code>
-       *
        * <pre>
        * Server
        * </pre>
+       *
+       * <code>SESSION_JOIN_SUCCESS = 4;</code>
        */
       public static final int SESSION_JOIN_SUCCESS_VALUE = 4;
       /**
-       * <code>SESSION_JOIN_FAIL = 5;</code>
-       *
        * <pre>
        * Server
        * </pre>
+       *
+       * <code>SESSION_JOIN_FAIL = 5;</code>
        */
       public static final int SESSION_JOIN_FAIL_VALUE = 5;
       /**
-       * <code>SESSION_LEAVE = 6;</code>
-       *
        * <pre>
        * Client
        * </pre>
+       *
+       * <code>SESSION_LEAVE = 6;</code>
        */
       public static final int SESSION_LEAVE_VALUE = 6;
       /**
-       * <code>SESSION_LEAVE_SUCCESS = 7;</code>
-       *
        * <pre>
        * Server
        * </pre>
+       *
+       * <code>SESSION_LEAVE_SUCCESS = 7;</code>
        */
       public static final int SESSION_LEAVE_SUCCESS_VALUE = 7;
       /**
-       * <code>SESSION_LEAVE_FAIL = 8;</code>
-       *
        * <pre>
        * Server
        * </pre>
+       *
+       * <code>SESSION_LEAVE_FAIL = 8;</code>
        */
       public static final int SESSION_LEAVE_FAIL_VALUE = 8;
       /**
-       * <code>SESSION_PEER_JOINED = 9;</code>
-       *
        * <pre>
        * Server
        * </pre>
+       *
+       * <code>SESSION_PEER_JOINED = 9;</code>
        */
       public static final int SESSION_PEER_JOINED_VALUE = 9;
       /**
-       * <code>SESSION_PEER_LEFT = 10;</code>
-       *
        * <pre>
        * Server
        * </pre>
+       *
+       * <code>SESSION_PEER_LEFT = 10;</code>
        */
       public static final int SESSION_PEER_LEFT_VALUE = 10;
 
 
-      public final int getNumber() { return value; }
+      public final int getNumber() {
+        return value;
+      }
 
+      /**
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
       public static SessionOpcode valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static SessionOpcode forNumber(int value) {
         switch (value) {
           case 0: return SESSION_CREATE;
           case 1: return SESSION_CREATE_SUCCESS;
@@ -419,17 +417,17 @@ public final class C2S {
           internalGetValueMap() {
         return internalValueMap;
       }
-      private static com.google.protobuf.Internal.EnumLiteMap<SessionOpcode>
-          internalValueMap =
+      private static final com.google.protobuf.Internal.EnumLiteMap<
+          SessionOpcode> internalValueMap =
             new com.google.protobuf.Internal.EnumLiteMap<SessionOpcode>() {
               public SessionOpcode findValueByNumber(int number) {
-                return SessionOpcode.valueOf(number);
+                return SessionOpcode.forNumber(number);
               }
             };
 
       public final com.google.protobuf.Descriptors.EnumValueDescriptor
           getValueDescriptor() {
-        return getDescriptor().getValues().get(index);
+        return getDescriptor().getValues().get(ordinal());
       }
       public final com.google.protobuf.Descriptors.EnumDescriptor
           getDescriptorForType() {
@@ -451,11 +449,9 @@ public final class C2S {
         return VALUES[desc.getIndex()];
       }
 
-      private final int index;
       private final int value;
 
-      private SessionOpcode(int index, int value) {
-        this.index = index;
+      private SessionOpcode(int value) {
         this.value = value;
       }
 
@@ -470,51 +466,51 @@ public final class C2S {
       /**
        * <code>ERROR_NOERROR = 0;</code>
        */
-      ERROR_NOERROR(0, 0),
+      ERROR_NOERROR(0),
       /**
        * <code>ERROR_CREATE_UNKOWN = 1;</code>
        */
-      ERROR_CREATE_UNKOWN(1, 1),
+      ERROR_CREATE_UNKOWN(1),
       /**
        * <code>ERROR_CREATE_ALREADY_HAS_SESSION = 2;</code>
        */
-      ERROR_CREATE_ALREADY_HAS_SESSION(2, 2),
+      ERROR_CREATE_ALREADY_HAS_SESSION(2),
       /**
        * <code>ERROR_JOIN_UNKNOWN = 3;</code>
        */
-      ERROR_JOIN_UNKNOWN(3, 3),
+      ERROR_JOIN_UNKNOWN(3),
       /**
        * <code>ERROR_JOIN_UNKNOWN_SECRET = 4;</code>
        */
-      ERROR_JOIN_UNKNOWN_SECRET(4, 4),
+      ERROR_JOIN_UNKNOWN_SECRET(4),
       /**
-       * <code>ERROR_JOIN_SESSION_FULL = 5;</code>
-       *
        * <pre>
        * Session already has max # of participants
        * </pre>
+       *
+       * <code>ERROR_JOIN_SESSION_FULL = 5;</code>
        */
-      ERROR_JOIN_SESSION_FULL(5, 5),
+      ERROR_JOIN_SESSION_FULL(5),
       /**
        * <code>ERROR_JOIN_ALREADY_HAS_SESSION = 6;</code>
        */
-      ERROR_JOIN_ALREADY_HAS_SESSION(6, 6),
+      ERROR_JOIN_ALREADY_HAS_SESSION(6),
       /**
        * <code>ERROR_LEAVE_UNKNOWN = 7;</code>
        */
-      ERROR_LEAVE_UNKNOWN(7, 7),
+      ERROR_LEAVE_UNKNOWN(7),
       /**
        * <code>ERROR_LEAVE_UNKNOWN_SECRET = 8;</code>
        */
-      ERROR_LEAVE_UNKNOWN_SECRET(8, 8),
+      ERROR_LEAVE_UNKNOWN_SECRET(8),
       /**
-       * <code>ERROR_LEAVE_NOT_JOINED = 9;</code>
-       *
        * <pre>
        * Trying to leave a session you never joined
        * </pre>
+       *
+       * <code>ERROR_LEAVE_NOT_JOINED = 9;</code>
        */
-      ERROR_LEAVE_NOT_JOINED(9, 9),
+      ERROR_LEAVE_NOT_JOINED(9),
       ;
 
       /**
@@ -538,11 +534,11 @@ public final class C2S {
        */
       public static final int ERROR_JOIN_UNKNOWN_SECRET_VALUE = 4;
       /**
-       * <code>ERROR_JOIN_SESSION_FULL = 5;</code>
-       *
        * <pre>
        * Session already has max # of participants
        * </pre>
+       *
+       * <code>ERROR_JOIN_SESSION_FULL = 5;</code>
        */
       public static final int ERROR_JOIN_SESSION_FULL_VALUE = 5;
       /**
@@ -558,18 +554,28 @@ public final class C2S {
        */
       public static final int ERROR_LEAVE_UNKNOWN_SECRET_VALUE = 8;
       /**
-       * <code>ERROR_LEAVE_NOT_JOINED = 9;</code>
-       *
        * <pre>
        * Trying to leave a session you never joined
        * </pre>
+       *
+       * <code>ERROR_LEAVE_NOT_JOINED = 9;</code>
        */
       public static final int ERROR_LEAVE_NOT_JOINED_VALUE = 9;
 
 
-      public final int getNumber() { return value; }
+      public final int getNumber() {
+        return value;
+      }
 
+      /**
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
       public static SessionErrorCode valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static SessionErrorCode forNumber(int value) {
         switch (value) {
           case 0: return ERROR_NOERROR;
           case 1: return ERROR_CREATE_UNKOWN;
@@ -589,17 +595,17 @@ public final class C2S {
           internalGetValueMap() {
         return internalValueMap;
       }
-      private static com.google.protobuf.Internal.EnumLiteMap<SessionErrorCode>
-          internalValueMap =
+      private static final com.google.protobuf.Internal.EnumLiteMap<
+          SessionErrorCode> internalValueMap =
             new com.google.protobuf.Internal.EnumLiteMap<SessionErrorCode>() {
               public SessionErrorCode findValueByNumber(int number) {
-                return SessionErrorCode.valueOf(number);
+                return SessionErrorCode.forNumber(number);
               }
             };
 
       public final com.google.protobuf.Descriptors.EnumValueDescriptor
           getValueDescriptor() {
-        return getDescriptor().getValues().get(index);
+        return getDescriptor().getValues().get(ordinal());
       }
       public final com.google.protobuf.Descriptors.EnumDescriptor
           getDescriptorForType() {
@@ -621,11 +627,9 @@ public final class C2S {
         return VALUES[desc.getIndex()];
       }
 
-      private final int index;
       private final int value;
 
-      private SessionErrorCode(int index, int value) {
-        this.index = index;
+      private SessionErrorCode(int value) {
         this.value = value;
       }
 
@@ -634,52 +638,53 @@ public final class C2S {
 
     private int bitField0_;
     public static final int OPCODE_FIELD_NUMBER = 1;
-    private tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode opcode_;
+    private int opcode_;
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode opcode = 1;</code>
-     *
      * <pre>
      * Opcode
      * describes intent of the message
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode opcode = 1;</code>
      */
     public boolean hasOpcode() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode opcode = 1;</code>
-     *
      * <pre>
      * Opcode
      * describes intent of the message
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode opcode = 1;</code>
      */
     public tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode getOpcode() {
-      return opcode_;
+      tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode result = tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode.valueOf(opcode_);
+      return result == null ? tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode.SESSION_CREATE : result;
     }
 
     public static final int SESSION_SECRET_FIELD_NUMBER = 2;
-    private java.lang.Object sessionSecret_;
+    private volatile java.lang.Object sessionSecret_;
     /**
-     * <code>optional string session_secret = 2;</code>
-     *
      * <pre>
      * Session secret
      * Set by server on SESSION_CREATE_SUCCESS
      * Required for SESSION_JOIN, SESSION_LEAVE
      * </pre>
+     *
+     * <code>optional string session_secret = 2;</code>
      */
     public boolean hasSessionSecret() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional string session_secret = 2;</code>
-     *
      * <pre>
      * Session secret
      * Set by server on SESSION_CREATE_SUCCESS
      * Required for SESSION_JOIN, SESSION_LEAVE
      * </pre>
+     *
+     * <code>optional string session_secret = 2;</code>
      */
     public java.lang.String getSessionSecret() {
       java.lang.Object ref = sessionSecret_;
@@ -696,13 +701,13 @@ public final class C2S {
       }
     }
     /**
-     * <code>optional string session_secret = 2;</code>
-     *
      * <pre>
      * Session secret
      * Set by server on SESSION_CREATE_SUCCESS
      * Required for SESSION_JOIN, SESSION_LEAVE
      * </pre>
+     *
+     * <code>optional string session_secret = 2;</code>
      */
     public com.google.protobuf.ByteString
         getSessionSecretBytes() {
@@ -719,37 +724,33 @@ public final class C2S {
     }
 
     public static final int ERRCODE_FIELD_NUMBER = 3;
-    private tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode errcode_;
+    private int errcode_;
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
-     *
      * <pre>
      * Error code
      * Set by server on every message
      * Defaults to ERROR_NOERROR
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
      */
     public boolean hasErrcode() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
-     *
      * <pre>
      * Error code
      * Set by server on every message
      * Defaults to ERROR_NOERROR
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
      */
     public tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode getErrcode() {
-      return errcode_;
+      tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode result = tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode.valueOf(errcode_);
+      return result == null ? tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode.ERROR_NOERROR : result;
     }
 
-    private void initFields() {
-      opcode_ = tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode.SESSION_CREATE;
-      sessionSecret_ = "";
-      errcode_ = tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode.ERROR_NOERROR;
-    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -770,49 +771,102 @@ public final class C2S {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeEnum(1, opcode_.getNumber());
+        output.writeEnum(1, opcode_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getSessionSecretBytes());
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, sessionSecret_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeEnum(3, errcode_.getNumber());
+        output.writeEnum(3, errcode_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
-    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSerializedSize;
+      int size = memoizedSize;
       if (size != -1) return size;
 
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(1, opcode_.getNumber());
+          .computeEnumSize(1, opcode_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, getSessionSecretBytes());
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, sessionSecret_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(3, errcode_.getNumber());
+          .computeEnumSize(3, errcode_);
       }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof tud.seemuh.nfcgate.network.c2s.C2S.Session)) {
+        return super.equals(obj);
+      }
+      tud.seemuh.nfcgate.network.c2s.C2S.Session other = (tud.seemuh.nfcgate.network.c2s.C2S.Session) obj;
+
+      boolean result = true;
+      result = result && (hasOpcode() == other.hasOpcode());
+      if (hasOpcode()) {
+        result = result && opcode_ == other.opcode_;
+      }
+      result = result && (hasSessionSecret() == other.hasSessionSecret());
+      if (hasSessionSecret()) {
+        result = result && getSessionSecret()
+            .equals(other.getSessionSecret());
+      }
+      result = result && (hasErrcode() == other.hasErrcode());
+      if (hasErrcode()) {
+        result = result && errcode_ == other.errcode_;
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
     }
 
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasOpcode()) {
+        hash = (37 * hash) + OPCODE_FIELD_NUMBER;
+        hash = (53 * hash) + opcode_;
+      }
+      if (hasSessionSecret()) {
+        hash = (37 * hash) + SESSION_SECRET_FIELD_NUMBER;
+        hash = (53 * hash) + getSessionSecret().hashCode();
+      }
+      if (hasErrcode()) {
+        hash = (37 * hash) + ERRCODE_FIELD_NUMBER;
+        hash = (53 * hash) + errcode_;
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static tud.seemuh.nfcgate.network.c2s.C2S.Session parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static tud.seemuh.nfcgate.network.c2s.C2S.Session parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static tud.seemuh.nfcgate.network.c2s.C2S.Session parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -836,58 +890,69 @@ public final class C2S {
     }
     public static tud.seemuh.nfcgate.network.c2s.C2S.Session parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.c2s.C2S.Session parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
     public static tud.seemuh.nfcgate.network.c2s.C2S.Session parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.c2s.C2S.Session parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
     public static tud.seemuh.nfcgate.network.c2s.C2S.Session parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.c2s.C2S.Session parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(tud.seemuh.nfcgate.network.c2s.C2S.Session prototype) {
-      return newBuilder().mergeFrom(prototype);
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
     }
-    public Builder toBuilder() { return newBuilder(this); }
+    public static Builder newBuilder(tud.seemuh.nfcgate.network.c2s.C2S.Session prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
     /**
-     * Protobuf type {@code tud.seemuh.nfcgate.network.c2s.Session}
-     *
      * <pre>
      * Session management messages
      * </pre>
+     *
+     * Protobuf type {@code tud.seemuh.nfcgate.network.c2s.Session}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:tud.seemuh.nfcgate.network.c2s.Session)
         tud.seemuh.nfcgate.network.c2s.C2S.SessionOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -895,7 +960,7 @@ public final class C2S {
         return tud.seemuh.nfcgate.network.c2s.C2S.internal_static_tud_seemuh_nfcgate_network_c2s_Session_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return tud.seemuh.nfcgate.network.c2s.C2S.internal_static_tud_seemuh_nfcgate_network_c2s_Session_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -908,31 +973,24 @@ public final class C2S {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
         }
       }
-      private static Builder create() {
-        return new Builder();
-      }
-
       public Builder clear() {
         super.clear();
-        opcode_ = tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode.SESSION_CREATE;
+        opcode_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
         sessionSecret_ = "";
         bitField0_ = (bitField0_ & ~0x00000002);
-        errcode_ = tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode.ERROR_NOERROR;
+        errcode_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
         return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -973,6 +1031,32 @@ public final class C2S {
         return result;
       }
 
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof tud.seemuh.nfcgate.network.c2s.C2S.Session) {
           return mergeFrom((tud.seemuh.nfcgate.network.c2s.C2S.Session)other);
@@ -995,17 +1079,16 @@ public final class C2S {
         if (other.hasErrcode()) {
           setErrcode(other.getErrcode());
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
         return this;
       }
 
       public final boolean isInitialized() {
         if (!hasOpcode()) {
-          
           return false;
         }
         if (!hasErrcode()) {
-          
           return false;
         }
         return true;
@@ -1020,7 +1103,7 @@ public final class C2S {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (tud.seemuh.nfcgate.network.c2s.C2S.Session) e.getUnfinishedMessage();
-          throw e;
+          throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -1030,82 +1113,83 @@ public final class C2S {
       }
       private int bitField0_;
 
-      private tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode opcode_ = tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode.SESSION_CREATE;
+      private int opcode_ = 0;
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode opcode = 1;</code>
-       *
        * <pre>
        * Opcode
        * describes intent of the message
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode opcode = 1;</code>
        */
       public boolean hasOpcode() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode opcode = 1;</code>
-       *
        * <pre>
        * Opcode
        * describes intent of the message
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode opcode = 1;</code>
        */
       public tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode getOpcode() {
-        return opcode_;
+        tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode result = tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode.valueOf(opcode_);
+        return result == null ? tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode.SESSION_CREATE : result;
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode opcode = 1;</code>
-       *
        * <pre>
        * Opcode
        * describes intent of the message
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode opcode = 1;</code>
        */
       public Builder setOpcode(tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode value) {
         if (value == null) {
           throw new NullPointerException();
         }
         bitField0_ |= 0x00000001;
-        opcode_ = value;
+        opcode_ = value.getNumber();
         onChanged();
         return this;
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode opcode = 1;</code>
-       *
        * <pre>
        * Opcode
        * describes intent of the message
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionOpcode opcode = 1;</code>
        */
       public Builder clearOpcode() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        opcode_ = tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode.SESSION_CREATE;
+        opcode_ = 0;
         onChanged();
         return this;
       }
 
       private java.lang.Object sessionSecret_ = "";
       /**
-       * <code>optional string session_secret = 2;</code>
-       *
        * <pre>
        * Session secret
        * Set by server on SESSION_CREATE_SUCCESS
        * Required for SESSION_JOIN, SESSION_LEAVE
        * </pre>
+       *
+       * <code>optional string session_secret = 2;</code>
        */
       public boolean hasSessionSecret() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>optional string session_secret = 2;</code>
-       *
        * <pre>
        * Session secret
        * Set by server on SESSION_CREATE_SUCCESS
        * Required for SESSION_JOIN, SESSION_LEAVE
        * </pre>
+       *
+       * <code>optional string session_secret = 2;</code>
        */
       public java.lang.String getSessionSecret() {
         java.lang.Object ref = sessionSecret_;
@@ -1122,13 +1206,13 @@ public final class C2S {
         }
       }
       /**
-       * <code>optional string session_secret = 2;</code>
-       *
        * <pre>
        * Session secret
        * Set by server on SESSION_CREATE_SUCCESS
        * Required for SESSION_JOIN, SESSION_LEAVE
        * </pre>
+       *
+       * <code>optional string session_secret = 2;</code>
        */
       public com.google.protobuf.ByteString
           getSessionSecretBytes() {
@@ -1144,13 +1228,13 @@ public final class C2S {
         }
       }
       /**
-       * <code>optional string session_secret = 2;</code>
-       *
        * <pre>
        * Session secret
        * Set by server on SESSION_CREATE_SUCCESS
        * Required for SESSION_JOIN, SESSION_LEAVE
        * </pre>
+       *
+       * <code>optional string session_secret = 2;</code>
        */
       public Builder setSessionSecret(
           java.lang.String value) {
@@ -1163,13 +1247,13 @@ public final class C2S {
         return this;
       }
       /**
-       * <code>optional string session_secret = 2;</code>
-       *
        * <pre>
        * Session secret
        * Set by server on SESSION_CREATE_SUCCESS
        * Required for SESSION_JOIN, SESSION_LEAVE
        * </pre>
+       *
+       * <code>optional string session_secret = 2;</code>
        */
       public Builder clearSessionSecret() {
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -1178,13 +1262,13 @@ public final class C2S {
         return this;
       }
       /**
-       * <code>optional string session_secret = 2;</code>
-       *
        * <pre>
        * Session secret
        * Set by server on SESSION_CREATE_SUCCESS
        * Required for SESSION_JOIN, SESSION_LEAVE
        * </pre>
+       *
+       * <code>optional string session_secret = 2;</code>
        */
       public Builder setSessionSecretBytes(
           com.google.protobuf.ByteString value) {
@@ -1197,74 +1281,112 @@ public final class C2S {
         return this;
       }
 
-      private tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode errcode_ = tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode.ERROR_NOERROR;
+      private int errcode_ = 0;
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
-       *
        * <pre>
        * Error code
        * Set by server on every message
        * Defaults to ERROR_NOERROR
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
        */
       public boolean hasErrcode() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
-       *
        * <pre>
        * Error code
        * Set by server on every message
        * Defaults to ERROR_NOERROR
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
        */
       public tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode getErrcode() {
-        return errcode_;
+        tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode result = tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode.valueOf(errcode_);
+        return result == null ? tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode.ERROR_NOERROR : result;
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
-       *
        * <pre>
        * Error code
        * Set by server on every message
        * Defaults to ERROR_NOERROR
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
        */
       public Builder setErrcode(tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode value) {
         if (value == null) {
           throw new NullPointerException();
         }
         bitField0_ |= 0x00000004;
-        errcode_ = value;
+        errcode_ = value.getNumber();
         onChanged();
         return this;
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
-       *
        * <pre>
        * Error code
        * Set by server on every message
        * Defaults to ERROR_NOERROR
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2s.Session.SessionErrorCode errcode = 3 [default = ERROR_NOERROR];</code>
        */
       public Builder clearErrcode() {
         bitField0_ = (bitField0_ & ~0x00000004);
-        errcode_ = tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionErrorCode.ERROR_NOERROR;
+        errcode_ = 0;
         onChanged();
         return this;
       }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
 
       // @@protoc_insertion_point(builder_scope:tud.seemuh.nfcgate.network.c2s.Session)
     }
 
+    // @@protoc_insertion_point(class_scope:tud.seemuh.nfcgate.network.c2s.Session)
+    private static final tud.seemuh.nfcgate.network.c2s.C2S.Session DEFAULT_INSTANCE;
     static {
-      defaultInstance = new Session(true);
-      defaultInstance.initFields();
+      DEFAULT_INSTANCE = new tud.seemuh.nfcgate.network.c2s.C2S.Session();
     }
 
-    // @@protoc_insertion_point(class_scope:tud.seemuh.nfcgate.network.c2s.Session)
+    public static tud.seemuh.nfcgate.network.c2s.C2S.Session getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    @java.lang.Deprecated public static final com.google.protobuf.Parser<Session>
+        PARSER = new com.google.protobuf.AbstractParser<Session>() {
+      public Session parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new Session(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<Session> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Session> getParserForType() {
+      return PARSER;
+    }
+
+    public tud.seemuh.nfcgate.network.c2s.C2S.Session getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
   }
 
   public interface DataOrBuilder extends
@@ -1272,88 +1394,84 @@ public final class C2S {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2s.Data.DataErrorCode errcode = 1 [default = ERROR_NOERROR];</code>
-     *
      * <pre>
      * Error code
      * Set by the server on every message
      * Defaults to ERROR_NOERROR
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2s.Data.DataErrorCode errcode = 1 [default = ERROR_NOERROR];</code>
      */
     boolean hasErrcode();
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2s.Data.DataErrorCode errcode = 1 [default = ERROR_NOERROR];</code>
-     *
      * <pre>
      * Error code
      * Set by the server on every message
      * Defaults to ERROR_NOERROR
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2s.Data.DataErrorCode errcode = 1 [default = ERROR_NOERROR];</code>
      */
     tud.seemuh.nfcgate.network.c2s.C2S.Data.DataErrorCode getErrcode();
 
     /**
-     * <code>optional bytes blob = 2;</code>
-     *
      * <pre>
      * binary blob
      * Contains the serialized binary blob of the
      * protobuf message that is passed to the other
      * client
      * </pre>
+     *
+     * <code>optional bytes blob = 2;</code>
      */
     boolean hasBlob();
     /**
-     * <code>optional bytes blob = 2;</code>
-     *
      * <pre>
      * binary blob
      * Contains the serialized binary blob of the
      * protobuf message that is passed to the other
      * client
      * </pre>
+     *
+     * <code>optional bytes blob = 2;</code>
      */
     com.google.protobuf.ByteString getBlob();
   }
   /**
-   * Protobuf type {@code tud.seemuh.nfcgate.network.c2s.Data}
-   *
    * <pre>
    * Message passing message
    * Used to pass generic messages between clients
    * </pre>
+   *
+   * Protobuf type {@code tud.seemuh.nfcgate.network.c2s.Data}
    */
-  public static final class Data extends
-      com.google.protobuf.GeneratedMessage implements
+  public  static final class Data extends
+      com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:tud.seemuh.nfcgate.network.c2s.Data)
       DataOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use Data.newBuilder() to construct.
-    private Data(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private Data(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
-      this.unknownFields = builder.getUnknownFields();
     }
-    private Data(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final Data defaultInstance;
-    public static Data getDefaultInstance() {
-      return defaultInstance;
+    private Data() {
+      errcode_ = 0;
+      blob_ = com.google.protobuf.ByteString.EMPTY;
     }
 
-    public Data getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
+    getUnknownFields() {
       return this.unknownFields;
     }
     private Data(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -1366,8 +1484,8 @@ public final class C2S {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
                 done = true;
               }
               break;
@@ -1379,7 +1497,7 @@ public final class C2S {
                 unknownFields.mergeVarintField(1, rawValue);
               } else {
                 bitField0_ |= 0x00000001;
-                errcode_ = value;
+                errcode_ = rawValue;
               }
               break;
             }
@@ -1394,7 +1512,7 @@ public final class C2S {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
+            e).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -1405,26 +1523,11 @@ public final class C2S {
       return tud.seemuh.nfcgate.network.c2s.C2S.internal_static_tud_seemuh_nfcgate_network_c2s_Data_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return tud.seemuh.nfcgate.network.c2s.C2S.internal_static_tud_seemuh_nfcgate_network_c2s_Data_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               tud.seemuh.nfcgate.network.c2s.C2S.Data.class, tud.seemuh.nfcgate.network.c2s.C2S.Data.Builder.class);
-    }
-
-    public static com.google.protobuf.Parser<Data> PARSER =
-        new com.google.protobuf.AbstractParser<Data>() {
-      public Data parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Data(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<Data> getParserForType() {
-      return PARSER;
     }
 
     /**
@@ -1435,19 +1538,19 @@ public final class C2S {
       /**
        * <code>ERROR_NOERROR = 0;</code>
        */
-      ERROR_NOERROR(0, 0),
+      ERROR_NOERROR(0),
       /**
        * <code>ERROR_UNKNOWN = 1;</code>
        */
-      ERROR_UNKNOWN(1, 1),
+      ERROR_UNKNOWN(1),
       /**
        * <code>ERROR_NO_SESSION = 2;</code>
        */
-      ERROR_NO_SESSION(2, 2),
+      ERROR_NO_SESSION(2),
       /**
        * <code>ERROR_TRANSMISSION_FAILED = 3;</code>
        */
-      ERROR_TRANSMISSION_FAILED(3, 3),
+      ERROR_TRANSMISSION_FAILED(3),
       ;
 
       /**
@@ -1468,9 +1571,19 @@ public final class C2S {
       public static final int ERROR_TRANSMISSION_FAILED_VALUE = 3;
 
 
-      public final int getNumber() { return value; }
+      public final int getNumber() {
+        return value;
+      }
 
+      /**
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
       public static DataErrorCode valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static DataErrorCode forNumber(int value) {
         switch (value) {
           case 0: return ERROR_NOERROR;
           case 1: return ERROR_UNKNOWN;
@@ -1484,17 +1597,17 @@ public final class C2S {
           internalGetValueMap() {
         return internalValueMap;
       }
-      private static com.google.protobuf.Internal.EnumLiteMap<DataErrorCode>
-          internalValueMap =
+      private static final com.google.protobuf.Internal.EnumLiteMap<
+          DataErrorCode> internalValueMap =
             new com.google.protobuf.Internal.EnumLiteMap<DataErrorCode>() {
               public DataErrorCode findValueByNumber(int number) {
-                return DataErrorCode.valueOf(number);
+                return DataErrorCode.forNumber(number);
               }
             };
 
       public final com.google.protobuf.Descriptors.EnumValueDescriptor
           getValueDescriptor() {
-        return getDescriptor().getValues().get(index);
+        return getDescriptor().getValues().get(ordinal());
       }
       public final com.google.protobuf.Descriptors.EnumDescriptor
           getDescriptorForType() {
@@ -1516,11 +1629,9 @@ public final class C2S {
         return VALUES[desc.getIndex()];
       }
 
-      private final int index;
       private final int value;
 
-      private DataErrorCode(int index, int value) {
-        this.index = index;
+      private DataErrorCode(int value) {
         this.value = value;
       }
 
@@ -1529,65 +1640,62 @@ public final class C2S {
 
     private int bitField0_;
     public static final int ERRCODE_FIELD_NUMBER = 1;
-    private tud.seemuh.nfcgate.network.c2s.C2S.Data.DataErrorCode errcode_;
+    private int errcode_;
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2s.Data.DataErrorCode errcode = 1 [default = ERROR_NOERROR];</code>
-     *
      * <pre>
      * Error code
      * Set by the server on every message
      * Defaults to ERROR_NOERROR
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2s.Data.DataErrorCode errcode = 1 [default = ERROR_NOERROR];</code>
      */
     public boolean hasErrcode() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2s.Data.DataErrorCode errcode = 1 [default = ERROR_NOERROR];</code>
-     *
      * <pre>
      * Error code
      * Set by the server on every message
      * Defaults to ERROR_NOERROR
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2s.Data.DataErrorCode errcode = 1 [default = ERROR_NOERROR];</code>
      */
     public tud.seemuh.nfcgate.network.c2s.C2S.Data.DataErrorCode getErrcode() {
-      return errcode_;
+      tud.seemuh.nfcgate.network.c2s.C2S.Data.DataErrorCode result = tud.seemuh.nfcgate.network.c2s.C2S.Data.DataErrorCode.valueOf(errcode_);
+      return result == null ? tud.seemuh.nfcgate.network.c2s.C2S.Data.DataErrorCode.ERROR_NOERROR : result;
     }
 
     public static final int BLOB_FIELD_NUMBER = 2;
     private com.google.protobuf.ByteString blob_;
     /**
-     * <code>optional bytes blob = 2;</code>
-     *
      * <pre>
      * binary blob
      * Contains the serialized binary blob of the
      * protobuf message that is passed to the other
      * client
      * </pre>
+     *
+     * <code>optional bytes blob = 2;</code>
      */
     public boolean hasBlob() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional bytes blob = 2;</code>
-     *
      * <pre>
      * binary blob
      * Contains the serialized binary blob of the
      * protobuf message that is passed to the other
      * client
      * </pre>
+     *
+     * <code>optional bytes blob = 2;</code>
      */
     public com.google.protobuf.ByteString getBlob() {
       return blob_;
     }
 
-    private void initFields() {
-      errcode_ = tud.seemuh.nfcgate.network.c2s.C2S.Data.DataErrorCode.ERROR_NOERROR;
-      blob_ = com.google.protobuf.ByteString.EMPTY;
-    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -1604,42 +1712,88 @@ public final class C2S {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeEnum(1, errcode_.getNumber());
+        output.writeEnum(1, errcode_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeBytes(2, blob_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
-    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSerializedSize;
+      int size = memoizedSize;
       if (size != -1) return size;
 
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(1, errcode_.getNumber());
+          .computeEnumSize(1, errcode_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(2, blob_);
       }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof tud.seemuh.nfcgate.network.c2s.C2S.Data)) {
+        return super.equals(obj);
+      }
+      tud.seemuh.nfcgate.network.c2s.C2S.Data other = (tud.seemuh.nfcgate.network.c2s.C2S.Data) obj;
+
+      boolean result = true;
+      result = result && (hasErrcode() == other.hasErrcode());
+      if (hasErrcode()) {
+        result = result && errcode_ == other.errcode_;
+      }
+      result = result && (hasBlob() == other.hasBlob());
+      if (hasBlob()) {
+        result = result && getBlob()
+            .equals(other.getBlob());
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
     }
 
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasErrcode()) {
+        hash = (37 * hash) + ERRCODE_FIELD_NUMBER;
+        hash = (53 * hash) + errcode_;
+      }
+      if (hasBlob()) {
+        hash = (37 * hash) + BLOB_FIELD_NUMBER;
+        hash = (53 * hash) + getBlob().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static tud.seemuh.nfcgate.network.c2s.C2S.Data parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static tud.seemuh.nfcgate.network.c2s.C2S.Data parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static tud.seemuh.nfcgate.network.c2s.C2S.Data parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1663,59 +1817,70 @@ public final class C2S {
     }
     public static tud.seemuh.nfcgate.network.c2s.C2S.Data parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.c2s.C2S.Data parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
     public static tud.seemuh.nfcgate.network.c2s.C2S.Data parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.c2s.C2S.Data parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
     public static tud.seemuh.nfcgate.network.c2s.C2S.Data parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.c2s.C2S.Data parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(tud.seemuh.nfcgate.network.c2s.C2S.Data prototype) {
-      return newBuilder().mergeFrom(prototype);
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
     }
-    public Builder toBuilder() { return newBuilder(this); }
+    public static Builder newBuilder(tud.seemuh.nfcgate.network.c2s.C2S.Data prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
     /**
-     * Protobuf type {@code tud.seemuh.nfcgate.network.c2s.Data}
-     *
      * <pre>
      * Message passing message
      * Used to pass generic messages between clients
      * </pre>
+     *
+     * Protobuf type {@code tud.seemuh.nfcgate.network.c2s.Data}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:tud.seemuh.nfcgate.network.c2s.Data)
         tud.seemuh.nfcgate.network.c2s.C2S.DataOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -1723,7 +1888,7 @@ public final class C2S {
         return tud.seemuh.nfcgate.network.c2s.C2S.internal_static_tud_seemuh_nfcgate_network_c2s_Data_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return tud.seemuh.nfcgate.network.c2s.C2S.internal_static_tud_seemuh_nfcgate_network_c2s_Data_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -1736,29 +1901,22 @@ public final class C2S {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
         }
       }
-      private static Builder create() {
-        return new Builder();
-      }
-
       public Builder clear() {
         super.clear();
-        errcode_ = tud.seemuh.nfcgate.network.c2s.C2S.Data.DataErrorCode.ERROR_NOERROR;
+        errcode_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
         blob_ = com.google.protobuf.ByteString.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000002);
         return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -1795,6 +1953,32 @@ public final class C2S {
         return result;
       }
 
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof tud.seemuh.nfcgate.network.c2s.C2S.Data) {
           return mergeFrom((tud.seemuh.nfcgate.network.c2s.C2S.Data)other);
@@ -1812,13 +1996,13 @@ public final class C2S {
         if (other.hasBlob()) {
           setBlob(other.getBlob());
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
         return this;
       }
 
       public final boolean isInitialized() {
         if (!hasErrcode()) {
-          
           return false;
         }
         return true;
@@ -1833,7 +2017,7 @@ public final class C2S {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (tud.seemuh.nfcgate.network.c2s.C2S.Data) e.getUnfinishedMessage();
-          throw e;
+          throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -1843,101 +2027,102 @@ public final class C2S {
       }
       private int bitField0_;
 
-      private tud.seemuh.nfcgate.network.c2s.C2S.Data.DataErrorCode errcode_ = tud.seemuh.nfcgate.network.c2s.C2S.Data.DataErrorCode.ERROR_NOERROR;
+      private int errcode_ = 0;
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2s.Data.DataErrorCode errcode = 1 [default = ERROR_NOERROR];</code>
-       *
        * <pre>
        * Error code
        * Set by the server on every message
        * Defaults to ERROR_NOERROR
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2s.Data.DataErrorCode errcode = 1 [default = ERROR_NOERROR];</code>
        */
       public boolean hasErrcode() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2s.Data.DataErrorCode errcode = 1 [default = ERROR_NOERROR];</code>
-       *
        * <pre>
        * Error code
        * Set by the server on every message
        * Defaults to ERROR_NOERROR
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2s.Data.DataErrorCode errcode = 1 [default = ERROR_NOERROR];</code>
        */
       public tud.seemuh.nfcgate.network.c2s.C2S.Data.DataErrorCode getErrcode() {
-        return errcode_;
+        tud.seemuh.nfcgate.network.c2s.C2S.Data.DataErrorCode result = tud.seemuh.nfcgate.network.c2s.C2S.Data.DataErrorCode.valueOf(errcode_);
+        return result == null ? tud.seemuh.nfcgate.network.c2s.C2S.Data.DataErrorCode.ERROR_NOERROR : result;
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2s.Data.DataErrorCode errcode = 1 [default = ERROR_NOERROR];</code>
-       *
        * <pre>
        * Error code
        * Set by the server on every message
        * Defaults to ERROR_NOERROR
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2s.Data.DataErrorCode errcode = 1 [default = ERROR_NOERROR];</code>
        */
       public Builder setErrcode(tud.seemuh.nfcgate.network.c2s.C2S.Data.DataErrorCode value) {
         if (value == null) {
           throw new NullPointerException();
         }
         bitField0_ |= 0x00000001;
-        errcode_ = value;
+        errcode_ = value.getNumber();
         onChanged();
         return this;
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2s.Data.DataErrorCode errcode = 1 [default = ERROR_NOERROR];</code>
-       *
        * <pre>
        * Error code
        * Set by the server on every message
        * Defaults to ERROR_NOERROR
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2s.Data.DataErrorCode errcode = 1 [default = ERROR_NOERROR];</code>
        */
       public Builder clearErrcode() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        errcode_ = tud.seemuh.nfcgate.network.c2s.C2S.Data.DataErrorCode.ERROR_NOERROR;
+        errcode_ = 0;
         onChanged();
         return this;
       }
 
       private com.google.protobuf.ByteString blob_ = com.google.protobuf.ByteString.EMPTY;
       /**
-       * <code>optional bytes blob = 2;</code>
-       *
        * <pre>
        * binary blob
        * Contains the serialized binary blob of the
        * protobuf message that is passed to the other
        * client
        * </pre>
+       *
+       * <code>optional bytes blob = 2;</code>
        */
       public boolean hasBlob() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>optional bytes blob = 2;</code>
-       *
        * <pre>
        * binary blob
        * Contains the serialized binary blob of the
        * protobuf message that is passed to the other
        * client
        * </pre>
+       *
+       * <code>optional bytes blob = 2;</code>
        */
       public com.google.protobuf.ByteString getBlob() {
         return blob_;
       }
       /**
-       * <code>optional bytes blob = 2;</code>
-       *
        * <pre>
        * binary blob
        * Contains the serialized binary blob of the
        * protobuf message that is passed to the other
        * client
        * </pre>
+       *
+       * <code>optional bytes blob = 2;</code>
        */
       public Builder setBlob(com.google.protobuf.ByteString value) {
         if (value == null) {
@@ -1949,14 +2134,14 @@ public final class C2S {
         return this;
       }
       /**
-       * <code>optional bytes blob = 2;</code>
-       *
        * <pre>
        * binary blob
        * Contains the serialized binary blob of the
        * protobuf message that is passed to the other
        * client
        * </pre>
+       *
+       * <code>optional bytes blob = 2;</code>
        */
       public Builder clearBlob() {
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -1964,34 +2149,71 @@ public final class C2S {
         onChanged();
         return this;
       }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
 
       // @@protoc_insertion_point(builder_scope:tud.seemuh.nfcgate.network.c2s.Data)
     }
 
+    // @@protoc_insertion_point(class_scope:tud.seemuh.nfcgate.network.c2s.Data)
+    private static final tud.seemuh.nfcgate.network.c2s.C2S.Data DEFAULT_INSTANCE;
     static {
-      defaultInstance = new Data(true);
-      defaultInstance.initFields();
+      DEFAULT_INSTANCE = new tud.seemuh.nfcgate.network.c2s.C2S.Data();
     }
 
-    // @@protoc_insertion_point(class_scope:tud.seemuh.nfcgate.network.c2s.Data)
+    public static tud.seemuh.nfcgate.network.c2s.C2S.Data getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    @java.lang.Deprecated public static final com.google.protobuf.Parser<Data>
+        PARSER = new com.google.protobuf.AbstractParser<Data>() {
+      public Data parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new Data(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<Data> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Data> getParserForType() {
+      return PARSER;
+    }
+
+    public tud.seemuh.nfcgate.network.c2s.C2S.Data getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_tud_seemuh_nfcgate_network_c2s_Session_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_tud_seemuh_nfcgate_network_c2s_Session_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_tud_seemuh_nfcgate_network_c2s_Data_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_tud_seemuh_nfcgate_network_c2s_Data_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
     return descriptor;
   }
-  private static com.google.protobuf.Descriptors.FileDescriptor
+  private static  com.google.protobuf.Descriptors.FileDescriptor
       descriptor;
   static {
     java.lang.String[] descriptorData = {
@@ -2004,7 +2226,7 @@ public final class C2S {
       "\"\221\002\n\rSessionOpcode\022\022\n\016SESSION_CREATE\020\000\022\032" +
       "\n\026SESSION_CREATE_SUCCESS\020\001\022\027\n\023SESSION_CR" +
       "EATE_FAIL\020\002\022\020\n\014SESSION_JOIN\020\003\022\030\n\024SESSION" +
-      "_JOIN_SUCCESS\020\004\022\025\n\021SESSION_JOIN_FAIL\020\005\022\021",
+      "_JOIN_SUCCESS\020\004\022\025\n\021SESSION_JOIN_FAIL\020\005\022\021" +
       "\n\rSESSION_LEAVE\020\006\022\031\n\025SESSION_LEAVE_SUCCE" +
       "SS\020\007\022\026\n\022SESSION_LEAVE_FAIL\020\010\022\027\n\023SESSION_" +
       "PEER_JOINED\020\t\022\025\n\021SESSION_PEER_LEFT\020\n\"\261\002\n" +
@@ -2014,7 +2236,7 @@ public final class C2S {
       "N\020\003\022\035\n\031ERROR_JOIN_UNKNOWN_SECRET\020\004\022\033\n\027ER" +
       "ROR_JOIN_SESSION_FULL\020\005\022\"\n\036ERROR_JOIN_AL" +
       "READY_HAS_SESSION\020\006\022\027\n\023ERROR_LEAVE_UNKNO" +
-      "WN\020\007\022\036\n\032ERROR_LEAVE_UNKNOWN_SECRET\020\010\022\032\n\026",
+      "WN\020\007\022\036\n\032ERROR_LEAVE_UNKNOWN_SECRET\020\010\022\032\n\026" +
       "ERROR_LEAVE_NOT_JOINED\020\t\"\324\001\n\004Data\022R\n\007err" +
       "code\030\001 \002(\01622.tud.seemuh.nfcgate.network." +
       "c2s.Data.DataErrorCode:\rERROR_NOERROR\022\014\n" +
@@ -2037,13 +2259,13 @@ public final class C2S {
     internal_static_tud_seemuh_nfcgate_network_c2s_Session_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_tud_seemuh_nfcgate_network_c2s_Session_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_tud_seemuh_nfcgate_network_c2s_Session_descriptor,
         new java.lang.String[] { "Opcode", "SessionSecret", "Errcode", });
     internal_static_tud_seemuh_nfcgate_network_c2s_Data_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_tud_seemuh_nfcgate_network_c2s_Data_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_tud_seemuh_nfcgate_network_c2s_Data_descriptor,
         new java.lang.String[] { "Errcode", "Blob", });
   }

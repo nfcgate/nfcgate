@@ -6,91 +6,93 @@ package tud.seemuh.nfcgate.network.c2c;
 public final class C2C {
   private C2C() {}
   public static void registerAllExtensions(
+      com.google.protobuf.ExtensionRegistryLite registry) {
+  }
+
+  public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
+    registerAllExtensions(
+        (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface NFCDataOrBuilder extends
       // @@protoc_insertion_point(interface_extends:tud.seemuh.nfcgate.network.c2c.NFCData)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.DataSource data_source = 1;</code>
-     *
      * <pre>
      * Data Source
      * Signifies if this data is coming from a NFC Card
      * or a NFC Reader
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.DataSource data_source = 1;</code>
      */
     boolean hasDataSource();
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.DataSource data_source = 1;</code>
-     *
      * <pre>
      * Data Source
      * Signifies if this data is coming from a NFC Card
      * or a NFC Reader
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.DataSource data_source = 1;</code>
      */
     tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource getDataSource();
 
     /**
-     * <code>required bytes data_bytes = 2;</code>
-     *
      * <pre>
      * Data bytes
      * The actual bytes to be sent
      * </pre>
+     *
+     * <code>required bytes data_bytes = 2;</code>
      */
     boolean hasDataBytes();
     /**
-     * <code>required bytes data_bytes = 2;</code>
-     *
      * <pre>
      * Data bytes
      * The actual bytes to be sent
      * </pre>
+     *
+     * <code>required bytes data_bytes = 2;</code>
      */
     com.google.protobuf.ByteString getDataBytes();
   }
   /**
-   * Protobuf type {@code tud.seemuh.nfcgate.network.c2c.NFCData}
-   *
    * <pre>
    * NFC Data message
    * Message for passing NFC data between clients
    * </pre>
+   *
+   * Protobuf type {@code tud.seemuh.nfcgate.network.c2c.NFCData}
    */
-  public static final class NFCData extends
-      com.google.protobuf.GeneratedMessage implements
+  public  static final class NFCData extends
+      com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:tud.seemuh.nfcgate.network.c2c.NFCData)
       NFCDataOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use NFCData.newBuilder() to construct.
-    private NFCData(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private NFCData(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
-      this.unknownFields = builder.getUnknownFields();
     }
-    private NFCData(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final NFCData defaultInstance;
-    public static NFCData getDefaultInstance() {
-      return defaultInstance;
+    private NFCData() {
+      dataSource_ = 0;
+      dataBytes_ = com.google.protobuf.ByteString.EMPTY;
     }
 
-    public NFCData getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
+    getUnknownFields() {
       return this.unknownFields;
     }
     private NFCData(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -103,8 +105,8 @@ public final class C2C {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
                 done = true;
               }
               break;
@@ -116,7 +118,7 @@ public final class C2C {
                 unknownFields.mergeVarintField(1, rawValue);
               } else {
                 bitField0_ |= 0x00000001;
-                dataSource_ = value;
+                dataSource_ = rawValue;
               }
               break;
             }
@@ -131,7 +133,7 @@ public final class C2C {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
+            e).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -142,26 +144,11 @@ public final class C2C {
       return tud.seemuh.nfcgate.network.c2c.C2C.internal_static_tud_seemuh_nfcgate_network_c2c_NFCData_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return tud.seemuh.nfcgate.network.c2c.C2C.internal_static_tud_seemuh_nfcgate_network_c2c_NFCData_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               tud.seemuh.nfcgate.network.c2c.C2C.NFCData.class, tud.seemuh.nfcgate.network.c2c.C2C.NFCData.Builder.class);
-    }
-
-    public static com.google.protobuf.Parser<NFCData> PARSER =
-        new com.google.protobuf.AbstractParser<NFCData>() {
-      public NFCData parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new NFCData(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<NFCData> getParserForType() {
-      return PARSER;
     }
 
     /**
@@ -172,11 +159,11 @@ public final class C2C {
       /**
        * <code>READER = 0;</code>
        */
-      READER(0, 0),
+      READER(0),
       /**
        * <code>CARD = 1;</code>
        */
-      CARD(1, 1),
+      CARD(1),
       ;
 
       /**
@@ -189,9 +176,19 @@ public final class C2C {
       public static final int CARD_VALUE = 1;
 
 
-      public final int getNumber() { return value; }
+      public final int getNumber() {
+        return value;
+      }
 
+      /**
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
       public static DataSource valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static DataSource forNumber(int value) {
         switch (value) {
           case 0: return READER;
           case 1: return CARD;
@@ -203,17 +200,17 @@ public final class C2C {
           internalGetValueMap() {
         return internalValueMap;
       }
-      private static com.google.protobuf.Internal.EnumLiteMap<DataSource>
-          internalValueMap =
+      private static final com.google.protobuf.Internal.EnumLiteMap<
+          DataSource> internalValueMap =
             new com.google.protobuf.Internal.EnumLiteMap<DataSource>() {
               public DataSource findValueByNumber(int number) {
-                return DataSource.valueOf(number);
+                return DataSource.forNumber(number);
               }
             };
 
       public final com.google.protobuf.Descriptors.EnumValueDescriptor
           getValueDescriptor() {
-        return getDescriptor().getValues().get(index);
+        return getDescriptor().getValues().get(ordinal());
       }
       public final com.google.protobuf.Descriptors.EnumDescriptor
           getDescriptorForType() {
@@ -235,11 +232,9 @@ public final class C2C {
         return VALUES[desc.getIndex()];
       }
 
-      private final int index;
       private final int value;
 
-      private DataSource(int index, int value) {
-        this.index = index;
+      private DataSource(int value) {
         this.value = value;
       }
 
@@ -248,61 +243,58 @@ public final class C2C {
 
     private int bitField0_;
     public static final int DATA_SOURCE_FIELD_NUMBER = 1;
-    private tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource dataSource_;
+    private int dataSource_;
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.DataSource data_source = 1;</code>
-     *
      * <pre>
      * Data Source
      * Signifies if this data is coming from a NFC Card
      * or a NFC Reader
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.DataSource data_source = 1;</code>
      */
     public boolean hasDataSource() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.DataSource data_source = 1;</code>
-     *
      * <pre>
      * Data Source
      * Signifies if this data is coming from a NFC Card
      * or a NFC Reader
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.DataSource data_source = 1;</code>
      */
     public tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource getDataSource() {
-      return dataSource_;
+      tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource result = tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource.valueOf(dataSource_);
+      return result == null ? tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource.READER : result;
     }
 
     public static final int DATA_BYTES_FIELD_NUMBER = 2;
     private com.google.protobuf.ByteString dataBytes_;
     /**
-     * <code>required bytes data_bytes = 2;</code>
-     *
      * <pre>
      * Data bytes
      * The actual bytes to be sent
      * </pre>
+     *
+     * <code>required bytes data_bytes = 2;</code>
      */
     public boolean hasDataBytes() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required bytes data_bytes = 2;</code>
-     *
      * <pre>
      * Data bytes
      * The actual bytes to be sent
      * </pre>
+     *
+     * <code>required bytes data_bytes = 2;</code>
      */
     public com.google.protobuf.ByteString getDataBytes() {
       return dataBytes_;
     }
 
-    private void initFields() {
-      dataSource_ = tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource.READER;
-      dataBytes_ = com.google.protobuf.ByteString.EMPTY;
-    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -323,42 +315,88 @@ public final class C2C {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeEnum(1, dataSource_.getNumber());
+        output.writeEnum(1, dataSource_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeBytes(2, dataBytes_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
-    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSerializedSize;
+      int size = memoizedSize;
       if (size != -1) return size;
 
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(1, dataSource_.getNumber());
+          .computeEnumSize(1, dataSource_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(2, dataBytes_);
       }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof tud.seemuh.nfcgate.network.c2c.C2C.NFCData)) {
+        return super.equals(obj);
+      }
+      tud.seemuh.nfcgate.network.c2c.C2C.NFCData other = (tud.seemuh.nfcgate.network.c2c.C2C.NFCData) obj;
+
+      boolean result = true;
+      result = result && (hasDataSource() == other.hasDataSource());
+      if (hasDataSource()) {
+        result = result && dataSource_ == other.dataSource_;
+      }
+      result = result && (hasDataBytes() == other.hasDataBytes());
+      if (hasDataBytes()) {
+        result = result && getDataBytes()
+            .equals(other.getDataBytes());
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
     }
 
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasDataSource()) {
+        hash = (37 * hash) + DATA_SOURCE_FIELD_NUMBER;
+        hash = (53 * hash) + dataSource_;
+      }
+      if (hasDataBytes()) {
+        hash = (37 * hash) + DATA_BYTES_FIELD_NUMBER;
+        hash = (53 * hash) + getDataBytes().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static tud.seemuh.nfcgate.network.c2c.C2C.NFCData parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static tud.seemuh.nfcgate.network.c2c.C2C.NFCData parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static tud.seemuh.nfcgate.network.c2c.C2C.NFCData parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -382,59 +420,70 @@ public final class C2C {
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.NFCData parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.NFCData parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.NFCData parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.NFCData parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.NFCData parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.NFCData parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(tud.seemuh.nfcgate.network.c2c.C2C.NFCData prototype) {
-      return newBuilder().mergeFrom(prototype);
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
     }
-    public Builder toBuilder() { return newBuilder(this); }
+    public static Builder newBuilder(tud.seemuh.nfcgate.network.c2c.C2C.NFCData prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
     /**
-     * Protobuf type {@code tud.seemuh.nfcgate.network.c2c.NFCData}
-     *
      * <pre>
      * NFC Data message
      * Message for passing NFC data between clients
      * </pre>
+     *
+     * Protobuf type {@code tud.seemuh.nfcgate.network.c2c.NFCData}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:tud.seemuh.nfcgate.network.c2c.NFCData)
         tud.seemuh.nfcgate.network.c2c.C2C.NFCDataOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -442,7 +491,7 @@ public final class C2C {
         return tud.seemuh.nfcgate.network.c2c.C2C.internal_static_tud_seemuh_nfcgate_network_c2c_NFCData_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return tud.seemuh.nfcgate.network.c2c.C2C.internal_static_tud_seemuh_nfcgate_network_c2c_NFCData_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -455,29 +504,22 @@ public final class C2C {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
         }
       }
-      private static Builder create() {
-        return new Builder();
-      }
-
       public Builder clear() {
         super.clear();
-        dataSource_ = tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource.READER;
+        dataSource_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
         dataBytes_ = com.google.protobuf.ByteString.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000002);
         return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -514,6 +556,32 @@ public final class C2C {
         return result;
       }
 
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof tud.seemuh.nfcgate.network.c2c.C2C.NFCData) {
           return mergeFrom((tud.seemuh.nfcgate.network.c2c.C2C.NFCData)other);
@@ -531,17 +599,16 @@ public final class C2C {
         if (other.hasDataBytes()) {
           setDataBytes(other.getDataBytes());
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
         return this;
       }
 
       public final boolean isInitialized() {
         if (!hasDataSource()) {
-          
           return false;
         }
         if (!hasDataBytes()) {
-          
           return false;
         }
         return true;
@@ -556,7 +623,7 @@ public final class C2C {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (tud.seemuh.nfcgate.network.c2c.C2C.NFCData) e.getUnfinishedMessage();
-          throw e;
+          throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -566,95 +633,96 @@ public final class C2C {
       }
       private int bitField0_;
 
-      private tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource dataSource_ = tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource.READER;
+      private int dataSource_ = 0;
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.DataSource data_source = 1;</code>
-       *
        * <pre>
        * Data Source
        * Signifies if this data is coming from a NFC Card
        * or a NFC Reader
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.DataSource data_source = 1;</code>
        */
       public boolean hasDataSource() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.DataSource data_source = 1;</code>
-       *
        * <pre>
        * Data Source
        * Signifies if this data is coming from a NFC Card
        * or a NFC Reader
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.DataSource data_source = 1;</code>
        */
       public tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource getDataSource() {
-        return dataSource_;
+        tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource result = tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource.valueOf(dataSource_);
+        return result == null ? tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource.READER : result;
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.DataSource data_source = 1;</code>
-       *
        * <pre>
        * Data Source
        * Signifies if this data is coming from a NFC Card
        * or a NFC Reader
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.DataSource data_source = 1;</code>
        */
       public Builder setDataSource(tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource value) {
         if (value == null) {
           throw new NullPointerException();
         }
         bitField0_ |= 0x00000001;
-        dataSource_ = value;
+        dataSource_ = value.getNumber();
         onChanged();
         return this;
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.DataSource data_source = 1;</code>
-       *
        * <pre>
        * Data Source
        * Signifies if this data is coming from a NFC Card
        * or a NFC Reader
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2c.NFCData.DataSource data_source = 1;</code>
        */
       public Builder clearDataSource() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        dataSource_ = tud.seemuh.nfcgate.network.c2c.C2C.NFCData.DataSource.READER;
+        dataSource_ = 0;
         onChanged();
         return this;
       }
 
       private com.google.protobuf.ByteString dataBytes_ = com.google.protobuf.ByteString.EMPTY;
       /**
-       * <code>required bytes data_bytes = 2;</code>
-       *
        * <pre>
        * Data bytes
        * The actual bytes to be sent
        * </pre>
+       *
+       * <code>required bytes data_bytes = 2;</code>
        */
       public boolean hasDataBytes() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>required bytes data_bytes = 2;</code>
-       *
        * <pre>
        * Data bytes
        * The actual bytes to be sent
        * </pre>
+       *
+       * <code>required bytes data_bytes = 2;</code>
        */
       public com.google.protobuf.ByteString getDataBytes() {
         return dataBytes_;
       }
       /**
-       * <code>required bytes data_bytes = 2;</code>
-       *
        * <pre>
        * Data bytes
        * The actual bytes to be sent
        * </pre>
+       *
+       * <code>required bytes data_bytes = 2;</code>
        */
       public Builder setDataBytes(com.google.protobuf.ByteString value) {
         if (value == null) {
@@ -666,12 +734,12 @@ public final class C2C {
         return this;
       }
       /**
-       * <code>required bytes data_bytes = 2;</code>
-       *
        * <pre>
        * Data bytes
        * The actual bytes to be sent
        * </pre>
+       *
+       * <code>required bytes data_bytes = 2;</code>
        */
       public Builder clearDataBytes() {
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -679,16 +747,53 @@ public final class C2C {
         onChanged();
         return this;
       }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
 
       // @@protoc_insertion_point(builder_scope:tud.seemuh.nfcgate.network.c2c.NFCData)
     }
 
+    // @@protoc_insertion_point(class_scope:tud.seemuh.nfcgate.network.c2c.NFCData)
+    private static final tud.seemuh.nfcgate.network.c2c.C2C.NFCData DEFAULT_INSTANCE;
     static {
-      defaultInstance = new NFCData(true);
-      defaultInstance.initFields();
+      DEFAULT_INSTANCE = new tud.seemuh.nfcgate.network.c2c.C2C.NFCData();
     }
 
-    // @@protoc_insertion_point(class_scope:tud.seemuh.nfcgate.network.c2c.NFCData)
+    public static tud.seemuh.nfcgate.network.c2c.C2C.NFCData getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    @java.lang.Deprecated public static final com.google.protobuf.Parser<NFCData>
+        PARSER = new com.google.protobuf.AbstractParser<NFCData>() {
+      public NFCData parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new NFCData(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<NFCData> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<NFCData> getParserForType() {
+      return PARSER;
+    }
+
+    public tud.seemuh.nfcgate.network.c2c.C2C.NFCData getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
   }
 
   public interface AnticolOrBuilder extends
@@ -696,80 +801,48 @@ public final class C2C {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>required bytes UID = 1;</code>
+     * <code>required bytes CONFIG = 1;</code>
      */
-    boolean hasUID();
+    boolean hasCONFIG();
     /**
-     * <code>required bytes UID = 1;</code>
+     * <code>required bytes CONFIG = 1;</code>
      */
-    com.google.protobuf.ByteString getUID();
-
-    /**
-     * <code>required bytes historical_byte = 2;</code>
-     */
-    boolean hasHistoricalByte();
-    /**
-     * <code>required bytes historical_byte = 2;</code>
-     */
-    com.google.protobuf.ByteString getHistoricalByte();
-
-    /**
-     * <code>required bytes ATQA = 3;</code>
-     */
-    boolean hasATQA();
-    /**
-     * <code>required bytes ATQA = 3;</code>
-     */
-    com.google.protobuf.ByteString getATQA();
-
-    /**
-     * <code>required bytes SAK = 4;</code>
-     */
-    boolean hasSAK();
-    /**
-     * <code>required bytes SAK = 4;</code>
-     */
-    com.google.protobuf.ByteString getSAK();
+    com.google.protobuf.ByteString getCONFIG();
   }
   /**
-   * Protobuf type {@code tud.seemuh.nfcgate.network.c2c.Anticol}
-   *
    * <pre>
    * Anticollision messages
-   * Message for transmitting UID, historical byte, atqa and sak
+   * Message for transmitting NFC config
    * </pre>
+   *
+   * Protobuf type {@code tud.seemuh.nfcgate.network.c2c.Anticol}
    */
-  public static final class Anticol extends
-      com.google.protobuf.GeneratedMessage implements
+  public  static final class Anticol extends
+      com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:tud.seemuh.nfcgate.network.c2c.Anticol)
       AnticolOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use Anticol.newBuilder() to construct.
-    private Anticol(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private Anticol(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
-      this.unknownFields = builder.getUnknownFields();
     }
-    private Anticol(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final Anticol defaultInstance;
-    public static Anticol getDefaultInstance() {
-      return defaultInstance;
+    private Anticol() {
+      cONFIG_ = com.google.protobuf.ByteString.EMPTY;
     }
 
-    public Anticol getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
+    getUnknownFields() {
       return this.unknownFields;
     }
     private Anticol(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -782,30 +855,15 @@ public final class C2C {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
                 done = true;
               }
               break;
             }
             case 10: {
               bitField0_ |= 0x00000001;
-              uID_ = input.readBytes();
-              break;
-            }
-            case 18: {
-              bitField0_ |= 0x00000002;
-              historicalByte_ = input.readBytes();
-              break;
-            }
-            case 26: {
-              bitField0_ |= 0x00000004;
-              aTQA_ = input.readBytes();
-              break;
-            }
-            case 34: {
-              bitField0_ |= 0x00000008;
-              sAK_ = input.readBytes();
+              cONFIG_ = input.readBytes();
               break;
             }
           }
@@ -814,7 +872,7 @@ public final class C2C {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
+            e).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -825,114 +883,36 @@ public final class C2C {
       return tud.seemuh.nfcgate.network.c2c.C2C.internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return tud.seemuh.nfcgate.network.c2c.C2C.internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               tud.seemuh.nfcgate.network.c2c.C2C.Anticol.class, tud.seemuh.nfcgate.network.c2c.C2C.Anticol.Builder.class);
     }
 
-    public static com.google.protobuf.Parser<Anticol> PARSER =
-        new com.google.protobuf.AbstractParser<Anticol>() {
-      public Anticol parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Anticol(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<Anticol> getParserForType() {
-      return PARSER;
-    }
-
     private int bitField0_;
-    public static final int UID_FIELD_NUMBER = 1;
-    private com.google.protobuf.ByteString uID_;
+    public static final int CONFIG_FIELD_NUMBER = 1;
+    private com.google.protobuf.ByteString cONFIG_;
     /**
-     * <code>required bytes UID = 1;</code>
+     * <code>required bytes CONFIG = 1;</code>
      */
-    public boolean hasUID() {
+    public boolean hasCONFIG() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required bytes UID = 1;</code>
+     * <code>required bytes CONFIG = 1;</code>
      */
-    public com.google.protobuf.ByteString getUID() {
-      return uID_;
+    public com.google.protobuf.ByteString getCONFIG() {
+      return cONFIG_;
     }
 
-    public static final int HISTORICAL_BYTE_FIELD_NUMBER = 2;
-    private com.google.protobuf.ByteString historicalByte_;
-    /**
-     * <code>required bytes historical_byte = 2;</code>
-     */
-    public boolean hasHistoricalByte() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    /**
-     * <code>required bytes historical_byte = 2;</code>
-     */
-    public com.google.protobuf.ByteString getHistoricalByte() {
-      return historicalByte_;
-    }
-
-    public static final int ATQA_FIELD_NUMBER = 3;
-    private com.google.protobuf.ByteString aTQA_;
-    /**
-     * <code>required bytes ATQA = 3;</code>
-     */
-    public boolean hasATQA() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>required bytes ATQA = 3;</code>
-     */
-    public com.google.protobuf.ByteString getATQA() {
-      return aTQA_;
-    }
-
-    public static final int SAK_FIELD_NUMBER = 4;
-    private com.google.protobuf.ByteString sAK_;
-    /**
-     * <code>required bytes SAK = 4;</code>
-     */
-    public boolean hasSAK() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>required bytes SAK = 4;</code>
-     */
-    public com.google.protobuf.ByteString getSAK() {
-      return sAK_;
-    }
-
-    private void initFields() {
-      uID_ = com.google.protobuf.ByteString.EMPTY;
-      historicalByte_ = com.google.protobuf.ByteString.EMPTY;
-      aTQA_ = com.google.protobuf.ByteString.EMPTY;
-      sAK_ = com.google.protobuf.ByteString.EMPTY;
-    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
-      if (!hasUID()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasHistoricalByte()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasATQA()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasSAK()) {
+      if (!hasCONFIG()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -942,56 +922,73 @@ public final class C2C {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeBytes(1, uID_);
+        output.writeBytes(1, cONFIG_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, historicalByte_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeBytes(3, aTQA_);
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeBytes(4, sAK_);
-      }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
-    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSerializedSize;
+      int size = memoizedSize;
       if (size != -1) return size;
 
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, uID_);
+          .computeBytesSize(1, cONFIG_);
       }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, historicalByte_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(3, aTQA_);
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(4, sAK_);
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof tud.seemuh.nfcgate.network.c2c.C2C.Anticol)) {
+        return super.equals(obj);
+      }
+      tud.seemuh.nfcgate.network.c2c.C2C.Anticol other = (tud.seemuh.nfcgate.network.c2c.C2C.Anticol) obj;
+
+      boolean result = true;
+      result = result && (hasCONFIG() == other.hasCONFIG());
+      if (hasCONFIG()) {
+        result = result && getCONFIG()
+            .equals(other.getCONFIG());
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
     }
 
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasCONFIG()) {
+        hash = (37 * hash) + CONFIG_FIELD_NUMBER;
+        hash = (53 * hash) + getCONFIG().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1015,59 +1012,70 @@ public final class C2C {
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(tud.seemuh.nfcgate.network.c2c.C2C.Anticol prototype) {
-      return newBuilder().mergeFrom(prototype);
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
     }
-    public Builder toBuilder() { return newBuilder(this); }
+    public static Builder newBuilder(tud.seemuh.nfcgate.network.c2c.C2C.Anticol prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
     /**
-     * Protobuf type {@code tud.seemuh.nfcgate.network.c2c.Anticol}
-     *
      * <pre>
      * Anticollision messages
-     * Message for transmitting UID, historical byte, atqa and sak
+     * Message for transmitting NFC config
      * </pre>
+     *
+     * Protobuf type {@code tud.seemuh.nfcgate.network.c2c.Anticol}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:tud.seemuh.nfcgate.network.c2c.Anticol)
         tud.seemuh.nfcgate.network.c2c.C2C.AnticolOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -1075,7 +1083,7 @@ public final class C2C {
         return tud.seemuh.nfcgate.network.c2c.C2C.internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return tud.seemuh.nfcgate.network.c2c.C2C.internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -1088,33 +1096,20 @@ public final class C2C {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
         }
       }
-      private static Builder create() {
-        return new Builder();
-      }
-
       public Builder clear() {
         super.clear();
-        uID_ = com.google.protobuf.ByteString.EMPTY;
+        cONFIG_ = com.google.protobuf.ByteString.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000001);
-        historicalByte_ = com.google.protobuf.ByteString.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000002);
-        aTQA_ = com.google.protobuf.ByteString.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000004);
-        sAK_ = com.google.protobuf.ByteString.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -1141,24 +1136,38 @@ public final class C2C {
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
           to_bitField0_ |= 0x00000001;
         }
-        result.uID_ = uID_;
-        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-          to_bitField0_ |= 0x00000002;
-        }
-        result.historicalByte_ = historicalByte_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
-        result.aTQA_ = aTQA_;
-        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-          to_bitField0_ |= 0x00000008;
-        }
-        result.sAK_ = sAK_;
+        result.cONFIG_ = cONFIG_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
 
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof tud.seemuh.nfcgate.network.c2c.C2C.Anticol) {
           return mergeFrom((tud.seemuh.nfcgate.network.c2c.C2C.Anticol)other);
@@ -1170,37 +1179,16 @@ public final class C2C {
 
       public Builder mergeFrom(tud.seemuh.nfcgate.network.c2c.C2C.Anticol other) {
         if (other == tud.seemuh.nfcgate.network.c2c.C2C.Anticol.getDefaultInstance()) return this;
-        if (other.hasUID()) {
-          setUID(other.getUID());
+        if (other.hasCONFIG()) {
+          setCONFIG(other.getCONFIG());
         }
-        if (other.hasHistoricalByte()) {
-          setHistoricalByte(other.getHistoricalByte());
-        }
-        if (other.hasATQA()) {
-          setATQA(other.getATQA());
-        }
-        if (other.hasSAK()) {
-          setSAK(other.getSAK());
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
         return this;
       }
 
       public final boolean isInitialized() {
-        if (!hasUID()) {
-          
-          return false;
-        }
-        if (!hasHistoricalByte()) {
-          
-          return false;
-        }
-        if (!hasATQA()) {
-          
-          return false;
-        }
-        if (!hasSAK()) {
-          
+        if (!hasCONFIG()) {
           return false;
         }
         return true;
@@ -1215,7 +1203,7 @@ public final class C2C {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (tud.seemuh.nfcgate.network.c2c.C2C.Anticol) e.getUnfinishedMessage();
-          throw e;
+          throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -1225,155 +1213,87 @@ public final class C2C {
       }
       private int bitField0_;
 
-      private com.google.protobuf.ByteString uID_ = com.google.protobuf.ByteString.EMPTY;
+      private com.google.protobuf.ByteString cONFIG_ = com.google.protobuf.ByteString.EMPTY;
       /**
-       * <code>required bytes UID = 1;</code>
+       * <code>required bytes CONFIG = 1;</code>
        */
-      public boolean hasUID() {
+      public boolean hasCONFIG() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required bytes UID = 1;</code>
+       * <code>required bytes CONFIG = 1;</code>
        */
-      public com.google.protobuf.ByteString getUID() {
-        return uID_;
+      public com.google.protobuf.ByteString getCONFIG() {
+        return cONFIG_;
       }
       /**
-       * <code>required bytes UID = 1;</code>
+       * <code>required bytes CONFIG = 1;</code>
        */
-      public Builder setUID(com.google.protobuf.ByteString value) {
+      public Builder setCONFIG(com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   bitField0_ |= 0x00000001;
-        uID_ = value;
+        cONFIG_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required bytes UID = 1;</code>
+       * <code>required bytes CONFIG = 1;</code>
        */
-      public Builder clearUID() {
+      public Builder clearCONFIG() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        uID_ = getDefaultInstance().getUID();
+        cONFIG_ = getDefaultInstance().getCONFIG();
         onChanged();
         return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
       }
 
-      private com.google.protobuf.ByteString historicalByte_ = com.google.protobuf.ByteString.EMPTY;
-      /**
-       * <code>required bytes historical_byte = 2;</code>
-       */
-      public boolean hasHistoricalByte() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
-      }
-      /**
-       * <code>required bytes historical_byte = 2;</code>
-       */
-      public com.google.protobuf.ByteString getHistoricalByte() {
-        return historicalByte_;
-      }
-      /**
-       * <code>required bytes historical_byte = 2;</code>
-       */
-      public Builder setHistoricalByte(com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        historicalByte_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>required bytes historical_byte = 2;</code>
-       */
-      public Builder clearHistoricalByte() {
-        bitField0_ = (bitField0_ & ~0x00000002);
-        historicalByte_ = getDefaultInstance().getHistoricalByte();
-        onChanged();
-        return this;
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
       }
 
-      private com.google.protobuf.ByteString aTQA_ = com.google.protobuf.ByteString.EMPTY;
-      /**
-       * <code>required bytes ATQA = 3;</code>
-       */
-      public boolean hasATQA() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      /**
-       * <code>required bytes ATQA = 3;</code>
-       */
-      public com.google.protobuf.ByteString getATQA() {
-        return aTQA_;
-      }
-      /**
-       * <code>required bytes ATQA = 3;</code>
-       */
-      public Builder setATQA(com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000004;
-        aTQA_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>required bytes ATQA = 3;</code>
-       */
-      public Builder clearATQA() {
-        bitField0_ = (bitField0_ & ~0x00000004);
-        aTQA_ = getDefaultInstance().getATQA();
-        onChanged();
-        return this;
-      }
-
-      private com.google.protobuf.ByteString sAK_ = com.google.protobuf.ByteString.EMPTY;
-      /**
-       * <code>required bytes SAK = 4;</code>
-       */
-      public boolean hasSAK() {
-        return ((bitField0_ & 0x00000008) == 0x00000008);
-      }
-      /**
-       * <code>required bytes SAK = 4;</code>
-       */
-      public com.google.protobuf.ByteString getSAK() {
-        return sAK_;
-      }
-      /**
-       * <code>required bytes SAK = 4;</code>
-       */
-      public Builder setSAK(com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000008;
-        sAK_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>required bytes SAK = 4;</code>
-       */
-      public Builder clearSAK() {
-        bitField0_ = (bitField0_ & ~0x00000008);
-        sAK_ = getDefaultInstance().getSAK();
-        onChanged();
-        return this;
-      }
 
       // @@protoc_insertion_point(builder_scope:tud.seemuh.nfcgate.network.c2c.Anticol)
     }
 
+    // @@protoc_insertion_point(class_scope:tud.seemuh.nfcgate.network.c2c.Anticol)
+    private static final tud.seemuh.nfcgate.network.c2c.C2C.Anticol DEFAULT_INSTANCE;
     static {
-      defaultInstance = new Anticol(true);
-      defaultInstance.initFields();
+      DEFAULT_INSTANCE = new tud.seemuh.nfcgate.network.c2c.C2C.Anticol();
     }
 
-    // @@protoc_insertion_point(class_scope:tud.seemuh.nfcgate.network.c2c.Anticol)
+    public static tud.seemuh.nfcgate.network.c2c.C2C.Anticol getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    @java.lang.Deprecated public static final com.google.protobuf.Parser<Anticol>
+        PARSER = new com.google.protobuf.AbstractParser<Anticol>() {
+      public Anticol parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new Anticol(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<Anticol> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Anticol> getParserForType() {
+      return PARSER;
+    }
+
+    public tud.seemuh.nfcgate.network.c2c.C2C.Anticol getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
   }
 
   public interface StatusOrBuilder extends
@@ -1381,63 +1301,58 @@ public final class C2C {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2c.Status.StatusCode code = 1;</code>
-     *
      * <pre>
      * Status Code
      * The status code to be communicated
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2c.Status.StatusCode code = 1;</code>
      */
     boolean hasCode();
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2c.Status.StatusCode code = 1;</code>
-     *
      * <pre>
      * Status Code
      * The status code to be communicated
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2c.Status.StatusCode code = 1;</code>
      */
     tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode getCode();
   }
   /**
-   * Protobuf type {@code tud.seemuh.nfcgate.network.c2c.Status}
-   *
    * <pre>
    * Status Messages
    * Messages for communicating status changes
    * </pre>
+   *
+   * Protobuf type {@code tud.seemuh.nfcgate.network.c2c.Status}
    */
-  public static final class Status extends
-      com.google.protobuf.GeneratedMessage implements
+  public  static final class Status extends
+      com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:tud.seemuh.nfcgate.network.c2c.Status)
       StatusOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use Status.newBuilder() to construct.
-    private Status(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private Status(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
-      this.unknownFields = builder.getUnknownFields();
     }
-    private Status(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final Status defaultInstance;
-    public static Status getDefaultInstance() {
-      return defaultInstance;
+    private Status() {
+      code_ = 0;
     }
 
-    public Status getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
+    getUnknownFields() {
       return this.unknownFields;
     }
     private Status(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -1450,8 +1365,8 @@ public final class C2C {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
                 done = true;
               }
               break;
@@ -1463,7 +1378,7 @@ public final class C2C {
                 unknownFields.mergeVarintField(1, rawValue);
               } else {
                 bitField0_ |= 0x00000001;
-                code_ = value;
+                code_ = rawValue;
               }
               break;
             }
@@ -1473,7 +1388,7 @@ public final class C2C {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
+            e).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -1484,26 +1399,11 @@ public final class C2C {
       return tud.seemuh.nfcgate.network.c2c.C2C.internal_static_tud_seemuh_nfcgate_network_c2c_Status_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return tud.seemuh.nfcgate.network.c2c.C2C.internal_static_tud_seemuh_nfcgate_network_c2c_Status_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               tud.seemuh.nfcgate.network.c2c.C2C.Status.class, tud.seemuh.nfcgate.network.c2c.C2C.Status.Builder.class);
-    }
-
-    public static com.google.protobuf.Parser<Status> PARSER =
-        new com.google.protobuf.AbstractParser<Status>() {
-      public Status parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Status(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<Status> getParserForType() {
-      return PARSER;
     }
 
     /**
@@ -1514,47 +1414,47 @@ public final class C2C {
       /**
        * <code>KEEPALIVE_REQ = 0;</code>
        */
-      KEEPALIVE_REQ(0, 0),
+      KEEPALIVE_REQ(0),
       /**
        * <code>KEEPALIVE_REP = 1;</code>
        */
-      KEEPALIVE_REP(1, 1),
+      KEEPALIVE_REP(1),
       /**
        * <code>CARD_FOUND = 2;</code>
        */
-      CARD_FOUND(2, 2),
+      CARD_FOUND(2),
       /**
        * <code>CARD_REMOVED = 3;</code>
        */
-      CARD_REMOVED(3, 3),
+      CARD_REMOVED(3),
       /**
        * <code>READER_FOUND = 4;</code>
        */
-      READER_FOUND(4, 4),
+      READER_FOUND(4),
       /**
        * <code>READER_REMOVED = 5;</code>
        */
-      READER_REMOVED(5, 5),
+      READER_REMOVED(5),
       /**
        * <code>NFC_NO_CONN = 6;</code>
        */
-      NFC_NO_CONN(6, 6),
+      NFC_NO_CONN(6),
       /**
        * <code>INVALID_MSG_FMT = 7;</code>
        */
-      INVALID_MSG_FMT(7, 7),
+      INVALID_MSG_FMT(7),
       /**
        * <code>NOT_IMPLEMENTED = 8;</code>
        */
-      NOT_IMPLEMENTED(8, 8),
+      NOT_IMPLEMENTED(8),
       /**
        * <code>UNKNOWN_MESSAGE = 9;</code>
        */
-      UNKNOWN_MESSAGE(9, 9),
+      UNKNOWN_MESSAGE(9),
       /**
        * <code>UNKNOWN_ERROR = 10;</code>
        */
-      UNKNOWN_ERROR(10, 10),
+      UNKNOWN_ERROR(10),
       ;
 
       /**
@@ -1603,9 +1503,19 @@ public final class C2C {
       public static final int UNKNOWN_ERROR_VALUE = 10;
 
 
-      public final int getNumber() { return value; }
+      public final int getNumber() {
+        return value;
+      }
 
+      /**
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
       public static StatusCode valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static StatusCode forNumber(int value) {
         switch (value) {
           case 0: return KEEPALIVE_REQ;
           case 1: return KEEPALIVE_REP;
@@ -1626,17 +1536,17 @@ public final class C2C {
           internalGetValueMap() {
         return internalValueMap;
       }
-      private static com.google.protobuf.Internal.EnumLiteMap<StatusCode>
-          internalValueMap =
+      private static final com.google.protobuf.Internal.EnumLiteMap<
+          StatusCode> internalValueMap =
             new com.google.protobuf.Internal.EnumLiteMap<StatusCode>() {
               public StatusCode findValueByNumber(int number) {
-                return StatusCode.valueOf(number);
+                return StatusCode.forNumber(number);
               }
             };
 
       public final com.google.protobuf.Descriptors.EnumValueDescriptor
           getValueDescriptor() {
-        return getDescriptor().getValues().get(index);
+        return getDescriptor().getValues().get(ordinal());
       }
       public final com.google.protobuf.Descriptors.EnumDescriptor
           getDescriptorForType() {
@@ -1658,11 +1568,9 @@ public final class C2C {
         return VALUES[desc.getIndex()];
       }
 
-      private final int index;
       private final int value;
 
-      private StatusCode(int index, int value) {
-        this.index = index;
+      private StatusCode(int value) {
         this.value = value;
       }
 
@@ -1671,33 +1579,31 @@ public final class C2C {
 
     private int bitField0_;
     public static final int CODE_FIELD_NUMBER = 1;
-    private tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode code_;
+    private int code_;
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2c.Status.StatusCode code = 1;</code>
-     *
      * <pre>
      * Status Code
      * The status code to be communicated
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2c.Status.StatusCode code = 1;</code>
      */
     public boolean hasCode() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required .tud.seemuh.nfcgate.network.c2c.Status.StatusCode code = 1;</code>
-     *
      * <pre>
      * Status Code
      * The status code to be communicated
      * </pre>
+     *
+     * <code>required .tud.seemuh.nfcgate.network.c2c.Status.StatusCode code = 1;</code>
      */
     public tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode getCode() {
-      return code_;
+      tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode result = tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode.valueOf(code_);
+      return result == null ? tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode.KEEPALIVE_REQ : result;
     }
 
-    private void initFields() {
-      code_ = tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode.KEEPALIVE_REQ;
-    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -1714,35 +1620,72 @@ public final class C2C {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeEnum(1, code_.getNumber());
+        output.writeEnum(1, code_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
-    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSerializedSize;
+      int size = memoizedSize;
       if (size != -1) return size;
 
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(1, code_.getNumber());
+          .computeEnumSize(1, code_);
       }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof tud.seemuh.nfcgate.network.c2c.C2C.Status)) {
+        return super.equals(obj);
+      }
+      tud.seemuh.nfcgate.network.c2c.C2C.Status other = (tud.seemuh.nfcgate.network.c2c.C2C.Status) obj;
+
+      boolean result = true;
+      result = result && (hasCode() == other.hasCode());
+      if (hasCode()) {
+        result = result && code_ == other.code_;
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
     }
 
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasCode()) {
+        hash = (37 * hash) + CODE_FIELD_NUMBER;
+        hash = (53 * hash) + code_;
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static tud.seemuh.nfcgate.network.c2c.C2C.Status parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static tud.seemuh.nfcgate.network.c2c.C2C.Status parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static tud.seemuh.nfcgate.network.c2c.C2C.Status parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1766,59 +1709,70 @@ public final class C2C {
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.Status parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.Status parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.Status parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.Status parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.Status parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.c2c.C2C.Status parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(tud.seemuh.nfcgate.network.c2c.C2C.Status prototype) {
-      return newBuilder().mergeFrom(prototype);
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
     }
-    public Builder toBuilder() { return newBuilder(this); }
+    public static Builder newBuilder(tud.seemuh.nfcgate.network.c2c.C2C.Status prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
     /**
-     * Protobuf type {@code tud.seemuh.nfcgate.network.c2c.Status}
-     *
      * <pre>
      * Status Messages
      * Messages for communicating status changes
      * </pre>
+     *
+     * Protobuf type {@code tud.seemuh.nfcgate.network.c2c.Status}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:tud.seemuh.nfcgate.network.c2c.Status)
         tud.seemuh.nfcgate.network.c2c.C2C.StatusOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -1826,7 +1780,7 @@ public final class C2C {
         return tud.seemuh.nfcgate.network.c2c.C2C.internal_static_tud_seemuh_nfcgate_network_c2c_Status_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return tud.seemuh.nfcgate.network.c2c.C2C.internal_static_tud_seemuh_nfcgate_network_c2c_Status_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -1839,27 +1793,20 @@ public final class C2C {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
         }
       }
-      private static Builder create() {
-        return new Builder();
-      }
-
       public Builder clear() {
         super.clear();
-        code_ = tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode.KEEPALIVE_REQ;
+        code_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
         return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -1892,6 +1839,32 @@ public final class C2C {
         return result;
       }
 
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof tud.seemuh.nfcgate.network.c2c.C2C.Status) {
           return mergeFrom((tud.seemuh.nfcgate.network.c2c.C2C.Status)other);
@@ -1906,13 +1879,13 @@ public final class C2C {
         if (other.hasCode()) {
           setCode(other.getCode());
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
         return this;
       }
 
       public final boolean isInitialized() {
         if (!hasCode()) {
-          
           return false;
         }
         return true;
@@ -1927,7 +1900,7 @@ public final class C2C {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (tud.seemuh.nfcgate.network.c2c.C2C.Status) e.getUnfinishedMessage();
-          throw e;
+          throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -1937,93 +1910,131 @@ public final class C2C {
       }
       private int bitField0_;
 
-      private tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode code_ = tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode.KEEPALIVE_REQ;
+      private int code_ = 0;
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2c.Status.StatusCode code = 1;</code>
-       *
        * <pre>
        * Status Code
        * The status code to be communicated
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2c.Status.StatusCode code = 1;</code>
        */
       public boolean hasCode() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2c.Status.StatusCode code = 1;</code>
-       *
        * <pre>
        * Status Code
        * The status code to be communicated
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2c.Status.StatusCode code = 1;</code>
        */
       public tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode getCode() {
-        return code_;
+        tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode result = tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode.valueOf(code_);
+        return result == null ? tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode.KEEPALIVE_REQ : result;
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2c.Status.StatusCode code = 1;</code>
-       *
        * <pre>
        * Status Code
        * The status code to be communicated
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2c.Status.StatusCode code = 1;</code>
        */
       public Builder setCode(tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode value) {
         if (value == null) {
           throw new NullPointerException();
         }
         bitField0_ |= 0x00000001;
-        code_ = value;
+        code_ = value.getNumber();
         onChanged();
         return this;
       }
       /**
-       * <code>required .tud.seemuh.nfcgate.network.c2c.Status.StatusCode code = 1;</code>
-       *
        * <pre>
        * Status Code
        * The status code to be communicated
        * </pre>
+       *
+       * <code>required .tud.seemuh.nfcgate.network.c2c.Status.StatusCode code = 1;</code>
        */
       public Builder clearCode() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        code_ = tud.seemuh.nfcgate.network.c2c.C2C.Status.StatusCode.KEEPALIVE_REQ;
+        code_ = 0;
         onChanged();
         return this;
       }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
 
       // @@protoc_insertion_point(builder_scope:tud.seemuh.nfcgate.network.c2c.Status)
     }
 
+    // @@protoc_insertion_point(class_scope:tud.seemuh.nfcgate.network.c2c.Status)
+    private static final tud.seemuh.nfcgate.network.c2c.C2C.Status DEFAULT_INSTANCE;
     static {
-      defaultInstance = new Status(true);
-      defaultInstance.initFields();
+      DEFAULT_INSTANCE = new tud.seemuh.nfcgate.network.c2c.C2C.Status();
     }
 
-    // @@protoc_insertion_point(class_scope:tud.seemuh.nfcgate.network.c2c.Status)
+    public static tud.seemuh.nfcgate.network.c2c.C2C.Status getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    @java.lang.Deprecated public static final com.google.protobuf.Parser<Status>
+        PARSER = new com.google.protobuf.AbstractParser<Status>() {
+      public Status parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new Status(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<Status> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Status> getParserForType() {
+      return PARSER;
+    }
+
+    public tud.seemuh.nfcgate.network.c2c.C2C.Status getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_tud_seemuh_nfcgate_network_c2c_NFCData_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_tud_seemuh_nfcgate_network_c2c_NFCData_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_tud_seemuh_nfcgate_network_c2c_Status_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_tud_seemuh_nfcgate_network_c2c_Status_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
     return descriptor;
   }
-  private static com.google.protobuf.Descriptors.FileDescriptor
+  private static  com.google.protobuf.Descriptors.FileDescriptor
       descriptor;
   static {
     java.lang.String[] descriptorData = {
@@ -2031,16 +2042,15 @@ public final class C2C {
       "c2c\"\212\001\n\007NFCData\022G\n\013data_source\030\001 \002(\01622.t" +
       "ud.seemuh.nfcgate.network.c2c.NFCData.Da" +
       "taSource\022\022\n\ndata_bytes\030\002 \002(\014\"\"\n\nDataSour" +
-      "ce\022\n\n\006READER\020\000\022\010\n\004CARD\020\001\"J\n\007Anticol\022\013\n\003U" +
-      "ID\030\001 \002(\014\022\027\n\017historical_byte\030\002 \002(\014\022\014\n\004ATQ" +
-      "A\030\003 \002(\014\022\013\n\003SAK\030\004 \002(\014\"\251\002\n\006Status\022?\n\004code\030" +
-      "\001 \002(\01621.tud.seemuh.nfcgate.network.c2c.S" +
-      "tatus.StatusCode\"\335\001\n\nStatusCode\022\021\n\rKEEPA" +
-      "LIVE_REQ\020\000\022\021\n\rKEEPALIVE_REP\020\001\022\016\n\nCARD_FO",
-      "UND\020\002\022\020\n\014CARD_REMOVED\020\003\022\020\n\014READER_FOUND\020" +
-      "\004\022\022\n\016READER_REMOVED\020\005\022\017\n\013NFC_NO_CONN\020\006\022\023" +
-      "\n\017INVALID_MSG_FMT\020\007\022\023\n\017NOT_IMPLEMENTED\020\010" +
-      "\022\023\n\017UNKNOWN_MESSAGE\020\t\022\021\n\rUNKNOWN_ERROR\020\n"
+      "ce\022\n\n\006READER\020\000\022\010\n\004CARD\020\001\"\031\n\007Anticol\022\016\n\006C" +
+      "ONFIG\030\001 \002(\014\"\251\002\n\006Status\022?\n\004code\030\001 \002(\01621.t" +
+      "ud.seemuh.nfcgate.network.c2c.Status.Sta" +
+      "tusCode\"\335\001\n\nStatusCode\022\021\n\rKEEPALIVE_REQ\020" +
+      "\000\022\021\n\rKEEPALIVE_REP\020\001\022\016\n\nCARD_FOUND\020\002\022\020\n\014" +
+      "CARD_REMOVED\020\003\022\020\n\014READER_FOUND\020\004\022\022\n\016READ" +
+      "ER_REMOVED\020\005\022\017\n\013NFC_NO_CONN\020\006\022\023\n\017INVALID" +
+      "_MSG_FMT\020\007\022\023\n\017NOT_IMPLEMENTED\020\010\022\023\n\017UNKNO" +
+      "WN_MESSAGE\020\t\022\021\n\rUNKNOWN_ERROR\020\n"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -2057,19 +2067,19 @@ public final class C2C {
     internal_static_tud_seemuh_nfcgate_network_c2c_NFCData_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_tud_seemuh_nfcgate_network_c2c_NFCData_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_tud_seemuh_nfcgate_network_c2c_NFCData_descriptor,
         new java.lang.String[] { "DataSource", "DataBytes", });
     internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_tud_seemuh_nfcgate_network_c2c_Anticol_descriptor,
-        new java.lang.String[] { "UID", "HistoricalByte", "ATQA", "SAK", });
+        new java.lang.String[] { "CONFIG", });
     internal_static_tud_seemuh_nfcgate_network_c2c_Status_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_tud_seemuh_nfcgate_network_c2c_Status_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_tud_seemuh_nfcgate_network_c2c_Status_descriptor,
         new java.lang.String[] { "Code", });
   }

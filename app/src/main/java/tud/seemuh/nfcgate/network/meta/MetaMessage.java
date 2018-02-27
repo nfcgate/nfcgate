@@ -6,7 +6,13 @@ package tud.seemuh.nfcgate.network.meta;
 public final class MetaMessage {
   private MetaMessage() {}
   public static void registerAllExtensions(
+      com.google.protobuf.ExtensionRegistryLite registry) {
+  }
+
+  public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
+    registerAllExtensions(
+        (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   public interface WrapperOrBuilder extends
       // @@protoc_insertion_point(interface_extends:tud.seemuh.nfcgate.network.meta.Wrapper)
@@ -76,48 +82,44 @@ public final class MetaMessage {
      * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
      */
     tud.seemuh.nfcgate.network.c2s.C2S.SessionOrBuilder getSessionOrBuilder();
+
+    public tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase getMessageCase();
   }
   /**
-   * Protobuf type {@code tud.seemuh.nfcgate.network.meta.Wrapper}
-   *
    * <pre>
    * Wrapper Message
    * This message contains another message
    * This is used to ensure that we only ever have to
    * expect one message type coming from the network
    * </pre>
+   *
+   * Protobuf type {@code tud.seemuh.nfcgate.network.meta.Wrapper}
    */
-  public static final class Wrapper extends
-      com.google.protobuf.GeneratedMessage implements
+  public  static final class Wrapper extends
+      com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:tud.seemuh.nfcgate.network.meta.Wrapper)
       WrapperOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use Wrapper.newBuilder() to construct.
-    private Wrapper(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+    private Wrapper(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
-      this.unknownFields = builder.getUnknownFields();
     }
-    private Wrapper(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
-
-    private static final Wrapper defaultInstance;
-    public static Wrapper getDefaultInstance() {
-      return defaultInstance;
+    private Wrapper() {
     }
 
-    public Wrapper getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
-        getUnknownFields() {
+    getUnknownFields() {
       return this.unknownFields;
     }
     private Wrapper(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      initFields();
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
@@ -130,8 +132,8 @@ public final class MetaMessage {
               done = true;
               break;
             default: {
-              if (!parseUnknownField(input, unknownFields,
-                                     extensionRegistry, tag)) {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
                 done = true;
               }
               break;
@@ -141,7 +143,8 @@ public final class MetaMessage {
               if (messageCase_ == 2) {
                 subBuilder = ((tud.seemuh.nfcgate.network.c2c.C2C.NFCData) message_).toBuilder();
               }
-              message_ = input.readMessage(tud.seemuh.nfcgate.network.c2c.C2C.NFCData.PARSER, extensionRegistry);
+              message_ =
+                  input.readMessage(tud.seemuh.nfcgate.network.c2c.C2C.NFCData.PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom((tud.seemuh.nfcgate.network.c2c.C2C.NFCData) message_);
                 message_ = subBuilder.buildPartial();
@@ -154,7 +157,8 @@ public final class MetaMessage {
               if (messageCase_ == 3) {
                 subBuilder = ((tud.seemuh.nfcgate.network.c2c.C2C.Anticol) message_).toBuilder();
               }
-              message_ = input.readMessage(tud.seemuh.nfcgate.network.c2c.C2C.Anticol.PARSER, extensionRegistry);
+              message_ =
+                  input.readMessage(tud.seemuh.nfcgate.network.c2c.C2C.Anticol.PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom((tud.seemuh.nfcgate.network.c2c.C2C.Anticol) message_);
                 message_ = subBuilder.buildPartial();
@@ -167,7 +171,8 @@ public final class MetaMessage {
               if (messageCase_ == 4) {
                 subBuilder = ((tud.seemuh.nfcgate.network.c2c.C2C.Status) message_).toBuilder();
               }
-              message_ = input.readMessage(tud.seemuh.nfcgate.network.c2c.C2C.Status.PARSER, extensionRegistry);
+              message_ =
+                  input.readMessage(tud.seemuh.nfcgate.network.c2c.C2C.Status.PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom((tud.seemuh.nfcgate.network.c2c.C2C.Status) message_);
                 message_ = subBuilder.buildPartial();
@@ -180,7 +185,8 @@ public final class MetaMessage {
               if (messageCase_ == 5) {
                 subBuilder = ((tud.seemuh.nfcgate.network.c2s.C2S.Data) message_).toBuilder();
               }
-              message_ = input.readMessage(tud.seemuh.nfcgate.network.c2s.C2S.Data.PARSER, extensionRegistry);
+              message_ =
+                  input.readMessage(tud.seemuh.nfcgate.network.c2s.C2S.Data.PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom((tud.seemuh.nfcgate.network.c2s.C2S.Data) message_);
                 message_ = subBuilder.buildPartial();
@@ -193,7 +199,8 @@ public final class MetaMessage {
               if (messageCase_ == 6) {
                 subBuilder = ((tud.seemuh.nfcgate.network.c2s.C2S.Session) message_).toBuilder();
               }
-              message_ = input.readMessage(tud.seemuh.nfcgate.network.c2s.C2S.Session.PARSER, extensionRegistry);
+              message_ =
+                  input.readMessage(tud.seemuh.nfcgate.network.c2s.C2S.Session.PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom((tud.seemuh.nfcgate.network.c2s.C2S.Session) message_);
                 message_ = subBuilder.buildPartial();
@@ -207,7 +214,7 @@ public final class MetaMessage {
         throw e.setUnfinishedMessage(this);
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
+            e).setUnfinishedMessage(this);
       } finally {
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -218,26 +225,11 @@ public final class MetaMessage {
       return tud.seemuh.nfcgate.network.meta.MetaMessage.internal_static_tud_seemuh_nfcgate_network_meta_Wrapper_descriptor;
     }
 
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return tud.seemuh.nfcgate.network.meta.MetaMessage.internal_static_tud_seemuh_nfcgate_network_meta_Wrapper_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.class, tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.Builder.class);
-    }
-
-    public static com.google.protobuf.Parser<Wrapper> PARSER =
-        new com.google.protobuf.AbstractParser<Wrapper>() {
-      public Wrapper parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Wrapper(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<Wrapper> getParserForType() {
-      return PARSER;
     }
 
     private int bitField0_;
@@ -251,11 +243,19 @@ public final class MetaMessage {
       DATA(5),
       SESSION(6),
       MESSAGE_NOT_SET(0);
-      private int value = 0;
+      private final int value;
       private MessageCase(int value) {
         this.value = value;
       }
+      /**
+       * @deprecated Use {@link #forNumber(int)} instead.
+       */
+      @java.lang.Deprecated
       public static MessageCase valueOf(int value) {
+        return forNumber(value);
+      }
+
+      public static MessageCase forNumber(int value) {
         switch (value) {
           case 2: return NFCDATA;
           case 3: return ANTICOL;
@@ -263,8 +263,7 @@ public final class MetaMessage {
           case 5: return DATA;
           case 6: return SESSION;
           case 0: return MESSAGE_NOT_SET;
-          default: throw new java.lang.IllegalArgumentException(
-            "Value is undefined for this oneof enum.");
+          default: return null;
         }
       }
       public int getNumber() {
@@ -274,7 +273,7 @@ public final class MetaMessage {
 
     public MessageCase
     getMessageCase() {
-      return MessageCase.valueOf(
+      return MessageCase.forNumber(
           messageCase_);
     }
 
@@ -408,8 +407,6 @@ public final class MetaMessage {
       return tud.seemuh.nfcgate.network.c2s.C2S.Session.getDefaultInstance();
     }
 
-    private void initFields() {
-    }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -452,7 +449,6 @@ public final class MetaMessage {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      getSerializedSize();
       if (messageCase_ == 2) {
         output.writeMessage(2, (tud.seemuh.nfcgate.network.c2c.C2C.NFCData) message_);
       }
@@ -468,12 +464,11 @@ public final class MetaMessage {
       if (messageCase_ == 6) {
         output.writeMessage(6, (tud.seemuh.nfcgate.network.c2s.C2S.Session) message_);
       }
-      getUnknownFields().writeTo(output);
+      unknownFields.writeTo(output);
     }
 
-    private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
-      int size = memoizedSerializedSize;
+      int size = memoizedSize;
       if (size != -1) return size;
 
       size = 0;
@@ -497,18 +492,100 @@ public final class MetaMessage {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(6, (tud.seemuh.nfcgate.network.c2s.C2S.Session) message_);
       }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper)) {
+        return super.equals(obj);
+      }
+      tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper other = (tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper) obj;
+
+      boolean result = true;
+      result = result && getMessageCase().equals(
+          other.getMessageCase());
+      if (!result) return false;
+      switch (messageCase_) {
+        case 2:
+          result = result && getNFCData()
+              .equals(other.getNFCData());
+          break;
+        case 3:
+          result = result && getAnticol()
+              .equals(other.getAnticol());
+          break;
+        case 4:
+          result = result && getStatus()
+              .equals(other.getStatus());
+          break;
+        case 5:
+          result = result && getData()
+              .equals(other.getData());
+          break;
+        case 6:
+          result = result && getSession()
+              .equals(other.getSession());
+          break;
+        case 0:
+        default:
+      }
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
     }
 
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      switch (messageCase_) {
+        case 2:
+          hash = (37 * hash) + NFCDATA_FIELD_NUMBER;
+          hash = (53 * hash) + getNFCData().hashCode();
+          break;
+        case 3:
+          hash = (37 * hash) + ANTICOL_FIELD_NUMBER;
+          hash = (53 * hash) + getAnticol().hashCode();
+          break;
+        case 4:
+          hash = (37 * hash) + STATUS_FIELD_NUMBER;
+          hash = (53 * hash) + getStatus().hashCode();
+          break;
+        case 5:
+          hash = (37 * hash) + DATA_FIELD_NUMBER;
+          hash = (53 * hash) + getData().hashCode();
+          break;
+        case 6:
+          hash = (37 * hash) + SESSION_FIELD_NUMBER;
+          hash = (53 * hash) + getSession().hashCode();
+          break;
+        case 0:
+        default:
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -532,61 +609,72 @@ public final class MetaMessage {
     }
     public static tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
     public static tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
     public static tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return PARSER.parseFrom(input);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
     }
     public static tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper prototype) {
-      return newBuilder().mergeFrom(prototype);
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
     }
-    public Builder toBuilder() { return newBuilder(this); }
+    public static Builder newBuilder(tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
 
     @java.lang.Override
     protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
     /**
-     * Protobuf type {@code tud.seemuh.nfcgate.network.meta.Wrapper}
-     *
      * <pre>
      * Wrapper Message
      * This message contains another message
      * This is used to ensure that we only ever have to
      * expect one message type coming from the network
      * </pre>
+     *
+     * Protobuf type {@code tud.seemuh.nfcgate.network.meta.Wrapper}
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:tud.seemuh.nfcgate.network.meta.Wrapper)
         tud.seemuh.nfcgate.network.meta.MetaMessage.WrapperOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
@@ -594,7 +682,7 @@ public final class MetaMessage {
         return tud.seemuh.nfcgate.network.meta.MetaMessage.internal_static_tud_seemuh_nfcgate_network_meta_Wrapper_descriptor;
       }
 
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return tud.seemuh.nfcgate.network.meta.MetaMessage.internal_static_tud_seemuh_nfcgate_network_meta_Wrapper_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
@@ -607,27 +695,20 @@ public final class MetaMessage {
       }
 
       private Builder(
-          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
       private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
         }
       }
-      private static Builder create() {
-        return new Builder();
-      }
-
       public Builder clear() {
         super.clear();
         messageCase_ = 0;
         message_ = null;
         return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
       }
 
       public com.google.protobuf.Descriptors.Descriptor
@@ -692,6 +773,32 @@ public final class MetaMessage {
         return result;
       }
 
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper) {
           return mergeFrom((tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper)other);
@@ -728,38 +835,34 @@ public final class MetaMessage {
             break;
           }
         }
-        this.mergeUnknownFields(other.getUnknownFields());
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
         return this;
       }
 
       public final boolean isInitialized() {
         if (hasNFCData()) {
           if (!getNFCData().isInitialized()) {
-            
             return false;
           }
         }
         if (hasAnticol()) {
           if (!getAnticol().isInitialized()) {
-            
             return false;
           }
         }
         if (hasStatus()) {
           if (!getStatus().isInitialized()) {
-            
             return false;
           }
         }
         if (hasData()) {
           if (!getData().isInitialized()) {
-            
             return false;
           }
         }
         if (hasSession()) {
           if (!getSession().isInitialized()) {
-            
             return false;
           }
         }
@@ -775,7 +878,7 @@ public final class MetaMessage {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
           parsedMessage = (tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper) e.getUnfinishedMessage();
-          throw e;
+          throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
             mergeFrom(parsedMessage);
@@ -787,7 +890,7 @@ public final class MetaMessage {
       private java.lang.Object message_;
       public MessageCase
           getMessageCase() {
-        return MessageCase.valueOf(
+        return MessageCase.forNumber(
             messageCase_);
       }
 
@@ -800,7 +903,7 @@ public final class MetaMessage {
 
       private int bitField0_;
 
-      private com.google.protobuf.SingleFieldBuilder<
+      private com.google.protobuf.SingleFieldBuilderV3<
           tud.seemuh.nfcgate.network.c2c.C2C.NFCData, tud.seemuh.nfcgate.network.c2c.C2C.NFCData.Builder, tud.seemuh.nfcgate.network.c2c.C2C.NFCDataOrBuilder> nFCDataBuilder_;
       /**
        * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData NFCData = 2;</code>
@@ -917,14 +1020,14 @@ public final class MetaMessage {
       /**
        * <code>optional .tud.seemuh.nfcgate.network.c2c.NFCData NFCData = 2;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private com.google.protobuf.SingleFieldBuilderV3<
           tud.seemuh.nfcgate.network.c2c.C2C.NFCData, tud.seemuh.nfcgate.network.c2c.C2C.NFCData.Builder, tud.seemuh.nfcgate.network.c2c.C2C.NFCDataOrBuilder> 
           getNFCDataFieldBuilder() {
         if (nFCDataBuilder_ == null) {
           if (!(messageCase_ == 2)) {
             message_ = tud.seemuh.nfcgate.network.c2c.C2C.NFCData.getDefaultInstance();
           }
-          nFCDataBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          nFCDataBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
               tud.seemuh.nfcgate.network.c2c.C2C.NFCData, tud.seemuh.nfcgate.network.c2c.C2C.NFCData.Builder, tud.seemuh.nfcgate.network.c2c.C2C.NFCDataOrBuilder>(
                   (tud.seemuh.nfcgate.network.c2c.C2C.NFCData) message_,
                   getParentForChildren(),
@@ -932,10 +1035,11 @@ public final class MetaMessage {
           message_ = null;
         }
         messageCase_ = 2;
+        onChanged();;
         return nFCDataBuilder_;
       }
 
-      private com.google.protobuf.SingleFieldBuilder<
+      private com.google.protobuf.SingleFieldBuilderV3<
           tud.seemuh.nfcgate.network.c2c.C2C.Anticol, tud.seemuh.nfcgate.network.c2c.C2C.Anticol.Builder, tud.seemuh.nfcgate.network.c2c.C2C.AnticolOrBuilder> anticolBuilder_;
       /**
        * <code>optional .tud.seemuh.nfcgate.network.c2c.Anticol Anticol = 3;</code>
@@ -1052,14 +1156,14 @@ public final class MetaMessage {
       /**
        * <code>optional .tud.seemuh.nfcgate.network.c2c.Anticol Anticol = 3;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private com.google.protobuf.SingleFieldBuilderV3<
           tud.seemuh.nfcgate.network.c2c.C2C.Anticol, tud.seemuh.nfcgate.network.c2c.C2C.Anticol.Builder, tud.seemuh.nfcgate.network.c2c.C2C.AnticolOrBuilder> 
           getAnticolFieldBuilder() {
         if (anticolBuilder_ == null) {
           if (!(messageCase_ == 3)) {
             message_ = tud.seemuh.nfcgate.network.c2c.C2C.Anticol.getDefaultInstance();
           }
-          anticolBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          anticolBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
               tud.seemuh.nfcgate.network.c2c.C2C.Anticol, tud.seemuh.nfcgate.network.c2c.C2C.Anticol.Builder, tud.seemuh.nfcgate.network.c2c.C2C.AnticolOrBuilder>(
                   (tud.seemuh.nfcgate.network.c2c.C2C.Anticol) message_,
                   getParentForChildren(),
@@ -1067,10 +1171,11 @@ public final class MetaMessage {
           message_ = null;
         }
         messageCase_ = 3;
+        onChanged();;
         return anticolBuilder_;
       }
 
-      private com.google.protobuf.SingleFieldBuilder<
+      private com.google.protobuf.SingleFieldBuilderV3<
           tud.seemuh.nfcgate.network.c2c.C2C.Status, tud.seemuh.nfcgate.network.c2c.C2C.Status.Builder, tud.seemuh.nfcgate.network.c2c.C2C.StatusOrBuilder> statusBuilder_;
       /**
        * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 4;</code>
@@ -1187,14 +1292,14 @@ public final class MetaMessage {
       /**
        * <code>optional .tud.seemuh.nfcgate.network.c2c.Status Status = 4;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private com.google.protobuf.SingleFieldBuilderV3<
           tud.seemuh.nfcgate.network.c2c.C2C.Status, tud.seemuh.nfcgate.network.c2c.C2C.Status.Builder, tud.seemuh.nfcgate.network.c2c.C2C.StatusOrBuilder> 
           getStatusFieldBuilder() {
         if (statusBuilder_ == null) {
           if (!(messageCase_ == 4)) {
             message_ = tud.seemuh.nfcgate.network.c2c.C2C.Status.getDefaultInstance();
           }
-          statusBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          statusBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
               tud.seemuh.nfcgate.network.c2c.C2C.Status, tud.seemuh.nfcgate.network.c2c.C2C.Status.Builder, tud.seemuh.nfcgate.network.c2c.C2C.StatusOrBuilder>(
                   (tud.seemuh.nfcgate.network.c2c.C2C.Status) message_,
                   getParentForChildren(),
@@ -1202,10 +1307,11 @@ public final class MetaMessage {
           message_ = null;
         }
         messageCase_ = 4;
+        onChanged();;
         return statusBuilder_;
       }
 
-      private com.google.protobuf.SingleFieldBuilder<
+      private com.google.protobuf.SingleFieldBuilderV3<
           tud.seemuh.nfcgate.network.c2s.C2S.Data, tud.seemuh.nfcgate.network.c2s.C2S.Data.Builder, tud.seemuh.nfcgate.network.c2s.C2S.DataOrBuilder> dataBuilder_;
       /**
        * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 5;</code>
@@ -1322,14 +1428,14 @@ public final class MetaMessage {
       /**
        * <code>optional .tud.seemuh.nfcgate.network.c2s.Data Data = 5;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private com.google.protobuf.SingleFieldBuilderV3<
           tud.seemuh.nfcgate.network.c2s.C2S.Data, tud.seemuh.nfcgate.network.c2s.C2S.Data.Builder, tud.seemuh.nfcgate.network.c2s.C2S.DataOrBuilder> 
           getDataFieldBuilder() {
         if (dataBuilder_ == null) {
           if (!(messageCase_ == 5)) {
             message_ = tud.seemuh.nfcgate.network.c2s.C2S.Data.getDefaultInstance();
           }
-          dataBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          dataBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
               tud.seemuh.nfcgate.network.c2s.C2S.Data, tud.seemuh.nfcgate.network.c2s.C2S.Data.Builder, tud.seemuh.nfcgate.network.c2s.C2S.DataOrBuilder>(
                   (tud.seemuh.nfcgate.network.c2s.C2S.Data) message_,
                   getParentForChildren(),
@@ -1337,10 +1443,11 @@ public final class MetaMessage {
           message_ = null;
         }
         messageCase_ = 5;
+        onChanged();;
         return dataBuilder_;
       }
 
-      private com.google.protobuf.SingleFieldBuilder<
+      private com.google.protobuf.SingleFieldBuilderV3<
           tud.seemuh.nfcgate.network.c2s.C2S.Session, tud.seemuh.nfcgate.network.c2s.C2S.Session.Builder, tud.seemuh.nfcgate.network.c2s.C2S.SessionOrBuilder> sessionBuilder_;
       /**
        * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
@@ -1457,14 +1564,14 @@ public final class MetaMessage {
       /**
        * <code>optional .tud.seemuh.nfcgate.network.c2s.Session Session = 6;</code>
        */
-      private com.google.protobuf.SingleFieldBuilder<
+      private com.google.protobuf.SingleFieldBuilderV3<
           tud.seemuh.nfcgate.network.c2s.C2S.Session, tud.seemuh.nfcgate.network.c2s.C2S.Session.Builder, tud.seemuh.nfcgate.network.c2s.C2S.SessionOrBuilder> 
           getSessionFieldBuilder() {
         if (sessionBuilder_ == null) {
           if (!(messageCase_ == 6)) {
             message_ = tud.seemuh.nfcgate.network.c2s.C2S.Session.getDefaultInstance();
           }
-          sessionBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+          sessionBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
               tud.seemuh.nfcgate.network.c2s.C2S.Session, tud.seemuh.nfcgate.network.c2s.C2S.Session.Builder, tud.seemuh.nfcgate.network.c2s.C2S.SessionOrBuilder>(
                   (tud.seemuh.nfcgate.network.c2s.C2S.Session) message_,
                   getParentForChildren(),
@@ -1472,31 +1579,69 @@ public final class MetaMessage {
           message_ = null;
         }
         messageCase_ = 6;
+        onChanged();;
         return sessionBuilder_;
       }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
 
       // @@protoc_insertion_point(builder_scope:tud.seemuh.nfcgate.network.meta.Wrapper)
     }
 
+    // @@protoc_insertion_point(class_scope:tud.seemuh.nfcgate.network.meta.Wrapper)
+    private static final tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper DEFAULT_INSTANCE;
     static {
-      defaultInstance = new Wrapper(true);
-      defaultInstance.initFields();
+      DEFAULT_INSTANCE = new tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper();
     }
 
-    // @@protoc_insertion_point(class_scope:tud.seemuh.nfcgate.network.meta.Wrapper)
+    public static tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    @java.lang.Deprecated public static final com.google.protobuf.Parser<Wrapper>
+        PARSER = new com.google.protobuf.AbstractParser<Wrapper>() {
+      public Wrapper parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new Wrapper(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<Wrapper> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Wrapper> getParserForType() {
+      return PARSER;
+    }
+
+    public tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_tud_seemuh_nfcgate_network_meta_Wrapper_descriptor;
-  private static
-    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_tud_seemuh_nfcgate_network_meta_Wrapper_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
     return descriptor;
   }
-  private static com.google.protobuf.Descriptors.FileDescriptor
+  private static  com.google.protobuf.Descriptors.FileDescriptor
       descriptor;
   static {
     java.lang.String[] descriptorData = {
@@ -1528,7 +1673,7 @@ public final class MetaMessage {
     internal_static_tud_seemuh_nfcgate_network_meta_Wrapper_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_tud_seemuh_nfcgate_network_meta_Wrapper_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_tud_seemuh_nfcgate_network_meta_Wrapper_descriptor,
         new java.lang.String[] { "NFCData", "Anticol", "Status", "Data", "Session", "Message", });
     tud.seemuh.nfcgate.network.c2s.C2S.getDescriptor();
