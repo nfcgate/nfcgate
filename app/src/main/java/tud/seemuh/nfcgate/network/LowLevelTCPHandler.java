@@ -234,6 +234,7 @@ public class LowLevelTCPHandler implements LowLevelNetworkHandler {
                     }
                 }
             } catch (IOException e) {
+                Log.i(TAG, "IOERROR ", e);
                 if (mCallback != null) {
                     mCallback.notifyBrokenPipe();
                     return;
