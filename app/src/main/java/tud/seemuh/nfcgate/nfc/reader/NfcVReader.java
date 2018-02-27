@@ -1,7 +1,7 @@
 package tud.seemuh.nfcgate.nfc.reader;
 
 import android.nfc.Tag;
-import android.nfc.tech.NfcF;
+import android.nfc.tech.NfcV;
 import android.util.Log;
 
 import java.io.IOException;
@@ -14,7 +14,7 @@ import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
  */
 public class NfcVReader implements NFCTagReader {
     private final static String TAG = "NFC_READER_NFCV";
-    private NfcF mAdapter = null;
+    private NfcV mAdapter = null;
 
     /**
      * Constructor of NfcVReader-Class, providing an NFC reader interface using the NfcV-Tech.
@@ -23,7 +23,7 @@ public class NfcVReader implements NFCTagReader {
      */
     public NfcVReader(Tag tag) {
         // Create NFC Adapter to use
-        mAdapter = NfcF.get(tag);
+        mAdapter = NfcV.get(tag);
         try{
             // Connect the adapter to the NFC card
             mAdapter.connect();
