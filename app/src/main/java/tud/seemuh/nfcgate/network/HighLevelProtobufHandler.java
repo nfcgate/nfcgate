@@ -437,23 +437,17 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
             return;
         }
 
-        // Retrieve values // FIXME network
-        /*byte[] atqa = nfcdata.getAtqa();
-        byte sak = nfcdata.getSak();
-        byte[] hist = nfcdata.getHist();
-        byte[] uid = nfcdata.getUid();
+        // Retrieve values
+        byte[] config = nfcdata.getConfig().build();
 
         // Build reply protobuf
         C2C.Anticol.Builder b = C2C.Anticol.newBuilder();
-        b.setATQA(ByteString.copyFrom(atqa));
-        b.setSAK(ByteString.copyFrom(new byte[]{sak}));
-        b.setHistoricalByte(ByteString.copyFrom(hist));
-        b.setUID(ByteString.copyFrom(uid));
+        b.setCONFIG(ByteString.copyFrom(config));
 
         // TODO If we aren't in a session, cache this and send it as soon as a session is established?
         // (And delete it if the card is removed in the meantime)
         sendMessage(b.build(), MessageCase.ANTICOL);
-        Log.d(TAG, "sendAnticol: Sent Anticol message");*/
+        Log.d(TAG, "sendAnticol: Sent Anticol message");
     }
 
     // Session status management

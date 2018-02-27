@@ -9,6 +9,7 @@ import tud.seemuh.nfcgate.network.c2s.C2S.Session.SessionOpcode;
 import tud.seemuh.nfcgate.network.meta.MetaMessage;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
 import tud.seemuh.nfcgate.nfc.NfcManager;
+import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 /**
@@ -117,21 +118,9 @@ public class ProtobufCallback implements Callback {
     private void handleAnticol(C2C.Anticol msg) {
         Log.i(TAG, "handleAnticol: got anticol values");
 
-        // FIXME network
-        /*byte[] a_atqa = msg.getATQA().toByteArray();
-        byte atqa = a_atqa.length > 0 ? a_atqa[a_atqa.length-1] : 0;
+        final byte[] config = msg.getCONFIG().toByteArray();
 
-        byte[] a_hist = msg.getHistoricalByte().toByteArray();
-        byte hist = a_hist.length > 0 ? a_atqa[0] : 0;
-
-        byte[] a_sak = msg.getSAK().toByteArray();
-        byte sak = a_sak.length > 0 ? a_sak[0] : 0;
-
-        byte[] uid = msg.getUID().toByteArray();
-
-        NfcComm anticol = new NfcComm(a_atqa, sak, a_hist, uid);
-
-        mNfcManager.setAnticolData(anticol);*/
+        mNfcManager.setAnticolData(new NfcComm(new ConfigBuilder(config)));
     }
 
 
