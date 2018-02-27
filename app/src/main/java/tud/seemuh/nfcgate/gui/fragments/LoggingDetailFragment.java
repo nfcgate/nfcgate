@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
 import tud.seemuh.nfcgate.util.NfcComm;
 import tud.seemuh.nfcgate.util.NfcSession;
 import tud.seemuh.nfcgate.util.db.SessionLoggingContract;
@@ -257,15 +258,9 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
                     SessionLoggingContract.SessionEvent.COLUMN_NAME_DATE,
                     SessionLoggingContract.SessionEvent.COLUMN_NAME_TYPE,
                     SessionLoggingContract.SessionEvent.COLUMN_NAME_NFCDATA,
-                    SessionLoggingContract.SessionEvent.COLUMN_NAME_UID,
-                    SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA,
-                    SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK,
-                    SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST,
+                    SessionLoggingContract.SessionEvent.COLUMN_NAME_CONFIG,
                     SessionLoggingContract.SessionEvent.COLUMN_NAME_NFCDATA_PREFILTER,
-                    SessionLoggingContract.SessionEvent.COLUMN_NAME_UID_PREFILTER,
-                    SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA_PREFILTER,
-                    SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK_PREFILTER,
-                    SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST_PREFILTER,
+                    SessionLoggingContract.SessionEvent.COLUMN_NAME_CONFIG_PREFILTER,
             };
             // Define Sort order
             String sortorder = SessionLoggingContract.SessionEvent._ID + " ASC";
@@ -301,26 +296,20 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
                 return;
             }
             do {
-                // prepare NfcComm object //FIXME database
-                /*NfcComm comm;
+                // prepare NfcComm object
+                NfcComm comm;
                 String date = c.getString(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_DATE));
                 int type    = c.getInt(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_TYPE));
                 if (type == SessionLoggingContract.SessionEvent.VALUE_TYPE_ANTICOL) {
                     // Anticol
-                    byte[] uid     = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_UID));
-                    byte[] atqa    = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA));
-                    byte[] sak     = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK));
-                    byte[] hist    = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST));
-                    byte[] uid_pf  = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_UID_PREFILTER));
-                    byte[] atqa_pf = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA_PREFILTER));
-                    byte[] sak_pf  = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK_PREFILTER));
-                    byte[] hist_pf = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST_PREFILTER));
-                    if (uid_pf != null) {
+                    byte[] config    = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_CONFIG));
+                    byte[] config_pf = c.getBlob(c.getColumnIndexOrThrow(SessionLoggingContract.SessionEvent.COLUMN_NAME_CONFIG_PREFILTER));
+                    if (config_pf != null) {
                         // Saving prefilter data is all-or-nothing: If one value is changed, all are saved
                         // We now need to properly initialize the NfcComm object.
-                        comm = new NfcComm(atqa, sak[0], hist, uid, atqa_pf, sak_pf[0], hist_pf, uid_pf);
+                        comm = new NfcComm(new ConfigBuilder(config), new ConfigBuilder(config_pf));
                     } else {
-                        comm = new NfcComm(atqa, sak[0], hist, uid);
+                        comm = new NfcComm(new ConfigBuilder(config));
                     }
 
                 } else {
@@ -339,7 +328,7 @@ public class LoggingDetailFragment extends Fragment implements DialogInterface.O
                         comm = new NfcComm(source, bytes);
                     }
                 }
-                addNfcEvent(comm);*/
+                addNfcEvent(comm);
             } while (c.moveToNext()); // Iterate until all elements of the cursor have been processed
             // Close the cursor, freeing the used memory
             updateSessionView();

@@ -34,15 +34,9 @@ public class SessionLoggingDbHelper extends SQLiteOpenHelper {
             SessionLoggingContract.SessionEvent.COLUMN_NAME_DATE + TYPE_DATETIME + OPT_DEFAULT_NOW + COMMA_SEP +
             SessionLoggingContract.SessionEvent.COLUMN_NAME_TYPE + TYPE_INT + OPT_NOT_NULL + COMMA_SEP +
             SessionLoggingContract.SessionEvent.COLUMN_NAME_NFCDATA + TYPE_BYTES + COMMA_SEP +
-            SessionLoggingContract.SessionEvent.COLUMN_NAME_UID + TYPE_BYTES + COMMA_SEP +
-            SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA + TYPE_BYTES + COMMA_SEP +
-            SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK + TYPE_BYTES + COMMA_SEP +
-            SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST + TYPE_BYTES + COMMA_SEP +
+            SessionLoggingContract.SessionEvent.COLUMN_NAME_CONFIG + TYPE_BYTES + COMMA_SEP +
             SessionLoggingContract.SessionEvent.COLUMN_NAME_NFCDATA_PREFILTER + TYPE_BYTES + COMMA_SEP +
-            SessionLoggingContract.SessionEvent.COLUMN_NAME_UID_PREFILTER + TYPE_BYTES + COMMA_SEP +
-            SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA_PREFILTER + TYPE_BYTES + COMMA_SEP +
-            SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK_PREFILTER + TYPE_BYTES + COMMA_SEP +
-            SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST_PREFILTER + TYPE_BYTES + COMMA_SEP +
+            SessionLoggingContract.SessionEvent.COLUMN_NAME_CONFIG_PREFILTER + TYPE_BYTES + COMMA_SEP +
             "FOREIGN KEY(" + SessionLoggingContract.SessionEvent.COLUMN_NAME_SESSION_ID + ") REFERENCES " +
             SessionLoggingContract.SessionMeta.TABLE_NAME + "(" + SessionLoggingContract.SessionMeta._ID + ")" +
             " ON DELETE CASCADE" + ");";

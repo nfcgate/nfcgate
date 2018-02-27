@@ -1,6 +1,7 @@
 package tud.seemuh.nfcgate.util;
 
 import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
+import tud.seemuh.nfcgate.nfc.config.ConfigOption;
 
 /**
  * The NfcComm-Class provides an object to store NFC bytes and information about them.
@@ -25,7 +26,7 @@ public class NfcComm {
     private byte[] mBytes_prefilter;
 
     // Contains the config options
-    ConfigBuilder mConfig = null, mConfig_prefilter;
+    ConfigBuilder mConfig = null, mConfig_prefilter = null;
 
     // Date (needed for Session logging display)
     private String mDate;
@@ -70,20 +71,13 @@ public class NfcComm {
 
     /**
      * Instantiate an NfcComm object for Anticollision data
-     * @param atqa Anticol protocol ATQA data
-     * @param sak Anticol protocol sak data
-     * @param hist Antocol protocol Historical byte
-     * @param uid Anticol protocol UID
-     * @param atqa_pf Anticol protocol ATQA data, before change by filter
-     * @param sak_pf Anticol protocol sak data, before change by filter
-     * @param hist_pf Antocol protocol Historical byte, before change by filter
-     * @param uid_pf Anticol protocol UID, before change by filter
      */
-    public NfcComm(byte[] atqa, byte sak, byte[] hist, byte[] uid,
-                   byte[] atqa_pf, byte sak_pf, byte[] hist_pf, byte[] uid_pf) {
+    public NfcComm(ConfigBuilder config, ConfigBuilder config_pf) {
         mSource = Source.CARD;
         mType   = Type.AnticolBytes;
+        mConfig = config;
 
+        mConfig_prefilter = config_pf;
         filterChanged = true;
     }
 

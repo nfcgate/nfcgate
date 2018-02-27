@@ -32,16 +32,10 @@ public final class SessionLoggingContract {
         public static final String COLUMN_NAME_TYPE = "type";
         // The actual data. Either nfcdata or the other fields may be set
         public static final String COLUMN_NAME_NFCDATA = "nfcdata";
-        public static final String COLUMN_NAME_UID = "uid";
-        public static final String COLUMN_NAME_ATQA = "atqa";
-        public static final String COLUMN_NAME_SAK = "sak";
-        public static final String COLUMN_NAME_HIST = "hist";
+        public static final String COLUMN_NAME_CONFIG = "config";
         // Pre-Filter values, where changed. NULL if they have not changed.
         public static final String COLUMN_NAME_NFCDATA_PREFILTER = "nfcdata_pf";
-        public static final String COLUMN_NAME_UID_PREFILTER = "uid_pf";
-        public static final String COLUMN_NAME_ATQA_PREFILTER = "atqa_pf";
-        public static final String COLUMN_NAME_SAK_PREFILTER = "sak_pf";
-        public static final String COLUMN_NAME_HIST_PREFILTER = "hist_pf";
+        public static final String COLUMN_NAME_CONFIG_PREFILTER = "config_pf";
 
         // Constants - Data type
         public static final int VALUE_TYPE_ANTICOL = 0;
