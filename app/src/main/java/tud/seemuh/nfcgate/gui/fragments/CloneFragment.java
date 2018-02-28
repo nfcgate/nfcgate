@@ -210,6 +210,9 @@ public class CloneFragment extends Fragment implements OnClickListener {
             //this call notifies the TextSink 2x: ok here, we override it anyway
             RelayFragment.getInstance().mNfcManager.setAnticolData(RelayFragment.getInstance().mNfcManager.getAnticolData());
             mSaveButton.setVisibility(View.VISIBLE);
+
+            // pin uid as soon as tag was discovered
+            getView().findViewById(R.id.btnSwitchPinUID).performClick();
         }
     }
 }
