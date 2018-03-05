@@ -38,7 +38,7 @@
         <activity
             android:name=".gui.MainActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="tud.seemuh.nfcgate.main" />
