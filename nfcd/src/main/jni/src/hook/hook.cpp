@@ -1,9 +1,9 @@
 /*
  *  Collin's Binary Instrumentation Tool/Framework for Android
- *  Collin Mulliner <collin[at]mulliner.org>
  *  http://www.mulliner.org/android/
  *
- *  (c) 2012,2013
+ *  (c) 2012,2013 Collin Mulliner <collin[at]mulliner.org>
+ *  (c) 2015-2018 NFCGate Team
  *
  *  License: LGPL v2.1
  *
