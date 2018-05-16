@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -34,7 +35,7 @@ import tud.seemuh.nfcgate.util.sink.SinkInitException;
 import tud.seemuh.nfcgate.util.sink.SinkManager;
 import tud.seemuh.nfcgate.xposed.Native;
 
-public class CloneFragment extends Fragment implements OnClickListener {
+public class CloneFragment extends Fragment implements CompoundButton.OnCheckedChangeListener {
 
     private final static String TAG = "CloneFragment";
 
@@ -61,10 +62,10 @@ public class CloneFragment extends Fragment implements OnClickListener {
         final View v = inflater.inflate(R.layout.fragment_clone, container, false);
         mCurrUID = (TextView) v.findViewById(R.id.cloned_uid);
         mToggleCloneMode = (Switch) v.findViewById(R.id.btnSwitchCloneMode);
-        mToggleCloneMode.setOnClickListener(this);
+        mToggleCloneMode.setOnCheckedChangeListener(this);
 
         mPinUID = (Switch) v.findViewById(R.id.btnSwitchPinUID);
-        mPinUID.setOnClickListener(this);
+        mPinUID.setOnCheckedChangeListener(this);
         mPinUID.setClickable(false);
 
         mListView = (ListView) v.findViewById(R.id.savedList);
@@ -158,14 +159,10 @@ public class CloneFragment extends Fragment implements OnClickListener {
     }
 
     @Override
-    public void onClick(View v) {
-        boolean on;
-
-        switch(v.getId()) {
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        switch (buttonView.getId()) {
             case R.id.btnSwitchCloneMode:
-                on = ((Switch) v).isChecked();
-
-                if (on) {
+                if (isChecked) {
                     //set sink
                     try {
                         mSinkManager = new SinkManager(mSinkManagerQueue);
@@ -186,25 +183,22 @@ public class CloneFragment extends Fragment implements OnClickListener {
                     mNfcManager.shutdown();
                     mCloneModeEnabled = false;
 
-                    DaemonConfiguration.getInstance().enablePolling();
-                    mPinUID.setChecked(false);
                     mPinUID.setClickable(false);
+                    mPinUID.setChecked(false);
                 }
-
                 break;
             case R.id.btnSwitchPinUID:
-                on = ((Switch) v).isChecked();
-
-                if(on) {
+                if(isChecked) {
                     Log.i(TAG, "onClick(): PinUID on");
                     DaemonConfiguration.getInstance().disablePolling();
                 } else {
                     Log.i(TAG, "onClick(): PinUID off");
                     DaemonConfiguration.getInstance().enablePolling();
                 }
-
+                break;
         }
     }
+
     public void onTagDiscoveredCommon(Tag tag) {
         if(mCloneModeEnabled) {
             //this call notifies the TextSink 2x: ok here, we override it anyway
