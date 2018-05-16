@@ -212,7 +212,12 @@ public class CloneFragment extends Fragment implements OnClickListener {
             mSaveButton.setVisibility(View.VISIBLE);
 
             // pin uid as soon as tag was discovered
-            getView().findViewById(R.id.btnSwitchPinUID).performClick();
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getView().findViewById(R.id.btnSwitchPinUID).performClick();
+                }
+            });
         }
     }
 }
