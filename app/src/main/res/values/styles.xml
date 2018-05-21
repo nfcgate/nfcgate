@@ -1,6 +1,14 @@
 <resources>
 
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <!-- colorPrimary is used for coloring the Toolbar -->
+        <item name="colorPrimary">#3F51B5</item>
+        <!-- colorPrimaryDark is used for coloring the status bar -->
+        <item name="colorPrimaryDark">#303F9F</item>
+        <!-- colorAccent is used as the default color to tint widgets -->
+        <item name="colorAccent">#FFAB40</item>
+
     </style>
 
     <style name="Blue" parent="android:Theme.Holo.Light.DarkActionBar">

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_clone"
+            android:title="Clone Mode"
+            android:icon="@drawable/ic_clone_black_24dp"
+            />
+        <item
+            android:id="@+id/nav_relay"
+            android:title="Relay Mode"
+            android:icon="@drawable/ic_relay_black_24dp"
+            />
+        <item
+            android:id="@+id/nav_replay"
+            android:title="Replay Mode"
+            android:icon="@drawable/ic_replay_black_24dp"
+            />
+        <item
+            android:id="@+id/nav_settings"
+            android:title="Settings"
+            android:icon="@drawable/ic_settings_black_24dp"
+            />
+        <item
+            android:id="@+id/nav_about"
+            android:title="About"
+            android:icon="@drawable/ic_about_black_24dp"
+            />
+    </group>
+</menu>
