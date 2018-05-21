@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '27.0.1'
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         minSdkVersion 19
@@ -14,7 +14,7 @@ android {
             moduleName "nfcgate-native"
             //cFlags "-std=c++11" //  -fexceptions -marm -g -fPIE
             ldLibs "log"
-            abiFilters "armeabi", "arm64-v8a"
+            abiFilters "armeabi-v7a", "arm64-v8a"
         }
         externalNativeBuild {
             cmake {
@@ -42,6 +42,6 @@ dependencies {
     //This must NOT be included
     //compile fileTree(include: ['*.jar'], dir: 'libs')
     // provided files('libs/XposedBridgeApi-20150213.jar')
-    provided 'de.robv.android.xposed:api:82'
-    provided 'de.robv.android.xposed:api:82:sources'
+    compileOnly 'de.robv.android.xposed:api:82'
+    compileOnly 'de.robv.android.xposed:api:82:sources'
 }
