@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 import tud.seemuh.nfcgate.R;
-import tud.seemuh.nfcgate.gui.fragments.CloneFragment;
 import tud.seemuh.nfcgate.network.HighLevelNetworkHandler;
 import tud.seemuh.nfcgate.nfc.config.Technologies;
 import tud.seemuh.nfcgate.nfc.hce.ApduService;
@@ -87,7 +86,7 @@ public class NfcManager {
         }
 
         //we only want to see AntiCol data in clone mode, discard everything else
-        if ( ! CloneFragment.getInstance().isCloneModeEnabled()) {
+        /*if ( ! CloneFragment.getInstance().isCloneModeEnabled()) {
             try {
                 mSinkManagerQueue.add(nfcdata);
             } catch (IllegalStateException e) {
@@ -99,7 +98,7 @@ public class NfcManager {
             } catch (IllegalStateException e) {
                 Log.e(TAG, "notifySinkManager: Tried to notify sm, but queue is full. Ignoring.");
             }
-        }
+        }*/
     }
 
 
@@ -220,9 +219,9 @@ public class NfcManager {
     public void setApduService(ApduService apduService) {
         mApduService = apduService;
         //we dont want the network active, when clone mode is on
-        if( ! CloneFragment.getInstance().isCloneModeEnabled()) {
+        /*if( ! CloneFragment.getInstance().isCloneModeEnabled()) {
             mNetworkHandler.notifyReaderFound();
-        }
+        }*/
     }
 
 
@@ -233,9 +232,9 @@ public class NfcManager {
         mApduService = null;
 
         //we dont want the network active, when clone mode is on
-        if( ! CloneFragment.getInstance().isCloneModeEnabled()) {
+        /*if( ! CloneFragment.getInstance().isCloneModeEnabled()) {
             mNetworkHandler.notifyReaderRemoved();
-        }
+        }*/
     }
 
 
@@ -337,9 +336,9 @@ public class NfcManager {
         nfcdata = handleHceDataCommon(nfcdata);
 
         //we dont want the network active, when clone mode is on
-        if( ! CloneFragment.getInstance().isCloneModeEnabled()) {
+        /*if( ! CloneFragment.getInstance().isCloneModeEnabled()) {
             mNetworkHandler.sendAPDUMessage(nfcdata);
-        }
+        }*/
     }
 
 
@@ -386,7 +385,7 @@ public class NfcManager {
         // Other devices work fine without this workaround, so we only activate it on bugged chipsets
         // TODO Only activate for DESFire cards
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(mContext);
-        boolean workaroundDisabled = pref.getBoolean(mContext.getString(R.string.pref_key_workaround_off), false);
+        boolean workaroundDisabled = false;//pref.getBoolean(mContext.getString(R.string.pref_key_workaround_off), false);
         if (DesfireWorkaround.workaroundNeeded() && !workaroundDisabled) {
             Log.i(TAG, "StartWorkaround: Problematic broadcom chip found, activate workaround");
 

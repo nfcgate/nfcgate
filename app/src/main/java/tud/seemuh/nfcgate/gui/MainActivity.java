@@ -1,279 +1,104 @@
 package tud.seemuh.nfcgate.gui;
 
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.nfc.NfcAdapter;
-import android.nfc.NfcAdapter.ReaderCallback;
-import android.nfc.Tag;
-import android.nfc.tech.IsoDep;
-import android.nfc.tech.Ndef;
-import android.nfc.tech.NfcA;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.provider.Settings;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.Switch;
-import android.widget.Toast;
 
 import tud.seemuh.nfcgate.R;
-import tud.seemuh.nfcgate.gui.fragments.CloneFragment;
-import tud.seemuh.nfcgate.gui.fragments.EnablenfcDialog;
-import tud.seemuh.nfcgate.gui.fragments.RelayFragment;
-import tud.seemuh.nfcgate.gui.fragments.WorkaroundDialog;
-import tud.seemuh.nfcgate.gui.tabLayout.SlidingTabLayout;
-import tud.seemuh.nfcgate.gui.tabLogic.PagerAdapter;
-import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
-import tud.seemuh.nfcgate.nfc.reader.DesfireWorkaround;
-import tud.seemuh.nfcgate.util.NfcComm;
-import tud.seemuh.nfcgate.util.db.CloneListItem;
-import tud.seemuh.nfcgate.util.db.CloneListStorage;
+import tud.seemuh.nfcgate.gui.fragment.BaseFragment;
+import tud.seemuh.nfcgate.gui.fragment.CloneFragment;
+import tud.seemuh.nfcgate.gui.fragment.RelayFragment;
 
-public class MainActivity extends FragmentActivity
-        implements ReaderCallback,EnablenfcDialog.NFCNoticeDialogListener, WorkaroundDialog.WorkaroundDialogListener {
-
-    private NfcAdapter mAdapter;
-    private IntentFilter mIntentFilter = new IntentFilter();
-    private PendingIntent mPendingIntent;
-    private IntentFilter[] mFilters;
-    private String[][] mTechLists;
-
+public class MainActivity extends AppCompatActivity {
     private final static String TAG = "MainActivity";
 
-
-    //TODO double in RelayFragment -> move to Enum
-    public static String joinSessionMessage = "Join Session";
-    public static String createSessionMessage = "Create Session";
-    public static String resetMessage = "Reset";
-    public static String resetCardMessage = "Forget Card";
-
-    private SlidingTabLayout mSlidingTabLayout;
+    // save these for later
+    DrawerLayout mDrawerLayout;
+    NavigationView mNavbar;
+    Toolbar mToolbar;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        DaemonConfiguration.Init(this);
-
-        registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Toast.makeText(context, intent.getStringExtra("text"), Toast.LENGTH_LONG).show();
-            }
-        }, new IntentFilter("tud.seemuh.nfcgate.toaster"));
-
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         setContentView(R.layout.activity_main);
 
-        mAdapter = NfcAdapter.getDefaultAdapter(this);
-        mIntentFilter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
+        // toolbar setup
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
 
-        if (!mAdapter.isEnabled()) {
-            // NFC is not enabled -> "Tell the user to enable NFC"
-            showEnableNFCDialog();
-        }
+        // drawer icon in toolbar
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer_black_24dp);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean neverShowAgain = preferences.getBoolean(getString(R.string.pref_key_workaroundWarn), false);
-        if (DesfireWorkaround.workaroundNeeded() && !neverShowAgain) {
-            WorkaroundDialog dialog = WorkaroundDialog.getInstance(this);
-            dialog.show(this.getSupportFragmentManager(), "Known issues");
-        }
+        // drawer setup
+        mDrawerLayout = findViewById(R.id.main_drawer_layout);
 
-        ViewPager pager = (ViewPager) findViewById(R.id.viewpager);
-        pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
-
-        //This is for the fancy tabs
-        mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
-        mSlidingTabLayout.setViewPager(pager);
-
-       //  FragmentTransaction mFragmentTransaction = getFragmentManager().beginTransaction();
-       //  mFragmentTransaction.addToBackStack(null);
-
-        // Create a generic PendingIntent that will be delivered to this activity.
-        // The NFC stack will fill in the intent with the details of the discovered tag before
-        // delivering to this activity.
-        mPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
-                getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-
-        // Setup an foreground intent filter for NFC
-        IntentFilter tech = new IntentFilter();
-        tech.addAction(NfcAdapter.ACTION_TECH_DISCOVERED);
-        mFilters = new IntentFilter[] { tech, };
-        // this thing must have the same structure as in the tech.xml
-        mTechLists = new String[][] {
-                new String[] {NfcA.class.getName()},
-                new String[] {Ndef.class.getName()},
-                new String[] {IsoDep.class.getName()}
-                //we could add all of the Types from the tech.xml here
-        };
-
+        // navbar setup actions
+        mNavbar = findViewById(R.id.main_navigation);
+        mNavbar.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                onNavbarAction(item);
+                return true;
+            }
+        });
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    BaseFragment findOrCreateFragment(String tag, Class<? extends Fragment> clazz) {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
 
-        // Load values from the Shared Preferences Buffer
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        if (mAdapter != null && mAdapter.isEnabled()) {
-            mAdapter.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
-
-            if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(this.getIntent().getAction())) {
-                Log.i(TAG, "onResume(): starting onNewIntent()...");
-                this.onNewIntent(this.getIntent());
+        if (fragment == null) {
+            try {
+                fragment = clazz.newInstance();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
-        //ReaderMode
-        boolean isReaderModeEnabled = preferences.getBoolean(getString(R.string.pref_key_readermode), false);
-        if(isReaderModeEnabled) {
-            //This cast to ReaderCallback seems unavoidable, stupid Java...
-            mAdapter.enableReaderMode(this, this,
-                    NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, null);
-        } else {
-            mAdapter.disableReaderMode(this);
+        return (BaseFragment)fragment;
+    }
+
+    BaseFragment getFragmentByAction(int id) {
+        switch (id) {
+            case R.id.nav_clone:
+                return findOrCreateFragment("clone", CloneFragment.class);
+            case R.id.nav_relay:
+                return findOrCreateFragment("relay", RelayFragment.class);
+            default:
+                return findOrCreateFragment("clone", CloneFragment.class);
+                //throw new IllegalArgumentException("Position out of range");
         }
     }
 
-    public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() == 0) {
-            this.finish();
-        } else {
-            getFragmentManager().popBackStack();
-        }
-    }
+    void onNavbarAction(MenuItem item) {
+        BaseFragment fragment = getFragmentByAction(item.getItemId());
 
-    private void onTagDiscoveredCommon(Tag tag) {
-        // Pass reference to NFC Manager
-        Log.d(TAG, "onTagDiscoveredCommon");
+        // no fancy animation for now
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_content, fragment, fragment.getTagName())
+                .commit();
 
-        RelayFragment.getInstance().mNfcManager.setTag(tag);
-
-        CloneFragment.getInstance().onTagDiscoveredCommon(tag);
-    }
-
-    /**
-     * Function to get tag when readerMode is enabled
-     * @param tag
-     */
-    @Override
-    public void onTagDiscovered(Tag tag) {
-
-        Log.i(TAG, "Discovered tag in ReaderMode");
-        onTagDiscoveredCommon(tag);
-    }
-
-    @Override
-    public void onNewIntent(Intent intent) {
-        Log.i(TAG, "onNewIntent(): started");
-
-        if(CloneFragment.getInstance().isPinUID()) {
-            return;
-        }
-
-        if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())) {
-            Log.i(TAG, "Discovered tag with intent: " + intent);
-            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-
-            onTagDiscoveredCommon(tag);
-
-            //This toast is very useful for debugging, DONT delete it!!!
-            Toast.makeText(this, "Found Tag", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
-        return super.onCreateOptionsMenu(menu);
+        // for the looks
+        getSupportActionBar().setTitle(item.getTitle());
+        mDrawerLayout.closeDrawers();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
-        switch (item.getItemId()) {
-            case  R.id.action_settings:
-                startActivityForResult(new Intent(MainActivity.this, SettingsActivity.class), 0);
-                return true;
-            case R.id.action_about:
-                startActivity(new Intent(MainActivity.this, AboutActivity.class));
-                return true;
-            case R.id.action_getpatchstate:
-                DaemonConfiguration.getInstance().requestPatchState();
-                return true;
-            case R.id.action_disablepatch:
-                DaemonConfiguration.getInstance().disablePatch();
-                Toast.makeText(this, "Patch disabled", Toast.LENGTH_LONG).show();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    public void showEnableNFCDialog() {
-        // Create an instance of the dialog fragment and show it
-        DialogFragment dialog = EnablenfcDialog.getInstance(this);
-        dialog.show(this.getSupportFragmentManager(), "Enable NFC: ");
-    }
-
-
-    @Override
-    public void onNFCDialogPositiveClick() {
-        // User touched the dialog's goto settings button
-        Intent intent = new Intent(Settings.ACTION_NFC_SETTINGS);
-        startActivity(intent);
-    }
-
-    @Override
-    public void onNFCDialogNegativeClick() {
-        // User touched the dialog's cancel button
-        Toast.makeText(this, "Caution! The app can't do something useful without NFC enabled -> please enable NFC in your phone settings", Toast.LENGTH_LONG).show();
-    }
-
-
-    @Override
-    public void onWorkaroundPositiveClick(View v) {
-        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        CheckBox dontShowAgain = (CheckBox) v.findViewById(R.id.neverAgain);
-        if (dontShowAgain.isChecked()) {
-            Log.i(TAG, "onCreate: Don't show this again is checked");
-            SharedPreferences.Editor editor = preferences.edit();
-
-            editor.putBoolean(getString(R.string.pref_key_workaroundWarn), true);
-            editor.apply();
-        }
-        startActivity(new Intent(MainActivity.this, AboutWorkaroundActivity.class));
-
-    }
-
-    @Override
-    public void onWorkaroundNegativeClick(View v) {
-        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        CheckBox dontShowAgain = (CheckBox) v.findViewById(R.id.neverAgain);
-        if (dontShowAgain.isChecked()) {
-            Log.i(TAG, "onCreate: Don't show this again is checked");
-            SharedPreferences.Editor editor = preferences.edit();
-
-            editor.putBoolean(getString(R.string.pref_key_workaroundWarn), true);
-            editor.apply();
+        if (item.getItemId() == android.R.id.home) {
+            // drawer button was pressed
+            mDrawerLayout.openDrawer(GravityCompat.START);
+            return true;
         }
 
+        return super.onOptionsItemSelected(item);
     }
 }

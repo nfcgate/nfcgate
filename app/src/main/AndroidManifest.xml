@@ -19,11 +19,10 @@
         android:required="true" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
 
         <meta-data
             android:name="xposedmodule"
@@ -38,35 +37,21 @@
         <activity
             android:name=".gui.MainActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".gui.Splash"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="tud.seemuh.nfcgate.splash" />
+            android:launchMode="singleTask">
 
-            </intent-filter>
-        </activity>
-
-        <!-- NFC Klimbim -->
-        <activity-alias
-            android:name=".ActivityAlias"
-            android:enabled="true"
-            android:screenOrientation="portrait"
-            android:targetActivity=".gui.MainActivity" >
             <intent-filter>
+                <action android:name="tud.seemuh.nfcgate.main" />
+                <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
 
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+
             </intent-filter>
 
-            <meta-data
-                android:name="android.nfc.action.TECH_DISCOVERED"
+            <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
                 android:resource="@xml/tech" />
-        </activity-alias>
+        </activity>
 
         <service
             android:name=".nfc.hce.ApduService"
@@ -80,65 +65,6 @@
                 android:name="android.nfc.cardemulation.host_apdu_service"
                 android:resource="@xml/hce" />
         </service>
-
-        <activity
-            android:name=".gui.AboutActivity"
-            android:label="@string/title_activity_about"
-            android:parentActivityName=".gui.MainActivity"
-            android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".gui.MainActivity" />
-
-            <intent-filter>
-                <action android:name="tud.seemuh.nfcgate.about" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".gui.SettingsActivity"
-            android:label="Settings"
-            android:parentActivityName=".gui.MainActivity"
-            android:screenOrientation="portrait"
-            android:targetActivity="MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".gui.MainActivity" />
-
-            <intent-filter>
-                <action android:name="tud.seemuh.nfcgate.settings" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".gui.AboutWorkaroundActivity"
-            android:label="@string/title_activity_about_workaround"
-            android:parentActivityName=".gui.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".gui.MainActivity" />
-        </activity>
-        <activity
-            android:name=".gui.LoggingDetailActivity"
-            android:label="@string/title_activity_logging_detail"
-            android:parentActivityName=".gui.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="tud.seemuh.nfcgate.gui.MainActivity" />
-        </activity>
-
-        <!-- new -->
-        <activity android:name=".newgui.MainActivity" >
-            <intent-filter>
-                <action android:name="tud.seemuh.nfcgate.main" />
-
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>

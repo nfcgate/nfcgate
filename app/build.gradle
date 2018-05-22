@@ -22,7 +22,7 @@ android {
 dependencies {
     //This must NOT be included
     //compile fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(':nfcd')
+    //implementation project(':nfcd')
     implementation 'com.google.protobuf:protobuf-java:3.5+'
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'

@@ -148,9 +148,9 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
     }
 
     private void setButtonTexts() {
-        new UpdateUI(connectButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.createSessionMessage);
+        /*new UpdateUI(connectButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.createSessionMessage);
         new UpdateUI(joinButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.joinSessionMessage);
-        new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetMessage);
+        new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetMessage);*/
     }
 
     // Network message building and sending
@@ -315,7 +315,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
     @Override
     public void disconnectCardWorkaround() {
         mNfcManager.stopWorkaround();
-        new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetMessage);
+        //new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetMessage);
     }
 
     /**
@@ -323,7 +323,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
      */
     @Override
     public void notifyCardWorkaroundConnected() {
-        new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetCardMessage);
+        //new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetCardMessage);
     }
 
     // Session management
