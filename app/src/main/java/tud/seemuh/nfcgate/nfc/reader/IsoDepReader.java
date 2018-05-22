@@ -20,7 +20,7 @@ import tud.seemuh.nfcgate.util.Utils;
 public class IsoDepReader implements NFCTagReader {
     private final static String TAG = "NFC_READER_ISODEP";
     private final TagTechnology mUnderlyingTech;
-    private IsoDep mAdapter = null;
+    private IsoDep mAdapter;
 
     /**
      * Constructor of NfcAReader-Class, providing an NFC reader interface using the NfcA-Tech.

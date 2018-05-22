@@ -15,7 +15,7 @@ import tud.seemuh.nfcgate.nfc.config.OptionType;
  */
 public class NfcFReader implements NFCTagReader {
     private final static String TAG = "NFC_READER_NFCF";
-    private NfcF mAdapter = null;
+    private NfcF mAdapter;
 
     /**
      * Constructor of NfcFReader-Class, providing an NFC reader interface using the NfcF-Tech.

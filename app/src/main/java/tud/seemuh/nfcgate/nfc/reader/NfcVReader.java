@@ -14,7 +14,7 @@ import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
  */
 public class NfcVReader implements NFCTagReader {
     private final static String TAG = "NFC_READER_NFCV";
-    private NfcV mAdapter = null;
+    private NfcV mAdapter;
 
     /**
      * Constructor of NfcVReader-Class, providing an NFC reader interface using the NfcV-Tech.

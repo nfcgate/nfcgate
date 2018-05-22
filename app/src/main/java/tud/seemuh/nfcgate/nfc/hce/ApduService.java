@@ -10,9 +10,7 @@ import tud.seemuh.nfcgate.util.Utils;
 
 /**
  * The ApduService class contains the logic for interaction with the Android HCE interface.
- * Here, we receive messages from the card reader and pass them on to the network interface.
- * The answer is determined by the other device and the reply is passed to the ApduService by
- * the Callback class.
+ * Here, we receive messages from the card reader and pass them on to the NfcManager.
  */
 public class ApduService extends HostApduService {
     private final static String TAG = "ApduService";
@@ -20,9 +18,7 @@ public class ApduService extends HostApduService {
     private NfcManager mNfcManager = NfcManager.getInstance();
 
     /**
-     * empty apdu byte array
-     * when returned in the processCommandApdu, the hce service will not respond to the
-     * reader request
+     * Returning an empty APDU response causes the hce service to wait
      */
     private final byte[] DONT_RESPOND = new byte[]{};
 
@@ -31,30 +27,29 @@ public class ApduService extends HostApduService {
     }
 
     /**
-     * callback from the hce service when a apdu from a reader is received
+     * Callback from the hce service when a apdu from a reader is received
      * @param apdu apdu data received from hce service
      * @param extras not used
      * @return apdu to answer
      */
     @Override
     public byte[] processCommandApdu(byte[] apdu, Bundle extras) {
-
         Log.d(TAG, "APDU-IN: " + Utils.bytesToHex(apdu));
 
         // Package the ADPU into a NfcComm object
         NfcComm nfcdata = new NfcComm(NfcComm.Source.HCE, apdu);
 
         // Send the object to the handler
-        mNfcManager.handleHCEData(nfcdata);
+        mNfcManager.handleData(nfcdata);
 
-        // Tell the HCE implementation to wait a moment
+        // Tell the HCE implementation to wait
         return DONT_RESPOND;
     }
 
     @Override
     public void onDeactivated(int reason) {
         Log.i(TAG, "Deactivated: " + reason);
-        mNfcManager.unsetApduService();
+        mNfcManager.setApduService(null);
     }
 
     public void sendResponse(byte[] apdu) {

@@ -1,5 +1,8 @@
 package tud.seemuh.nfcgate.nfc.config;
 
+/**
+ * Represents all NCI configuration options that can occur in initial card data
+ */
 public enum OptionType {
     // LISTEN A
 

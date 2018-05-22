@@ -15,7 +15,7 @@ import tud.seemuh.nfcgate.nfc.config.OptionType;
  */
 public class NfcAReader implements NFCTagReader {
     private final static String TAG = "NFC_READER_NFCA";
-    private NfcA mAdapter = null;
+    private NfcA mAdapter;
 
     /**
      * Constructor of NfcAReader-Class, providing an NFC reader interface using the NfcA-Tech.

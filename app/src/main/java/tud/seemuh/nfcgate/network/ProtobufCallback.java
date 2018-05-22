@@ -116,28 +116,19 @@ public class ProtobufCallback implements Callback {
     }
 
     private void handleAnticol(C2C.Anticol msg) {
-        Log.i(TAG, "handleAnticol: got anticol values");
+        Log.i(TAG, "handleInitial: got initial values");
 
-        final byte[] config = msg.getCONFIG().toByteArray();
-
-        mNfcManager.setAnticolData(new NfcComm(new ConfigBuilder(config)));
+        mNfcManager.handleData(new NfcComm(new ConfigBuilder(msg.getCONFIG().toByteArray())));
     }
 
 
     private void handleNFCData(C2C.NFCData msg) {
-        if (msg.getDataSource() == C2C.NFCData.DataSource.READER) {
-            // We received a signal FROM a reader device and are required to talk TO a card.
-            NfcComm nfcdata = new NfcComm(NfcComm.Source.HCE, msg.getDataBytes().toByteArray());
-            mNfcManager.sendToCard(nfcdata);
-        } else  if (msg.getDataSource() == C2C.NFCData.DataSource.CARD) {
-            // We received a signal FROM a card and are required to talk TO a reader.
-            NfcComm nfcdata = new NfcComm(NfcComm.Source.CARD, msg.getDataBytes().toByteArray());
-            mNfcManager.sendToReader(nfcdata);
-        } else {
-            // Wait, what? This should be impossible. Are we using an old protocol version?
-            Log.e(TAG, "HandleNfcData: Received Nfc Data from unknown source => Not implemented");
-            Handler.notifyNotImplemented();
-        }
+        // Convert C2C source into NfcComm source
+        NfcComm.Source source = msg.getDataSource() == C2C.NFCData.DataSource.READER ?
+                NfcComm.Source.HCE : NfcComm.Source.CARD;
+
+        // any data gets handled here automatically
+        mNfcManager.handleData(new NfcComm(source, msg.getDataBytes().toByteArray()));
     }
 
 
@@ -189,7 +180,6 @@ public class ProtobufCallback implements Callback {
             Handler.notifyNotImplemented();
         }
     }
-
 
     private void handleSession(C2S.Session msg) {
         if (msg.getOpcode() == SessionOpcode.SESSION_CREATE_FAIL) {

@@ -261,7 +261,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
      */
     @Override
     public HighLevelNetworkHandler connect(String addr, int port) {
-        mNfcManager.start();
+        //mNfcManager.start();
         handler = LowLevelTCPHandler.getInstance().connect(addr, port);
         handler.setCallback(mCallbackInstance);
         status = Status.CONNECTED_NO_SESSION;
@@ -306,7 +306,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
         setButtonTexts();
         reactivateButtons();
         // Stop NfcManager
-        mNfcManager.shutdown();
+        //mNfcManager.shutdown();
     }
 
     /**
@@ -314,7 +314,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
      */
     @Override
     public void disconnectCardWorkaround() {
-        mNfcManager.stopWorkaround();
+        //mNfcManager.stopWorkaround();
         //new UpdateUI(resetButton, UpdateUI.UpdateMethod.setTextButton).execute(MainActivity.resetMessage);
     }
 
@@ -391,7 +391,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
     // NFC Message passing
     @Override
     public void sendAPDUMessage(NfcComm nfcdata) {
-        if (nfcdata.getType() != NfcComm.Type.NFCBytes) {
+        if (nfcdata.getType() != NfcComm.Type.Continuation) {
             Log.e(TAG, "sendApduMessage: NfcComm object does not contain NFC bytes. Doing nothing.");
             return;
         }
@@ -411,7 +411,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
 
     @Override
     public void sendAPDUReply(NfcComm nfcdata) {
-        if (nfcdata.getType() != NfcComm.Type.NFCBytes) {
+        if (nfcdata.getType() != NfcComm.Type.Continuation) {
             Log.e(TAG, "sendApduReply: NfcComm object does not contain NFC bytes. Doing nothing.");
             return;
         }
@@ -432,7 +432,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
 
     @Override
     public void sendAnticol(NfcComm nfcdata) {
-        if (nfcdata.getType() != NfcComm.Type.AnticolBytes) {
+        if (nfcdata.getType() != NfcComm.Type.Initial) {
             Log.e(TAG, "sendAnticol: NfcComm object does not contain Anticol bytes. Doing nothing.");
             return;
         }

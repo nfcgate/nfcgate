@@ -3,6 +3,10 @@ package tud.seemuh.nfcgate.nfc.config;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a NCI config stream.
+ * Parses an existing stream or builds a new one from options.
+ */
 public class ConfigBuilder {
     private List<ConfigOption> mOptions = new ArrayList<>();
 

@@ -7,58 +7,40 @@ import android.content.Intent;
  * Interface to the nfc daemon patches
  */
 public class DaemonConfiguration {
-
-    static DaemonConfiguration mInstance;
-    private Context mContext;
-    public static DaemonConfiguration getInstance() { return mInstance; }
-
-    public static void Init(Context ctx) {
-        mInstance = new DaemonConfiguration(ctx);
-    }
+    private Context mCtx;
 
     public DaemonConfiguration(Context ctx) {
-        mContext = ctx;
+        mCtx = ctx;
     }
 
-    public void enablePatch() {
-        sendSimple("ENABLE");
+    public void upload(byte[] config) {
+        send("UPLOAD", config);
     }
 
-    public void enablePolling() {
-        sendSimple("ENABLE_POLLING");
+    public void enable() {
+        send("ENABLE", null);
     }
 
-    public void disablePolling() {
-        sendSimple("DISABLE_POLLING");
+    public void disable() {
+        send("DISABLE", null);
     }
 
-    public void disablePatch() {
-        sendSimple("DISABLE");
+    public void lock() {
+        send("ENABLE_POLLING", null);
     }
 
-    public boolean isPatchEnabled() {
-        return false;
+    public void unlock() {
+        send("DISABLE_POLLING", null);
     }
 
-    public void uploadConfiguration(byte[] config) {
+    private void send(String action, byte[] config) {
         Intent intent = new Intent();
-        intent.putExtra("action", "UPLOAD");
-        intent.putExtra("config", config);
-        send(intent);
-    }
-
-    private void sendSimple(String action) {
-        Intent intent = new Intent();
-        intent.putExtra("action", action);
-        send(intent);
-    }
-
-    private void send(Intent intent) {
         intent.setAction("tud.seemuh.nfcgate.daemoncall");
-        mContext.sendBroadcast(intent);
-    }
 
-    public void requestPatchState() {
-        sendSimple("REQSTATE");
+        intent.putExtra("action", action);
+        if (config != null)
+            intent.putExtra("config", config);
+
+        mCtx.sendBroadcast(intent);
     }
 }

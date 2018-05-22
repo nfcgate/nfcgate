@@ -1,5 +1,8 @@
 package tud.seemuh.nfcgate.nfc.config;
 
+/**
+ * Represents a single NCI configuration option with an option code, its length and data
+ */
 public class ConfigOption {
     private OptionType mID;
     private byte[] mData;
