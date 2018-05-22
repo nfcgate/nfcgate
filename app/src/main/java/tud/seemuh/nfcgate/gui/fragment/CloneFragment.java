@@ -14,11 +14,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.gui.Util;
 
 public class CloneFragment extends BaseFragment {
     View mCloneWaiting;
     TextView mCloneContent;
     ListView mCloneSaved;
+    boolean mTagInfoDisplayed;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -32,12 +34,21 @@ public class CloneFragment extends BaseFragment {
         setHasOptionsMenu(true);
         setCloneWait(false);
 
+        mTagInfoDisplayed = false;
+
         return v;
     }
 
     @Override
     public String getTagName() {
         return "clone";
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        Util.setMenuItemEnabled(menu, R.id.action_save, mTagInfoDisplayed);
     }
 
     @Override
@@ -57,6 +68,12 @@ public class CloneFragment extends BaseFragment {
         }
     }
 
+    private void setTagInfoDisplayed(boolean tagInfoDisplayed) {
+        mTagInfoDisplayed = tagInfoDisplayed;
+        if (getActivity() != null)
+            getActivity().invalidateOptionsMenu();
+    }
+
     void setCloneWait(boolean waiting) {
         mCloneWaiting.setVisibility(waiting ? ViewGroup.VISIBLE : ViewGroup.GONE);
         mCloneContent.setVisibility(waiting ? ViewGroup.GONE : ViewGroup.VISIBLE);
@@ -70,6 +87,8 @@ public class CloneFragment extends BaseFragment {
 
     void setCloneContent(String content) {
         mCloneContent.setText(content);
+
+        setTagInfoDisplayed(true);
     }
 
     void beginClone() {

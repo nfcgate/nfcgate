@@ -5,4 +5,9 @@
         android:icon="@drawable/ic_refresh_white_24dp"
         android:title="Clone"
         app:showAsAction="always" />
+    <item android:id="@+id/action_save"
+        android:icon="@drawable/ic_save_white_24dp"
+        android:title="Save"
+        app:showAsAction="ifRoom"
+        />
 </menu>

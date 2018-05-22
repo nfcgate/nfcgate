@@ -49,12 +49,19 @@
             />
     </RelativeLayout>
 
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
         android:text="Saved:"
-        style="@style/TextAppearance.AppCompat.Title"
+        style="@style/TextAppearance.AppCompat.Caption"
         />
     <ListView
         android:id="@+id/clone_saved"
