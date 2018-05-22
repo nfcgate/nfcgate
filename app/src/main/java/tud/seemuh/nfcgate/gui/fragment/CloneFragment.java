@@ -1,26 +1,43 @@
 package tud.seemuh.nfcgate.gui.fragment;
 
+import android.app.AlertDialog;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.List;
+
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.db.TagInfo;
 import tud.seemuh.nfcgate.gui.Util;
+import tud.seemuh.nfcgate.gui.model.TagInfoViewModel;
 
 public class CloneFragment extends BaseFragment {
     View mCloneWaiting;
     TextView mCloneContent;
     ListView mCloneSaved;
     boolean mTagInfoDisplayed;
+
+    private TagInfoViewModel mTagInfoViewModel;
+    private ArrayAdapter<TagInfo> mTagInfoAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -36,7 +53,39 @@ public class CloneFragment extends BaseFragment {
 
         mTagInfoDisplayed = false;
 
+        // setup db model
+        mTagInfoViewModel = ViewModelProviders.of(this).get(TagInfoViewModel.class);
+        mTagInfoViewModel.getTagInfos().observe(this, new Observer<List<TagInfo>>() {
+            @Override
+            public void onChanged(@Nullable List<TagInfo> tagInfos) {
+                mTagInfoAdapter.clear();
+                mTagInfoAdapter.addAll(tagInfos);
+                mTagInfoAdapter.notifyDataSetChanged();
+            }
+        });
+
+        // handlers
+        mCloneSaved.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position >= 0) {
+                    // deleting inside models automatically updates adapter
+                    mTagInfoViewModel.delete(mTagInfoAdapter.getItem(position));
+                    return true;
+                }
+                return false;
+            }
+        });
+
         return v;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mTagInfoAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
+        mCloneSaved.setAdapter(mTagInfoAdapter);
     }
 
     @Override
@@ -62,6 +111,9 @@ public class CloneFragment extends BaseFragment {
         switch (item.getItemId()) {
             case R.id.action_clone:
                 beginClone();
+                return true;
+            case R.id.action_save:
+                beginSave();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -102,5 +154,25 @@ public class CloneFragment extends BaseFragment {
                 onTagDiscovered();
             }
         }, 3000);
+    }
+
+    private void beginSave() {
+        final EditText input = new EditText(getContext());
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+
+        new AlertDialog.Builder(getContext())
+            .setTitle("Enter a description")
+            .setView(input)
+            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    final String description = input.getText().toString();
+                    // TODO config data
+                    if (!description.isEmpty())
+                        mTagInfoViewModel.insert(new TagInfo(description, null));
+                }
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
     }
 }
