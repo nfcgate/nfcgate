@@ -5,7 +5,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.protobuf.ByteString;
-import com.google.protobuf.Message;
+import com.google.protobuf.MessageLite;
 
 import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
@@ -165,7 +165,7 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
         return dataMsg.build();
     }
 
-    private void sendMessage(Message msg, MessageCase mcase) {
+    private void sendMessage(MessageLite msg, MessageCase mcase) {
         if (status == Status.NOT_CONNECTED) {
             Log.e(TAG, "sendMessage: Trying to send message while not connected. Failed, doing nothing");
             return;
