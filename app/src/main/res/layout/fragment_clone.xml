@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
 
-            android:text="LA_HIST_BY = 123"
+            android:text="No Tag cloned yet."
             android:gravity="center_vertical"
             />
     </RelativeLayout>

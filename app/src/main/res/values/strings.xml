@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">NFCGate</string>
+    <string name="about">
+        <![CDATA[
+        <p><b>DISCLAIMER</b>: This application was built for research purposes only.
+        Do <i>NOT</i> misuse it for malicious activity.</p>
+        <p><b>NFCGate</b> is licensed under <i>Apache License, v2.0</i><br />
+        <b>Xposed</b> is licensed under <i>Apache License, v2.0</i><br />
+        <b>Protobuf</b> is licensed under <i>BSD 3-Clause license</i></p>
+        <p>We take no responsibility for, and will not be liable for, the application misbehaving
+        due to technical issues beyond our control.</p>
+        ]]>
+    </string>
 </resources>

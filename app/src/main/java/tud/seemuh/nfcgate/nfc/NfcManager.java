@@ -71,10 +71,25 @@ public class NfcManager implements NfcAdapter.ReaderCallback {
     }
 
     /**
+     * Indicates whether this device has NFC capability
+     */
+    public boolean hasNfc() {
+        return mAdapter != null;
+    }
+
+    /**
+     * Indicates whether the XPosed module is enabled
+     * This is hooked by the module to return true
+     */
+    public static boolean isHookLoaded() {
+        return false;
+    }
+
+    /**
      * Indicates whether NFC is enabled or disabled
      */
     public boolean isEnabled() {
-        return mAdapter != null && mAdapter.isEnabled();
+        return hasNfc() && mAdapter.isEnabled();
     }
 
     /**

@@ -27,6 +27,9 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
 
+    // About
+    implementation "com.github.medyo:android-about-page:1.2.4"
+
     def room_version = "1.1.0"
     def archLifecycleVersion = '1.1.0'
 

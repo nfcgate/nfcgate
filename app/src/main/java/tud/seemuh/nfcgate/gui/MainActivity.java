@@ -10,11 +10,13 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.gui.fragment.AboutFragment;
 import tud.seemuh.nfcgate.gui.fragment.BaseFragment;
 import tud.seemuh.nfcgate.gui.fragment.CloneFragment;
 import tud.seemuh.nfcgate.gui.fragment.RelayFragment;
@@ -61,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
 
         // NFC setup
         mNfc = new NfcManager(this);
+        if (!mNfc.hasNfc())
+            showWarning("This device seems to be missing the NFC capability.");
+        else if (!NfcManager.isHookLoaded())
+            showWarning("The XPosed module is not enabled or XPosed is not installed.");
     }
 
     @Override
@@ -110,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
                 return findOrCreateFragment("clone", CloneFragment.class);
             case R.id.nav_relay:
                 return findOrCreateFragment("relay", RelayFragment.class);
+            case R.id.nav_about:
+                return findOrCreateFragment("about", AboutFragment.class);
             default:
                 return findOrCreateFragment("clone", CloneFragment.class);
                 //throw new IllegalArgumentException("Position out of range");
@@ -144,6 +152,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Displays a warning dialog with the specified message
+     */
+    void showWarning(String warning) {
+        new AlertDialog.Builder(this)
+                .setTitle("Warning")
+                .setMessage(warning)
+                .setNegativeButton("OK", null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     public NfcManager getNfc() {

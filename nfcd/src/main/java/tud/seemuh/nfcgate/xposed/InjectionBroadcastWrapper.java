@@ -47,11 +47,6 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
         else if("UPLOAD".equals(action)) {
             Native.Instance.uploadConfiguration(intent.getByteArrayExtra("config"));
         }
-        else if("REQSTATE".equals(action)) {
-            Intent toaster = new Intent("tud.seemuh.nfcgate.toaster");
-            toaster.putExtra("text", "Patch state: " + (Native.Instance.isEnabled() ? "Active" : "Inactive"));
-            context.sendBroadcast(toaster);
-        }
     }
 
     private void loadForeignLibrary(Context ctx, String foreignPkg, String name) {

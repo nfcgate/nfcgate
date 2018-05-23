@@ -12,6 +12,7 @@ import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class Hooks implements IXposedHookLoadPackage {
@@ -19,7 +20,12 @@ public class Hooks implements IXposedHookLoadPackage {
     private Object mReceiver;
 
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
-        if(!"com.android.nfc".equals(lpparam.packageName))
+        // hook our own NfcManager to indicate that the hook is loaded and active
+        if ("tud.seemuh.nfcgate".equals(lpparam.packageName)) {
+            findAndHookMethod("tud.seemuh.nfcgate.nfc.NfcManager", lpparam.classLoader,
+                    "isHookLoaded", XC_MethodReplacement.returnConstant(true));
+        }
+        else if (!"com.android.nfc".equals(lpparam.packageName))
             return;
 
         // hook construtor to catch application context
