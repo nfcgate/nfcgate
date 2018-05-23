@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         if (!mNfc.hasNfc())
             showWarning("This device seems to be missing the NFC capability.");
         else if (!NfcManager.isHookLoaded())
-            showWarning("The XPosed module is not enabled or XPosed is not installed.");
+            showWarning("The Xposed module is not enabled or Xposed is not installed.");
     }
 
     @Override
