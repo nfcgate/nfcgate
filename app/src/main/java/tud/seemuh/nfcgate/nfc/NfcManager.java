@@ -73,7 +73,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback {
      * Indicates whether NFC is enabled or disabled
      */
     public boolean isEnabled() {
-        return mAdapter.isEnabled();
+        return mAdapter != null && mAdapter.isEnabled();
     }
 
     /**
