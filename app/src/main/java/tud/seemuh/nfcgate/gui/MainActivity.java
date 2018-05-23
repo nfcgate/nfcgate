@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
                 .setTitle("Warning")
                 .setMessage(warning)
                 .setNegativeButton("OK", null)
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIconAttribute(android.R.attr.alertDialogIcon)
                 .show();
     }
 
