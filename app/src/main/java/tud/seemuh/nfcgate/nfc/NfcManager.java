@@ -10,7 +10,6 @@ import android.nfc.tech.NfcB;
 import android.text.TextUtils;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback {
     public interface Callback {
         void notify(NfcComm data);
     }
-    private ArrayList<Callback> mCallbacks = new ArrayList<>();
+    private Callback mCallback = null;
 
     // references
     private MainActivity mActivity;
@@ -49,16 +48,18 @@ public class NfcManager implements NfcAdapter.ReaderCallback {
 
     // state
     private boolean mReaderMode = false;
+    private boolean mPollingEnabled = true;
     private Tag mTag;
     private NFCTagReader mReader;
 
     // mode
     public enum Mode {
+        None,
         Clone,
         Relay,
         Replay
     }
-    private Mode mMode = Mode.Clone;
+    private Mode mMode = Mode.None;
 
     public NfcManager(MainActivity activity) {
         mActivity = activity;
@@ -91,6 +92,13 @@ public class NfcManager implements NfcAdapter.ReaderCallback {
         mMode = mode;
     }
 
+    public void enableCloneMode() {
+        mMode = Mode.Clone;
+
+        // enable polling because we are looking for a tag
+        enablePolling();
+    }
+
     /**
      * Allows the ApduService to set its reference in the manager
      */
@@ -101,15 +109,8 @@ public class NfcManager implements NfcAdapter.ReaderCallback {
     /**
      * Adds the specified data callback to the list of callbacks
      */
-    public void addCallback(Callback cb) {
-        mCallbacks.add(cb);
-    }
-
-    /**
-     * Removes the specified data callback
-     */
-    public void removeCallback(Callback cb) {
-        mCallbacks.remove(cb);
+    public void setCallback(Callback cb) {
+        mCallback = cb;
     }
 
     /**
@@ -155,7 +156,9 @@ public class NfcManager implements NfcAdapter.ReaderCallback {
 
         switch (mMode) {
             case Clone:
+                // clone tag and immediately disable polling to avoid detecting same tag again
                 applyData(data);
+                disablePolling();
                 break;
             case Relay:
                 if (data.getSource() == NfcComm.Source.CARD && mReaderMode ||
@@ -169,8 +172,23 @@ public class NfcManager implements NfcAdapter.ReaderCallback {
                 break;
             default:
                 // drop
+                mReader.closeConnection();
                 break;
         }
+    }
+
+    // PRIVATE
+
+    private void enablePolling() {
+        if (!mPollingEnabled)
+            mDaemon.enablePolling();
+
+        mPollingEnabled = true;
+    }
+
+    private void disablePolling() {
+        mDaemon.disablePolling();
+        mPollingEnabled = false;
     }
 
     /**
@@ -205,8 +223,8 @@ public class NfcManager implements NfcAdapter.ReaderCallback {
      * Notifies all callbacks of the data
      */
     private void notifyCallbacks(NfcComm data) {
-        for (Callback cb : mCallbacks)
-            cb.notify(data);
+        if (mCallback != null)
+            mCallback.notify(data);
     }
 
     /**

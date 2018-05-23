@@ -7,14 +7,12 @@ import android.widget.TextView;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 
-import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.network.c2c.C2C;
 import tud.seemuh.nfcgate.network.c2s.C2S;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper;
 import tud.seemuh.nfcgate.network.meta.MetaMessage.Wrapper.MessageCase;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.util.NfcComm;
-import tud.seemuh.nfcgate.util.UpdateUI;
 
 /**
  * The HighLevelProtobufHandler is an implementation of the HighLevelNetworkHandler interface.
@@ -129,22 +127,22 @@ public class HighLevelProtobufHandler implements HighLevelNetworkHandler {
     }
 
     private void appendDebugOutput(String output) {
-        new UpdateUI(debugView, UpdateUI.UpdateMethod.appendTextView).execute(output + "\n");
+        //new UpdateUI(debugView, UpdateUI.UpdateMethod.appendTextView).execute(output + "\n");
     }
 
     private void setConnectionStatusOutput(String output) {
-        new UpdateUI(connectionStatusView, UpdateUI.UpdateMethod.setTextTextView).execute("Server Status: " + output);
+        //new UpdateUI(connectionStatusView, UpdateUI.UpdateMethod.setTextTextView).execute("Server Status: " + output);
     }
 
     private void setPeerStatusOutput(String output) {
-        new UpdateUI(peerStatusView, UpdateUI.UpdateMethod.setTextTextView).execute("Partner Status: " + output);
+        //new UpdateUI(peerStatusView, UpdateUI.UpdateMethod.setTextTextView).execute("Partner Status: " + output);
     }
 
     private void reactivateButtons() {
         // We need to pass a parameter, even though it isn't used. Otherwise, the app will crash.
-        new UpdateUI(connectButton, UpdateUI.UpdateMethod.enableButton).execute("Unfug");
+        /*new UpdateUI(connectButton, UpdateUI.UpdateMethod.enableButton).execute("Unfug");
         new UpdateUI(joinButton, UpdateUI.UpdateMethod.enableButton).execute("Unfug");
-        new UpdateUI(abortButton, UpdateUI.UpdateMethod.disableButton).execute("Unfug");
+        new UpdateUI(abortButton, UpdateUI.UpdateMethod.disableButton).execute("Unfug");*/
     }
 
     private void setButtonTexts() {

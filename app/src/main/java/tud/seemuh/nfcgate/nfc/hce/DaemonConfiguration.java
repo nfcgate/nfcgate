@@ -25,11 +25,11 @@ public class DaemonConfiguration {
         send("DISABLE", null);
     }
 
-    public void lock() {
+    public void enablePolling() {
         send("ENABLE_POLLING", null);
     }
 
-    public void unlock() {
+    public void disablePolling() {
         send("DISABLE_POLLING", null);
     }
 

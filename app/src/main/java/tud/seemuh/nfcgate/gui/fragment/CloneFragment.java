@@ -29,11 +29,15 @@ import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.TagInfo;
 import tud.seemuh.nfcgate.gui.Util;
 import tud.seemuh.nfcgate.gui.model.TagInfoViewModel;
+import tud.seemuh.nfcgate.nfc.NfcManager;
+import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
+import tud.seemuh.nfcgate.util.NfcComm;
 
-public class CloneFragment extends BaseFragment {
+public class CloneFragment extends BaseFragment implements NfcManager.Callback {
     View mCloneWaiting;
     TextView mCloneContent;
     ListView mCloneSaved;
+    byte[] mCloneConfig;
     boolean mTagInfoDisplayed;
 
     private TagInfoViewModel mTagInfoViewModel;
@@ -131,14 +135,9 @@ public class CloneFragment extends BaseFragment {
         mCloneContent.setVisibility(waiting ? ViewGroup.GONE : ViewGroup.VISIBLE);
     }
 
-    void onTagDiscovered() {
-        // stop waiting and display data
-        setCloneWait(false);
-        setCloneContent("Found Tag");
-    }
-
-    void setCloneContent(String content) {
-        mCloneContent.setText(content);
+    void setCloneContent(ConfigBuilder config) {
+        mCloneContent.setText(config.toString());
+        mCloneConfig = config.build();
 
         setTagInfoDisplayed(true);
     }
@@ -146,14 +145,11 @@ public class CloneFragment extends BaseFragment {
     void beginClone() {
         setCloneWait(true);
 
-        // TODO: debug code
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // simulate tag found
-                onTagDiscovered();
-            }
-        }, 3000);
+        // add callback
+        getNfc().setCallback(this);
+
+        // enable clone mode
+        getNfc().enableCloneMode();
     }
 
     private void beginSave() {
@@ -167,12 +163,21 @@ public class CloneFragment extends BaseFragment {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     final String description = input.getText().toString();
-                    // TODO config data
+
                     if (!description.isEmpty())
-                        mTagInfoViewModel.insert(new TagInfo(description, null));
+                        mTagInfoViewModel.insert(new TagInfo(description, mCloneConfig));
                 }
             })
             .setNegativeButton("Cancel", null)
             .show();
+    }
+
+    @Override
+    public void notify(NfcComm data) {
+        if (data.getType() == NfcComm.Type.Initial) {
+            // stop waiting and display data
+            setCloneWait(false);
+            setCloneContent(data.getConfig());
+        }
     }
 }
