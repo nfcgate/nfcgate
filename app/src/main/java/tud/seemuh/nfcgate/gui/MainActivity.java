@@ -55,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // initially select clone mode
+        mNavbar.setCheckedItem(R.id.nav_clone);
+        mNavbar.getMenu().performIdentifierAction(R.id.nav_clone, 0);
+
         // NFC setup
         mNfc = new NfcManager(this);
     }
