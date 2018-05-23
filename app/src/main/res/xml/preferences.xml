@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="General Settings"
+        android:key="general"
+        >
+        <CheckBoxPreference
+            android:title="Enable Workaround"
+            android:key="workaround"
+
+            android:summary="Enables the NFC Keep-Alive Workaround"
+            />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Relay Settings"
+        android:key="relay"
+        >
+        <EditTextPreference
+            android:title="Hostname"
+            android:key="host"
+
+            android:summary="Server Hostname or IP Address"
+            android:dialogMessage="Enter a valid hostname or IP address"
+            />
+        <EditTextPreference
+            android:title="Port"
+            android:key="port"
+
+            android:summary="Server Port"
+            android:dialogMessage="Enter a valid port number"
+            android:inputType="number"
+            android:maxLength="5"
+            android:defaultValue="5566"
+            />
+        <EditTextPreference
+            android:title="Session"
+            android:key="session"
+
+            android:summary="Shared Session Number"
+            android:dialogMessage="Enter a two-digit session number"
+            android:inputType="number"
+            android:maxLength="2"
+            android:defaultValue="00"
+            />
+    </PreferenceCategory>
+
+</PreferenceScreen>

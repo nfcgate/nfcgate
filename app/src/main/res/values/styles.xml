@@ -7,7 +7,10 @@
         <item name="colorPrimaryDark">#303F9F</item>
         <!-- colorAccent is used as the default color to tint widgets -->
         <item name="colorAccent">#FFAB40</item>
-
+        <!-- preferenceTheme is needed for Settings -->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <!-- reduce preference category bottom margin -->
+        <item name="preferenceCategory_marginBottom">0dp</item>
     </style>
 
     <style name="Divider">

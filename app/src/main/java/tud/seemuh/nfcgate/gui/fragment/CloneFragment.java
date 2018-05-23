@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,13 +28,14 @@ import java.util.List;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.TagInfo;
+import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.gui.Util;
 import tud.seemuh.nfcgate.gui.model.TagInfoViewModel;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
 import tud.seemuh.nfcgate.util.NfcComm;
 
-public class CloneFragment extends BaseFragment implements NfcManager.Callback {
+public class CloneFragment extends Fragment implements BaseFragment, NfcManager.Callback {
     View mCloneWaiting;
     TextView mCloneContent;
     ListView mCloneSaved;
@@ -179,5 +181,9 @@ public class CloneFragment extends BaseFragment implements NfcManager.Callback {
             setCloneWait(false);
             setCloneContent(data.getConfig());
         }
+    }
+
+    public NfcManager getNfc() {
+        return ((MainActivity) getActivity()).getNfc();
     }
 }

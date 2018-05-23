@@ -20,6 +20,7 @@ import tud.seemuh.nfcgate.gui.fragment.AboutFragment;
 import tud.seemuh.nfcgate.gui.fragment.BaseFragment;
 import tud.seemuh.nfcgate.gui.fragment.CloneFragment;
 import tud.seemuh.nfcgate.gui.fragment.RelayFragment;
+import tud.seemuh.nfcgate.gui.fragment.SettingsFragment;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 
 public class MainActivity extends AppCompatActivity {
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Try to find a Fragment on the stack or create a new one
      */
-    private BaseFragment findOrCreateFragment(String tag, Class<? extends Fragment> clazz) {
+    private Fragment findOrCreateFragment(String tag, Class<? extends Fragment> clazz) {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
 
         if (fragment == null) {
@@ -104,18 +105,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        return (BaseFragment)fragment;
+        return fragment;
     }
 
     /**
      * Returns a Fragment for every navbar action
      */
-    private BaseFragment getFragmentByAction(int id) {
+    private Fragment getFragmentByAction(int id) {
         switch (id) {
             case R.id.nav_clone:
                 return findOrCreateFragment("clone", CloneFragment.class);
             case R.id.nav_relay:
                 return findOrCreateFragment("relay", RelayFragment.class);
+            case R.id.nav_settings:
+                return findOrCreateFragment("settings", SettingsFragment.class);
             case R.id.nav_about:
                 return findOrCreateFragment("about", AboutFragment.class);
             default:
@@ -128,11 +131,13 @@ public class MainActivity extends AppCompatActivity {
      * Handles all navbar actions by switching to an existing fragment or creating a new one
      */
     private void onNavbarAction(MenuItem item) {
-        BaseFragment fragment = getFragmentByAction(item.getItemId());
+        // every fragment must implement BaseFragment
+        Fragment fragment = getFragmentByAction(item.getItemId());
+        BaseFragment baseFragment = (BaseFragment) fragment;
 
         // no fancy animation for now
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_content, fragment, fragment.getTagName())
+                .replace(R.id.main_content, fragment, baseFragment.getTagName())
                 .commit();
 
         // for the looks
