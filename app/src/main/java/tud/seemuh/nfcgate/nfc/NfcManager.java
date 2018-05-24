@@ -121,9 +121,11 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
         // look for a tag
         enablePolling();
 
-        // enable / disable reader mode
-        mReaderMode = reader;
-        enableDisableReaderMode();
+        // enable or disable reader mode
+        if (isEnabled()) {
+            mReaderMode = reader;
+            enableDisableReaderMode();
+        }
 
         // connect to the network
         mNetwork.connect();
@@ -133,8 +135,10 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
         mMode = Mode.None;
 
         // disable reader mode
-        mReaderMode = false;
-        enableDisableReaderMode();
+        if (isEnabled()) {
+            mReaderMode = false;
+            enableDisableReaderMode();
+        }
 
         // disconnect from network
         mNetwork.disconnect();
@@ -197,9 +201,9 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
 
         switch (mMode) {
             case Clone:
-                // clone tag and immediately disable polling to avoid detecting same tag again
+                // clone tag and immediately disable clone mode to avoid cloning same tag again
                 applyData(data);
-                disablePolling();
+                disableCloneMode();
                 break;
             case Relay:
                 if (data.isCard() && mReaderMode || !data.isCard() && !mReaderMode)

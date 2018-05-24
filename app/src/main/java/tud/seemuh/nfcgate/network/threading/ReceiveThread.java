@@ -8,21 +8,20 @@ import tud.seemuh.nfcgate.network.ServerConnection;
 
 public class ReceiveThread extends BaseThread {
     // references
-    ServerConnection.Callback mCallback;
+    private ServerConnection mConnection;
     private DataInputStream mReadStream;
 
     /**
      * Waits on sendQueue and sends the data over the specified stream
      */
-    public ReceiveThread(ServerConnection.Callback callback, Socket socket) {
+    public ReceiveThread(ServerConnection connection) {
         super();
+        mConnection = connection;
+    }
 
-        try {
-            mCallback = callback;
-            mReadStream = new DataInputStream(socket.getInputStream());
-        } catch (IOException e) {
-            onError();
-        }
+    @Override
+    void initThread() throws IOException {
+        mReadStream = new DataInputStream(mConnection.getSocket().getInputStream());
     }
 
     /**
@@ -38,7 +37,7 @@ public class ReceiveThread extends BaseThread {
         mReadStream.readFully(data);
 
         // deliver data
-        mCallback.onReceive(data);
+        mConnection.onReceive(data);
     }
 
     @Override

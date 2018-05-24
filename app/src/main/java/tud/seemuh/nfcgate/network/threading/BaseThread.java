@@ -16,6 +16,14 @@ public abstract class BaseThread extends Thread {
 
     @Override
     public void run() {
+        // per-thread init
+        try {
+            initThread();
+        } catch (IOException e) {
+            mExit = true;
+            onError();
+        }
+
         while (!mExit && !Thread.currentThread().isInterrupted()) {
             try {
                 Thread.sleep(10);
@@ -32,6 +40,7 @@ public abstract class BaseThread extends Thread {
         }
     }
 
+    abstract void initThread() throws IOException;
     abstract void runInternal() throws IOException;
     abstract void onError();
 }

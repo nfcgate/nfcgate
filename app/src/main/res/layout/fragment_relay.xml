@@ -10,6 +10,7 @@
         android:layout_height="100dp"
         >
         <Button
+            android:id="@+id/btn_reader"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -17,6 +18,7 @@
             android:text="Reader"
             />
         <Button
+            android:id="@+id/btn_tag"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

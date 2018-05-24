@@ -2,6 +2,7 @@ package tud.seemuh.nfcgate.network;
 
 import android.content.SharedPreferences;
 import android.support.v7.preference.PreferenceManagerFix;
+import android.util.Log;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -104,15 +105,17 @@ public class NetworkManager implements ServerConnection.Callback {
         mPort = Integer.parseInt(prefs.getString("port", "0"));
         mSessionNumber = Integer.parseInt(prefs.getString("session", "0"));
 
-        // TODO: verify / santize inputs?
+        Log.d("nfcgate", "Connecting to: " + mHostname + ":" + mPort + " in session " + mSessionNumber);
+
+        // TODO: verify / sanitize inputs?
     }
 
     private void sendServer(Opcode opcode, byte[] data) {
-        mConnection.send(C2S.ServerData.newBuilder()
-                .setOpcode(opcode)
-                .setSessionNumber(mSessionNumber)
-                .setData(ByteString.copyFrom(data))
-                .build()
-                .toByteArray());
+        mConnection.send(mSessionNumber,
+                C2S.ServerData.newBuilder()
+                    .setOpcode(opcode)
+                    .setData(data == null ? ByteString.EMPTY : ByteString.copyFrom(data))
+                    .build()
+                    .toByteArray());
     }
 }

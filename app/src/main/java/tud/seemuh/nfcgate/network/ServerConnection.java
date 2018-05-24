@@ -1,6 +1,5 @@
 package tud.seemuh.nfcgate.network;
 
-import java.io.IOException;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -16,9 +15,12 @@ public class ServerConnection {
 
     // connection objects
     private Socket mSocket;
+    private final Object mSocketLock = new Object();
+
+    // threading
     private SendThread mSendThread;
     private ReceiveThread mReceiveThread;
-    private Queue<byte[]> mSendQueue = new LinkedList<>();
+    private Queue<SendRecord> mSendQueue = new LinkedList<>();
 
     // metadata
     private Callback mCallback;
@@ -40,24 +42,11 @@ public class ServerConnection {
      * Connects to the socket, enables async I/O
      */
     public ServerConnection connect() {
-        try {
-            mSocket = new Socket(mHostname, mPort);
-            mSocket.setTcpNoDelay(true);
-        }
-        catch (Exception e) {
-            // print error to log and inform callback
-            e.printStackTrace();
-            reportStatus();
-        }
-
         // I/O threads
-        if (mSocket != null) {
-            mSendThread = new SendThread(mSendQueue, mSocket);
-            mReceiveThread = new ReceiveThread(mCallback, mSocket);
-            mSendThread.run();
-            mReceiveThread.run();
-        }
-
+        mSendThread = new SendThread(this);
+        mReceiveThread = new ReceiveThread(this);
+        mSendThread.start();
+        mReceiveThread.start();
         return this;
     }
 
@@ -65,27 +54,48 @@ public class ServerConnection {
      * Closes the connection and releases all resources
      */
     public void disconnect() {
-        try {
-            if (mSendThread != null)
-                mSendThread.interrupt();
+        if (mSendThread != null)
+            mSendThread.interrupt();
 
-            if (mReceiveThread != null)
-                mReceiveThread.interrupt();
-
-            if (mSocket != null)
-                mSocket.close();
-        }
-        catch (IOException e) {
-            // TODO: error handling
-            reportStatus();
-        }
+        if (mReceiveThread != null)
+            mReceiveThread.interrupt();
     }
 
     /**
      * Schedules the data to be sent
      */
-    public void send(byte[] data) {
-        mSendQueue.add(data);
+    public void send(int session, byte[] data) {
+        mSendQueue.add(new SendRecord(session, data));
+    }
+
+    public Socket getSocket() {
+        if (mSocket == null)
+            createSocket();
+
+        return mSocket;
+    }
+
+    private void createSocket() {
+        synchronized (mSocketLock) {
+            if (mSocket == null) {
+                try {
+                    mSocket = new Socket(mHostname, mPort);
+                    mSocket.setTcpNoDelay(true);
+                } catch (Exception e) {
+                    // print error to log and inform callback
+                    e.printStackTrace();
+                    reportStatus();
+                }
+            }
+        }
+    }
+
+    public void onReceive(byte[] data) {
+        mCallback.onReceive(data);
+    }
+
+    public Queue<SendRecord> getSendQueue() {
+        return mSendQueue;
     }
 
     /**
