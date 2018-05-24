@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import tud.seemuh.nfcgate.gui.MainActivity;
+import tud.seemuh.nfcgate.network.NetworkManager;
 import tud.seemuh.nfcgate.nfc.config.Technologies;
 import tud.seemuh.nfcgate.nfc.hce.ApduService;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
@@ -25,7 +26,7 @@ import tud.seemuh.nfcgate.nfc.reader.NfcFReader;
 import tud.seemuh.nfcgate.nfc.reader.NfcVReader;
 import tud.seemuh.nfcgate.util.NfcComm;
 
-public class NfcManager implements NfcAdapter.ReaderCallback {
+public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Callback {
     private final String TAG = "NfcManager";
 
     // singleton
@@ -45,6 +46,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback {
     private NfcAdapter mAdapter;
     private ApduService mApduService;
     private DaemonConfiguration mDaemon;
+    private NetworkManager mNetwork;
 
     // state
     private boolean mReaderMode = false;
@@ -65,6 +67,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback {
         mActivity = activity;
         mAdapter = NfcAdapter.getDefaultAdapter(activity);
         mDaemon = new DaemonConfiguration(mActivity);
+        mNetwork = new NetworkManager(mActivity, this);
 
         // save instance for service communication
         mInstance = this;
@@ -158,7 +161,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback {
 
         if (mReader != null) {
             // handle initial card data according to mode
-            handleData(new NfcComm(mReader.getConfig()));
+            handleData(new NfcComm(true, mReader.getConfig().build()));
         }
     }
 
@@ -176,11 +179,9 @@ public class NfcManager implements NfcAdapter.ReaderCallback {
                 disablePolling();
                 break;
             case Relay:
-                if (data.getSource() == NfcComm.Source.CARD && mReaderMode ||
-                        data.getSource() == NfcComm.Source.HCE && !mReaderMode)
+                if (data.isCard() && mReaderMode || !data.isCard() && !mReaderMode)
                     // send own data over network
-                    //mNetwork.send(data);
-                    return;
+                    mNetwork.send(data);
                 else
                     // apply foreign data
                     applyData(data);
@@ -210,9 +211,9 @@ public class NfcManager implements NfcAdapter.ReaderCallback {
      * Applies own or foreign data
      */
     private void applyData(NfcComm data) {
-        if (data.getType() == NfcComm.Type.Initial) {
+        if (data.isInitial()) {
             // upload to service and enable
-            mDaemon.upload(data.getConfig().build());
+            mDaemon.upload(data.getData());
             mDaemon.enable();
         }
         else if (mReaderMode) {
@@ -223,7 +224,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback {
             }
 
             // send reply
-            handleData(new NfcComm(NfcComm.Source.CARD, reply));
+            handleData(new NfcComm(true, reply));
         }
         else {
             // send data to reader
@@ -276,6 +277,22 @@ public class NfcManager implements NfcAdapter.ReaderCallback {
         return null;
     }
 
+    @Override
+    public void onReceive(final NfcComm data) {
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // handle data on UI thread
+                handleData(data);
+            }
+        });
+    }
+
+    @Override
+    public void onConnectionStatus() {
+        // TODO: report this
+    }
+
     /**
      * Enable or disable reader mode for this activity
      */
@@ -301,13 +318,11 @@ public class NfcManager implements NfcAdapter.ReaderCallback {
      */
     private void enableForegroundDispatch() {
         Intent intent = new Intent(mActivity, mActivity.getClass());
-        IntentFilter[] actionFilter =
-                new IntentFilter[] { new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED) };
         PendingIntent pendingIntent =
                 PendingIntent.getActivity(mActivity, 0, intent, 0);
 
         // Register the activity, pass null techLists as a wildcard
-        mAdapter.enableForegroundDispatch(mActivity, pendingIntent, actionFilter, null);
+        mAdapter.enableForegroundDispatch(mActivity, pendingIntent, null, null);
     }
 
     /**

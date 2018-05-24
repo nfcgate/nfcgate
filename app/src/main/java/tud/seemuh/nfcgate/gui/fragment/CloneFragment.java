@@ -2,12 +2,9 @@ package tud.seemuh.nfcgate.gui.fragment;
 
 import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -176,10 +173,10 @@ public class CloneFragment extends Fragment implements BaseFragment, NfcManager.
 
     @Override
     public void notify(NfcComm data) {
-        if (data.getType() == NfcComm.Type.Initial) {
+        if (data.isInitial()) {
             // stop waiting and display data
             setCloneWait(false);
-            setCloneContent(data.getConfig());
+            setCloneContent(new ConfigBuilder(data.getData()));
         }
     }
 

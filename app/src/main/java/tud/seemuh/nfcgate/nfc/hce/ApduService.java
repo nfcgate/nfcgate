@@ -37,7 +37,7 @@ public class ApduService extends HostApduService {
         Log.d(TAG, "APDU-IN: " + Utils.bytesToHex(apdu));
 
         // Package the ADPU into a NfcComm object
-        NfcComm nfcdata = new NfcComm(NfcComm.Source.HCE, apdu);
+        NfcComm nfcdata = new NfcComm(false, apdu);
 
         // Send the object to the handler
         mNfcManager.handleData(nfcdata);

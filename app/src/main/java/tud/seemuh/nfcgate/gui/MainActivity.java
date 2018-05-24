@@ -72,7 +72,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction()))
+        // tech discovered is triggered by XML, tag discovered by foreground dispatch
+        if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction()) ||
+                NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction()))
             mNfc.onTagDiscovered(intent.<Tag>getParcelableExtra(NfcAdapter.EXTRA_TAG));
         else
             super.onNewIntent(intent);

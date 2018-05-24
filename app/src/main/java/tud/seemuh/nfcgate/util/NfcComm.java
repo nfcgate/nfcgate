@@ -1,86 +1,60 @@
 package tud.seemuh.nfcgate.util;
 
-import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
+
+import tud.seemuh.nfcgate.network.c2c.C2C.NFCData;
 
 /**
  * The NfcComm-Class provides an object to store NFC bytes and information about them.
  * It is used to pass information to Sinks, including metadata like the source of the bytes.
  */
 public class NfcComm {
-    public enum Source {
-        HCE,
-        CARD
-    }
-
-    public enum Type {
-        Continuation,
-        Initial
-    }
-
-    private Source mSource;
-    private Type mType;
-    // Contains the used bytes
-    private byte[] mBytes;
-
-    // Contains the config options
-    ConfigBuilder mConfig = null;
-
-    // Date (needed for Session logging display)
-    private String mDate;
+    private NFCData mData;
 
     /**
-     * Instantiate an NfcComm object for regular NFC Traffic
+     * Instantiate a NfcComm object for regular NFC Traffic
      */
-    public NfcComm (Source source, byte[] data) {
-        mSource = source;
-        mType = Type.Continuation;
-        mBytes = data;
+    public NfcComm(boolean fromCard, byte[] data) {
+        mData = NFCData.newBuilder()
+                .setDataSource(fromCard ? NFCData.DataSource.CARD : NFCData.DataSource.READER)
+                .setData(ByteString.copyFrom(data))
+                .build();
     }
 
     /**
-     * Instantiate an NfcComm object for initial data
+     * Instantiate a NfcComm object from serialized data
      */
-    public NfcComm (ConfigBuilder config) {
-        mSource = Source.CARD;
-        mType = Type.Initial;
-        mConfig = config;
+    public NfcComm(byte[] data) {
+        try {
+            mData = NFCData.parseFrom(data);
+        } catch (InvalidProtocolBufferException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void setDate(String date) {
-        mDate = date;
+    /**
+     * True if initial data, false on continuation
+     */
+    public boolean isInitial() {
+        return mData.getDataType() == NFCData.DataType.INITIAL;
     }
 
-    // Variable getters
-    // It is the responsibility of the Sink implementation to check if the return value is not null.
-    public Type getType() {
-        return mType;
-    }
-
-    public Source getSource() {
-        return mSource;
+    /**
+     * True if card source, false on reader source
+     */
+    public boolean isCard() {
+        return mData.getDataSource() == NFCData.DataSource.CARD;
     }
 
     public byte[] getData() {
-        return mBytes;
+        return mData.getData().toByteArray();
     }
 
-    public ConfigBuilder getConfig() {
-        return mConfig;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        if (mType == Type.Continuation) {
-            if (mSource == Source.HCE)
-                sb.append("R: ");
-            else
-                sb.append("C: ");
-
-            sb.append(Utils.bytesToHex(mBytes));
-        } else {
-            sb.append(mConfig.toString());
-        }
-        return sb.toString();
+    /**
+     * Returns serialized NFCData
+     */
+    public byte[] toByteArray() {
+        return mData.toByteArray();
     }
 }
