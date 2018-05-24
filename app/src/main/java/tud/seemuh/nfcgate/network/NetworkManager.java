@@ -45,6 +45,11 @@ public class NetworkManager implements ServerConnection.Callback {
         sendServer(Opcode.OP_SYN, null);
     }
 
+    public void disconnect() {
+        if (mConnection != null)
+            mConnection.disconnect();
+    }
+
     public void send(NfcComm data) {
         // queue data message
         sendServer(Opcode.OP_PSH, data.toByteArray());

@@ -30,7 +30,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     private final String TAG = "NfcManager";
 
     // singleton
-    static NfcManager mInstance;
+    private static NfcManager mInstance;
     public static NfcManager getInstance() {
         return mInstance;
     }
@@ -96,25 +96,48 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     }
 
     /**
-     * Enable or disable reader mode
+     * We want to clone the next tag
      */
-    public void setReaderMode(boolean enabled) {
-        mReaderMode = enabled;
-        enableDisableReaderMode();
-    }
-
-    /**
-     * Set current handling mode
-     */
-    public void setMode(Mode mode) {
-        mMode = mode;
-    }
-
     public void enableCloneMode() {
         mMode = Mode.Clone;
 
         // enable polling because we are looking for a tag
         enablePolling();
+    }
+
+    /**
+     * We don't want to clone the next tag
+     */
+    public void disableCloneMode() {
+        mMode = Mode.None;
+
+        // ignore all further tags
+        disablePolling();
+    }
+
+    public void enableRelayMode(boolean reader) {
+        mMode = Mode.Relay;
+
+        // look for a tag
+        enablePolling();
+
+        // enable / disable reader mode
+        mReaderMode = reader;
+        enableDisableReaderMode();
+
+        // connect to the network
+        mNetwork.connect();
+    }
+
+    public void disableRelayMode() {
+        mMode = Mode.None;
+
+        // disable reader mode
+        mReaderMode = false;
+        enableDisableReaderMode();
+
+        // disconnect from network
+        mNetwork.disconnect();
     }
 
     /**
