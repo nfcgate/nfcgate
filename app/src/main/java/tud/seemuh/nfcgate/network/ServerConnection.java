@@ -10,7 +10,7 @@ import tud.seemuh.nfcgate.network.threading.SendThread;
 public class ServerConnection {
     public interface Callback {
         void onReceive(byte[] data);
-        void onConnectionStatus();
+        void onNetworkStatus(NetworkStatus status);
     }
 
     // connection objects
@@ -27,14 +27,13 @@ public class ServerConnection {
     private String mHostname;
     private int mPort;
 
-    public ServerConnection(String hostname, int port) {
+    ServerConnection(String hostname, int port) {
         mHostname = hostname;
         mPort = port;
     }
 
     public ServerConnection setCallback(Callback cb) {
         mCallback = cb;
-
         return this;
     }
 
@@ -68,6 +67,9 @@ public class ServerConnection {
         mSendQueue.add(new SendRecord(session, data));
     }
 
+    /**
+     * Called by threads to get socket
+     */
     public Socket getSocket() {
         if (mSocket == null)
             createSocket();
@@ -75,35 +77,43 @@ public class ServerConnection {
         return mSocket;
     }
 
+    /**
+     * Called by threads to create socket
+     */
     private void createSocket() {
         synchronized (mSocketLock) {
+            // double-check to prevent race conditions
             if (mSocket == null) {
                 try {
                     mSocket = new Socket(mHostname, mPort);
                     mSocket.setTcpNoDelay(true);
                 } catch (Exception e) {
-                    // print error to log and inform callback
+                    // print error to log and invalidate socket
                     e.printStackTrace();
-                    reportStatus();
+                    mSocket = null;
                 }
             }
         }
     }
 
+    /**
+     * ReceiveThread delivers data
+     */
     public void onReceive(byte[] data) {
         mCallback.onReceive(data);
     }
 
+    /**
+     * SendThread accesses sendQueue
+     */
     public Queue<SendRecord> getSendQueue() {
         return mSendQueue;
     }
 
     /**
      * Reports a status to the callback if set
-     * TODO: status enum
      */
-    private void reportStatus() {
-        if (mCallback != null)
-            mCallback.onConnectionStatus();
+    public void reportStatus(NetworkStatus status) {
+        mCallback.onNetworkStatus(status);
     }
 }

@@ -16,7 +16,7 @@ import static tud.seemuh.nfcgate.network.c2s.C2S.ServerData.Opcode;
 public class NetworkManager implements ServerConnection.Callback {
     public interface Callback {
         void onReceive(NfcComm data);
-        void onConnectionStatus();
+        void onNetworkStatus(NetworkStatus status);
     }
 
     // references
@@ -54,6 +54,8 @@ public class NetworkManager implements ServerConnection.Callback {
     public void send(NfcComm data) {
         // queue data message
         sendServer(Opcode.OP_PSH, data.toByteArray());
+        // waiting for partner
+        onNetworkStatus(NetworkStatus.PARTNER_WAIT);
     }
 
     @Override
@@ -68,19 +70,19 @@ public class NetworkManager implements ServerConnection.Callback {
         switch (serverData.getOpcode()) {
             case OP_SYN:
                 // empty syn message indicates our peer has just connected
-                onConnectionStatus();
+                onNetworkStatus(NetworkStatus.PARTNER_CONNECT);
                 // return ack
                 sendServer(Opcode.OP_ACK, null);
 
                 break;
             case OP_ACK:
                 // empty ack message indicates our peer was already connected
-                onConnectionStatus();
+                onNetworkStatus(NetworkStatus.PARTNER_CONNECT);
 
                 break;
             case OP_FIN:
                 // our peer has disconnected
-                onConnectionStatus();
+                onNetworkStatus(NetworkStatus.PARTNER_LEFT);
                 // TODO: disconnect
 
                 break;
@@ -93,9 +95,8 @@ public class NetworkManager implements ServerConnection.Callback {
     }
 
     @Override
-    public void onConnectionStatus() {
-        if (mCallback != null)
-            mCallback.onConnectionStatus();
+    public void onNetworkStatus(NetworkStatus status) {
+        mCallback.onNetworkStatus(status);
     }
 
     private void getPreferenceData() {

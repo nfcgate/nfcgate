@@ -2,7 +2,9 @@ package tud.seemuh.nfcgate.network.threading;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 
+import tud.seemuh.nfcgate.network.NetworkStatus;
 import tud.seemuh.nfcgate.network.SendRecord;
 import tud.seemuh.nfcgate.network.ServerConnection;
 
@@ -21,7 +23,12 @@ public class SendThread extends BaseThread {
 
     @Override
     void initThread() throws IOException {
-        mWriteStream = new DataOutputStream(mConnection.getSocket().getOutputStream());
+        Socket socket = mConnection.getSocket();
+
+        if (socket == null)
+            throw new IOException("Socket error");
+        else
+            mWriteStream = new DataOutputStream(socket.getOutputStream());
     }
 
     /**
@@ -44,6 +51,6 @@ public class SendThread extends BaseThread {
 
     @Override
     void onError() {
-        // TODO: error handling
+        mConnection.reportStatus(NetworkStatus.SEND_ERROR);
     }
 }

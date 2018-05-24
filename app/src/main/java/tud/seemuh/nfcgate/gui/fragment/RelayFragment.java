@@ -11,32 +11,44 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 
 public class RelayFragment extends Fragment implements BaseFragment {
+    // UI references
+    View mTagWaiting;
+    LinearLayout mSelector;
+    TextView mLog;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_relay, container, false);
 
-        // button setup
+        // setup
+        mTagWaiting = v.findViewById(R.id.tag_wait);
+        mSelector = v.findViewById(R.id.relay_selector);
+        mLog = v.findViewById(R.id.relay_log);
+
+        // selector setup
         v.<Button>findViewById(R.id.btn_reader).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getNfc().enableRelayMode(true);
+                onSelect(true);
             }
         });
         v.<Button>findViewById(R.id.btn_tag).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getNfc().enableRelayMode(false);
+                onSelect(false);
             }
         });
 
         setHasOptionsMenu(true);
+        setSelectorVisible(true);
         return v;
     }
 
@@ -59,6 +71,25 @@ public class RelayFragment extends Fragment implements BaseFragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /**
+     * Called when user selects reader or tag
+     */
+    private void onSelect(boolean reader) {
+        // enable relay, connect to server, etc
+        getNfc().enableRelayMode(reader);
+
+        // toggle selector visibility
+        setSelectorVisible(false);
+    }
+
+    /**
+     * Shows or hides the selector
+     */
+    private void setSelectorVisible(boolean visible) {
+        mSelector.setVisibility(visible ? View.VISIBLE : View.GONE);
+        mTagWaiting.setVisibility(visible ? View.GONE : View.VISIBLE);
     }
 
     public NfcManager getNfc() {

@@ -1,31 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
+    android:orientation="vertical"
+
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
     >
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="0dp"
+        android:layout_weight="2"
         >
-        <Button
-            android:id="@+id/btn_reader"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+        <include layout="@layout/tag_wait" />
+        <LinearLayout
+            android:id="@+id/relay_selector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
 
-            android:text="Reader"
-            />
-        <Button
-            android:id="@+id/btn_tag"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
 
-            android:text="Tag"
-            />
+                android:text="Emulate:"
+                style="@style/TextAppearance.AppCompat.Caption"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
 
-    </LinearLayout>
+                android:orientation="horizontal"
+                >
+                <Button
+                    android:id="@+id/btn_reader"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
 
-</RelativeLayout>
+                    android:text="Reader"
+                    />
+                <Button
+                    android:id="@+id/btn_tag"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+
+                    android:text="Tag"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+    <!-- divider and label -->
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Log:"
+        style="@style/TextAppearance.AppCompat.Caption"
+        />
+    <!-- log -->
+    <TextView
+        android:id="@+id/relay_log"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+</LinearLayout>

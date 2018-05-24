@@ -15,6 +15,7 @@ import java.util.List;
 
 import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.network.NetworkManager;
+import tud.seemuh.nfcgate.network.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.config.Technologies;
 import tud.seemuh.nfcgate.nfc.hce.ApduService;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
@@ -316,8 +317,9 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     }
 
     @Override
-    public void onConnectionStatus() {
-        // TODO: report this
+    public void onNetworkStatus(NetworkStatus status) {
+        // TODO: proper UI forward here
+        Log.d(TAG, "Status changed to: " + status.name());
     }
 
     /**

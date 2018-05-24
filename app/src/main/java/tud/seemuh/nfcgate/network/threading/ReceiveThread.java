@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import tud.seemuh.nfcgate.network.NetworkStatus;
 import tud.seemuh.nfcgate.network.ServerConnection;
 
 public class ReceiveThread extends BaseThread {
@@ -21,7 +22,12 @@ public class ReceiveThread extends BaseThread {
 
     @Override
     void initThread() throws IOException {
-        mReadStream = new DataInputStream(mConnection.getSocket().getInputStream());
+        Socket socket = mConnection.getSocket();
+
+        if (socket == null)
+            throw new IOException("Socket error");
+        else
+            mReadStream = new DataInputStream(socket.getInputStream());
     }
 
     /**
@@ -42,6 +48,6 @@ public class ReceiveThread extends BaseThread {
 
     @Override
     void onError() {
-        // TODO: error handling
+        mConnection.reportStatus(NetworkStatus.RECEIVE_ERROR);
     }
 }

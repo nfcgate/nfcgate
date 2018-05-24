@@ -33,12 +33,16 @@ import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 public class CloneFragment extends Fragment implements BaseFragment, NfcManager.Callback {
-    View mCloneWaiting;
+    // UI references
+    View mTagWaiting;
     TextView mCloneContent;
     ListView mCloneSaved;
+
+    // clone data
     byte[] mCloneConfig;
     boolean mTagInfoDisplayed;
 
+    // db data
     private TagInfoViewModel mTagInfoViewModel;
     private ArrayAdapter<TagInfo> mTagInfoAdapter;
 
@@ -47,12 +51,12 @@ public class CloneFragment extends Fragment implements BaseFragment, NfcManager.
         View v = inflater.inflate(R.layout.fragment_clone, container, false);
 
         // setup
-        mCloneWaiting = v.findViewById(R.id.clone_wait);
+        mTagWaiting = v.findViewById(R.id.tag_wait);
         mCloneContent = v.findViewById(R.id.clone_content);
         mCloneSaved = v.findViewById(R.id.clone_saved);
 
         setHasOptionsMenu(true);
-        setCloneWait(false);
+        beginClone();
 
         mTagInfoDisplayed = false;
 
@@ -130,7 +134,7 @@ public class CloneFragment extends Fragment implements BaseFragment, NfcManager.
     }
 
     void setCloneWait(boolean waiting) {
-        mCloneWaiting.setVisibility(waiting ? ViewGroup.VISIBLE : ViewGroup.GONE);
+        mTagWaiting.setVisibility(waiting ? ViewGroup.VISIBLE : ViewGroup.GONE);
         mCloneContent.setVisibility(waiting ? ViewGroup.GONE : ViewGroup.VISIBLE);
     }
 
