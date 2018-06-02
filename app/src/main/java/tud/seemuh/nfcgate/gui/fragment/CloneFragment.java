@@ -28,6 +28,7 @@ import tud.seemuh.nfcgate.db.TagInfo;
 import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.gui.Util;
 import tud.seemuh.nfcgate.gui.model.TagInfoViewModel;
+import tud.seemuh.nfcgate.network.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
 import tud.seemuh.nfcgate.util.NfcComm;
@@ -182,6 +183,11 @@ public class CloneFragment extends Fragment implements BaseFragment, NfcManager.
             setCloneWait(false);
             setCloneContent(new ConfigBuilder(data.getData()));
         }
+    }
+
+    @Override
+    public void onNetworkStatus(NetworkStatus status) {
+        // no-op
     }
 
     public NfcManager getNfc() {

@@ -1,5 +1,6 @@
 package tud.seemuh.nfcgate.network;
 
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -85,8 +86,10 @@ public class ServerConnection {
             // double-check to prevent race conditions
             if (mSocket == null) {
                 try {
-                    mSocket = new Socket(mHostname, mPort);
+                    mSocket = new Socket();
+                    mSocket.connect(new InetSocketAddress(mHostname, mPort), 10000);
                     mSocket.setTcpNoDelay(true);
+                    mSocket.setSoTimeout(10000);
                 } catch (Exception e) {
                     // print error to log and invalidate socket
                     e.printStackTrace();

@@ -2,7 +2,6 @@ package tud.seemuh.nfcgate.nfc;
 
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.NfcA;
@@ -39,6 +38,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     // callbacks
     public interface Callback {
         void notify(NfcComm data);
+        void onNetworkStatus(NetworkStatus status);
     }
     private Callback mCallback = null;
 
@@ -198,7 +198,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      */
     public void handleData(NfcComm data) {
         // pass initial data through callbacks
-        notifyCallbacks(data);
+        notifyCallback(data);
 
         switch (mMode) {
             case Clone:
@@ -264,11 +264,20 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     }
 
     /**
-     * Notifies all callbacks of the data
+     * Notify UI callback of the data
      */
-    private void notifyCallbacks(NfcComm data) {
+    private void notifyCallback(NfcComm data) {
         if (mCallback != null)
             mCallback.notify(data);
+    }
+
+    /**
+     * Forward status to UI callback
+     */
+    @Override
+    public void onNetworkStatus(NetworkStatus status) {
+        if (mCallback != null)
+            mCallback.onNetworkStatus(status);
     }
 
     /**
@@ -314,12 +323,6 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
                 handleData(data);
             }
         });
-    }
-
-    @Override
-    public void onNetworkStatus(NetworkStatus status) {
-        // TODO: proper UI forward here
-        Log.d(TAG, "Status changed to: " + status.name());
     }
 
     /**

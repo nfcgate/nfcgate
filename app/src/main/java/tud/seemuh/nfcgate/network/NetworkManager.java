@@ -44,6 +44,9 @@ public class NetworkManager implements ServerConnection.Callback {
 
         // queue initial handshake message
         sendServer(Opcode.OP_SYN, null);
+
+        // set status to connecting
+        onNetworkStatus(NetworkStatus.CONNECTING);
     }
 
     public void disconnect() {
