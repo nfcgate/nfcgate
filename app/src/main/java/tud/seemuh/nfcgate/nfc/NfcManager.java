@@ -18,6 +18,7 @@ import tud.seemuh.nfcgate.network.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.config.Technologies;
 import tud.seemuh.nfcgate.nfc.hce.ApduService;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;
+import tud.seemuh.nfcgate.nfc.modes.BaseMode;
 import tud.seemuh.nfcgate.nfc.reader.IsoDepReader;
 import tud.seemuh.nfcgate.nfc.reader.NFCTagReader;
 import tud.seemuh.nfcgate.nfc.reader.NfcAReader;
@@ -35,13 +36,6 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
         return mInstance;
     }
 
-    // callbacks
-    public interface Callback {
-        void notify(NfcComm data);
-        void onNetworkStatus(NetworkStatus status);
-    }
-    private Callback mCallback = null;
-
     // references
     private MainActivity mActivity;
     private NfcAdapter mAdapter;
@@ -54,15 +48,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     private boolean mPollingEnabled = true;
     private Tag mTag;
     private NFCTagReader mReader;
-
-    // mode
-    public enum Mode {
-        None,
-        Clone,
-        Relay,
-        Replay
-    }
-    private Mode mMode = Mode.None;
+    private BaseMode mMode = null;
 
     public NfcManager(MainActivity activity) {
         mActivity = activity;
@@ -97,52 +83,36 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     }
 
     /**
-     * We want to clone the next tag
+     * Enable or disable reader mode
      */
-    public void enableCloneMode() {
-        mMode = Mode.Clone;
+    public void setReaderMode(boolean enabled) {
+        mReaderMode = enabled;
 
-        // enable polling because we are looking for a tag
-        enablePolling();
+        // apply setting if nfc is enabled
+        if (isEnabled())
+            enableDisableReaderMode();
+    }
+
+    public void startMode(BaseMode mode) {
+        mMode = mode;
+
+        // enable
+        mode.setManager(this);
+        mode.onEnable();
+    }
+
+    public void stopMode() {
+        if (mMode != null)
+            mMode.onDisable();
+
+        mMode = null;
     }
 
     /**
-     * We don't want to clone the next tag
+     * Get current network manager
      */
-    public void disableCloneMode() {
-        mMode = Mode.None;
-
-        // ignore all further tags
-        disablePolling();
-    }
-
-    public void enableRelayMode(boolean reader) {
-        mMode = Mode.Relay;
-
-        // look for a tag
-        enablePolling();
-
-        // enable or disable reader mode
-        if (isEnabled()) {
-            mReaderMode = reader;
-            enableDisableReaderMode();
-        }
-
-        // connect to the network
-        mNetwork.connect();
-    }
-
-    public void disableRelayMode() {
-        mMode = Mode.None;
-
-        // disable reader mode
-        if (isEnabled()) {
-            mReaderMode = false;
-            enableDisableReaderMode();
-        }
-
-        // disconnect from network
-        mNetwork.disconnect();
+    public NetworkManager getNetwork() {
+        return mNetwork;
     }
 
     /**
@@ -150,13 +120,6 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      */
     public void setApduService(ApduService apduService) {
         mApduService = apduService;
-    }
-
-    /**
-     * Adds the specified data callback to the list of callbacks
-     */
-    public void setCallback(Callback cb) {
-        mCallback = cb;
     }
 
     /**
@@ -197,48 +160,34 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      * Handles card data by mode
      */
     public void handleData(NfcComm data) {
-        // pass initial data through callbacks
-        notifyCallback(data);
-
-        switch (mMode) {
-            case Clone:
-                // clone tag and immediately disable clone mode to avoid cloning same tag again
-                applyData(data);
-                disableCloneMode();
-                break;
-            case Relay:
-                if (data.isCard() && mReaderMode || !data.isCard() && !mReaderMode)
-                    // send own data over network
-                    mNetwork.send(data);
-                else
-                    // apply foreign data
-                    applyData(data);
-                break;
-            default:
-                // drop
-                mReader.closeConnection();
-                break;
-        }
+        if (mMode != null)
+            mMode.onData(data);
+        else
+            mReader.closeConnection();
     }
 
-    // PRIVATE
+    /**
+     * Stops polling for new tags
+     */
+    public void disablePolling() {
+        mDaemon.disablePolling();
+        mPollingEnabled = false;
+    }
 
-    private void enablePolling() {
+    /**
+     * Starts polling for new tags
+     */
+    public void enablePolling() {
         if (!mPollingEnabled)
             mDaemon.enablePolling();
 
         mPollingEnabled = true;
     }
 
-    private void disablePolling() {
-        mDaemon.disablePolling();
-        mPollingEnabled = false;
-    }
-
     /**
      * Applies own or foreign data
      */
-    private void applyData(NfcComm data) {
+    public void applyData(NfcComm data) {
         if (data.isInitial()) {
             // upload to service and enable
             mDaemon.upload(data.getData());
@@ -263,21 +212,15 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
         }
     }
 
-    /**
-     * Notify UI callback of the data
-     */
-    private void notifyCallback(NfcComm data) {
-        if (mCallback != null)
-            mCallback.notify(data);
-    }
+    // PRIVATE
 
     /**
-     * Forward status to UI callback
+     * Forward status to current mode
      */
     @Override
     public void onNetworkStatus(NetworkStatus status) {
-        if (mCallback != null)
-            mCallback.onNetworkStatus(status);
+        if (mMode != null)
+            mMode.onNetworkStatus(status);
     }
 
     /**

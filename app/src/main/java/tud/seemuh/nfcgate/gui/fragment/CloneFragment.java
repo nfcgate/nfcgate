@@ -28,12 +28,12 @@ import tud.seemuh.nfcgate.db.TagInfo;
 import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.gui.Util;
 import tud.seemuh.nfcgate.gui.model.TagInfoViewModel;
-import tud.seemuh.nfcgate.network.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
+import tud.seemuh.nfcgate.nfc.modes.CloneMode;
 import tud.seemuh.nfcgate.util.NfcComm;
 
-public class CloneFragment extends Fragment implements BaseFragment, NfcManager.Callback {
+public class CloneFragment extends Fragment implements BaseFragment {
     // UI references
     View mTagWaiting;
     TextView mCloneContent;
@@ -147,13 +147,11 @@ public class CloneFragment extends Fragment implements BaseFragment, NfcManager.
     }
 
     void beginClone() {
+        // stop waiting for tag
         setCloneWait(true);
 
-        // add callback
-        getNfc().setCallback(this);
-
-        // enable clone mode
-        getNfc().enableCloneMode();
+        // start custom clone mode
+        getNfc().startMode(new UICloneMode());
     }
 
     private void beginSave() {
@@ -176,21 +174,20 @@ public class CloneFragment extends Fragment implements BaseFragment, NfcManager.
             .show();
     }
 
-    @Override
-    public void notify(NfcComm data) {
-        if (data.isInitial()) {
-            // stop waiting and display data
-            setCloneWait(false);
-            setCloneContent(new ConfigBuilder(data.getData()));
-        }
-    }
-
-    @Override
-    public void onNetworkStatus(NetworkStatus status) {
-        // no-op
-    }
-
     public NfcManager getNfc() {
         return ((MainActivity) getActivity()).getNfc();
+    }
+
+    class UICloneMode extends CloneMode {
+        @Override
+        public void onData(NfcComm data) {
+            super.onData(data);
+
+            if (data.isInitial()) {
+                // stop waiting and display data
+                setCloneWait(false);
+                setCloneContent(new ConfigBuilder(data.getData()));
+            }
+        }
     }
 }

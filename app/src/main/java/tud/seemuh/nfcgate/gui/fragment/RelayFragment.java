@@ -19,9 +19,9 @@ import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.network.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.NfcManager;
-import tud.seemuh.nfcgate.util.NfcComm;
+import tud.seemuh.nfcgate.nfc.modes.RelayMode;
 
-public class RelayFragment extends Fragment implements BaseFragment, NfcManager.Callback {
+public class RelayFragment extends Fragment implements BaseFragment {
     // UI references
     View mTagWaiting;
     LinearLayout mSelector;
@@ -83,11 +83,8 @@ public class RelayFragment extends Fragment implements BaseFragment, NfcManager.
      * Called when user selects reader or tag
      */
     private void onSelect(boolean reader) {
-        // get callbacks
-        getNfc().setCallback(this);
-
-        // enable relay, connect to server, etc
-        getNfc().enableRelayMode(reader);
+        // enable reader or emulator mode
+        getNfc().startMode(new UIRelayMode(reader));
 
         // toggle selector visibility
         setSelectorVisible(false);
@@ -101,23 +98,26 @@ public class RelayFragment extends Fragment implements BaseFragment, NfcManager.
         mTagWaiting.setVisibility(visible ? View.GONE : View.VISIBLE);
     }
 
-    @Override
-    public void notify(NfcComm data) {
-        // no-op
-    }
-
-    @Override
-    public void onNetworkStatus(final NetworkStatus status) {
-        // add log entry
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mLog.append("Status changed: " + status.name() + "\n");
-            }
-        });
-    }
-
     public NfcManager getNfc() {
         return ((MainActivity) getActivity()).getNfc();
+    }
+
+    class UIRelayMode extends RelayMode {
+        UIRelayMode(boolean reader) {
+            super(reader);
+        }
+
+        @Override
+        public void onNetworkStatus(final NetworkStatus status) {
+            super.onNetworkStatus(status);
+
+            // add log entry
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mLog.append("Status changed: " + status.name() + "\n");
+                }
+            });
+        }
     }
 }
