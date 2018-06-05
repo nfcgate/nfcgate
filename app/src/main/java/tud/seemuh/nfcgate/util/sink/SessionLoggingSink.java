@@ -180,17 +180,8 @@ public class SessionLoggingSink implements Sink {
         // Meta values
         values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_SESSION_ID, mSessionID);
         values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_TYPE, SessionLoggingContract.SessionEvent.VALUE_TYPE_ANTICOL);
-        // Content Values // FIXME database
-        /*values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_UID, msg.getUid());
-        values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA, msg.getAtqa());
-        values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK, new byte[] {msg.getSak()});
-        values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST, msg.getHist());
-        if (msg.isChanged()) {
-            values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_UID_PREFILTER, msg.getOldUid());
-            values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_ATQA_PREFILTER, msg.getOldAtqa());
-            values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_SAK_PREFILTER, new byte[] {msg.getOldSak()});
-            values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_HIST_PREFILTER, msg.getOldHist());
-        }*/
+        // Content Values
+        values.put(SessionLoggingContract.SessionEvent.COLUMN_NAME_CONFIG, msg.getConfig().build());
 
         // Commit to database
         mDB.insert(SessionLoggingContract.SessionEvent.TABLE_NAME,
