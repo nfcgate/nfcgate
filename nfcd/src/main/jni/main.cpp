@@ -1,4 +1,5 @@
 #include <dlfcn.h>
+#include <unistd.h>
 
 #include <nfcd/nfcd.h>
 #include <nfcd/hook/hook.h>
@@ -28,6 +29,12 @@ void onLoad() {
     LOGI("ARM detected!");
     const char *path = "/system/lib/libnfc-nci.so";
 #endif
+
+    // check if NCI library exists and is readable
+    if (access(path, R_OK) != 0) {
+        LOGE("libnfc-nci library does not exist. Exiting.");
+        return;
+    }
 
     // create symbol mapping
     SymbolTable::create(path);
