@@ -1,5 +1,7 @@
 package tud.seemuh.nfcgate.network;
 
+import android.util.Log;
+
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.LinkedList;
@@ -9,6 +11,8 @@ import tud.seemuh.nfcgate.network.threading.ReceiveThread;
 import tud.seemuh.nfcgate.network.threading.SendThread;
 
 public class ServerConnection {
+    private static final String TAG = "ServerConnection";
+
     public interface Callback {
         void onReceive(byte[] data);
         void onNetworkStatus(NetworkStatus status);
@@ -65,6 +69,7 @@ public class ServerConnection {
      * Schedules the data to be sent
      */
     public void send(int session, byte[] data) {
+        Log.v(TAG, "Enqueuing message of " + data.length + " bytes");
         mSendQueue.add(new SendRecord(session, data));
     }
 
@@ -72,29 +77,28 @@ public class ServerConnection {
      * Called by threads to get socket
      */
     public Socket getSocket() {
-        if (mSocket == null)
-            createSocket();
+        synchronized (mSocketLock) {
+            if (mSocket == null)
+                createSocket();
 
-        return mSocket;
+            return mSocket;
+        }
     }
 
     /**
      * Called by threads to create socket
      */
     private void createSocket() {
-        synchronized (mSocketLock) {
-            // double-check to prevent race conditions
-            if (mSocket == null) {
-                try {
-                    mSocket = new Socket();
-                    mSocket.connect(new InetSocketAddress(mHostname, mPort), 10000);
-                    mSocket.setTcpNoDelay(true);
-                    mSocket.setSoTimeout(10000);
-                } catch (Exception e) {
-                    // print error to log and invalidate socket
-                    e.printStackTrace();
-                    mSocket = null;
-                }
+        // double-check to prevent race conditions
+        Log.v(TAG, "Creating socket. mSocket = " + mSocket);
+        if (mSocket == null) {
+            try {
+                mSocket = new Socket();
+                mSocket.connect(new InetSocketAddress(mHostname, mPort), 10000);
+                mSocket.setTcpNoDelay(true);
+            } catch (Exception e) {
+                Log.e(TAG, "Socket cannot connect", e);
+                mSocket = null;
             }
         }
     }
