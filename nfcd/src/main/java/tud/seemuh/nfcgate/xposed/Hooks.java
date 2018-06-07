@@ -25,50 +25,49 @@ public class Hooks implements IXposedHookLoadPackage {
             findAndHookMethod("tud.seemuh.nfcgate.nfc.NfcManager", lpparam.classLoader,
                     "isHookLoaded", XC_MethodReplacement.returnConstant(true));
         }
-        else if (!"com.android.nfc".equals(lpparam.packageName))
-            return;
+        else if ("com.android.nfc".equals(lpparam.packageName)) {
+            // hook construtor to catch application context
+            findAndHookConstructor("com.android.nfc.NfcService", lpparam.classLoader, Application.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    Log.i("HOOKNFC", "constructor");
+                    Application app = (Application) param.args[0];
 
-        // hook construtor to catch application context
-        findAndHookConstructor("com.android.nfc.NfcService", lpparam.classLoader, Application.class, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                Log.i("HOOKNFC", "constructor");
-                Application app = (Application) param.args[0];
-
-                // using context, inject our class into the nfc service class loader
-                mReceiver = loadOrInjectClass(app, "tud.seemuh.nfcgate",
-                                getClass().getClassLoader(), lpparam.classLoader,
-                                "tud.seemuh.nfcgate.xposed.InjectionBroadcastWrapper");
-            }
-        });
-
-        // hook findSelectAid to route all APDUs to our app
-        findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager", lpparam.classLoader, "findSelectAid", byte[].class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-
-                Log.i("HOOKNFC", "beforeHookedMethod");
-                if (isNativeEnabled()) {
-                    Log.i("HOOKNFC", "enabled");
-                    // setting a result will prevent the original method to run.
-                    // F0010203040506 is a aid registered by the nfcgate hce service
-                    param.setResult("F0010203040506");
+                    // using context, inject our class into the nfc service class loader
+                    mReceiver = loadOrInjectClass(app, "tud.seemuh.nfcgate",
+                            getClass().getClassLoader(), lpparam.classLoader,
+                            "tud.seemuh.nfcgate.xposed.InjectionBroadcastWrapper");
                 }
-            }
-        });
+            });
 
-        // support extended length apdus
-        // see http://stackoverflow.com/questions/25913480/what-are-the-requirements-for-support-of-extended-length-apdus-and-which-smartph
-        findAndHookMethod("com.android.nfc.dhimpl.NativeNfcManager", lpparam.classLoader, "getMaxTransceiveLength", int.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            // hook findSelectAid to route all APDUs to our app
+            findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager", lpparam.classLoader, "findSelectAid", byte[].class, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
 
-                int technology = (int) param.args[0];
-                if (technology == 3 /* 3=TagTechnology.ISO_DEP */) {
-                    param.setResult(2462);
+                    Log.i("HOOKNFC", "beforeHookedMethod");
+                    if (isNativeEnabled()) {
+                        Log.i("HOOKNFC", "enabled");
+                        // setting a result will prevent the original method to run.
+                        // F0010203040506 is a aid registered by the nfcgate hce service
+                        param.setResult("F0010203040506");
+                    }
                 }
-            }
-        });
+            });
+
+            // support extended length apdus
+            // see http://stackoverflow.com/questions/25913480/what-are-the-requirements-for-support-of-extended-length-apdus-and-which-smartph
+            findAndHookMethod("com.android.nfc.dhimpl.NativeNfcManager", lpparam.classLoader, "getMaxTransceiveLength", int.class, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+
+                    int technology = (int) param.args[0];
+                    if (technology == 3 /* 3=TagTechnology.ISO_DEP */) {
+                        param.setResult(2462);
+                    }
+                }
+            });
+        }
     }
 
     private boolean isNativeEnabled() {

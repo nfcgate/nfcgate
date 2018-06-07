@@ -151,8 +151,10 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
         mReader = fromTag();
 
         if (mReader != null) {
+            Log.i(TAG, "Discovered new Tag: " + mReader.getProtocol());
+
             // handle initial card data according to mode
-            handleData(new NfcComm(true, mReader.getConfig().build()));
+            handleData(new NfcComm(true, true, mReader.getConfig().build()));
         }
     }
 
@@ -160,7 +162,8 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      * Handles card data by mode
      */
     public void handleData(NfcComm data) {
-        Log.v(TAG, "handleData " + data.getData().length + " bytes in mode " + mMode.toString());
+        Log.v(TAG, "handleData " + data.getData().length + " bytes");
+
         if (mMode != null)
             mMode.onData(data);
         else
@@ -199,19 +202,19 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
         else if (mReaderMode) {
             // send data to tag and get reply
             byte[] reply = mReader.sendCmd(data.getData());
-            if (reply == null) {
-                // TODO: errorhandling
-            }
 
             // send reply
-            handleData(new NfcComm(true, reply));
+            if (reply == null)
+                Log.w(TAG, "Empty TAG reply");
+            else
+                handleData(new NfcComm(true, false, reply));
         }
         else {
             // send data to reader
-            if (mApduService != null)
+            if (mApduService == null)
+                Log.w(TAG, "No APDU Service connected");
+            else
                 mApduService.sendResponse(data.getData());
-            // else TODO: errorhandling
-
         }
     }
 

@@ -34,12 +34,6 @@ public class NfcAReader implements NFCTagReader {
         }
     }
 
-    /**
-     * Send a raw command to the NFC chip, receiving the answer as a byte[]
-     *
-     * @param command: byte[]-representation of the command to be sent
-     * @return byte[]-representation of the answer of the NFC chip
-     */
     @Override
     public byte[] sendCmd(byte[] command) {
         try {
@@ -54,11 +48,6 @@ public class NfcAReader implements NFCTagReader {
         }
     }
 
-    /**
-     * Closes the adapter, signalling that communication is over. Should be called only
-     * when no further communication with the adapter will follow, as the adapter will become
-     * unusable from this
-     */
     @Override
     public void closeConnection() {
         try{
@@ -68,15 +57,9 @@ public class NfcAReader implements NFCTagReader {
         }
     }
 
-    /**
-     * Returns the integer representation of the protocol the used implementation is speaking.
-     * This will be one of the READER_* constants defined by the util.NFCTagReader interface.
-     *
-     * @return integer representation of the underlying NFC tag reader protocol
-     */
     @Override
-    public int getProtocol() {
-        return READER_NFC_A;
+    public Protocol getProtocol() {
+        return Protocol.NFC_A;
     }
 
     @Override

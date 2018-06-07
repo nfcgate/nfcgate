@@ -6,17 +6,20 @@ import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
  * Interface to all NFCTagReader-Classes.
  */
 public interface NFCTagReader {
-    // Constants to indicate the used NFC reader technology
-    // Not all of these are guaranteed to be available, as the android API does not guarantee
-    // support for some of these.
-    int READER_ISODEP            = 0;
-    int READER_MIFARE_CLASSIC    = 1;
-    int READER_MIFARE_ULTRALIGHT = 2;
-    int READER_NFC_A             = 3;
-    int READER_NFC_B             = 4;
-    int READER_NFC_BARCODE       = 5;
-    int READER_NFC_F             = 6;
-    int READER_NFC_V             = 7;
+    /*
+     * Constants to indicate the used NFC reader technology
+     */
+    enum Protocol {
+        NFCDEP,
+        ISODEP,
+        MIFARE_CLASSIC,
+        MIFARE_ULTRALIGHT,
+        NFC_A,
+        NFC_B,
+        NFC_BARCODE,
+        NFC_F,
+        NFC_V
+    }
 
     /**
      * Send a raw command to the NFC chip, receiving the answer as a byte[]
@@ -27,12 +30,9 @@ public interface NFCTagReader {
     byte[] sendCmd(byte[] command);
 
     /**
-     * Returns the integer representation of the protocol the used implementation is speaking.
-     * This will be one of the READER_* constants defined by the util.NFCTagReader interface.
-     *
-     * @return integer representation of the underlying NFC tag reader protocol
+     * Returns the protocol used by the reader
      */
-    int getProtocol();
+    Protocol getProtocol();
 
     /**
      * Closes the connection, no further communication will be possible
