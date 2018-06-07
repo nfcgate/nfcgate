@@ -14,6 +14,8 @@ import tud.seemuh.nfcgate.util.NfcComm;
 import static tud.seemuh.nfcgate.network.c2s.C2S.ServerData.Opcode;
 
 public class NetworkManager implements ServerConnection.Callback {
+    private static final String TAG = "NetworkManager";
+
     public interface Callback {
         void onReceive(NfcComm data);
         void onNetworkStatus(NetworkStatus status);
@@ -67,9 +69,11 @@ public class NetworkManager implements ServerConnection.Callback {
         try {
             serverData = C2S.ServerData.parseFrom(data);
         } catch (InvalidProtocolBufferException e) {
-            e.printStackTrace();
+            Log.e(TAG, "Message parsing failed", e);
+            return;
         }
 
+        Log.v(TAG, "Got message "+serverData.getOpcode().toString());
         switch (serverData.getOpcode()) {
             case OP_SYN:
                 // empty syn message indicates our peer has just connected

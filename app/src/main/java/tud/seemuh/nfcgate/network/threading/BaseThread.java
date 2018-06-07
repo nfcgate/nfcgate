@@ -21,7 +21,7 @@ public abstract class BaseThread extends Thread {
             initThread();
         } catch (IOException e) {
             mExit = true;
-            onError();
+            onError(e);
         }
 
         while (!mExit && !Thread.currentThread().isInterrupted()) {
@@ -35,12 +35,12 @@ public abstract class BaseThread extends Thread {
             }
             catch (IOException e) {
                 mExit = true;
-                onError();
+                onError(e);
             }
         }
     }
 
     abstract void initThread() throws IOException;
     abstract void runInternal() throws IOException;
-    abstract void onError();
+    abstract void onError(Exception e);
 }

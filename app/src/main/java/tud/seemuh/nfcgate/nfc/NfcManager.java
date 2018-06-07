@@ -160,6 +160,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      * Handles card data by mode
      */
     public void handleData(NfcComm data) {
+        Log.v(TAG, "handleData " + data.getData().length + " bytes in mode " + mMode.toString());
         if (mMode != null)
             mMode.onData(data);
         else
@@ -188,6 +189,8 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      * Applies own or foreign data
      */
     public void applyData(NfcComm data) {
+        Log.v(TAG, "applyData of " + data.getData().length + " bytes");
+
         if (data.isInitial()) {
             // upload to service and enable
             mDaemon.upload(data.getData());
