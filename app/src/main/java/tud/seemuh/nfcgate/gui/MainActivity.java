@@ -13,15 +13,25 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.db.AppDatabase;
+import tud.seemuh.nfcgate.db.NfcCommEntry;
+import tud.seemuh.nfcgate.db.SessionLog;
+import tud.seemuh.nfcgate.db.SessionLogJoin;
 import tud.seemuh.nfcgate.gui.fragment.AboutFragment;
 import tud.seemuh.nfcgate.gui.fragment.BaseFragment;
 import tud.seemuh.nfcgate.gui.fragment.CloneFragment;
 import tud.seemuh.nfcgate.gui.fragment.RelayFragment;
 import tud.seemuh.nfcgate.gui.fragment.SettingsFragment;
 import tud.seemuh.nfcgate.nfc.NfcManager;
+import tud.seemuh.nfcgate.util.NfcComm;
 
 public class MainActivity extends AppCompatActivity {
     // UI
@@ -68,6 +78,34 @@ public class MainActivity extends AppCompatActivity {
             showWarning("This device seems to be missing the NFC capability.");
         else if (!NfcManager.isHookLoaded())
             showWarning("The Xposed module is not enabled or Xposed is not installed.");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final AppDatabase database = AppDatabase.getDatabase(MainActivity.this);
+                final SessionLog sessionLog = new SessionLog(new Date());
+                List<NfcCommEntry> entries = new ArrayList<>();
+
+                long sessionId = database.sessionLogDao().insert(sessionLog);
+
+                final NfcCommEntry entry = new NfcCommEntry(new NfcComm(true, false, new byte[]{0, 1}), sessionId);
+                entries.add(entry);
+                database.nfcCommEntryDao().insert(entry);
+
+                final List<SessionLogJoin> all = database.sessionLogJoinDao().getAll();
+                Log.d("NFCGATE", ""+all.size());
+                for (SessionLogJoin log : all) {
+                    Log.d("NFCGATE", log.getSessionLog().getId() + " " + log.getSessionLog().getDate());
+                    for (NfcCommEntry nfcCommEntry : log.getNfcCommEntries()) {
+                        Log.d("NFCGATE", nfcCommEntry.getId() + " " + nfcCommEntry.getSessionId());
+                    }
+                }
+
+            }
+        }).start();
+
+        //database.sessionLogJoinDao().insert(new SessionLogJoin(sessionLog, entries));
+
     }
 
     @Override
