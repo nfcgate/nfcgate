@@ -40,7 +40,7 @@
             android:dialogMessage="Enter a two-digit session number"
             android:inputType="number"
             android:maxLength="2"
-            android:defaultValue="00"
+            android:defaultValue="1"
             />
     </PreferenceCategory>
 
