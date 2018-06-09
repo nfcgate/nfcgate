@@ -31,6 +31,7 @@ import tud.seemuh.nfcgate.db.SessionLogJoin;
 import tud.seemuh.nfcgate.gui.fragment.AboutFragment;
 import tud.seemuh.nfcgate.gui.fragment.BaseFragment;
 import tud.seemuh.nfcgate.gui.fragment.CloneFragment;
+import tud.seemuh.nfcgate.gui.fragment.LoggingFragment;
 import tud.seemuh.nfcgate.gui.fragment.RelayFragment;
 import tud.seemuh.nfcgate.gui.fragment.SettingsFragment;
 import tud.seemuh.nfcgate.nfc.NfcManager;
@@ -119,7 +120,18 @@ public class MainActivity extends AppCompatActivity {
 
                 long sessionId = database.sessionLogDao().insert(sessionLog);
 
-                final NfcCommEntry entry = new NfcCommEntry(new NfcComm(true, false, new byte[]{0, 1}), sessionId);
+                final NfcCommEntry entry = new NfcCommEntry(new NfcComm(true, false,
+                        new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,}), sessionId);
                 entries.add(entry);
                 database.nfcCommEntryDao().insert(entry);
 
@@ -198,6 +210,8 @@ public class MainActivity extends AppCompatActivity {
                 return findOrCreateFragment("settings", SettingsFragment.class);
             case R.id.nav_about:
                 return findOrCreateFragment("about", AboutFragment.class);
+            case R.id.nav_logging:
+                return findOrCreateFragment("logging", LoggingFragment.class);
             default:
                 return findOrCreateFragment("clone", CloneFragment.class);
                 //throw new IllegalArgumentException("Position out of range");

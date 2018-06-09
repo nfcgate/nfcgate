@@ -7,6 +7,8 @@ import android.arch.persistence.room.PrimaryKey;
 
 import tud.seemuh.nfcgate.util.NfcComm;
 
+import static tud.seemuh.nfcgate.util.Utils.bytesToHexDump;
+
 @Entity(foreignKeys = {
         @ForeignKey(entity = SessionLog.class, parentColumns = "id", childColumns = "sessionId")
 })
@@ -47,5 +49,25 @@ public class NfcCommEntry {
 
     public void setSessionId(long sessionId) {
         this.sessionId = sessionId;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        final byte[] data = nfcComm.getData();
+        final boolean card = nfcComm.isCard();
+        final boolean initial = nfcComm.isInitial();
+
+        sb.append("card: ");
+        sb.append(card);
+        sb.append(" ");
+        sb.append("initial: ");
+        sb.append(initial);
+        sb.append("\n");
+        sb.append("\n");
+        sb.append(bytesToHexDump(data));
+
+        return sb.toString();
     }
 }

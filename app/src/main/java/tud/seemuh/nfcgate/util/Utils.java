@@ -22,4 +22,42 @@ public class Utils {
     public static String bytesToHex(byte b) {
         return bytesToHex(new byte[]{ b });
     }
+
+    /**
+     * Convert a byte-array to a multiline hexdump String.
+     *
+     * Every line is prefixed with the hex offset, e.g.:
+     * 000 01 02 03 ...
+     * 010 10 20 30 ...
+     *
+     * @param bytes Byte[] to convert to String
+     * @return Byte[] as hexdump string
+     */
+    public static String bytesToHexDump(byte[] bytes) {
+        int lines = bytes.length % 16;
+        int linePreamble = 5;
+        char[] hexChars = new char[bytes.length * 3 + lines * linePreamble];
+        for ( int j = 0, l = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            int baseIx = l * 4 + j * 3;
+
+            hexChars[baseIx + linePreamble] = ' ';
+            hexChars[baseIx + linePreamble + 1] = hexArray[v >>> 4];
+            hexChars[baseIx + linePreamble + 2] = hexArray[v & 0x0F];
+
+            // begin of new line
+            if ((j % 16) == 0) {
+                if (j != 0)
+                    hexChars[baseIx] = '\n';
+
+                // hex offset
+                hexChars[baseIx + 1] = hexArray[(j >>> 8) & 0x0F];
+                hexChars[baseIx + 2] = hexArray[(j >>> 4) & 0x0F];
+                hexChars[baseIx + 3] = hexArray[j & 0x0F];
+                hexChars[baseIx + 4] = ' ';
+                l++;
+            }
+        }
+        return new String(hexChars);
+    }
 }

@@ -10,6 +10,9 @@ import java.util.List;
 
 @Dao
 public interface SessionLogJoinDao {
-    @Query("SELECT * FROM SessionLog INNER JOIN NfcCommEntry ON SessionLog.id = NfcCommEntry.sessionId ORDER BY Date ASC")
+    @Query("SELECT * FROM SessionLog INNER JOIN NfcCommEntry ON SessionLog.id = NfcCommEntry.sessionId ORDER BY Date ASC, NfcCommEntry.id ASC")
     List<SessionLogJoin> getAll();
+
+    @Query("SELECT * FROM SessionLog INNER JOIN NfcCommEntry ON SessionLog.id = NfcCommEntry.sessionId WHERE SessionLog.id=:sessionId ORDER BY NfcCommEntry.id ASC")
+    LiveData<SessionLogJoin> get(long sessionId);
 }

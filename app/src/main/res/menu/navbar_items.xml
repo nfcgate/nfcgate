@@ -21,6 +21,11 @@
                         android:title="Replay Mode"
                         android:icon="@drawable/ic_replay_black_24dp"
                         />
+                    <item
+                        android:id="@+id/nav_logging"
+                        android:title="Logging"
+                        android:icon="@drawable/ic_log_black_24dp"
+                        />
                 </group>
             </menu>
         </item>
