@@ -21,6 +21,7 @@
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             app:titleTextColor="#fff"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             />
 
         <!-- fragments go in here -->
