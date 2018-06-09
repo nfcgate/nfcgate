@@ -233,7 +233,18 @@ public class MainActivity extends AppCompatActivity {
 
         // for the looks
         getSupportActionBar().setTitle(item.getTitle());
+        // reset the subtitle because a fragment might have changed it
+        getSupportActionBar().setSubtitle(null);
+
         mDrawerLayout.closeDrawers();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // reset the subtitle because a fragment might have changed it
+        getSupportActionBar().setSubtitle(null);
+
+        super.onBackPressed();
     }
 
     /**
