@@ -8,13 +8,16 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout mDrawerLayout;
     NavigationView mNavbar;
     Toolbar mToolbar;
+    ActionBarDrawerToggle mToggle;
 
     // NFC
     NfcManager mNfc;
@@ -51,12 +55,39 @@ public class MainActivity extends AppCompatActivity {
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-        // drawer icon in toolbar
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer_black_24dp);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         // drawer setup
         mDrawerLayout = findViewById(R.id.main_drawer_layout);
+
+        // drawer toggle in toolbar
+        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.empty, R.string.empty);
+        mToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // when drawer icon is NOT visible (due to fragment on backstack), issue back action
+                onBackPressed();
+            }
+        });
+        mDrawerLayout.addDrawerListener(mToggle);
+
+        // display "up-arrow" when non-empty backstack, display navigation drawer otherwise
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        final ActionBar actionBar = getSupportActionBar();
+
+        fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                if (fragmentManager.getBackStackEntryCount() > 0) {
+                    // https://stackoverflow.com/a/29594947
+                    actionBar.setDisplayHomeAsUpEnabled(false);
+                    mToggle.setDrawerIndicatorEnabled(false);
+                    actionBar.setDisplayHomeAsUpEnabled(true);
+                } else {
+                    actionBar.setDisplayHomeAsUpEnabled(false);
+                    mToggle.setDrawerIndicatorEnabled(true);
+                    mToggle.syncState();
+                }
+            }
+        });
 
         // navbar setup actions
         mNavbar = findViewById(R.id.main_navigation);
@@ -106,6 +137,12 @@ public class MainActivity extends AppCompatActivity {
 
         //database.sessionLogJoinDao().insert(new SessionLogJoin(sessionLog, entries));
 
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        mToggle.syncState();
+        super.onPostCreate(savedInstanceState);
     }
 
     @Override
@@ -183,20 +220,6 @@ public class MainActivity extends AppCompatActivity {
         // for the looks
         getSupportActionBar().setTitle(item.getTitle());
         mDrawerLayout.closeDrawers();
-    }
-
-    /**
-     * Helper for opening the drawer using the drawer button of the Toolbar
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            // drawer button was pressed
-            mDrawerLayout.openDrawer(GravityCompat.START);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /**
