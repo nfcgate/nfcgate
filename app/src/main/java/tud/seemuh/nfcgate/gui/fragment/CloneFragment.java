@@ -40,7 +40,7 @@ public class CloneFragment extends Fragment implements BaseFragment {
     ListView mCloneSaved;
 
     // clone data
-    byte[] mCloneConfig;
+    byte[] mCloneData;
     boolean mTagInfoDisplayed;
 
     // db data
@@ -82,6 +82,16 @@ public class CloneFragment extends Fragment implements BaseFragment {
                     return true;
                 }
                 return false;
+            }
+        });
+        mCloneSaved.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position >= 0) {
+                    // load configuration of saved tag
+                    final TagInfo item = mTagInfoAdapter.getItem(position);
+                    getNfc().handleData(new NfcComm(item.getData()));
+                }
             }
         });
 
@@ -139,9 +149,10 @@ public class CloneFragment extends Fragment implements BaseFragment {
         mCloneContent.setVisibility(waiting ? ViewGroup.GONE : ViewGroup.VISIBLE);
     }
 
-    void setCloneContent(ConfigBuilder config) {
-        mCloneContent.setText(config.toString());
-        mCloneConfig = config.build();
+    void setCloneContent(NfcComm data) {
+        final ConfigBuilder builder = new ConfigBuilder(data.getData());
+        mCloneContent.setText(builder.toString());
+        mCloneData = data.toByteArray();
 
         setTagInfoDisplayed(true);
     }
@@ -167,7 +178,7 @@ public class CloneFragment extends Fragment implements BaseFragment {
                     final String description = input.getText().toString();
 
                     if (!description.isEmpty())
-                        mTagInfoViewModel.insert(new TagInfo(description, mCloneConfig));
+                        mTagInfoViewModel.insert(new TagInfo(description, mCloneData));
                 }
             })
             .setNegativeButton("Cancel", null)
@@ -186,7 +197,7 @@ public class CloneFragment extends Fragment implements BaseFragment {
             if (data.isInitial()) {
                 // stop waiting and display data
                 setCloneWait(false);
-                setCloneContent(new ConfigBuilder(data.getData()));
+                setCloneContent(data);
             }
         }
     }

@@ -13,11 +13,11 @@ public class TagInfo {
     private String name;
 
     @ColumnInfo
-    private byte[] configurationData;
+    private byte[] data;
 
-    public TagInfo(String name, byte[] configurationData) {
+    public TagInfo(String name, byte[] data) {
         this.name = name;
-        this.configurationData = configurationData;
+        this.data = data;
     }
 
     public int getId() {
@@ -36,12 +36,12 @@ public class TagInfo {
         this.name = name;
     }
 
-    public byte[] getConfigurationData() {
-        return configurationData;
+    public byte[] getData() {
+        return data;
     }
 
-    public void setConfigurationData(byte[] configurationData) {
-        this.configurationData = configurationData;
+    public void setData(byte[] data) {
+        this.data = data;
     }
 
     @Override
