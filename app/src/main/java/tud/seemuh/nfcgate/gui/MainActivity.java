@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         else if (!NfcManager.isHookLoaded())
             showWarning("The Xposed module is not enabled or Xposed is not installed.");
 
-        new Thread(new Runnable() {
+        /*new Thread(new Runnable() {
             @Override
             public void run() {
                 final AppDatabase database = AppDatabase.getDatabase(MainActivity.this);
@@ -147,8 +147,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
 
-        //database.sessionLogJoinDao().insert(new SessionLogJoin(sessionLog, entries));
-
+        database.sessionLogJoinDao().insert(new SessionLogJoin(sessionLog, entries));*/
     }
 
     @Override

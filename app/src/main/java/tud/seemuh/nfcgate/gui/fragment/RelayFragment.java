@@ -13,20 +13,33 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.Date;
+
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.db.AppDatabase;
+import tud.seemuh.nfcgate.db.NfcCommEntry;
+import tud.seemuh.nfcgate.db.SessionLog;
 import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.network.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.nfc.modes.RelayMode;
+import tud.seemuh.nfcgate.util.NfcComm;
 
 public class RelayFragment extends Fragment implements BaseFragment {
     // UI references
     View mTagWaiting;
     LinearLayout mSelector;
     TextView mLog;
+    ImageView mSemaphoreLight;
+    TextView mSemaphoreText;
+
+    // database reference
+    AppDatabase mDatabase;
+    long mSessionId = -1;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -36,6 +49,11 @@ public class RelayFragment extends Fragment implements BaseFragment {
         mTagWaiting = v.findViewById(R.id.tag_wait);
         mSelector = v.findViewById(R.id.relay_selector);
         mLog = v.findViewById(R.id.relay_log);
+        mSemaphoreLight = v.findViewById(R.id.tag_semaphore_light);
+        mSemaphoreText = v.findViewById(R.id.tag_semaphore_text);
+
+        // database setup
+        mDatabase = AppDatabase.getDatabase(getActivity());
 
         // selector setup
         v.<Button>findViewById(R.id.btn_reader).setOnClickListener(new View.OnClickListener() {
@@ -99,6 +117,23 @@ public class RelayFragment extends Fragment implements BaseFragment {
         mTagWaiting.setVisibility(visible ? View.GONE : View.VISIBLE);
     }
 
+    private void setSemaphore(int lightId, String message) {
+        mSemaphoreLight.setImageResource(lightId);
+        mSemaphoreText.setText(message);
+    }
+
+    private void handleStatus(NetworkStatus status) {
+        mLog.append("Status changed: " + status.name() + "\n");
+
+        // semaphore
+        if (status == NetworkStatus.PARTNER_WAIT)
+            setSemaphore(R.drawable.semaphore_light_yellow, "Waiting for partner...");
+        else if (status == NetworkStatus.PARTNER_CONNECT)
+            setSemaphore(R.drawable.semaphore_light_green, "Connected to partner...");
+        else
+            setSemaphore(R.drawable.semaphore_light_red, "Connecting to network...");
+    }
+
     public NfcManager getNfc() {
         return ((MainActivity) getActivity()).getNfc();
     }
@@ -109,18 +144,31 @@ public class RelayFragment extends Fragment implements BaseFragment {
         }
 
         @Override
+        public void onData(NfcComm data) {
+            super.onData(data);
+
+            // create new session if needed
+            if (mSessionId == -1 || data.isInitial())
+                mSessionId = mDatabase.sessionLogDao().insert(new SessionLog(new Date()));
+
+            // log to database
+            mDatabase.nfcCommEntryDao().insert(new NfcCommEntry(data, mSessionId));
+        }
+
+        @Override
         public void onNetworkStatus(final NetworkStatus status) {
             super.onNetworkStatus(status);
 
             // add log entry
             final FragmentActivity activity = getActivity();
-            if (activity != null)
+            if (activity != null) {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mLog.append("Status changed: " + status.name() + "\n");
+                        handleStatus(status);
                     }
                 });
+            }
         }
     }
 }

@@ -54,6 +54,8 @@
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
+    <!-- status bar -->
+    <include layout="@layout/tag_semaphore" />
     <!-- divider and label -->
     <View
         android:id="@+id/divider"
