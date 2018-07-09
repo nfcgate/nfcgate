@@ -17,21 +17,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.Date;
-
 import tud.seemuh.nfcgate.R;
-import tud.seemuh.nfcgate.db.AppDatabase;
-import tud.seemuh.nfcgate.db.NfcCommEntry;
-import tud.seemuh.nfcgate.db.SessionLog;
 import tud.seemuh.nfcgate.db.worker.LogInserter;
 import tud.seemuh.nfcgate.gui.MainActivity;
-import tud.seemuh.nfcgate.gui.model.SessionLogViewModel;
 import tud.seemuh.nfcgate.network.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.nfc.modes.RelayMode;
 import tud.seemuh.nfcgate.util.NfcComm;
 
-public class RelayFragment extends Fragment implements BaseFragment {
+public class RelayFragment extends Fragment {
     // UI references
     View mTagWaiting;
     LinearLayout mSelector;
@@ -81,11 +75,6 @@ public class RelayFragment extends Fragment implements BaseFragment {
 
         // database setup
         mLogInserter = new LogInserter(getActivity());
-    }
-
-    @Override
-    public String getTagName() {
-        return "relay";
     }
 
     @Override

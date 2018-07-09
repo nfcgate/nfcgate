@@ -5,7 +5,7 @@ import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 public abstract class BaseMode {
-    protected NfcManager mManager;
+    NfcManager mManager;
 
     // used by manager to set own reference before enabling this mode
     public void setManager(NfcManager manager) {

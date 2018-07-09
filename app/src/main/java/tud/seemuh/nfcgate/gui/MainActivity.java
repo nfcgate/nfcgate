@@ -15,27 +15,16 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import tud.seemuh.nfcgate.R;
-import tud.seemuh.nfcgate.db.AppDatabase;
-import tud.seemuh.nfcgate.db.NfcCommEntry;
-import tud.seemuh.nfcgate.db.SessionLog;
-import tud.seemuh.nfcgate.db.SessionLogJoin;
 import tud.seemuh.nfcgate.gui.fragment.AboutFragment;
-import tud.seemuh.nfcgate.gui.fragment.BaseFragment;
 import tud.seemuh.nfcgate.gui.fragment.CloneFragment;
 import tud.seemuh.nfcgate.gui.fragment.LoggingFragment;
 import tud.seemuh.nfcgate.gui.fragment.RelayFragment;
 import tud.seemuh.nfcgate.gui.fragment.SettingsFragment;
 import tud.seemuh.nfcgate.nfc.NfcManager;
-import tud.seemuh.nfcgate.util.NfcComm;
 
 public class MainActivity extends AppCompatActivity {
     // UI
@@ -110,44 +99,6 @@ public class MainActivity extends AppCompatActivity {
             showWarning("This device seems to be missing the NFC capability.");
         else if (!NfcManager.isHookLoaded())
             showWarning("The Xposed module is not enabled or Xposed is not installed.");
-
-        /*new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final AppDatabase database = AppDatabase.getDatabase(MainActivity.this);
-                final SessionLog sessionLog = new SessionLog(new Date());
-                List<NfcCommEntry> entries = new ArrayList<>();
-
-                long sessionId = database.sessionLogDao().insert(sessionLog);
-
-                final NfcCommEntry entry = new NfcCommEntry(new NfcComm(true, false,
-                        new byte[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,}), sessionId);
-                entries.add(entry);
-                database.nfcCommEntryDao().insert(entry);
-
-                final List<SessionLogJoin> all = database.sessionLogJoinDao().getAll();
-                Log.d("NFCGATE", ""+all.size());
-                for (SessionLogJoin log : all) {
-                    Log.d("NFCGATE", log.getSessionLog().getId() + " " + log.getSessionLog().getDate());
-                    for (NfcCommEntry nfcCommEntry : log.getNfcCommEntries()) {
-                        Log.d("NFCGATE", nfcCommEntry.getId() + " " + nfcCommEntry.getSessionId());
-                    }
-                }
-
-            }
-        }).start();
-
-        database.sessionLogJoinDao().insert(new SessionLogJoin(sessionLog, entries));*/
     }
 
     @Override
@@ -179,41 +130,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Try to find a Fragment on the stack or create a new one
-     */
-    private Fragment findOrCreateFragment(String tag, Class<? extends Fragment> clazz) {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
-
-        if (fragment == null) {
-            try {
-                fragment = clazz.newInstance();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        return fragment;
-    }
-
-    /**
      * Returns a Fragment for every navbar action
      */
     private Fragment getFragmentByAction(int id) {
         switch (id) {
             case R.id.nav_clone:
-                return findOrCreateFragment("clone", CloneFragment.class);
+            case R.id.nav_replay:
+                return new CloneFragment();
             case R.id.nav_relay:
-                return findOrCreateFragment("relay", RelayFragment.class);
+                return new RelayFragment();
             case R.id.nav_settings:
-                return findOrCreateFragment("settings", SettingsFragment.class);
+                return new SettingsFragment();
             case R.id.nav_about:
-                return findOrCreateFragment("about", AboutFragment.class);
+                return new AboutFragment();
             case R.id.nav_logging:
-                return findOrCreateFragment("logging", LoggingFragment.class);
+                return new LoggingFragment();
             default:
-                return findOrCreateFragment("clone", CloneFragment.class);
-                //throw new IllegalArgumentException("Position out of range");
+                throw new IllegalArgumentException("Position out of range");
         }
     }
 
@@ -223,11 +156,10 @@ public class MainActivity extends AppCompatActivity {
     private void onNavbarAction(MenuItem item) {
         // every fragment must implement BaseFragment
         Fragment fragment = getFragmentByAction(item.getItemId());
-        BaseFragment baseFragment = (BaseFragment) fragment;
 
         // no fancy animation for now
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_content, fragment, baseFragment.getTagName())
+                .replace(R.id.main_content, fragment)
                 .commit();
 
         // for the looks

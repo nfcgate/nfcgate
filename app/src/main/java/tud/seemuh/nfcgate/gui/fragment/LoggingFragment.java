@@ -17,9 +17,9 @@ import java.util.List;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.SessionLog;
-import tud.seemuh.nfcgate.gui.model.SessionLogViewModel;
+import tud.seemuh.nfcgate.db.model.SessionLogViewModel;
 
-public class LoggingFragment extends Fragment implements BaseFragment {
+public class LoggingFragment extends Fragment {
     // UI references
     ListView mLog;
 
@@ -36,11 +36,11 @@ public class LoggingFragment extends Fragment implements BaseFragment {
 
         // setup db model
         mLogModel = ViewModelProviders.of(this).get(SessionLogViewModel.class);
-        mLogModel.getTagInfos().observe(this, new Observer<List<SessionLog>>() {
+        mLogModel.getSessionLogs().observe(this, new Observer<List<SessionLog>>() {
             @Override
-            public void onChanged(@Nullable List<SessionLog> tagInfos) {
+            public void onChanged(@Nullable List<SessionLog> sessionLogs) {
                 mLogAdapter.clear();
-                mLogAdapter.addAll(tagInfos);
+                mLogAdapter.addAll(sessionLogs);
                 mLogAdapter.notifyDataSetChanged();
             }
         });
@@ -68,10 +68,5 @@ public class LoggingFragment extends Fragment implements BaseFragment {
 
         mLogAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
         mLog.setAdapter(mLogAdapter);
-    }
-
-    @Override
-    public String getTagName() {
-        return "logging";
     }
 }

@@ -4,18 +4,11 @@ import android.util.Log;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
-import tud.seemuh.nfcgate.db.AppDatabase;
-import tud.seemuh.nfcgate.db.NfcCommEntry;
-import tud.seemuh.nfcgate.db.SessionLog;
 import tud.seemuh.nfcgate.network.threading.ReceiveThread;
 import tud.seemuh.nfcgate.network.threading.SendThread;
-import tud.seemuh.nfcgate.util.NfcComm;
 
 public class ServerConnection {
     private static final String TAG = "ServerConnection";

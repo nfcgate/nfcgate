@@ -27,13 +27,13 @@ import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.TagInfo;
 import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.gui.Util;
-import tud.seemuh.nfcgate.gui.model.TagInfoViewModel;
+import tud.seemuh.nfcgate.db.model.TagInfoViewModel;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
 import tud.seemuh.nfcgate.nfc.modes.CloneMode;
 import tud.seemuh.nfcgate.util.NfcComm;
 
-public class CloneFragment extends Fragment implements BaseFragment {
+public class CloneFragment extends Fragment {
     // UI references
     View mTagWaiting;
     TextView mCloneContent;
@@ -104,11 +104,6 @@ public class CloneFragment extends Fragment implements BaseFragment {
 
         mTagInfoAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
         mCloneSaved.setAdapter(mTagInfoAdapter);
-    }
-
-    @Override
-    public String getTagName() {
-        return "clone";
     }
 
     @Override

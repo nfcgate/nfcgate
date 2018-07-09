@@ -32,7 +32,7 @@ public class ConfigBuilder {
         return mOptions;
     }
 
-    public void parse(byte[] config) {
+    private void parse(byte[] config) {
         mOptions.clear();
         int index = 0;
 

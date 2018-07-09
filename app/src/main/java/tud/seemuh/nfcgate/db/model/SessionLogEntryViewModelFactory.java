@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate.gui.model;
+package tud.seemuh.nfcgate.db.model;
 
 import android.app.Application;
 import android.arch.lifecycle.ViewModel;
@@ -8,12 +8,10 @@ public class SessionLogEntryViewModelFactory extends ViewModelProvider.NewInstan
     private Application mApplication;
     private long mSessionLog;
 
-
     public SessionLogEntryViewModelFactory(Application application, long sessionLog) {
         mApplication = application;
         mSessionLog = sessionLog;
     }
-
 
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {

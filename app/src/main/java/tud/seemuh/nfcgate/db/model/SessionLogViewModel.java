@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate.gui.model;
+package tud.seemuh.nfcgate.db.model;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -19,7 +19,7 @@ public class SessionLogViewModel extends AndroidViewModel {
         mSessionLog = AppDatabase.getDatabase(application).sessionLogDao().getAll();
     }
 
-    public LiveData<List<SessionLog>> getTagInfos() {
+    public LiveData<List<SessionLog>> getSessionLogs() {
         return mSessionLog;
     }
 }

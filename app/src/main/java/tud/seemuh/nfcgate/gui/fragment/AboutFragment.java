@@ -16,7 +16,7 @@ import mehdi.sakout.aboutpage.AboutPage;
 import mehdi.sakout.aboutpage.Element;
 import tud.seemuh.nfcgate.R;
 
-public class AboutFragment extends Fragment implements BaseFragment {
+public class AboutFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // custom elements
@@ -44,10 +44,5 @@ public class AboutFragment extends Fragment implements BaseFragment {
         TextView description = aboutPage.findViewById(R.id.description);
         description.setText(Html.fromHtml(getString(R.string.about)));
         return aboutPage;
-    }
-
-    @Override
-    public String getTagName() {
-        return "about";
     }
 }

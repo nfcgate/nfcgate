@@ -19,10 +19,10 @@ import android.widget.ListView;
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.NfcCommEntry;
 import tud.seemuh.nfcgate.db.SessionLogJoin;
-import tud.seemuh.nfcgate.gui.model.SessionLogEntryViewModel;
-import tud.seemuh.nfcgate.gui.model.SessionLogEntryViewModelFactory;
+import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModel;
+import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModelFactory;
 
-public class SessionLogEntryFragment extends Fragment implements BaseFragment {
+public class SessionLogEntryFragment extends Fragment {
     // UI references
     ListView mLogEntries;
 
@@ -46,7 +46,6 @@ public class SessionLogEntryFragment extends Fragment implements BaseFragment {
         super.onCreate(savedInstanceState);
 
         mSessionLog = getArguments().getLong("sessionLog");
-
     }
 
     @Override
@@ -87,7 +86,6 @@ public class SessionLogEntryFragment extends Fragment implements BaseFragment {
 
         // setup db data and view adapter
         mLogEntriesAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
-
         mLogEntries.setAdapter(mLogEntriesAdapter);
     }
 
@@ -100,10 +98,5 @@ public class SessionLogEntryFragment extends Fragment implements BaseFragment {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public String getTagName() {
-        return "log_entry";
     }
 }

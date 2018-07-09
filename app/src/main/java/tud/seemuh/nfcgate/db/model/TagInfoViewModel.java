@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate.gui.model;
+package tud.seemuh.nfcgate.db.model;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
@@ -36,7 +36,6 @@ public class TagInfoViewModel extends AndroidViewModel {
     }
 
     private static class insertAsyncTask extends AsyncTask<TagInfo, Void, Void> {
-
         private TagInfoDao mAsyncTaskDao;
 
         insertAsyncTask(TagInfoDao dao) {
@@ -49,8 +48,8 @@ public class TagInfoViewModel extends AndroidViewModel {
             return null;
         }
     }
-    private static class deleteAsyncTask extends AsyncTask<TagInfo, Void, Void> {
 
+    private static class deleteAsyncTask extends AsyncTask<TagInfo, Void, Void> {
         private TagInfoDao mAsyncTaskDao;
 
         deleteAsyncTask(TagInfoDao dao) {
