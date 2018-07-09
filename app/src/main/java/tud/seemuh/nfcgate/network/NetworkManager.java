@@ -46,9 +46,6 @@ public class NetworkManager implements ServerConnection.Callback {
 
         // queue initial handshake message
         sendServer(Opcode.OP_SYN, null);
-
-        // set status to connecting
-        onNetworkStatus(NetworkStatus.CONNECTING);
     }
 
     public void disconnect() {
@@ -59,8 +56,6 @@ public class NetworkManager implements ServerConnection.Callback {
     public void send(NfcComm data) {
         // queue data message
         sendServer(Opcode.OP_PSH, data.toByteArray());
-        // waiting for partner
-        onNetworkStatus(NetworkStatus.PARTNER_WAIT);
     }
 
     @Override

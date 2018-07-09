@@ -103,6 +103,8 @@ public class ServerConnection {
                 mSocket = new Socket();
                 mSocket.connect(new InetSocketAddress(mHostname, mPort), 10000);
                 mSocket.setTcpNoDelay(true);
+
+                reportStatus(NetworkStatus.CONNECTED);
             } catch (Exception e) {
                 Log.e(TAG, "Socket cannot connect", e);
                 mSocket = null;

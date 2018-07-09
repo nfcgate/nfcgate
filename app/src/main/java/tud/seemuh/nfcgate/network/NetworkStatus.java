@@ -1,11 +1,9 @@
 package tud.seemuh.nfcgate.network;
 
 public enum NetworkStatus {
-    CONNECTING,
-    SEND_ERROR,
-    RECEIVE_ERROR,
+    ERROR,
 
-    PARTNER_WAIT,
+    CONNECTED,
     PARTNER_CONNECT,
     PARTNER_LEFT,
 }

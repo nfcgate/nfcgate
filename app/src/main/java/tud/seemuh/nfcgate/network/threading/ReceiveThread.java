@@ -56,6 +56,6 @@ public class ReceiveThread extends BaseThread {
     @Override
     void onError(Exception e) {
         Log.e(TAG, "Receive onError", e);
-        mConnection.reportStatus(NetworkStatus.RECEIVE_ERROR);
+        mConnection.reportStatus(NetworkStatus.ERROR);
     }
 }

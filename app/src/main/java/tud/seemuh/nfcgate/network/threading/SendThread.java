@@ -58,6 +58,6 @@ public class SendThread extends BaseThread {
     @Override
     void onError(Exception e) {
         Log.e("NFCGate", "Send onError", e);
-        mConnection.reportStatus(NetworkStatus.SEND_ERROR);
+        mConnection.reportStatus(NetworkStatus.ERROR);
     }
 }

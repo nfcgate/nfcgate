@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
 
     android:orientation="horizontal"
-    android:gravity="center"
+    android:gravity="center_vertical"
+    android:paddingLeft="20dp"
     >
     <ImageView
         android:id="@+id/tag_semaphore_light"

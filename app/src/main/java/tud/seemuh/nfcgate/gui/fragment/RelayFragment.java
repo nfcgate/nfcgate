@@ -23,7 +23,9 @@ import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.AppDatabase;
 import tud.seemuh.nfcgate.db.NfcCommEntry;
 import tud.seemuh.nfcgate.db.SessionLog;
+import tud.seemuh.nfcgate.db.worker.LogInserter;
 import tud.seemuh.nfcgate.gui.MainActivity;
+import tud.seemuh.nfcgate.gui.model.SessionLogViewModel;
 import tud.seemuh.nfcgate.network.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.nfc.modes.RelayMode;
@@ -38,8 +40,7 @@ public class RelayFragment extends Fragment implements BaseFragment {
     TextView mSemaphoreText;
 
     // database reference
-    AppDatabase mDatabase;
-    long mSessionId = -1;
+    LogInserter mLogInserter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -51,9 +52,6 @@ public class RelayFragment extends Fragment implements BaseFragment {
         mLog = v.findViewById(R.id.relay_log);
         mSemaphoreLight = v.findViewById(R.id.tag_semaphore_light);
         mSemaphoreText = v.findViewById(R.id.tag_semaphore_text);
-
-        // database setup
-        mDatabase = AppDatabase.getDatabase(getActivity());
 
         // selector setup
         v.<Button>findViewById(R.id.btn_reader).setOnClickListener(new View.OnClickListener() {
@@ -73,8 +71,16 @@ public class RelayFragment extends Fragment implements BaseFragment {
         mLog.setMovementMethod(new ScrollingMovementMethod());
 
         setHasOptionsMenu(true);
-        setSelectorVisible(true);
+        resetRelay();
         return v;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // database setup
+        mLogInserter = new LogInserter(getActivity());
     }
 
     @Override
@@ -92,7 +98,7 @@ public class RelayFragment extends Fragment implements BaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh:
-                // TODO:
+                resetRelay();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -122,16 +128,27 @@ public class RelayFragment extends Fragment implements BaseFragment {
         mSemaphoreText.setText(message);
     }
 
-    private void handleStatus(NetworkStatus status) {
-        mLog.append("Status changed: " + status.name() + "\n");
+    private void resetRelay() {
+        getNfc().stopMode();
+        setSelectorVisible(true);
+        setSemaphore(R.drawable.semaphore_light_red, "Connecting to network");
+    }
 
-        // semaphore
-        if (status == NetworkStatus.PARTNER_WAIT)
-            setSemaphore(R.drawable.semaphore_light_yellow, "Waiting for partner...");
-        else if (status == NetworkStatus.PARTNER_CONNECT)
-            setSemaphore(R.drawable.semaphore_light_green, "Connected to partner...");
-        else
-            setSemaphore(R.drawable.semaphore_light_red, "Connecting to network...");
+    private void handleStatus(NetworkStatus status) {
+        switch (status) {
+            case ERROR:
+                setSemaphore(R.drawable.semaphore_light_red, "Connection error");
+                break;
+            case CONNECTED:
+                setSemaphore(R.drawable.semaphore_light_yellow, "Connected, waiting for partner");
+                break;
+            case PARTNER_CONNECT:
+                setSemaphore(R.drawable.semaphore_light_green, "Connected to partner");
+                break;
+            case PARTNER_LEFT:
+                setSemaphore(R.drawable.semaphore_light_red, "Partner left");
+                break;
+        }
     }
 
     public NfcManager getNfc() {
@@ -147,12 +164,8 @@ public class RelayFragment extends Fragment implements BaseFragment {
         public void onData(NfcComm data) {
             super.onData(data);
 
-            // create new session if needed
-            if (mSessionId == -1 || data.isInitial())
-                mSessionId = mDatabase.sessionLogDao().insert(new SessionLog(new Date()));
-
             // log to database
-            mDatabase.nfcCommEntryDao().insert(new NfcCommEntry(data, mSessionId));
+            mLogInserter.log(data);
         }
 
         @Override

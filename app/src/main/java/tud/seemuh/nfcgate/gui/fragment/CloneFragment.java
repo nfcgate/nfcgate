@@ -158,7 +158,7 @@ public class CloneFragment extends Fragment implements BaseFragment {
     }
 
     void beginClone() {
-        // stop waiting for tag
+        // start waiting for tag
         setCloneWait(true);
 
         // start custom clone mode
