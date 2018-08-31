@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:orientation="vertical"
+
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        >
+        <include layout="@layout/tag_wait" />
+        <LinearLayout
+            android:id="@+id/replay_selector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="Replay:"
+                style="@style/TextAppearance.AppCompat.Caption"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+
+                android:orientation="horizontal"
+                >
+                <Button
+                    android:id="@+id/btn_reader"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+
+                    android:text="Reader"
+                    />
+                <Button
+                    android:id="@+id/btn_tag"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+
+                    android:text="Tag"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+    <!-- status bar -->
+    <include layout="@layout/tag_semaphore" />
+    <!-- divider and label -->
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="Log:"
+        style="@style/TextAppearance.AppCompat.Caption"
+        />
+    <!-- log -->
+    <TextView
+        android:id="@+id/replay_log"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+</LinearLayout>

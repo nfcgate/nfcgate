@@ -23,6 +23,7 @@ import tud.seemuh.nfcgate.gui.fragment.AboutFragment;
 import tud.seemuh.nfcgate.gui.fragment.CloneFragment;
 import tud.seemuh.nfcgate.gui.fragment.LoggingFragment;
 import tud.seemuh.nfcgate.gui.fragment.RelayFragment;
+import tud.seemuh.nfcgate.gui.fragment.ReplayFragment;
 import tud.seemuh.nfcgate.gui.fragment.SettingsFragment;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 
@@ -135,10 +136,11 @@ public class MainActivity extends AppCompatActivity {
     private Fragment getFragmentByAction(int id) {
         switch (id) {
             case R.id.nav_clone:
-            case R.id.nav_replay:
                 return new CloneFragment();
             case R.id.nav_relay:
                 return new RelayFragment();
+            case R.id.nav_replay:
+                return new ReplayFragment();
             case R.id.nav_settings:
                 return new SettingsFragment();
             case R.id.nav_about:
