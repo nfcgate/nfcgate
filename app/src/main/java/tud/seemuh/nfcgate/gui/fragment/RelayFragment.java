@@ -48,13 +48,13 @@ public class RelayFragment extends Fragment {
         mSemaphoreText = v.findViewById(R.id.tag_semaphore_text);
 
         // selector setup
-        v.<Button>findViewById(R.id.btn_reader).setOnClickListener(new View.OnClickListener() {
+        v.<LinearLayout>findViewById(R.id.select_reader).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onSelect(true);
             }
         });
-        v.<Button>findViewById(R.id.btn_tag).setOnClickListener(new View.OnClickListener() {
+        v.<LinearLayout>findViewById(R.id.select_tag).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onSelect(false);
@@ -97,6 +97,9 @@ public class RelayFragment extends Fragment {
      * Called when user selects reader or tag
      */
     private void onSelect(boolean reader) {
+        // print status
+        setSemaphore(R.drawable.semaphore_light_red, "Connecting to Network");
+
         // enable reader or emulator mode
         getNfc().startMode(new UIRelayMode(reader));
 
@@ -120,7 +123,7 @@ public class RelayFragment extends Fragment {
     private void resetRelay() {
         getNfc().stopMode();
         setSelectorVisible(true);
-        setSemaphore(R.drawable.semaphore_light_red, "Connecting to network");
+        setSemaphore(R.drawable.semaphore_light_red, "Idle");
     }
 
     private void handleStatus(NetworkStatus status) {

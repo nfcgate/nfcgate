@@ -19,38 +19,80 @@
             android:id="@+id/relay_selector"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
 
             android:orientation="vertical"
             >
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
 
-                android:text="Emulate:"
-                style="@style/TextAppearance.AppCompat.Caption"
+                android:text="Emulate"
+                style="@style/TextAppearance.AppCompat.Small"
                 />
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
 
                 android:orientation="horizontal"
+                android:layout_marginTop="10dp"
                 >
-                <Button
-                    android:id="@+id/btn_reader"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
+                <LinearLayout
+                    android:id="@+id/select_reader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
 
-                    android:text="Reader"
-                    />
-                <Button
-                    android:id="@+id/btn_tag"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:orientation="vertical"
+                    android:padding="10dp"
+                    >
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
 
-                    android:text="Tag"
+                        android:src="@drawable/ic_reader_grey_60dp"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+
+                        android:text="Reader"
+                        />
+                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+
+                    android:text="or"
+                    style="@style/TextAppearance.AppCompat.Small"
                     />
+                <LinearLayout
+                    android:id="@+id/select_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:background="?android:attr/selectableItemBackground"
+                    android:orientation="vertical"
+                    android:padding="10dp"
+                    >
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:src="@drawable/ic_tag_grey_60dp"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+
+                        android:text="Tag"
+                        />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
