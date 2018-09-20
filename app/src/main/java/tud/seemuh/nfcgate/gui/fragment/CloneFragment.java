@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -186,13 +187,19 @@ public class CloneFragment extends Fragment {
 
     class UICloneMode extends CloneMode {
         @Override
-        public void onData(NfcComm data) {
+        public void onData(final NfcComm data) {
             super.onData(data);
 
-            if (data.isInitial()) {
-                // stop waiting and display data
-                setCloneWait(false);
-                setCloneContent(data);
+            FragmentActivity activity = getActivity();
+            if (activity != null && data.isInitial()) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // stop waiting and display data
+                        setCloneWait(false);
+                        setCloneContent(data);
+                    }
+                });
             }
         }
     }
