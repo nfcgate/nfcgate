@@ -103,6 +103,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        // pass initial intent to current mode in case it carries a tag
+        if (getIntent() != null)
+            onNewIntent(getIntent());
+    }
+
+    @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         mToggle.syncState();
         super.onPostCreate(savedInstanceState);
