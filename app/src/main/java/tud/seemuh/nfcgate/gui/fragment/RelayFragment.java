@@ -53,6 +53,7 @@ public class RelayFragment extends BaseNetworkFragment {
         switch (status) {
             case ERROR:
                 setSemaphore(R.drawable.semaphore_light_red, "Connection error");
+                reset();
                 break;
             case CONNECTED:
                 setSemaphore(R.drawable.semaphore_light_yellow, "Connected, waiting for partner");
@@ -62,6 +63,7 @@ public class RelayFragment extends BaseNetworkFragment {
                 break;
             case PARTNER_LEFT:
                 setSemaphore(R.drawable.semaphore_light_red, "Partner left");
+                reset();
                 break;
         }
     }

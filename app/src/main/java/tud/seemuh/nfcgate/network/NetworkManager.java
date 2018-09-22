@@ -41,7 +41,7 @@ public class NetworkManager implements ServerConnection.Callback {
 
         // disconnect old connection
         if (mConnection != null)
-            mConnection.disconnect();
+            disconnect();
 
         // establish connection
         mConnection = new ServerConnection(mHostname, mPort)
@@ -53,8 +53,11 @@ public class NetworkManager implements ServerConnection.Callback {
     }
 
     public void disconnect() {
-        if (mConnection != null)
+        if (mConnection != null) {
+            sendServer(Opcode.OP_FIN, null);
+            mConnection.sync();
             mConnection.disconnect();
+        }
     }
 
     public void send(NfcComm data) {
@@ -89,7 +92,7 @@ public class NetworkManager implements ServerConnection.Callback {
             case OP_FIN:
                 // our peer has disconnected
                 onNetworkStatus(NetworkStatus.PARTNER_LEFT);
-                // TODO: disconnect
+                mConnection.disconnect();
 
                 break;
             case OP_PSH:

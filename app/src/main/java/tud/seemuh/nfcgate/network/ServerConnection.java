@@ -67,6 +67,17 @@ public class ServerConnection {
     }
 
     /**
+     * Wait some time to allow sendQueue to be processed
+     */
+    public void sync() {
+        if (mSendQueue.peek() != null) {
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException ignored) { }
+        }
+    }
+
+    /**
      * Schedules the data to be sent
      */
     public void send(int session, byte[] data) {

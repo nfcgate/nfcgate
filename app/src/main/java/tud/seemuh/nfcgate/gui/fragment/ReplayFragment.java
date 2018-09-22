@@ -9,10 +9,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.network.ServerConnection;
 
 public class ReplayFragment extends BaseNetworkFragment implements LoggingFragment.LogItemSelectedCallback {
     // session selection reference
     LoggingFragment mLoggingFragment = new LoggingFragment();
+
+    // replay partner connection
+    ServerConnection mReplayConnection;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
