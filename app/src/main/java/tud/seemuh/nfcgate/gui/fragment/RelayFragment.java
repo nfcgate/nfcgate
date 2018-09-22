@@ -53,7 +53,6 @@ public class RelayFragment extends BaseNetworkFragment {
         switch (status) {
             case ERROR:
                 setSemaphore(R.drawable.semaphore_light_red, "Connection error");
-                reset();
                 break;
             case CONNECTED:
                 setSemaphore(R.drawable.semaphore_light_yellow, "Connected, waiting for partner");
@@ -63,7 +62,6 @@ public class RelayFragment extends BaseNetworkFragment {
                 break;
             case PARTNER_LEFT:
                 setSemaphore(R.drawable.semaphore_light_red, "Partner left");
-                reset();
                 break;
         }
     }
@@ -74,8 +72,8 @@ public class RelayFragment extends BaseNetworkFragment {
         }
 
         @Override
-        public void onData(NfcComm data) {
-            super.onData(data);
+        public void onData(boolean isForeign, NfcComm data) {
+            super.onData(isForeign, data);
 
             // log to database
             mLogInserter.log(data);

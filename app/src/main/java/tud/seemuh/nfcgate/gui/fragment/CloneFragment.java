@@ -91,7 +91,7 @@ public class CloneFragment extends Fragment {
                 if (position >= 0) {
                     // load configuration of saved tag
                     final TagInfo item = mTagInfoAdapter.getItem(position);
-                    getNfc().handleData(new NfcComm(item.getData()));
+                    getNfc().handleData(false, new NfcComm(item.getData()));
                 }
             }
         });
@@ -187,8 +187,8 @@ public class CloneFragment extends Fragment {
 
     class UICloneMode extends CloneMode {
         @Override
-        public void onData(final NfcComm data) {
-            super.onData(data);
+        public void onData(boolean isForeign, final NfcComm data) {
+            super.onData(isForeign, data);
 
             FragmentActivity activity = getActivity();
             if (activity != null && data.isInitial()) {

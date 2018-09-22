@@ -40,7 +40,7 @@ public class ApduService extends HostApduService {
         NfcComm nfcdata = new NfcComm(false, false, apdu);
 
         // Send the object to the handler
-        mNfcManager.handleData(nfcdata);
+        mNfcManager.handleData(false, nfcdata);
 
         // Tell the HCE implementation to wait
         return DONT_RESPOND;

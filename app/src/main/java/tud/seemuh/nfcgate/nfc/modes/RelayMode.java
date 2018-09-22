@@ -32,14 +32,17 @@ public class RelayMode extends BaseMode {
     }
 
     @Override
-    public void onData(NfcComm data) {
-        if (data.isCard() && mReader
-                || !data.isCard() && !mReader)
-            // send own data over network
-            mManager.getNetwork().send(data);
-        else
+    public void onData(boolean isForeign, NfcComm data) {
+        // accept only foreign data of other type than we are
+        if (isForeign && data.isCard() != mReader) {
             // apply foreign data
             mManager.applyData(data);
+        }
+        // accept only own data of our type
+        else if (!isForeign && data.isCard() == mReader) {
+            // send own data over network
+            mManager.getNetwork().send(data);
+        }
     }
 
     @Override

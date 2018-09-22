@@ -17,6 +17,6 @@ public abstract class BaseMode {
     public abstract void onDisable();
 
     // action and log methods
-    public abstract void onData(NfcComm data);
+    public abstract void onData(boolean isForeign, NfcComm data);
     public abstract void onNetworkStatus(NetworkStatus status);
 }

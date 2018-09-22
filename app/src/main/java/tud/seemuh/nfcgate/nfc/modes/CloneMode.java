@@ -17,7 +17,7 @@ public class CloneMode extends BaseMode {
     }
 
     @Override
-    public void onData(NfcComm data) {
+    public void onData(boolean isForeign, NfcComm data) {
         // clone tag and immediately disable clone mode to avoid cloning same tag again
         mManager.applyData(data);
         mManager.disablePolling();

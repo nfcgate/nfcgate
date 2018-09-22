@@ -154,18 +154,18 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
             Log.i(TAG, "Discovered new Tag: " + mReader.getProtocol());
 
             // handle initial card data according to mode
-            handleData(new NfcComm(true, true, mReader.getConfig().build()));
+            handleData(false, new NfcComm(true, true, mReader.getConfig().build()));
         }
     }
 
     /**
      * Handles card data by mode
      */
-    public void handleData(NfcComm data) {
-        Log.v(TAG, "handleData " + data.getData().length + " bytes");
+    public void handleData(boolean isForeign, NfcComm data) {
+        Log.v(TAG, "handleData foreign: " + isForeign + ", " + data.getData().length + " bytes");
 
         if (mMode != null)
-            mMode.onData(data);
+            mMode.onData(isForeign, data);
         else
             mReader.closeConnection();
     }
@@ -207,7 +207,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
             if (reply == null)
                 Log.w(TAG, "Empty TAG reply");
             else
-                handleData(new NfcComm(true, false, reply));
+                handleData(false, new NfcComm(true, false, reply));
         }
         else {
             // send data to reader
@@ -269,7 +269,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
             @Override
             public void run() {
                 // handle data on UI thread
-                handleData(data);
+                handleData(true, data);
             }
         });
     }
