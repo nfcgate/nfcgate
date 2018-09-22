@@ -1,21 +1,36 @@
 package tud.seemuh.nfcgate.gui.fragment;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
+
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.db.NfcCommEntry;
+import tud.seemuh.nfcgate.db.SessionLogJoin;
+import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModel;
+import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModelFactory;
+import tud.seemuh.nfcgate.network.NetworkStatus;
 import tud.seemuh.nfcgate.network.ServerConnection;
+import tud.seemuh.nfcgate.nfc.modes.BaseMode;
+import tud.seemuh.nfcgate.nfc.modes.RelayMode;
+import tud.seemuh.nfcgate.nfc.modes.ReplayMode;
+import tud.seemuh.nfcgate.util.NfcComm;
 
 public class ReplayFragment extends BaseNetworkFragment implements LoggingFragment.LogItemSelectedCallback {
     // session selection reference
     LoggingFragment mLoggingFragment = new LoggingFragment();
 
-    // replay partner connection
+    // replay data
+    List<NfcCommEntry> mSessionLog;
     ServerConnection mReplayConnection;
 
     @Override
@@ -60,11 +75,28 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
                 .hide(mLoggingFragment)
                 .commit();
 
-        // show reader/tag selector
-        setSelectorVisible(true);
-
         // set subtitle
         getMainActivity().getSupportActionBar().setSubtitle("Session " + sessionId);
+
+        // load session data
+        ViewModelProviders.of(this, new SessionLogEntryViewModelFactory(getActivity().getApplication(), sessionId))
+                .get(SessionLogEntryViewModel.class)
+                .getSession()
+                .observe(this, new Observer<SessionLogJoin>() {
+                    @Override
+                    public void onChanged(@Nullable SessionLogJoin sessionLogJoin) {
+                        if (sessionLogJoin != null) {
+                            mSessionLog = sessionLogJoin.getNfcCommEntries();
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // show reader/tag selector after session data is loaded
+                                    setSelectorVisible(true);
+                                }
+                            });
+                        }
+                    }
+                });
     }
 
     protected void onSelect(boolean reader) {
@@ -75,9 +107,18 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
         setSelectorVisible(false);
         setTagWaitVisible(true);
 
-        /*
-        // enable reader or emulator mode
-        getNfc().startMode(new RelayFragment.UIRelayMode(reader));
-        */
+        // enable reader or emulator replay mode
+        getNfc().startMode(new ReplayFragment.UIReplayMode(reader));
+    }
+
+    class UIReplayMode extends ReplayMode {
+        UIReplayMode(boolean reader) {
+            super(reader, mSessionLog);
+        }
+
+        @Override
+        public void onData(boolean isForeign, NfcComm data) {
+            super.onData(isForeign, data);
+        }
     }
 }

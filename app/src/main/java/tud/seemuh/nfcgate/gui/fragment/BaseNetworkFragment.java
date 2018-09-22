@@ -34,9 +34,6 @@ public abstract class BaseNetworkFragment extends Fragment {
     ImageView mSemaphoreLight;
     TextView mSemaphoreText;
 
-    // database reference
-    LogInserter mLogInserter;
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_network, container, false);
@@ -68,14 +65,6 @@ public abstract class BaseNetworkFragment extends Fragment {
         setHasOptionsMenu(true);
         reset();
         return v;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        // database setup
-        mLogInserter = new LogInserter(getActivity());
     }
 
     @Override

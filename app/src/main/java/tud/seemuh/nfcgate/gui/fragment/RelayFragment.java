@@ -10,11 +10,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.db.worker.LogInserter;
 import tud.seemuh.nfcgate.network.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.modes.RelayMode;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 public class RelayFragment extends BaseNetworkFragment {
+    // database reference
+    LogInserter mLogInserter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -24,6 +27,14 @@ public class RelayFragment extends BaseNetworkFragment {
         v.<TextView>findViewById(R.id.txt_action).setText("Emulate");
 
         return v;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // database setup
+        mLogInserter = new LogInserter(getActivity());
     }
 
     @Override
