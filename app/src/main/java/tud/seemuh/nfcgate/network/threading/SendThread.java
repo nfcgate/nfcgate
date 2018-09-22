@@ -4,7 +4,6 @@ import android.util.Log;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 
 import tud.seemuh.nfcgate.network.NetworkStatus;
 import tud.seemuh.nfcgate.network.SendRecord;
@@ -14,25 +13,18 @@ public class SendThread extends BaseThread {
     public static final String TAG = "SendThread";
 
     // references
-    private ServerConnection mConnection;
     private DataOutputStream mWriteStream;
 
     /**
      * Waits on sendQueue and sends the data over the specified stream
      */
     public SendThread(ServerConnection connection) {
-        super();
-        mConnection = connection;
+        super(connection);
     }
 
     @Override
     void initThread() throws IOException {
-        Socket socket = mConnection.getSocket();
-
-        if (socket == null)
-            throw new IOException("Socket error");
-        else
-            mWriteStream = new DataOutputStream(socket.getOutputStream());
+        mWriteStream = new DataOutputStream(mSocket.getOutputStream());
     }
 
     /**

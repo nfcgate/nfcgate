@@ -42,6 +42,7 @@ public class RelayFragment extends BaseNetworkFragment {
 
             // toggle selector visibility
             setSelectorVisible(false);
+            setTagWaitVisible(true);
 
             // enable reader or emulator mode
             getNfc().startMode(new UIRelayMode(reader));

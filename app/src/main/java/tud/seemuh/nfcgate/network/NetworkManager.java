@@ -39,6 +39,10 @@ public class NetworkManager implements ServerConnection.Callback {
         // read fresh preference data
         getPreferenceData();
 
+        // disconnect old connection
+        if (mConnection != null)
+            mConnection.disconnect();
+
         // establish connection
         mConnection = new ServerConnection(mHostname, mPort)
                 .setCallback(this)

@@ -2,6 +2,7 @@ package tud.seemuh.nfcgate.network;
 
 import android.util.Log;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.LinkedList;
@@ -74,34 +75,41 @@ public class ServerConnection {
     }
 
     /**
-     * Called by threads to get socket
+     * Called by threads to open socket
      */
-    public Socket getSocket() {
+    public Socket openSocket() {
         synchronized (mSocketLock) {
-            if (mSocket == null)
-                createSocket();
+            if (mSocket == null) {
+                try {
+                    mSocket = new Socket();
+                    mSocket.connect(new InetSocketAddress(mHostname, mPort), 10000);
+                    mSocket.setTcpNoDelay(true);
+
+                    reportStatus(NetworkStatus.CONNECTED);
+                } catch (Exception e) {
+                    Log.e(TAG, "Socket cannot connect", e);
+                    mSocket = null;
+                }
+            }
 
             return mSocket;
         }
     }
 
     /**
-     * Called by threads to create socket
+     * Called by threads to close socket
      */
-    private void createSocket() {
-        // double-check to prevent race conditions
-        Log.v(TAG, "Creating socket. mSocket = " + mSocket);
-        if (mSocket == null) {
-            try {
-                mSocket = new Socket();
-                mSocket.connect(new InetSocketAddress(mHostname, mPort), 10000);
-                mSocket.setTcpNoDelay(true);
-
-                reportStatus(NetworkStatus.CONNECTED);
-            } catch (Exception e) {
-                Log.e(TAG, "Socket cannot connect", e);
-                mSocket = null;
+    public void closeSocket() {
+        synchronized (mSocketLock) {
+            if (mSocket != null) {
+                try {
+                    mSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+
+            mSocket = null;
         }
     }
 
