@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -22,10 +23,17 @@ import tud.seemuh.nfcgate.db.model.SessionLogViewModel;
 public class LoggingFragment extends Fragment {
     // UI references
     ListView mLog;
+    TextView mEmptyText;
 
     // db data
     private SessionLogViewModel mLogModel;
     private ArrayAdapter<SessionLog> mLogAdapter;
+
+    // callback
+    public interface LogItemSelectedCallback {
+        void onLogItemSelected(int sessionId);
+    }
+    LogItemSelectedCallback mCallback = new LogItemSelectedDefaultCallback();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -33,6 +41,7 @@ public class LoggingFragment extends Fragment {
 
         // setup
         mLog = v.findViewById(R.id.session_log);
+        mEmptyText = v.findViewById(R.id.txt_empty);
 
         // setup db model
         mLogModel = ViewModelProviders.of(this).get(SessionLogViewModel.class);
@@ -42,6 +51,9 @@ public class LoggingFragment extends Fragment {
                 mLogAdapter.clear();
                 mLogAdapter.addAll(sessionLogs);
                 mLogAdapter.notifyDataSetChanged();
+
+                // toggle empty message
+                setEmptyTextVisible(sessionLogs.isEmpty());
             }
         });
 
@@ -49,13 +61,8 @@ public class LoggingFragment extends Fragment {
         mLog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position >= 0) {
-                    // open detail view with log information
-                    getFragmentManager().beginTransaction()
-                            .replace(R.id.main_content, SessionLogEntryFragment.newInstance(mLogAdapter.getItem(position).getId()), "log_entry")
-                            .addToBackStack(null)
-                            .commit();
-                }
+                if (position >= 0)
+                    mCallback.onLogItemSelected(mLogAdapter.getItem(position).getId());
             }
         });
 
@@ -68,5 +75,27 @@ public class LoggingFragment extends Fragment {
 
         mLogAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
         mLog.setAdapter(mLogAdapter);
+    }
+
+    private void setEmptyTextVisible(boolean visible) {
+        mEmptyText.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    public void setLogItemSelectedCallback(LogItemSelectedCallback callback) {
+        mCallback = callback;
+    }
+
+    /**
+     * Class implementing the default log item action: open details view
+     */
+    class LogItemSelectedDefaultCallback implements LogItemSelectedCallback {
+        @Override
+        public void onLogItemSelected(int sessionId) {
+            // open detail view with log information
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.main_content, SessionLogEntryFragment.newInstance(sessionId), "log_entry")
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 }

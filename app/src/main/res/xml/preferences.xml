@@ -12,8 +12,8 @@
             />
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="Relay Settings"
-        android:key="relay"
+        android:title="Network Settings"
+        android:key="network"
         >
         <EditTextPreference
             android:title="Hostname"

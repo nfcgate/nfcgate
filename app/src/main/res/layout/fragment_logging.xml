@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-    android:orientation="vertical"
 
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
@@ -12,7 +10,15 @@
     <ListView
         android:id="@+id/session_log"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         />
-</LinearLayout>
+    <TextView
+        android:id="@+id/txt_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+
+        android:text="No sessions found"
+        style="@android:style/TextAppearance.DeviceDefault.Medium"
+        />
+</RelativeLayout>

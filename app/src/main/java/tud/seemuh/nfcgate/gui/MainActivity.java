@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Displays a warning dialog with the specified message
      */
-    void showWarning(String warning) {
+    public void showWarning(String warning) {
         new AlertDialog.Builder(this)
                 .setTitle("Warning")
                 .setMessage(warning)
