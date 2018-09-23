@@ -1,11 +1,11 @@
 package tud.seemuh.nfcgate.nfc.modes;
 
-import tud.seemuh.nfcgate.network.NetworkStatus;
+import tud.seemuh.nfcgate.network.data.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 public abstract class BaseMode {
-    NfcManager mManager;
+    protected NfcManager mManager;
 
     // used by manager to set own reference before enabling this mode
     public void setManager(NfcManager manager) {

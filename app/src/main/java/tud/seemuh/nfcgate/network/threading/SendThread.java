@@ -5,8 +5,8 @@ import android.util.Log;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import tud.seemuh.nfcgate.network.NetworkStatus;
-import tud.seemuh.nfcgate.network.SendRecord;
+import tud.seemuh.nfcgate.network.data.NetworkStatus;
+import tud.seemuh.nfcgate.network.data.SendRecord;
 import tud.seemuh.nfcgate.network.ServerConnection;
 
 public class SendThread extends BaseThread {

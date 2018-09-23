@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.worker.LogInserter;
-import tud.seemuh.nfcgate.network.NetworkStatus;
+import tud.seemuh.nfcgate.network.data.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.modes.RelayMode;
 import tud.seemuh.nfcgate.util.NfcComm;
 
@@ -60,23 +60,6 @@ public class RelayFragment extends BaseNetworkFragment {
         }
     }
 
-    private void handleStatus(NetworkStatus status) {
-        switch (status) {
-            case ERROR:
-                setSemaphore(R.drawable.semaphore_light_red, "Connection error");
-                break;
-            case CONNECTED:
-                setSemaphore(R.drawable.semaphore_light_yellow, "Connected, waiting for partner");
-                break;
-            case PARTNER_CONNECT:
-                setSemaphore(R.drawable.semaphore_light_green, "Connected to partner");
-                break;
-            case PARTNER_LEFT:
-                setSemaphore(R.drawable.semaphore_light_red, "Partner left");
-                break;
-        }
-    }
-
     class UIRelayMode extends RelayMode {
         UIRelayMode(boolean reader) {
             super(reader);
@@ -88,13 +71,16 @@ public class RelayFragment extends BaseNetworkFragment {
 
             // log to database
             mLogInserter.log(data);
+
+            // log to UI
+            logAppend(data.toString());
         }
 
         @Override
         public void onNetworkStatus(final NetworkStatus status) {
             super.onNetworkStatus(status);
 
-            // add log entry
+            // report status
             final FragmentActivity activity = getActivity();
             if (activity != null) {
                 activity.runOnUiThread(new Runnable() {

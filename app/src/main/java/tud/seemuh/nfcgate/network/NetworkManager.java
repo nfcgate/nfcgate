@@ -9,6 +9,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 
 import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.network.c2s.C2S;
+import tud.seemuh.nfcgate.network.data.NetworkStatus;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 import static tud.seemuh.nfcgate.network.c2s.C2S.ServerData.Opcode;
@@ -37,7 +38,7 @@ public class NetworkManager implements ServerConnection.Callback {
 
     public void connect() {
         // read fresh preference data
-        getPreferenceData();
+        loadPreferenceData();
 
         // disconnect old connection
         if (mConnection != null)
@@ -108,16 +109,12 @@ public class NetworkManager implements ServerConnection.Callback {
         mCallback.onNetworkStatus(status);
     }
 
-    private void getPreferenceData() {
+    private void loadPreferenceData() {
         // read data from shared prefs
         SharedPreferences prefs = PreferenceManagerFix.getDefaultSharedPreferences(mActivity);
         mHostname = prefs.getString("host", null);
         mPort = Integer.parseInt(prefs.getString("port", "0"));
         mSessionNumber = Integer.parseInt(prefs.getString("session", "0"));
-
-        Log.d("nfcgate", "Connecting to: " + mHostname + ":" + mPort + " in session " + mSessionNumber);
-
-        // TODO: verify / sanitize inputs?
     }
 
     private void sendServer(Opcode opcode, byte[] data) {

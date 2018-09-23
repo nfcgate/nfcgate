@@ -1,10 +1,10 @@
-package tud.seemuh.nfcgate.network;
+package tud.seemuh.nfcgate.network.data;
 
 public class SendRecord {
     private int mSession;
     private byte[] mData;
 
-    SendRecord(int session, byte[] data) {
+    public SendRecord(int session, byte[] data) {
         mSession = session;
         mData = data;
     }

@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate.network;
+package tud.seemuh.nfcgate.network.data;
 
 public enum NetworkStatus {
     ERROR,

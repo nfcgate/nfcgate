@@ -14,7 +14,7 @@ import java.util.List;
 
 import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.network.NetworkManager;
-import tud.seemuh.nfcgate.network.NetworkStatus;
+import tud.seemuh.nfcgate.network.data.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.config.Technologies;
 import tud.seemuh.nfcgate.nfc.hce.ApduService;
 import tud.seemuh.nfcgate.nfc.hce.DaemonConfiguration;

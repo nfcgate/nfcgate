@@ -1,6 +1,6 @@
 package tud.seemuh.nfcgate.nfc.modes;
 
-import tud.seemuh.nfcgate.network.NetworkStatus;
+import tud.seemuh.nfcgate.network.data.NetworkStatus;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 public class CloneMode extends BaseMode {

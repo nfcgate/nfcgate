@@ -5,7 +5,7 @@ import android.util.Log;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-import tud.seemuh.nfcgate.network.NetworkStatus;
+import tud.seemuh.nfcgate.network.data.NetworkStatus;
 import tud.seemuh.nfcgate.network.ServerConnection;
 
 public class ReceiveThread extends BaseThread {

@@ -8,6 +8,8 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import tud.seemuh.nfcgate.network.data.NetworkStatus;
+import tud.seemuh.nfcgate.network.data.SendRecord;
 import tud.seemuh.nfcgate.network.threading.ReceiveThread;
 import tud.seemuh.nfcgate.network.threading.SendThread;
 

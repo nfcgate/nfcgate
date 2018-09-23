@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManagerFix;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
@@ -22,8 +21,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import tud.seemuh.nfcgate.R;
-import tud.seemuh.nfcgate.db.worker.LogInserter;
 import tud.seemuh.nfcgate.gui.MainActivity;
+import tud.seemuh.nfcgate.network.data.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 
 public abstract class BaseNetworkFragment extends Fragment {
@@ -96,6 +95,23 @@ public abstract class BaseNetworkFragment extends Fragment {
         mSemaphoreText.setText(message);
     }
 
+    protected void handleStatus(NetworkStatus status) {
+        switch (status) {
+            case ERROR:
+                setSemaphore(R.drawable.semaphore_light_red, "Connection error");
+                break;
+            case CONNECTED:
+                setSemaphore(R.drawable.semaphore_light_yellow, "Connected, waiting for partner");
+                break;
+            case PARTNER_CONNECT:
+                setSemaphore(R.drawable.semaphore_light_green, "Connected to partner");
+                break;
+            case PARTNER_LEFT:
+                setSemaphore(R.drawable.semaphore_light_red, "Partner left");
+                break;
+        }
+    }
+
     /**
      * Returns true if any network connection appears to be online
      */
@@ -114,6 +130,9 @@ public abstract class BaseNetworkFragment extends Fragment {
         return !prefs.getString("host", "").isEmpty();
     }
 
+    /**
+     * Checks if any network is available and the server connection is properly configured
+     */
     protected boolean checkNetwork() {
         // check if any network connection is available
         if (!isNetworkAvailable()) {
@@ -131,11 +150,25 @@ public abstract class BaseNetworkFragment extends Fragment {
     }
 
     /**
+     * Append line to UI log from thread
+     */
+    protected void logAppend(final String line) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mLog.append(line);
+                mLog.append("\n");
+            }
+        });
+    }
+
+    /**
      * Reset method called initially and when user presses reset button
      */
     protected void reset() {
         getNfc().stopMode();
         setSemaphore(R.drawable.semaphore_light_red, "Idle");
+        mLog.setText("");
     }
 
     /**

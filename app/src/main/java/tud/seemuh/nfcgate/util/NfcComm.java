@@ -48,6 +48,9 @@ public class NfcComm {
         return mData.getDataSource() == NFCData.DataSource.CARD;
     }
 
+    /**
+     * Returns the binary config stream if initial or APDU if continuation
+     */
     public byte[] getData() {
         return mData.getData().toByteArray();
     }
@@ -57,5 +60,13 @@ public class NfcComm {
      */
     public byte[] toByteArray() {
         return mData.toByteArray();
+    }
+
+    @Override
+    public String toString() {
+        String letter = isCard() ? "C" : "R";
+        String initial = isInitial() ? "(initial) " : "";
+        String data = Utils.bytesToHex(getData());
+        return String.format("%s: %s%s", letter, initial, data);
     }
 }

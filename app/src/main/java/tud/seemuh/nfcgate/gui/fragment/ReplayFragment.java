@@ -18,10 +18,9 @@ import tud.seemuh.nfcgate.db.NfcCommEntry;
 import tud.seemuh.nfcgate.db.SessionLogJoin;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModel;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModelFactory;
-import tud.seemuh.nfcgate.network.NetworkStatus;
-import tud.seemuh.nfcgate.network.ServerConnection;
-import tud.seemuh.nfcgate.nfc.modes.BaseMode;
-import tud.seemuh.nfcgate.nfc.modes.RelayMode;
+import tud.seemuh.nfcgate.gui.MainActivity;
+import tud.seemuh.nfcgate.network.NetworkManager;
+import tud.seemuh.nfcgate.network.data.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.modes.ReplayMode;
 import tud.seemuh.nfcgate.util.NfcComm;
 
@@ -31,7 +30,6 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
 
     // replay data
     List<NfcCommEntry> mSessionLog;
-    ServerConnection mReplayConnection;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -101,7 +99,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
 
     protected void onSelect(boolean reader) {
         // print status
-        setSemaphore(R.drawable.semaphore_light_red, "Connecting to Network");
+        //setSemaphore(R.drawable.semaphore_light_red, "Connecting to Network");
 
         // hide selector, show tag wait indicator
         setSelectorVisible(false);
@@ -111,6 +109,9 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
         getNfc().startMode(new ReplayFragment.UIReplayMode(reader));
     }
 
+    /**
+     * Offline replay mode
+     */
     class UIReplayMode extends ReplayMode {
         UIReplayMode(boolean reader) {
             super(reader, mSessionLog);
@@ -118,7 +119,53 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
 
         @Override
         public void onData(boolean isForeign, NfcComm data) {
-            super.onData(isForeign, data);
+            // TODO: prevent wrong type data from getting a response
+
+            NfcComm response = getResponse(data);
+
+            // log request
+            logAppend(data.toString());
+
+            // log and apply response
+            if (response != null) {
+                logAppend(response.toString());
+                mManager.applyData(response);
+            }
+            else
+                logAppend((data.isCard() ? "R" : "C") + ": none");
+        }
+    }
+
+    class OnlineReplayer implements NetworkManager.Callback {
+        NetworkManager mReplayManager;
+
+        OnlineReplayer(MainActivity activity) {
+            mReplayManager = new NetworkManager(activity, this);
+            mReplayManager.connect();
+        }
+
+        void release() {
+            mReplayManager.disconnect();
+        }
+
+        @Override
+        public void onReceive(NfcComm data) {
+            // TODO: replay from mSessionLog and combine with ReplayMode
+            mReplayManager.send(data);
+        }
+
+        @Override
+        public void onNetworkStatus(final NetworkStatus status) {
+            // report status
+            final FragmentActivity activity = getActivity();
+            if (activity != null) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        handleStatus(status);
+                    }
+                });
+            }
         }
     }
 }
