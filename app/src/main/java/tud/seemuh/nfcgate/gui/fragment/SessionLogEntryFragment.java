@@ -2,6 +2,7 @@ package tud.seemuh.nfcgate.gui.fragment;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,13 +15,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import java.util.List;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.NfcCommEntry;
 import tud.seemuh.nfcgate.db.SessionLogJoin;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModel;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModelFactory;
+import tud.seemuh.nfcgate.util.NfcComm;
+
+import static tud.seemuh.nfcgate.util.Utils.bytesToHexDump;
 
 public class SessionLogEntryFragment extends Fragment {
     // UI references
@@ -28,7 +36,7 @@ public class SessionLogEntryFragment extends Fragment {
 
     // db data
     private SessionLogEntryViewModel mLogEntryModel;
-    private ArrayAdapter<NfcCommEntry> mLogEntriesAdapter;
+    private SessionLogListAdapter mLogEntriesAdapter;
     private long mSessionLog;
 
     public static SessionLogEntryFragment newInstance(long sessionLog) {
@@ -85,7 +93,7 @@ public class SessionLogEntryFragment extends Fragment {
         });
 
         // setup db data and view adapter
-        mLogEntriesAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
+        mLogEntriesAdapter = new SessionLogListAdapter(getActivity(), R.layout.list_log_entry);
         mLogEntries.setAdapter(mLogEntriesAdapter);
     }
 
@@ -98,5 +106,71 @@ public class SessionLogEntryFragment extends Fragment {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private class SessionLogListAdapter extends ArrayAdapter<NfcCommEntry> {
+
+        private int mResource;
+
+        public SessionLogListAdapter(@NonNull Context context, int resource) {
+            super(context, resource);
+
+            mResource = resource;
+        }
+
+        public SessionLogListAdapter(@NonNull Context context, int resource, int textViewResourceId) {
+            super(context, resource, textViewResourceId);
+
+            mResource = resource;
+        }
+
+        public SessionLogListAdapter(@NonNull Context context, int resource, @NonNull NfcCommEntry[] objects) {
+            super(context, resource, objects);
+
+            mResource = resource;
+        }
+
+        public SessionLogListAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull NfcCommEntry[] objects) {
+            super(context, resource, textViewResourceId, objects);
+
+            mResource = resource;
+        }
+
+        public SessionLogListAdapter(@NonNull Context context, int resource, @NonNull List<NfcCommEntry> objects) {
+            super(context, resource, objects);
+
+            mResource = resource;
+        }
+
+        public SessionLogListAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull List<NfcCommEntry> objects) {
+            super(context, resource, textViewResourceId, objects);
+
+            mResource = resource;
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            //return super.getView(position, convertView, parent);
+            View v = convertView;
+
+            if (v == null)
+                v = LayoutInflater.from(getContext()).inflate(mResource, null);
+
+            final NfcCommEntry entry = getItem(position);
+            if (entry != null) {
+                final NfcComm nfcComm = entry.getNfcComm();
+                final ImageView type = v.<ImageView>findViewById(R.id.type);
+                if (nfcComm.isCard())
+                    type.setImageResource(R.drawable.ic_tag_grey_60dp);
+                else
+                    type.setImageResource(R.drawable.ic_reader_grey_60dp);
+
+                v.<TextView>findViewById(R.id.initial).setText(nfcComm.isInitial() ? "initial" : "");
+                v.<TextView>findViewById(R.id.data).setText(bytesToHexDump(nfcComm.getData()));
+            }
+
+            return v;
+        }
     }
 }

@@ -18,4 +18,9 @@
         <item name="android:layout_height">1dp</item>
         <item name="android:background">@color/black</item>
     </style>
+
+    <style name="Hexdump" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

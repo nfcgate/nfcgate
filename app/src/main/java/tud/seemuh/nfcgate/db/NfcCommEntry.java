@@ -53,21 +53,6 @@ public class NfcCommEntry {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        final byte[] data = nfcComm.getData();
-        final boolean card = nfcComm.isCard();
-        final boolean initial = nfcComm.isInitial();
-
-        sb.append("card: ");
-        sb.append(card);
-        sb.append(" ");
-        sb.append("initial: ");
-        sb.append(initial);
-        sb.append("\n");
-        sb.append("\n");
-        sb.append(bytesToHexDump(data));
-
-        return sb.toString();
+        return nfcComm.toString();
     }
 }
