@@ -14,6 +14,7 @@ import tud.seemuh.nfcgate.util.NfcComm;
 public class LogInserter {
     private AppDatabase mDatabase;
     private BlockingQueue<NfcComm> mQueue = new LinkedBlockingQueue<>();
+    private long mSessionId = -1;
 
     public LogInserter(Context ctx) {
         mDatabase = AppDatabase.getDatabase(ctx);
@@ -26,9 +27,11 @@ public class LogInserter {
         } catch (InterruptedException ignored) { }
     }
 
-    class LogInserterThread extends Thread {
-        private long mSessionId = -1;
+    public void reset() {
+        mSessionId = -1;
+    }
 
+    class LogInserterThread extends Thread {
         LogInserterThread() {
             // ensure JVM stops this thread at the end of app
             setDaemon(true);

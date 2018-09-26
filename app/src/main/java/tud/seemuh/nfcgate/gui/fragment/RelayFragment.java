@@ -41,6 +41,9 @@ public class RelayFragment extends BaseNetworkFragment {
     protected void reset() {
         super.reset();
 
+        if (mLogInserter != null)
+            mLogInserter.reset();
+
         // show selector, hide tag wait indicator
         setSelectorVisible(true);
         setTagWaitVisible(false);
