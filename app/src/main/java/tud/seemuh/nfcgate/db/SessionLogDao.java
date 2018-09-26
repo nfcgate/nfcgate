@@ -10,7 +10,7 @@ import java.util.List;
 
 @Dao
 public interface SessionLogDao {
-    @Query("SELECT * FROM SessionLog ORDER BY Date ASC")
+    @Query("SELECT * FROM SessionLog ORDER BY Date DESC")
     LiveData<List<SessionLog>> getAll();
 
     @Insert
