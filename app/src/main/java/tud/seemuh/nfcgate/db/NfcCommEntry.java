@@ -7,14 +7,12 @@ import android.arch.persistence.room.PrimaryKey;
 
 import tud.seemuh.nfcgate.util.NfcComm;
 
-import static tud.seemuh.nfcgate.util.Utils.bytesToHexDump;
-
 @Entity(foreignKeys = {
         @ForeignKey(entity = SessionLog.class, parentColumns = "id", childColumns = "sessionId")
 })
 public class NfcCommEntry {
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private int entryId;
 
     @ColumnInfo
     private NfcComm nfcComm;
@@ -27,12 +25,12 @@ public class NfcCommEntry {
         this.sessionId = sessionId;
     }
 
-    public int getId() {
-        return id;
+    public int getEntryId() {
+        return entryId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setEntryId(int entryId) {
+        this.entryId = entryId;
     }
 
     public NfcComm getNfcComm() {

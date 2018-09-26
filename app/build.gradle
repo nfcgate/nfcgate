@@ -36,8 +36,8 @@ dependencies {
     // About
     implementation "com.github.medyo:android-about-page:1.2.4"
 
-    def room_version = "1.1.0"
-    def archLifecycleVersion = '1.1.0'
+    def room_version = "1.1.1"
+    def archLifecycleVersion = '1.1.1'
 
     // Room
     implementation "android.arch.persistence.room:runtime:$room_version"
