@@ -5,9 +5,6 @@
     android:layout_height="match_parent"
 
     android:orientation="vertical"
-
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
     >
     <RelativeLayout
         android:id="@+id/lay_content"

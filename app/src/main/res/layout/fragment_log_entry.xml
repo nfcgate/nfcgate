@@ -5,14 +5,7 @@
     android:layout_height="match_parent"
 
     android:orientation="vertical"
-
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
     >
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Hurr durr"/>
     <ListView
         android:id="@+id/log_entries"
         android:layout_width="match_parent"
