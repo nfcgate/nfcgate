@@ -69,8 +69,12 @@ public class ConfigBuilder {
     public String toString() {
         StringBuilder result = new StringBuilder();
 
-        for (ConfigOption option : mOptions)
+        for (ConfigOption option : mOptions) {
+            if (result.length() > 0)
+                result.append("\n");
+
             result.append(option.toString());
+        }
 
         return result.toString();
     }

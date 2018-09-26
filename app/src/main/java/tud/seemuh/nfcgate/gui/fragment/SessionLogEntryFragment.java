@@ -26,6 +26,7 @@ import tud.seemuh.nfcgate.db.NfcCommEntry;
 import tud.seemuh.nfcgate.db.SessionLogJoin;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModel;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModelFactory;
+import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 import static tud.seemuh.nfcgate.util.Utils.bytesToHexDump;
@@ -151,7 +152,6 @@ public class SessionLogEntryFragment extends Fragment {
         @NonNull
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            //return super.getView(position, convertView, parent);
             View v = convertView;
 
             if (v == null)
@@ -160,14 +160,14 @@ public class SessionLogEntryFragment extends Fragment {
             final NfcCommEntry entry = getItem(position);
             if (entry != null) {
                 final NfcComm nfcComm = entry.getNfcComm();
-                final ImageView type = v.<ImageView>findViewById(R.id.type);
-                if (nfcComm.isCard())
-                    type.setImageResource(R.drawable.ic_tag_grey_60dp);
-                else
-                    type.setImageResource(R.drawable.ic_reader_grey_60dp);
 
-                v.<TextView>findViewById(R.id.initial).setText(nfcComm.isInitial() ? "initial" : "");
-                v.<TextView>findViewById(R.id.data).setText(bytesToHexDump(nfcComm.getData()));
+                // set image indicating card or reader
+                v.<ImageView>findViewById(R.id.type).setImageResource(nfcComm.isCard() ?
+                        R.drawable.ic_tag_grey_60dp : R.drawable.ic_reader_grey_60dp);
+
+                // set content to either config stream or binary content
+                v.<TextView>findViewById(R.id.data).setText(nfcComm.isInitial() ?
+                        new ConfigBuilder(nfcComm.getData()).toString() : bytesToHexDump(nfcComm.getData()));
             }
 
             return v;

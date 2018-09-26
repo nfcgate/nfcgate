@@ -54,7 +54,6 @@ public class ConfigOption {
 
         result.append(", Value: 0x");
         result.append(bytesToHex(mData));
-        result.append("\n");
 
         return result.toString();
     }
