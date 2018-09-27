@@ -106,7 +106,16 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
         setTagWaitVisible(true);
 
         // enable reader or emulator replay mode
-        getNfc().startMode(new ReplayFragment.UIReplayMode(reader));
+        final UIReplayMode replayMode = new UIReplayMode(reader);
+        getNfc().startMode(replayMode);
+
+        // initial push required for tag replay
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                replayMode.onData(false, null);
+            }
+        });
     }
 
     /**
@@ -119,20 +128,12 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
 
         @Override
         public void onData(boolean isForeign, NfcComm data) {
-            // TODO: prevent wrong type data from getting a response
-
-            NfcComm response = getResponse(data);
-
             // log request
-            logAppend(data.toString());
+            if (data != null)
+                logAppend(data.toString());
 
-            // log and apply response
-            if (response != null) {
-                logAppend(response.toString());
-                mManager.applyData(response);
-            }
-            else
-                logAppend((data.isCard() ? "R" : "C") + ": none");
+            // forward data to replayer
+            super.onData(isForeign, data);
         }
     }
 

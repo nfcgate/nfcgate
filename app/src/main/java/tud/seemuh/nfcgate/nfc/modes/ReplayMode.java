@@ -4,16 +4,16 @@ import java.util.List;
 
 import tud.seemuh.nfcgate.db.NfcCommEntry;
 import tud.seemuh.nfcgate.network.data.NetworkStatus;
+import tud.seemuh.nfcgate.nfc.NfcLogReplayer;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 public class ReplayMode extends BaseMode {
     private boolean mReplayReader;
-    private List<NfcCommEntry> mReplayLog;
-    private int mReplayIndex = 0;
+    private NfcLogReplayer mLogReplayer;
 
     public ReplayMode(boolean reader, List<NfcCommEntry> replayLog) {
         mReplayReader = reader;
-        mReplayLog = replayLog;
+        mLogReplayer = new NfcLogReplayer(reader, replayLog);
     }
 
     @Override
@@ -31,22 +31,19 @@ public class ReplayMode extends BaseMode {
         mManager.setReaderMode(false);
     }
 
-    protected NfcComm getResponse(NfcComm data) {
-        // reached end of log
-        if (mReplayIndex + 1 >= mReplayLog.size())
-            return null;
-
-        // TODO: switch from response by position to response by data
-        NfcComm result = mReplayLog.get(mReplayIndex + 1).getNfcComm();
-
-        // advance position in log
-        mReplayIndex += 2;
-        return result;
-    }
-
     @Override
     public void onData(boolean isForeign, NfcComm data) {
-        // no-op: override in UI
+        if (isForeign) {
+            // apply replay response
+            mManager.applyData(data);
+        }
+        else {
+            // get response for request and handle it
+            NfcComm response = mLogReplayer.getResponse(data);
+
+            if (response != null)
+                mManager.handleData(true, response);
+        }
     }
 
     @Override
