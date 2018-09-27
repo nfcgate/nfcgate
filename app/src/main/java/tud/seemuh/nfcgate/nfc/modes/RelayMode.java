@@ -5,6 +5,7 @@ import tud.seemuh.nfcgate.util.NfcComm;
 
 public class RelayMode extends BaseMode {
     private boolean mReader;
+    protected boolean mOnline = true;
 
     public RelayMode(boolean reader) {
         mReader = reader;
@@ -19,7 +20,8 @@ public class RelayMode extends BaseMode {
         mManager.setReaderMode(mReader);
 
         // connect to the network
-        mManager.getNetwork().connect();
+        if (mOnline)
+            mManager.getNetwork().connect();
     }
 
     @Override
@@ -28,7 +30,13 @@ public class RelayMode extends BaseMode {
         mManager.setReaderMode(false);
 
         // disconnect from the network
-        mManager.getNetwork().disconnect();
+        if (mOnline)
+            mManager.getNetwork().disconnect();
+    }
+
+    @Override
+    public void onNetworkStatus(NetworkStatus status) {
+        // no-op: override in UI
     }
 
     @Override
@@ -41,12 +49,12 @@ public class RelayMode extends BaseMode {
         // accept only own data of our type
         else if (!isForeign && data.isCard() == mReader) {
             // send own data over network
-            mManager.getNetwork().send(data);
+            toNetwork(data);
         }
     }
 
-    @Override
-    public void onNetworkStatus(NetworkStatus status) {
-        // no-op: override in UI
+    protected void toNetwork(NfcComm data) {
+        // default action is to send to network
+        mManager.getNetwork().send(data);
     }
 }

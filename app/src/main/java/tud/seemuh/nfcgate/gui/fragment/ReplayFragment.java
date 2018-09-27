@@ -18,10 +18,10 @@ import tud.seemuh.nfcgate.db.NfcCommEntry;
 import tud.seemuh.nfcgate.db.SessionLogJoin;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModel;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModelFactory;
-import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.network.NetworkManager;
 import tud.seemuh.nfcgate.network.data.NetworkStatus;
-import tud.seemuh.nfcgate.nfc.modes.ReplayMode;
+import tud.seemuh.nfcgate.nfc.NfcLogReplayer;
+import tud.seemuh.nfcgate.nfc.modes.RelayMode;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 public class ReplayFragment extends BaseNetworkFragment implements LoggingFragment.LogItemSelectedCallback {
@@ -30,6 +30,8 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
 
     // replay data
     List<NfcCommEntry> mSessionLog;
+    boolean mOfflineReplay = true;
+    UIReplayer mReplayer;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -61,6 +63,10 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
         // hide selector and tag wait indicator
         setSelectorVisible(false);
         setTagWaitVisible(false);
+
+        // release replayer network
+        if (mReplayer != null)
+            mReplayer.release();
 
         // clear subtitle
         getMainActivity().getSupportActionBar().setSubtitle("Select session");
@@ -99,21 +105,24 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
 
     protected void onSelect(boolean reader) {
         // print status
-        //setSemaphore(R.drawable.semaphore_light_red, "Connecting to Network");
+        if (!mOfflineReplay)
+            setSemaphore(R.drawable.semaphore_light_red, "Connecting to Network");
 
         // hide selector, show tag wait indicator
         setSelectorVisible(false);
         setTagWaitVisible(true);
 
-        // enable reader or emulator replay mode
-        final UIReplayMode replayMode = new UIReplayMode(reader);
-        getNfc().startMode(replayMode);
+        // init replayer
+        mReplayer = new UIReplayer(reader);
 
-        // initial push required for tag replay
+        // relay to local or remote end
+        getNfc().startMode(new UIReplayMode(reader));
+
+        // initial tickle required for tag replay
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                replayMode.onData(false, null);
+                mReplayer.onReceive(null);
             }
         });
     }
@@ -121,38 +130,85 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
     /**
      * Offline replay mode
      */
-    class UIReplayMode extends ReplayMode {
+    class UIReplayMode extends RelayMode {
         UIReplayMode(boolean reader) {
-            super(reader, mSessionLog);
+            super(reader);
+
+            // prevent network connect in offline mode
+            mOnline = !mOfflineReplay;
         }
 
         @Override
         public void onData(boolean isForeign, NfcComm data) {
-            // log request
-            if (data != null)
-                logAppend(data.toString());
+            // log to database and UI
+            //mLogInserter.log(data); // TODO: separate relay and replay log
+            logAppend(data.toString());
 
-            // forward data to replayer
+            // forward data to NFC or network
             super.onData(isForeign, data);
+        }
+
+        @Override
+        protected void toNetwork(final NfcComm data) {
+            if (!mOfflineReplay)
+                // send to actual network
+                super.toNetwork(data);
+            else
+                // simulate network send
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mReplayer.onReceive(data);
+                    }
+                });
+        }
+
+        @Override
+        public void onNetworkStatus(final NetworkStatus status) {
+            super.onNetworkStatus(status);
+
+            // report status
+            final FragmentActivity activity = getActivity();
+            if (activity != null) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        handleStatus(status);
+                    }
+                });
+            }
         }
     }
 
-    class OnlineReplayer implements NetworkManager.Callback {
-        NetworkManager mReplayManager;
+    class UIReplayer implements NetworkManager.Callback {
+        NfcLogReplayer mReplayer;
+        NetworkManager mReplayNetwork = null;
 
-        OnlineReplayer(MainActivity activity) {
-            mReplayManager = new NetworkManager(activity, this);
-            mReplayManager.connect();
+        UIReplayer(boolean reader) {
+            mReplayer = new NfcLogReplayer(reader, mSessionLog);
+
+            if (!mOfflineReplay) {
+                mReplayNetwork = new NetworkManager(getMainActivity(), this);
+                mReplayNetwork.connect();
+            }
         }
 
         void release() {
-            mReplayManager.disconnect();
+            if (mReplayNetwork != null)
+                mReplayNetwork.disconnect();
         }
 
         @Override
         public void onReceive(NfcComm data) {
-            // TODO: replay from mSessionLog and combine with ReplayMode
-            mReplayManager.send(data);
+            // get response
+            NfcComm response = mReplayer.getResponse(data);
+
+            if (response != null && mOfflineReplay)
+                // simulate network receive
+                getNfc().handleData(true, response);
+            else if (response != null)
+                // actual network receive
+                mReplayNetwork.send(response);
         }
 
         @Override

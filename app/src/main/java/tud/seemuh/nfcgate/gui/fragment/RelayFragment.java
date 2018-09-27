@@ -70,10 +70,8 @@ public class RelayFragment extends BaseNetworkFragment {
 
         @Override
         public void onData(boolean isForeign, NfcComm data) {
-            // log to database
+            // log to database and UI
             mLogInserter.log(data);
-
-            // log to UI
             logAppend(data.toString());
 
             // forward data to NFC or network
