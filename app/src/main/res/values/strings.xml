@@ -9,4 +9,12 @@
 ]]>
     </string>
     <string name="empty"/>
+    <string-array name="replay_mode_names">
+        <item>Index Mode</item>
+        <item>Data Mode</item>
+    </string-array>
+    <string-array name="replay_mode_values">
+        <item>index</item>
+        <item>data</item>
+    </string-array>
 </resources>

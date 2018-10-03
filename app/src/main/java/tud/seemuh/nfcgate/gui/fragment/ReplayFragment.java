@@ -2,10 +2,12 @@ package tud.seemuh.nfcgate.gui.fragment;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.preference.PreferenceManagerFix;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,7 +106,15 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
     }
 
     protected void onSelect(boolean reader) {
-        // print status
+        // get preference data
+        SharedPreferences prefs = PreferenceManagerFix.getDefaultSharedPreferences(getActivity());
+        mOfflineReplay = !prefs.getBoolean("network", false);
+
+        // quit if network check fails
+        if (!mOfflineReplay && !checkNetwork())
+            return;
+
+        // print network status
         if (!mOfflineReplay)
             setSemaphore(R.drawable.semaphore_light_red, "Connecting to Network");
 
@@ -112,13 +122,15 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
         setSelectorVisible(false);
         setTagWaitVisible(true);
 
-        // init replayer
+        // init replayer and mode
         mReplayer = new UIReplayer(reader);
-
-        // relay to local or remote end
         getNfc().startMode(new UIReplayMode(reader));
 
         // initial tickle required for tag replay
+        tickleReplayer();
+    }
+
+    void tickleReplayer() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -209,6 +221,10 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
             else if (response != null)
                 // actual network receive
                 mReplayNetwork.send(response);
+
+            // if we need to take action, schedule a tickle
+            if (!mReplayer.shouldWait())
+                tickleReplayer();
         }
 
         @Override

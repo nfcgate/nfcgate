@@ -43,5 +43,24 @@
             android:defaultValue="1"
             />
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Replay Settings"
+        android:key="replay"
+        >
+        <CheckBoxPreference
+            android:title="Advanced Replay"
+            android:key="network"
 
+            android:summary="Enables replay over network"
+            />
+        <ListPreference
+            android:title="Replay mode"
+            android:key="mode"
+
+            android:summary="Sets reply mode for replay requests"
+            android:entries="@array/replay_mode_names"
+            android:entryValues="@array/replay_mode_values"
+            android:defaultValue="index"
+            />
+    </PreferenceCategory>
 </PreferenceScreen>
