@@ -8,14 +8,23 @@ import java.util.Date;
 
 @Entity
 public class SessionLog {
+    public enum SessionType {
+        RELAY,
+        REPLAY
+    }
+
     @PrimaryKey(autoGenerate = true)
     private int id;
 
     @ColumnInfo
     private Date date;
 
-    public SessionLog(Date date) {
+    @ColumnInfo
+    private SessionType type;
+
+    public SessionLog(Date date, SessionType type) {
         this.date = date;
+        this.type = type;
     }
 
     public int getId() {
@@ -32,6 +41,14 @@ public class SessionLog {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public SessionType getType() {
+        return type;
+    }
+
+    public void setType(SessionType type) {
+        this.type = type;
     }
 
     @Override

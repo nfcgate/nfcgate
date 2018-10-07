@@ -27,4 +27,13 @@ public class Converters {
         return date == null ? null : date.getTime();
     }
 
+    @TypeConverter
+    public static SessionLog.SessionType intToType(int type) {
+        return SessionLog.SessionType.values()[type];
+    }
+
+    @TypeConverter
+    public static int typeToInt(SessionLog.SessionType type) {
+        return type.ordinal();
+    }
 }

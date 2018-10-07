@@ -2,6 +2,7 @@ package tud.seemuh.nfcgate.gui.fragment;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,14 +12,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.Date;
 import java.util.List;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.db.NfcCommEntry;
 import tud.seemuh.nfcgate.db.SessionLog;
 import tud.seemuh.nfcgate.db.model.SessionLogViewModel;
+import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
+import tud.seemuh.nfcgate.util.NfcComm;
+
+import static tud.seemuh.nfcgate.util.Utils.bytesToHexDump;
 
 public class LoggingFragment extends Fragment {
     // UI references
@@ -27,7 +35,7 @@ public class LoggingFragment extends Fragment {
 
     // db data
     private SessionLogViewModel mLogModel;
-    private ArrayAdapter<SessionLog> mLogAdapter;
+    private SessionLogListAdapter mLogAdapter;
 
     // callback
     public interface LogItemSelectedCallback {
@@ -73,7 +81,7 @@ public class LoggingFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mLogAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
+        mLogAdapter = new SessionLogListAdapter(getActivity(), R.layout.list_log);
         mLog.setAdapter(mLogAdapter);
     }
 
@@ -96,6 +104,75 @@ public class LoggingFragment extends Fragment {
                     .replace(R.id.main_content, SessionLogEntryFragment.newInstance(sessionId), "log_entry")
                     .addToBackStack(null)
                     .commit();
+        }
+    }
+
+    private class SessionLogListAdapter extends ArrayAdapter<SessionLog> {
+
+        private int mResource;
+
+        public SessionLogListAdapter(@NonNull Context context, int resource) {
+            super(context, resource);
+
+            mResource = resource;
+        }
+
+        public SessionLogListAdapter(@NonNull Context context, int resource, int textViewResourceId) {
+            super(context, resource, textViewResourceId);
+
+            mResource = resource;
+        }
+
+        public SessionLogListAdapter(@NonNull Context context, int resource, @NonNull SessionLog[] objects) {
+            super(context, resource, objects);
+
+            mResource = resource;
+        }
+
+        public SessionLogListAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull SessionLog[] objects) {
+            super(context, resource, textViewResourceId, objects);
+
+            mResource = resource;
+        }
+
+        public SessionLogListAdapter(@NonNull Context context, int resource, @NonNull List<SessionLog> objects) {
+            super(context, resource, objects);
+
+            mResource = resource;
+        }
+
+        public SessionLogListAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull List<SessionLog> objects) {
+            super(context, resource, textViewResourceId, objects);
+
+            mResource = resource;
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            View v = convertView;
+
+            if (v == null)
+                v = LayoutInflater.from(getContext()).inflate(mResource, null);
+
+            final SessionLog entry = getItem(position);
+            if (entry != null) {
+                final SessionLog.SessionType type = entry.getType();
+                final Date date = entry.getDate();
+
+                // set image indicating card or reader
+                switch (type) {
+                    case RELAY:
+                        v.<ImageView>findViewById(R.id.type).setImageResource(R.drawable.ic_relay_black_24dp);
+                        break;
+                    case REPLAY:
+                        v.<ImageView>findViewById(R.id.type).setImageResource(R.drawable.ic_replay_black_24dp);
+                        break;
+                }
+                v.<TextView>findViewById(R.id.title).setText(date.toString());
+            }
+
+            return v;
         }
     }
 }

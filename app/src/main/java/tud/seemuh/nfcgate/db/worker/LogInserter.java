@@ -44,7 +44,7 @@ public class LogInserter {
                     NfcComm data = mQueue.take();
 
                     if (mSessionId == -1)
-                        mSessionId = mDatabase.sessionLogDao().insert(new SessionLog(new Date()));
+                        mSessionId = mDatabase.sessionLogDao().insert(new SessionLog(new Date(), SessionLog.SessionType.RELAY));
 
                     mDatabase.nfcCommEntryDao().insert(new NfcCommEntry(data, mSessionId));
                 } catch (InterruptedException ignored) { }

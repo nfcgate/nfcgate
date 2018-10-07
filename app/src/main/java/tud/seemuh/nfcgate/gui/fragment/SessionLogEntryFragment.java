@@ -37,7 +37,7 @@ public class SessionLogEntryFragment extends Fragment {
 
     // db data
     private SessionLogEntryViewModel mLogEntryModel;
-    private SessionLogListAdapter mLogEntriesAdapter;
+    private SessionLogEntryListAdapter mLogEntriesAdapter;
     private long mSessionLog;
 
     public static SessionLogEntryFragment newInstance(long sessionLog) {
@@ -94,7 +94,7 @@ public class SessionLogEntryFragment extends Fragment {
         });
 
         // setup db data and view adapter
-        mLogEntriesAdapter = new SessionLogListAdapter(getActivity(), R.layout.list_log_entry);
+        mLogEntriesAdapter = new SessionLogEntryListAdapter(getActivity(), R.layout.list_log_entry);
         mLogEntries.setAdapter(mLogEntriesAdapter);
     }
 
@@ -109,41 +109,41 @@ public class SessionLogEntryFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private class SessionLogListAdapter extends ArrayAdapter<NfcCommEntry> {
+    private class SessionLogEntryListAdapter extends ArrayAdapter<NfcCommEntry> {
 
         private int mResource;
 
-        public SessionLogListAdapter(@NonNull Context context, int resource) {
+        public SessionLogEntryListAdapter(@NonNull Context context, int resource) {
             super(context, resource);
 
             mResource = resource;
         }
 
-        public SessionLogListAdapter(@NonNull Context context, int resource, int textViewResourceId) {
+        public SessionLogEntryListAdapter(@NonNull Context context, int resource, int textViewResourceId) {
             super(context, resource, textViewResourceId);
 
             mResource = resource;
         }
 
-        public SessionLogListAdapter(@NonNull Context context, int resource, @NonNull NfcCommEntry[] objects) {
+        public SessionLogEntryListAdapter(@NonNull Context context, int resource, @NonNull NfcCommEntry[] objects) {
             super(context, resource, objects);
 
             mResource = resource;
         }
 
-        public SessionLogListAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull NfcCommEntry[] objects) {
+        public SessionLogEntryListAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull NfcCommEntry[] objects) {
             super(context, resource, textViewResourceId, objects);
 
             mResource = resource;
         }
 
-        public SessionLogListAdapter(@NonNull Context context, int resource, @NonNull List<NfcCommEntry> objects) {
+        public SessionLogEntryListAdapter(@NonNull Context context, int resource, @NonNull List<NfcCommEntry> objects) {
             super(context, resource, objects);
 
             mResource = resource;
         }
 
-        public SessionLogListAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull List<NfcCommEntry> objects) {
+        public SessionLogEntryListAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull List<NfcCommEntry> objects) {
             super(context, resource, textViewResourceId, objects);
 
             mResource = resource;
