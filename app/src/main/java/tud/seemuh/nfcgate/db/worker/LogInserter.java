@@ -13,11 +13,13 @@ import tud.seemuh.nfcgate.util.NfcComm;
 
 public class LogInserter {
     private AppDatabase mDatabase;
+    private SessionLog.SessionType mSessionType;
     private BlockingQueue<NfcComm> mQueue = new LinkedBlockingQueue<>();
     private long mSessionId = -1;
 
-    public LogInserter(Context ctx) {
+    public LogInserter(Context ctx, SessionLog.SessionType sessionType) {
         mDatabase = AppDatabase.getDatabase(ctx);
+        mSessionType = sessionType;
         new LogInserterThread().start();
     }
 
@@ -44,7 +46,7 @@ public class LogInserter {
                     NfcComm data = mQueue.take();
 
                     if (mSessionId == -1)
-                        mSessionId = mDatabase.sessionLogDao().insert(new SessionLog(new Date(), SessionLog.SessionType.RELAY));
+                        mSessionId = mDatabase.sessionLogDao().insert(new SessionLog(new Date(), mSessionType));
 
                     mDatabase.nfcCommEntryDao().insert(new NfcCommEntry(data, mSessionId));
                 } catch (InterruptedException ignored) { }

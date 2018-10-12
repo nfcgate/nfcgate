@@ -17,9 +17,11 @@ import java.util.List;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.NfcCommEntry;
+import tud.seemuh.nfcgate.db.SessionLog;
 import tud.seemuh.nfcgate.db.SessionLogJoin;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModel;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModelFactory;
+import tud.seemuh.nfcgate.db.worker.LogInserter;
 import tud.seemuh.nfcgate.network.NetworkManager;
 import tud.seemuh.nfcgate.network.data.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.NfcLogReplayer;
@@ -51,6 +53,14 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
                 .commit();
 
         return v;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // database setup
+        mLogInserter = new LogInserter(getActivity(), SessionLog.SessionType.REPLAY);
     }
 
     @Override
@@ -153,7 +163,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
         @Override
         public void onData(boolean isForeign, NfcComm data) {
             // log to database and UI
-            //mLogInserter.log(data); // TODO: separate relay and replay log
+            mLogInserter.log(data);
             logAppend(data.toString());
 
             // forward data to NFC or network

@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.db.worker.LogInserter;
 import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.network.data.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.NfcManager;
@@ -32,6 +33,9 @@ public abstract class BaseNetworkFragment extends Fragment {
     TextView mLog;
     ImageView mSemaphoreLight;
     TextView mSemaphoreText;
+
+    // database reference
+    LogInserter mLogInserter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -169,6 +173,9 @@ public abstract class BaseNetworkFragment extends Fragment {
         getNfc().stopMode();
         setSemaphore(R.drawable.semaphore_light_red, "Idle");
         mLog.setText("");
+
+        if (mLogInserter != null)
+            mLogInserter.reset();
     }
 
     /**

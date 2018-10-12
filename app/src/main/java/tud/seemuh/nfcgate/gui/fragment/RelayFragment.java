@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.db.SessionLog;
 import tud.seemuh.nfcgate.db.worker.LogInserter;
 import tud.seemuh.nfcgate.network.data.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.modes.RelayMode;
@@ -34,15 +35,12 @@ public class RelayFragment extends BaseNetworkFragment {
         super.onActivityCreated(savedInstanceState);
 
         // database setup
-        mLogInserter = new LogInserter(getActivity());
+        mLogInserter = new LogInserter(getActivity(), SessionLog.SessionType.RELAY);
     }
 
     @Override
     protected void reset() {
         super.reset();
-
-        if (mLogInserter != null)
-            mLogInserter.reset();
 
         // show selector, hide tag wait indicator
         setSelectorVisible(true);
