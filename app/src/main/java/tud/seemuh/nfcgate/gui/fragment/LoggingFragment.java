@@ -101,7 +101,7 @@ public class LoggingFragment extends Fragment {
         public void onLogItemSelected(int sessionId) {
             // open detail view with log information
             getFragmentManager().beginTransaction()
-                    .replace(R.id.main_content, SessionLogEntryFragment.newInstance(sessionId, true), "log_entry")
+                    .replace(R.id.main_content, SessionLogEntryFragment.newInstance(sessionId, SessionLogEntryFragment.Type.VIEW, null), "log_entry")
                     .addToBackStack(null)
                     .commit();
         }

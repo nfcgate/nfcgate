@@ -9,8 +9,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,32 +33,40 @@ import tud.seemuh.nfcgate.util.NfcComm;
 import static tud.seemuh.nfcgate.util.Utils.bytesToHexDump;
 
 public class SessionLogEntryFragment extends Fragment {
+    public enum Type {
+        // look at a prerecorded log
+        VIEW,
+        // like VIEW with the ability to confirm or reject this log
+        SELECT,
+        // like view but with autoscroll and updates
+        LIVE
+    }
+
     // UI references
     ListView mLogEntries;
 
     // db data
     private SessionLogEntryViewModel mLogEntryModel;
     private SessionLogEntryListAdapter mLogEntriesAdapter;
-    private long mSessionLog;
-    private boolean mStandalone;
+    private long mSessionId;
+    private Type mType;
 
-    public static SessionLogEntryFragment newInstance(long sessionLog, boolean standalone) {
-        SessionLogEntryFragment fragment = new SessionLogEntryFragment();
+    // callback
+    public interface LogSelectedCallback {
+        void onLogSelected(long sessionId);
+    }
+    LogSelectedCallback mCallback;
 
-        Bundle args = new Bundle();
-        args.putLong("sessionLog", sessionLog);
-        args.putBoolean("standalone", standalone);
-        fragment.setArguments(args);
-
-        return fragment;
+    public static SessionLogEntryFragment newInstance(long sessionId, Type type, LogSelectedCallback cb) {
+        return new SessionLogEntryFragment()
+                .setup(sessionId, type, cb);
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        mSessionLog = getArguments().getLong("sessionLog");
-        mStandalone = getArguments().getBoolean("standalone");
+    SessionLogEntryFragment setup(long sessionId, Type type, LogSelectedCallback cb) {
+        mSessionId = sessionId;
+        mType = type;
+        mCallback = cb;
+        return this;
     }
 
     @Override
@@ -67,6 +76,10 @@ public class SessionLogEntryFragment extends Fragment {
         // setup
         mLogEntries = v.findViewById(R.id.log_entries);
 
+        // select type requires custom action menu
+        if (mType == Type.SELECT)
+            setHasOptionsMenu(true);
+
         return v;
     }
 
@@ -75,13 +88,14 @@ public class SessionLogEntryFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if (mStandalone) {
+        // view requires a back button
+        if (mType == Type.VIEW) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
         // setup db model
-        mLogEntryModel = ViewModelProviders.of(this, new SessionLogEntryViewModelFactory(getActivity().getApplication(), mSessionLog))
+        mLogEntryModel = ViewModelProviders.of(this, new SessionLogEntryViewModelFactory(getActivity().getApplication(), mSessionId))
                 .get(SessionLogEntryViewModel.class);
 
         mLogEntryModel.getSession().observe(this, new Observer<SessionLogJoin>() {
@@ -93,10 +107,11 @@ public class SessionLogEntryFragment extends Fragment {
                     mLogEntriesAdapter.addAll(sessionLogJoin.getNfcCommEntries());
                     mLogEntriesAdapter.notifyDataSetChanged();
 
-                    if (mStandalone)
-                        actionBar.setSubtitle(sessionLogJoin.getSessionLog().toString());
-                    else
+                    // live requires autoscroll, view and select require subtitle
+                    if (mType == Type.LIVE)
                         mLogEntries.setSelection(mLogEntriesAdapter.getCount() - 1);
+                    else
+                        actionBar.setSubtitle(sessionLogJoin.getSessionLog().toString());
                 }
             }
         });
@@ -107,11 +122,19 @@ public class SessionLogEntryFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.toolbar_log_choose, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case android.R.id.home:
-                Log.d("", "BACK PRESSED");
                 getActivity().onBackPressed();
+                return true;
+            case R.id.action_yes:
+                mCallback.onLogSelected(mSessionId);
                 return true;
         }
         return super.onOptionsItemSelected(item);

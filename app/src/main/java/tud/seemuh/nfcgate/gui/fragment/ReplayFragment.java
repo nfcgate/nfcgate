@@ -29,9 +29,10 @@ import tud.seemuh.nfcgate.nfc.NfcLogReplayer;
 import tud.seemuh.nfcgate.nfc.modes.RelayMode;
 import tud.seemuh.nfcgate.util.NfcComm;
 
-public class ReplayFragment extends BaseNetworkFragment implements LoggingFragment.LogItemSelectedCallback {
+public class ReplayFragment extends BaseNetworkFragment implements LoggingFragment.LogItemSelectedCallback, SessionLogEntryFragment.LogSelectedCallback {
     // session selection reference
     LoggingFragment mLoggingFragment = new LoggingFragment();
+    SessionLogEntryFragment mDetailFragment = null;
 
     // replay data
     List<NfcCommEntry> mSessionLog = null;
@@ -65,7 +66,18 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
     public void onLogItemSelected(int sessionId) {
         // hide session selection, set subtitle
         setSessionSelectionVisible(false);
+
+        // show session detail chooser
+        setSessionChooserVisible(true, sessionId);
+    }
+
+    @Override
+    public void onLogSelected(long sessionId) {
+        // set subtitle
         getMainActivity().getSupportActionBar().setSubtitle("Session " + sessionId);
+
+        // hide details chooser
+        setSessionChooserVisible(false, -1);
 
         // load session data
         ViewModelProviders.of(this, new SessionLogEntryViewModelFactory(getActivity().getApplication(), sessionId))
@@ -139,6 +151,16 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
             transaction.replace(R.id.lay_content, mLoggingFragment).commit();
         else
             transaction.remove(mLoggingFragment).commit();
+    }
+
+    void setSessionChooserVisible(boolean visible, int sessionId) {
+        FragmentTransaction transaction = getMainActivity().getSupportFragmentManager().beginTransaction();
+        if (visible) {
+            mDetailFragment = SessionLogEntryFragment.newInstance(sessionId, SessionLogEntryFragment.Type.SELECT, this);
+            transaction.replace(R.id.lay_content, mDetailFragment).commit();
+        }
+        else if (mDetailFragment != null)
+            transaction.remove(mDetailFragment).commit();
     }
 
     void tickleReplayer() {

@@ -92,7 +92,7 @@ public abstract class BaseNetworkFragment extends Fragment implements LogInserte
 
         // if new session exists, show log fragment
         if (sessionID > -1) {
-            mLogFragment = SessionLogEntryFragment.newInstance(sessionID, false);
+            mLogFragment = SessionLogEntryFragment.newInstance(sessionID, SessionLogEntryFragment.Type.LIVE, null);
             getMainActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.lay_content, mLogFragment)
                     .commit();
