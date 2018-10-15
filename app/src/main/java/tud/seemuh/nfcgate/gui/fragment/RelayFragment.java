@@ -17,9 +17,6 @@ import tud.seemuh.nfcgate.nfc.modes.RelayMode;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 public class RelayFragment extends BaseNetworkFragment {
-    // database reference
-    LogInserter mLogInserter;
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
@@ -35,7 +32,7 @@ public class RelayFragment extends BaseNetworkFragment {
         super.onActivityCreated(savedInstanceState);
 
         // database setup
-        mLogInserter = new LogInserter(getActivity(), SessionLog.SessionType.RELAY);
+        mLogInserter = new LogInserter(getActivity(), SessionLog.SessionType.RELAY, this);
     }
 
     @Override
@@ -49,8 +46,8 @@ public class RelayFragment extends BaseNetworkFragment {
 
     protected void onSelect(boolean reader) {
         if (checkNetwork()) {
-            // print status
-            setSemaphore(R.drawable.semaphore_light_red, "Connecting to Network");
+            // set status indicator
+            handleStatus(NetworkStatus.CONNECTING);
 
             // toggle selector visibility
             setSelectorVisible(false);
@@ -66,11 +63,24 @@ public class RelayFragment extends BaseNetworkFragment {
             super(reader);
         }
 
+        void runOnUI(Runnable r) {
+            FragmentActivity activity = getActivity();
+            if (activity != null)
+                activity.runOnUiThread(r);
+        }
+
         @Override
         public void onData(boolean isForeign, NfcComm data) {
             // log to database and UI
             mLogInserter.log(data);
-            logAppend(data.toString());
+
+            // hide wait indicator
+            runOnUI(new Runnable() {
+                @Override
+                public void run() {
+                    setTagWaitVisible(false);
+                }
+            });
 
             // forward data to NFC or network
             super.onData(isForeign, data);
@@ -81,15 +91,12 @@ public class RelayFragment extends BaseNetworkFragment {
             super.onNetworkStatus(status);
 
             // report status
-            final FragmentActivity activity = getActivity();
-            if (activity != null) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        handleStatus(status);
-                    }
-                });
-            }
+            runOnUI(new Runnable() {
+                @Override
+                public void run() {
+                    handleStatus(status);
+                }
+            });
         }
     }
 }

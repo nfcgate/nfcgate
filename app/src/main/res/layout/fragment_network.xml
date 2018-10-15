@@ -6,6 +6,8 @@
 
     android:orientation="vertical"
     >
+    <!-- status bar -->
+    <include layout="@layout/tag_semaphore" />
     <RelativeLayout
         android:id="@+id/lay_content"
         android:layout_width="match_parent"
@@ -95,27 +97,4 @@
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
-    <!-- status bar -->
-    <include layout="@layout/tag_semaphore" />
-    <!-- divider and label -->
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?android:attr/listDivider"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:text="Log:"
-        style="@style/TextAppearance.AppCompat.Caption"
-        />
-    <!-- log -->
-    <TextView
-        android:id="@+id/log"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        />
 </LinearLayout>

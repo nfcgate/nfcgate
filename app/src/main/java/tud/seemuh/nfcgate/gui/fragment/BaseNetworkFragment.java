@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.preference.PreferenceManagerFix;
-import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,24 +17,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.worker.LogInserter;
 import tud.seemuh.nfcgate.gui.MainActivity;
+import tud.seemuh.nfcgate.gui.component.Semaphore;
 import tud.seemuh.nfcgate.network.data.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 
-public abstract class BaseNetworkFragment extends Fragment {
+public abstract class BaseNetworkFragment extends Fragment implements LogInserter.SIDChangedListener {
     // UI references
     View mTagWaiting;
     LinearLayout mSelector;
-    TextView mLog;
-    ImageView mSemaphoreLight;
-    TextView mSemaphoreText;
+    Semaphore mSemaphore;
 
-    // database reference
+    // database log reference
     LogInserter mLogInserter;
+    SessionLogEntryFragment mLogFragment;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -44,9 +44,7 @@ public abstract class BaseNetworkFragment extends Fragment {
         // setup
         mTagWaiting = v.findViewById(R.id.tag_wait);
         mSelector = v.findViewById(R.id.selector);
-        mLog = v.findViewById(R.id.log);
-        mSemaphoreLight = v.findViewById(R.id.tag_semaphore_light);
-        mSemaphoreText = v.findViewById(R.id.tag_semaphore_text);
+        mSemaphore = new Semaphore(v);
 
         // selector setup
         v.<LinearLayout>findViewById(R.id.select_reader).setOnClickListener(new View.OnClickListener() {
@@ -61,9 +59,6 @@ public abstract class BaseNetworkFragment extends Fragment {
                 onSelect(false);
             }
         });
-
-        // log autoscroll
-        mLog.setMovementMethod(new ScrollingMovementMethod());
 
         setHasOptionsMenu(true);
         reset();
@@ -86,6 +81,24 @@ public abstract class BaseNetworkFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onSIDChanged(long sessionID) {
+        // first, close old fragment if exists
+        if (mLogFragment != null) {
+            getMainActivity().getSupportFragmentManager().beginTransaction()
+                    .remove(mLogFragment)
+                    .commit();
+        }
+
+        // if new session exists, show log fragment
+        if (sessionID > -1) {
+            mLogFragment = SessionLogEntryFragment.newInstance(sessionID, false);
+            getMainActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.lay_content, mLogFragment)
+                    .commit();
+        }
+    }
+
     protected void setSelectorVisible(boolean visible) {
         mSelector.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
@@ -94,24 +107,22 @@ public abstract class BaseNetworkFragment extends Fragment {
         mTagWaiting.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
-    protected void setSemaphore(int lightId, String message) {
-        mSemaphoreLight.setImageResource(lightId);
-        mSemaphoreText.setText(message);
-    }
-
     protected void handleStatus(NetworkStatus status) {
         switch (status) {
             case ERROR:
-                setSemaphore(R.drawable.semaphore_light_red, "Connection error");
+                mSemaphore.set(Semaphore.State.RED, "Error");
+                break;
+            case CONNECTING:
+                mSemaphore.set(Semaphore.State.RED, "Connecting to network");
                 break;
             case CONNECTED:
-                setSemaphore(R.drawable.semaphore_light_yellow, "Connected, waiting for partner");
+                mSemaphore.set(Semaphore.State.YELLOW, "Connected, wait for partner");
                 break;
             case PARTNER_CONNECT:
-                setSemaphore(R.drawable.semaphore_light_green, "Connected to partner");
+                mSemaphore.set(Semaphore.State.GREEN, "Connected to partner");
                 break;
             case PARTNER_LEFT:
-                setSemaphore(R.drawable.semaphore_light_red, "Partner left");
+                mSemaphore.set(Semaphore.State.RED, "Partner left");
                 break;
         }
     }
@@ -154,25 +165,11 @@ public abstract class BaseNetworkFragment extends Fragment {
     }
 
     /**
-     * Append line to UI log from thread
-     */
-    protected void logAppend(final String line) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mLog.append(line);
-                mLog.append("\n");
-            }
-        });
-    }
-
-    /**
      * Reset method called initially and when user presses reset button
      */
     protected void reset() {
         getNfc().stopMode();
-        setSemaphore(R.drawable.semaphore_light_red, "Idle");
-        mLog.setText("");
+        mSemaphore.reset();
 
         if (mLogInserter != null)
             mLogInserter.reset();

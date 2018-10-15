@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="black" type="color">#000000</item>
+    <item name="semaphore_green" type="color">#388e3c</item>
+    <item name="semaphore_yellow" type="color">#f57f17</item>
+    <item name="semaphore_red" type="color">#c62828</item>
+    <item name="semaphore_idle" type="color">#CFD8DC</item>
 </resources>

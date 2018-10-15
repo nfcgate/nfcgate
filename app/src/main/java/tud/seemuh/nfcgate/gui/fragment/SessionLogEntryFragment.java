@@ -39,12 +39,14 @@ public class SessionLogEntryFragment extends Fragment {
     private SessionLogEntryViewModel mLogEntryModel;
     private SessionLogEntryListAdapter mLogEntriesAdapter;
     private long mSessionLog;
+    private boolean mStandalone;
 
-    public static SessionLogEntryFragment newInstance(long sessionLog) {
+    public static SessionLogEntryFragment newInstance(long sessionLog, boolean standalone) {
         SessionLogEntryFragment fragment = new SessionLogEntryFragment();
 
         Bundle args = new Bundle();
         args.putLong("sessionLog", sessionLog);
+        args.putBoolean("standalone", standalone);
         fragment.setArguments(args);
 
         return fragment;
@@ -55,6 +57,7 @@ public class SessionLogEntryFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mSessionLog = getArguments().getLong("sessionLog");
+        mStandalone = getArguments().getBoolean("standalone");
     }
 
     @Override
@@ -72,8 +75,10 @@ public class SessionLogEntryFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         final ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(true);
+        if (mStandalone) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
 
         // setup db model
         mLogEntryModel = ViewModelProviders.of(this, new SessionLogEntryViewModelFactory(getActivity().getApplication(), mSessionLog))
@@ -85,10 +90,13 @@ public class SessionLogEntryFragment extends Fragment {
                 mLogEntriesAdapter.clear();
 
                 if (sessionLogJoin != null) {
-                    actionBar.setSubtitle(sessionLogJoin.getSessionLog().toString());
-
                     mLogEntriesAdapter.addAll(sessionLogJoin.getNfcCommEntries());
                     mLogEntriesAdapter.notifyDataSetChanged();
+
+                    if (mStandalone)
+                        actionBar.setSubtitle(sessionLogJoin.getSessionLog().toString());
+                    else
+                        mLogEntries.setSelection(mLogEntriesAdapter.getCount() - 1);
                 }
             }
         });

@@ -22,6 +22,7 @@ import tud.seemuh.nfcgate.db.SessionLogJoin;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModel;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModelFactory;
 import tud.seemuh.nfcgate.db.worker.LogInserter;
+import tud.seemuh.nfcgate.gui.component.Semaphore;
 import tud.seemuh.nfcgate.network.NetworkManager;
 import tud.seemuh.nfcgate.network.data.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.NfcLogReplayer;
@@ -60,7 +61,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
         super.onActivityCreated(savedInstanceState);
 
         // database setup
-        mLogInserter = new LogInserter(getActivity(), SessionLog.SessionType.REPLAY);
+        mLogInserter = new LogInserter(getActivity(), SessionLog.SessionType.REPLAY, this);
     }
 
     @Override
@@ -126,7 +127,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
 
         // print network status
         if (!mOfflineReplay)
-            setSemaphore(R.drawable.semaphore_light_red, "Connecting to Network");
+            handleStatus(NetworkStatus.CONNECTING);
 
         // hide selector, show tag wait indicator
         setSelectorVisible(false);
@@ -164,7 +165,6 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
         public void onData(boolean isForeign, NfcComm data) {
             // log to database and UI
             mLogInserter.log(data);
-            logAppend(data.toString());
 
             // forward data to NFC or network
             super.onData(isForeign, data);
