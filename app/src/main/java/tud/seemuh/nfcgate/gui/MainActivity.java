@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.gui.fragment.AboutFragment;
@@ -177,6 +178,8 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(item.getTitle());
         // reset the subtitle because a fragment might have changed it
         getSupportActionBar().setSubtitle(null);
+        // hide status bar
+        findViewById(R.id.tag_semaphore).setVisibility(View.GONE);
 
         mDrawerLayout.closeDrawers();
     }

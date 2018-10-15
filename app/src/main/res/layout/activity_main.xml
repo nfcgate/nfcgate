@@ -24,13 +24,36 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             />
 
+        <!-- status indicator goes here -->
+        <RelativeLayout
+            android:id="@+id/tag_semaphore"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_below="@+id/toolbar"
+
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            >
+            <TextView
+                android:id="@+id/tag_semaphore_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_centerInParent="true"
+
+                android:text="Connecting to network"
+                style="@style/TextAppearance.AppCompat.Body1"
+                />
+        </RelativeLayout>
+
         <!-- fragments go in here -->
         <FrameLayout
             android:id="@+id/main_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
-            android:layout_below="@+id/toolbar"
+            android:layout_below="@+id/tag_semaphore"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"

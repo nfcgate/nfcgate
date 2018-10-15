@@ -6,6 +6,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.gui.MainActivity;
 
 public class Semaphore {
     // state for each color
@@ -20,10 +21,13 @@ public class Semaphore {
     private RelativeLayout mSemaphore;
     private TextView mSemaphoreText;
 
-    public Semaphore(View v) {
+    public Semaphore(MainActivity act) {
         // get components
-        mSemaphore = v.findViewById(R.id.tag_semaphore);
-        mSemaphoreText = v.findViewById(R.id.tag_semaphore_text);
+        mSemaphore = act.findViewById(R.id.tag_semaphore);
+        mSemaphoreText = act.findViewById(R.id.tag_semaphore_text);
+
+        // enable semaphore and set default
+        mSemaphore.setVisibility(View.VISIBLE);
         reset();
     }
 

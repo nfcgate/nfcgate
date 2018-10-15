@@ -44,7 +44,7 @@ public abstract class BaseNetworkFragment extends Fragment implements LogInserte
         // setup
         mTagWaiting = v.findViewById(R.id.tag_wait);
         mSelector = v.findViewById(R.id.selector);
-        mSemaphore = new Semaphore(v);
+        mSemaphore = new Semaphore(getMainActivity());
 
         // selector setup
         v.<LinearLayout>findViewById(R.id.select_reader).setOnClickListener(new View.OnClickListener() {

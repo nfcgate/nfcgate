@@ -6,8 +6,6 @@
 
     android:orientation="vertical"
     >
-    <!-- status bar -->
-    <include layout="@layout/tag_semaphore" />
     <RelativeLayout
         android:id="@+id/lay_content"
         android:layout_width="match_parent"
