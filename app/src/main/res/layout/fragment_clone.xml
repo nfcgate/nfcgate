@@ -12,14 +12,7 @@
         android:layout_weight="2"
         >
         <include layout="@layout/tag_wait" />
-        <TextView
-            android:id="@+id/clone_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
-            android:text="LA_XYZ = 123"
-            android:gravity="center_vertical"
-            />
+        <include layout="@layout/list_log_entry" />
     </RelativeLayout>
 
     <View

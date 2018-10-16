@@ -30,6 +30,7 @@ import tud.seemuh.nfcgate.nfc.NfcManager;
 public abstract class BaseNetworkFragment extends Fragment implements LogInserter.SIDChangedListener {
     // UI references
     View mTagWaiting;
+    TextView mTagWaitingText;
     LinearLayout mSelector;
     Semaphore mSemaphore;
 
@@ -43,6 +44,7 @@ public abstract class BaseNetworkFragment extends Fragment implements LogInserte
 
         // setup
         mTagWaiting = v.findViewById(R.id.tag_wait);
+        mTagWaitingText = v.findViewById(R.id.tag_wait_text);
         mSelector = v.findViewById(R.id.selector);
         mSemaphore = new Semaphore(getMainActivity());
 
@@ -103,7 +105,8 @@ public abstract class BaseNetworkFragment extends Fragment implements LogInserte
         mSelector.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
-    protected void setTagWaitVisible(boolean visible) {
+    protected void setTagWaitVisible(boolean visible, boolean reader) {
+        mTagWaitingText.setText("Waiting for " + (reader ? "Reader" : "Tag") + "...");
         mTagWaiting.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 

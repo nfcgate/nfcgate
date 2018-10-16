@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -37,6 +38,7 @@ import tud.seemuh.nfcgate.util.NfcComm;
 public class CloneFragment extends Fragment {
     // UI references
     View mTagWaiting;
+    ImageView mCloneType;
     TextView mCloneContent;
     ListView mCloneSaved;
 
@@ -54,7 +56,8 @@ public class CloneFragment extends Fragment {
 
         // setup
         mTagWaiting = v.findViewById(R.id.tag_wait);
-        mCloneContent = v.findViewById(R.id.clone_content);
+        mCloneType = v.findViewById(R.id.type);
+        mCloneContent = v.findViewById(R.id.data);
         mCloneSaved = v.findViewById(R.id.clone_saved);
 
         setHasOptionsMenu(true);
@@ -146,8 +149,8 @@ public class CloneFragment extends Fragment {
     }
 
     void setCloneContent(NfcComm data) {
-        final ConfigBuilder builder = new ConfigBuilder(data.getData());
-        mCloneContent.setText(builder.toString());
+        mCloneType.setImageResource(data.isCard() ? R.drawable.ic_tag_grey_60dp : R.drawable.ic_reader_grey_60dp);
+        mCloneContent.setText(new ConfigBuilder(data.getData()).toString());
         mCloneData = data.toByteArray();
 
         setTagInfoDisplayed(true);

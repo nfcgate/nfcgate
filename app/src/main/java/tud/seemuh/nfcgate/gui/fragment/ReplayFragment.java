@@ -110,7 +110,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
         // show session selector, hide selector and tag wait indicator
         setSessionSelectionVisible(true);
         setSelectorVisible(false);
-        setTagWaitVisible(false);
+        setTagWaitVisible(false, false);
 
         // release replayer network
         if (mReplayer != null)
@@ -135,7 +135,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
 
         // hide selector, show tag wait indicator
         setSelectorVisible(false);
-        setTagWaitVisible(true);
+        setTagWaitVisible(true, !reader);
 
         // init replayer and mode
         mReplayer = new UIReplayer(reader);
@@ -198,7 +198,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
             runOnUI(new Runnable() {
                 @Override
                 public void run() {
-                    setTagWaitVisible(false);
+                    setTagWaitVisible(false, false);
                 }
             });
 

@@ -41,7 +41,7 @@ public class RelayFragment extends BaseNetworkFragment {
 
         // show selector, hide tag wait indicator
         setSelectorVisible(true);
-        setTagWaitVisible(false);
+        setTagWaitVisible(false, false);
     }
 
     protected void onSelect(boolean reader) {
@@ -51,7 +51,7 @@ public class RelayFragment extends BaseNetworkFragment {
 
             // toggle selector visibility
             setSelectorVisible(false);
-            setTagWaitVisible(true);
+            setTagWaitVisible(true, !reader);
 
             // enable reader or emulator mode
             getNfc().startMode(new UIRelayMode(reader));
@@ -78,7 +78,7 @@ public class RelayFragment extends BaseNetworkFragment {
             runOnUI(new Runnable() {
                 @Override
                 public void run() {
-                    setTagWaitVisible(false);
+                    setTagWaitVisible(false, false);
                 }
             });
 
