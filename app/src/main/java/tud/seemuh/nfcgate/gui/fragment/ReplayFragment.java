@@ -60,6 +60,11 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
 
         // database setup
         mLogInserter = new LogInserter(getActivity(), SessionLog.SessionType.REPLAY, this);
+
+        // get preference data
+        SharedPreferences prefs = PreferenceManagerFix.getDefaultSharedPreferences(getActivity());
+        mOfflineReplay = !prefs.getBoolean("network", false);
+        mSemaphore.setVisibility(!mOfflineReplay);
     }
 
     @Override
@@ -121,10 +126,6 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
     }
 
     protected void onSelect(boolean reader) {
-        // get preference data
-        SharedPreferences prefs = PreferenceManagerFix.getDefaultSharedPreferences(getActivity());
-        mOfflineReplay = !prefs.getBoolean("network", false);
-
         // quit if network check fails
         if (!mOfflineReplay && !checkNetwork())
             return;

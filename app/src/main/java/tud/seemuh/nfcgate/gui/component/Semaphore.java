@@ -27,7 +27,6 @@ public class Semaphore {
         mSemaphoreText = act.findViewById(R.id.tag_semaphore_text);
 
         // enable semaphore and set default
-        mSemaphore.setVisibility(View.VISIBLE);
         reset();
     }
 
@@ -59,7 +58,12 @@ public class Semaphore {
         mSemaphoreText.setText("Network: " + message);
     }
 
+    public void setVisibility(boolean visible) {
+        mSemaphore.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
     public void reset() {
+        setVisibility(true);
         set(State.IDLE, "Idle");
     }
 }
