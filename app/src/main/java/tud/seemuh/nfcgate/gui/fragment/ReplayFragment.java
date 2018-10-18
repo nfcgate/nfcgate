@@ -109,6 +109,9 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
     protected void reset() {
         super.reset();
 
+        // hide semaphore in offline case
+        mSemaphore.setVisibility(!mOfflineReplay);
+
         // clear saved session data
         mSessionLog = null;
 
@@ -117,9 +120,9 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
         setSelectorVisible(false);
         setTagWaitVisible(false, false);
 
-        // release replayer network
+        // reset replayer network
         if (mReplayer != null)
-            mReplayer.release();
+            mReplayer.reset();
 
         // clear subtitle
         getMainActivity().getSupportActionBar().setSubtitle("Select session");
@@ -249,7 +252,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
             }
         }
 
-        void release() {
+        void reset() {
             if (mReplayNetwork != null)
                 mReplayNetwork.disconnect();
         }

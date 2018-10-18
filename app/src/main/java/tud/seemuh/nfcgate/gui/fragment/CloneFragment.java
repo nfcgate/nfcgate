@@ -30,6 +30,7 @@ import tud.seemuh.nfcgate.db.TagInfo;
 import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.gui.Util;
 import tud.seemuh.nfcgate.db.model.TagInfoViewModel;
+import tud.seemuh.nfcgate.gui.component.Semaphore;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
 import tud.seemuh.nfcgate.nfc.modes.CloneMode;
@@ -108,6 +109,10 @@ public class CloneFragment extends Fragment {
 
         mTagInfoAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
         mCloneSaved.setAdapter(mTagInfoAdapter);
+
+        // show warning if xposed module is missing
+        if (!NfcManager.isHookLoaded())
+            new Semaphore(getMainActivity()).setWarning("missing Xposed module");
     }
 
     @Override
@@ -186,6 +191,10 @@ public class CloneFragment extends Fragment {
 
     public NfcManager getNfc() {
         return ((MainActivity) getActivity()).getNfc();
+    }
+
+    protected MainActivity getMainActivity() {
+        return ((MainActivity) getActivity());
     }
 
     class UICloneMode extends CloneMode {

@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.gui.component.Semaphore;
 import tud.seemuh.nfcgate.gui.fragment.AboutFragment;
 import tud.seemuh.nfcgate.gui.fragment.CloneFragment;
 import tud.seemuh.nfcgate.gui.fragment.LoggingFragment;
@@ -99,8 +100,6 @@ public class MainActivity extends AppCompatActivity {
         mNfc = new NfcManager(this);
         if (!mNfc.hasNfc())
             showWarning("This device seems to be missing the NFC capability.");
-        else if (!NfcManager.isHookLoaded())
-            showWarning("The Xposed module is not enabled or Xposed is not installed.");
     }
 
     @Override

@@ -58,6 +58,12 @@ public class Semaphore {
         mSemaphoreText.setText("Network: " + message);
     }
 
+    public void setWarning(String message) {
+        mSemaphore.setBackgroundResource(backgroundByState(State.YELLOW));
+        mSemaphoreText.setTextColor(colorByState(State.YELLOW));
+        mSemaphoreText.setText("Warning: " + message);
+    }
+
     public void setVisibility(boolean visible) {
         mSemaphore.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
