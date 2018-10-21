@@ -19,6 +19,7 @@ public class NfcComm {
         mData = NFCData.newBuilder()
                 .setDataSource(fromCard ? NFCData.DataSource.CARD : NFCData.DataSource.READER)
                 .setDataType(isInitial ? NFCData.DataType.INITIAL : NFCData.DataType.CONTINUATION)
+                .setTimestamp(System.currentTimeMillis())
                 .setData(ByteString.copyFrom(data))
                 .build();
     }
@@ -46,6 +47,13 @@ public class NfcComm {
      */
     public boolean isCard() {
         return mData.getDataSource() == NFCData.DataSource.CARD;
+    }
+
+    /**
+     * Unix timestamp in millis
+     */
+    public long getTimestamp() {
+        return mData.getTimestamp();
     }
 
     /**
