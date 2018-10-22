@@ -20,16 +20,18 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.text.DateFormat;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.NfcCommEntry;
+import tud.seemuh.nfcgate.db.SessionLog;
 import tud.seemuh.nfcgate.db.SessionLogJoin;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModel;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModelFactory;
+import tud.seemuh.nfcgate.gui.component.FileShare;
 import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
 import tud.seemuh.nfcgate.util.NfcComm;
 
@@ -53,6 +55,10 @@ public class SessionLogEntryFragment extends Fragment {
     private SessionLogEntryListAdapter mLogEntriesAdapter;
     private long mSessionId;
     private Type mType;
+
+    // current data
+    private List<NfcCommEntry> mLogData;
+    private SessionLog mSessionLog;
 
     // callback
     public interface LogSelectedCallback {
@@ -79,9 +85,8 @@ public class SessionLogEntryFragment extends Fragment {
         // setup
         mLogEntries = v.findViewById(R.id.log_entries);
 
-        // select type requires custom action menu
-        if (mType == Type.SELECT)
-            setHasOptionsMenu(true);
+        // enable custom toolbar actions
+        setHasOptionsMenu(true);
 
         return v;
     }
@@ -107,14 +112,19 @@ public class SessionLogEntryFragment extends Fragment {
                 mLogEntriesAdapter.clear();
 
                 if (sessionLogJoin != null) {
-                    mLogEntriesAdapter.addAll(sessionLogJoin.getNfcCommEntries());
+                    // save current log data
+                    mSessionLog = sessionLogJoin.getSessionLog();
+                    mLogData = sessionLogJoin.getNfcCommEntries();
+
+                    // add log data to list adapter
+                    mLogEntriesAdapter.addAll(mLogData);
                     mLogEntriesAdapter.notifyDataSetChanged();
 
                     // live requires autoscroll, view and select require subtitle
                     if (mType == Type.LIVE)
                         mLogEntries.setSelection(mLogEntriesAdapter.getCount() - 1);
                     else
-                        actionBar.setSubtitle(sessionLogJoin.getSessionLog().toString());
+                        actionBar.setSubtitle(mSessionLog.toString());
                 }
             }
         });
@@ -126,7 +136,12 @@ public class SessionLogEntryFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.toolbar_log_choose, menu);
+        // select mode requires an accept action, view mode a share action
+        if (mType == Type.SELECT)
+            inflater.inflate(R.menu.toolbar_log_choose, menu);
+        else if (mType == Type.VIEW)
+            inflater.inflate(R.menu.toolbar_log_view, menu);
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -139,6 +154,17 @@ public class SessionLogEntryFragment extends Fragment {
             case R.id.action_yes:
                 mCallback.onLogSelected(mSessionId);
                 return true;
+            case R.id.action_share:
+                FileShare fileShare = new FileShare(getActivity(), mSessionLog.toString(), ".pcap");
+
+                // FIXME: insert real data
+                try {
+                    fileShare.getStream().write(new byte[] { 0x13, 0x37 });
+                    fileShare.getStream().close();
+                }
+                catch (IOException ignored) { }
+
+                fileShare.share();
         }
         return super.onOptionsItemSelected(item);
     }
