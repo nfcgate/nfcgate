@@ -65,10 +65,18 @@
                 <action android:name="android.nfc.cardemulation.action.HOST_APDU_SERVICE" />
             </intent-filter>
 
-            <meta-data
-                android:name="android.nfc.cardemulation.host_apdu_service"
+            <meta-data android:name="android.nfc.cardemulation.host_apdu_service"
                 android:resource="@xml/hce" />
         </service>
+
+        <provider
+            android:authorities="tud.seemuh.nfcgate"
+            android:name="android.support.v4.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>
