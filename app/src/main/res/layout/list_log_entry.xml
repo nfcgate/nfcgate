@@ -1,26 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_centerInParent="true"
 
-    android:orientation="horizontal"
     android:padding="5dp"
     >
     <ImageView
         android:id="@+id/type"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:layout_gravity="center"
         />
     <TextView
         android:id="@+id/data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
         android:layout_marginStart="10dp"
+
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/type"
 
         style="@style/Hexdump"
         />
-</LinearLayout>
+    <TextView
+        android:id="@+id/timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/data"
+
+        style="@style/Hexdump"
+        android:textColor="#757575"
+        />
+</RelativeLayout>

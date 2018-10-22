@@ -20,6 +20,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import tud.seemuh.nfcgate.R;
@@ -141,7 +144,7 @@ public class SessionLogEntryFragment extends Fragment {
     }
 
     private class SessionLogEntryListAdapter extends ArrayAdapter<NfcCommEntry> {
-
+        private SimpleDateFormat isoDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         private int mResource;
 
         public SessionLogEntryListAdapter(@NonNull Context context, int resource) {
@@ -199,6 +202,10 @@ public class SessionLogEntryFragment extends Fragment {
                 // set content to either config stream or binary content
                 v.<TextView>findViewById(R.id.data).setText(nfcComm.isInitial() ?
                         new ConfigBuilder(nfcComm.getData()).toString() : bytesToHexDump(nfcComm.getData()));
+
+                // set timestamp
+                v.<TextView>findViewById(R.id.timestamp).setText(isoDate.format(
+                        new Date(nfcComm.getTimestamp())));
             }
 
             return v;
