@@ -55,10 +55,10 @@ public class FileShare {
 
         File file;
         try {
-            // create random file in share directory with given prefix and extension
-            file = File.createTempFile(mPrefix, mExtension, shareDir);
+            // create file with given prefix and extension
+            file = new File(shareDir, mPrefix + mExtension);
 
-            // write to file
+            // write to file (overwrites if already exists)
             OutputStream stream = new FileOutputStream(file);
             share.write(stream);
             stream.close();
