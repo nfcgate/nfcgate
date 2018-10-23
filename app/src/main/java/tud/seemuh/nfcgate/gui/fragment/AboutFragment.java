@@ -34,7 +34,7 @@ public class AboutFragment extends Fragment {
 
         // create actual page
         View aboutPage = new AboutPage(getContext())
-                .setImage(R.drawable.ic_launcher)
+                .setImage(R.mipmap.ic_launcher)
                 .addGitHub("nfcgate/nfcgate")
                 .addItem(licenseElement)
                 .addItem(versionElement)
