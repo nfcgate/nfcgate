@@ -34,7 +34,7 @@ public class Utils {
      * @return Byte[] as hexdump string
      */
     public static String bytesToHexDump(byte[] bytes) {
-        int lines = bytes.length % 16;
+        int lines = bytes.length / 16 + 1;
         int linePreamble = 5;
         char[] hexChars = new char[bytes.length * 3 + lines * linePreamble];
         for ( int j = 0, l = 0; j < bytes.length; j++ ) {
