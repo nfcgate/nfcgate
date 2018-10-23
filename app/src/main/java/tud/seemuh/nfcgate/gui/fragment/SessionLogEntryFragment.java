@@ -30,6 +30,7 @@ import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.NfcCommEntry;
 import tud.seemuh.nfcgate.db.SessionLog;
 import tud.seemuh.nfcgate.db.SessionLogJoin;
+import tud.seemuh.nfcgate.db.export.PcapOutputStream;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModel;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModelFactory;
 import tud.seemuh.nfcgate.gui.component.FileShare;
@@ -157,15 +158,17 @@ public class SessionLogEntryFragment extends Fragment {
                 mCallback.onLogSelected(mSessionId);
                 return true;
             case R.id.action_share:
+                // construct pcap
+                PcapOutputStream pcap = new PcapOutputStream();
+                for (NfcCommEntry logEntry : mLogData) {
+                    pcap.write(logEntry.getNfcComm());
+                }
+
+                // share pcap
                 new FileShare(getActivity())
                         .setPrefix(mIsoDate.format(mSessionLog.getDate()))
                         .setExtension(".pcap")
-                        .share(new FileShare.IFileShareable() {
-                            @Override
-                            public void write(OutputStream stream) throws IOException {
-                                stream.write(new byte[] { 0x13, 0x37 });
-                            }
-                        });
+                        .share(pcap);
         }
         return super.onOptionsItemSelected(item);
     }
