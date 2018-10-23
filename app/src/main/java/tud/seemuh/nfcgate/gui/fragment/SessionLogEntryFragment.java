@@ -58,7 +58,7 @@ public class SessionLogEntryFragment extends Fragment {
     private Type mType;
 
     // current data
-    private SimpleDateFormat mIsoDate = new SimpleDateFormat("yyyy-MM-ddTHH:mm:ss.SSS");
+    private SimpleDateFormat mIsoDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
     private List<NfcCommEntry> mLogData;
     private SessionLog mSessionLog;
 
