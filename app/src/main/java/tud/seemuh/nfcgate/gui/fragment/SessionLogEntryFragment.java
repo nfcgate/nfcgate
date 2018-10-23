@@ -23,6 +23,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class SessionLogEntryFragment extends Fragment {
 
     // current data
     private SimpleDateFormat mIsoDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-    private List<NfcCommEntry> mLogData;
+    private List<NfcComm> mLogData = new ArrayList<>();
     private SessionLog mSessionLog;
 
     // callback
@@ -113,11 +114,13 @@ public class SessionLogEntryFragment extends Fragment {
             @Override
             public void onChanged(@Nullable SessionLogJoin sessionLogJoin) {
                 mLogEntriesAdapter.clear();
+                mLogData.clear();
 
                 if (sessionLogJoin != null) {
                     // save current log data
                     mSessionLog = sessionLogJoin.getSessionLog();
-                    mLogData = sessionLogJoin.getNfcCommEntries();
+                    for (NfcCommEntry nfcCommEntry : sessionLogJoin.getNfcCommEntries())
+                        mLogData.add(nfcCommEntry.getNfcComm());
 
                     // add log data to list adapter
                     mLogEntriesAdapter.addAll(mLogData);
@@ -158,56 +161,20 @@ public class SessionLogEntryFragment extends Fragment {
                 mCallback.onLogSelected(mSessionId);
                 return true;
             case R.id.action_share:
-                // construct pcap
-                PcapOutputStream pcap = new PcapOutputStream();
-                for (NfcCommEntry logEntry : mLogData) {
-                    pcap.write(logEntry.getNfcComm());
-                }
-
                 // share pcap
                 new FileShare(getActivity())
                         .setPrefix(mIsoDate.format(mSessionLog.getDate()))
                         .setExtension(".pcap")
-                        .share(pcap);
+                        .share(new PcapOutputStream().append(mLogData));
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private class SessionLogEntryListAdapter extends ArrayAdapter<NfcCommEntry> {
+    private class SessionLogEntryListAdapter extends ArrayAdapter<NfcComm> {
         private int mResource;
 
         SessionLogEntryListAdapter(@NonNull Context context, int resource) {
             super(context, resource);
-
-            mResource = resource;
-        }
-
-        public SessionLogEntryListAdapter(@NonNull Context context, int resource, int textViewResourceId) {
-            super(context, resource, textViewResourceId);
-
-            mResource = resource;
-        }
-
-        public SessionLogEntryListAdapter(@NonNull Context context, int resource, @NonNull NfcCommEntry[] objects) {
-            super(context, resource, objects);
-
-            mResource = resource;
-        }
-
-        public SessionLogEntryListAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull NfcCommEntry[] objects) {
-            super(context, resource, textViewResourceId, objects);
-
-            mResource = resource;
-        }
-
-        public SessionLogEntryListAdapter(@NonNull Context context, int resource, @NonNull List<NfcCommEntry> objects) {
-            super(context, resource, objects);
-
-            mResource = resource;
-        }
-
-        public SessionLogEntryListAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull List<NfcCommEntry> objects) {
-            super(context, resource, textViewResourceId, objects);
 
             mResource = resource;
         }
@@ -220,10 +187,8 @@ public class SessionLogEntryFragment extends Fragment {
             if (v == null)
                 v = LayoutInflater.from(getContext()).inflate(mResource, null);
 
-            final NfcCommEntry entry = getItem(position);
-            if (entry != null) {
-                final NfcComm nfcComm = entry.getNfcComm();
-
+            final NfcComm nfcComm = getItem(position);
+            if (nfcComm != null) {
                 // set image indicating card or reader
                 v.<ImageView>findViewById(R.id.type).setImageResource(nfcComm.isCard() ?
                         R.drawable.ic_tag_grey_60dp : R.drawable.ic_reader_grey_60dp);

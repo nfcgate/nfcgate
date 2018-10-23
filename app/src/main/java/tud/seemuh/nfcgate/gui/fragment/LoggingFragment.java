@@ -108,41 +108,10 @@ public class LoggingFragment extends Fragment {
     }
 
     private class SessionLogListAdapter extends ArrayAdapter<SessionLog> {
-
         private int mResource;
 
         public SessionLogListAdapter(@NonNull Context context, int resource) {
             super(context, resource);
-
-            mResource = resource;
-        }
-
-        public SessionLogListAdapter(@NonNull Context context, int resource, int textViewResourceId) {
-            super(context, resource, textViewResourceId);
-
-            mResource = resource;
-        }
-
-        public SessionLogListAdapter(@NonNull Context context, int resource, @NonNull SessionLog[] objects) {
-            super(context, resource, objects);
-
-            mResource = resource;
-        }
-
-        public SessionLogListAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull SessionLog[] objects) {
-            super(context, resource, textViewResourceId, objects);
-
-            mResource = resource;
-        }
-
-        public SessionLogListAdapter(@NonNull Context context, int resource, @NonNull List<SessionLog> objects) {
-            super(context, resource, objects);
-
-            mResource = resource;
-        }
-
-        public SessionLogListAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull List<SessionLog> objects) {
-            super(context, resource, textViewResourceId, objects);
 
             mResource = resource;
         }

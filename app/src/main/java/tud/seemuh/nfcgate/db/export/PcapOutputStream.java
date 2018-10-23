@@ -6,7 +6,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
 import java.util.List;
 
 import tud.seemuh.nfcgate.gui.component.FileShare;
@@ -15,7 +14,6 @@ import tud.seemuh.nfcgate.util.NfcComm;
 public class PcapOutputStream implements FileShare.IFileShareable {
     protected DataOutputStream mOut;
     protected ByteArrayOutputStream mArrayOut;
-    protected Date mDate;
 
     public PcapOutputStream() {
         try {
@@ -41,22 +39,25 @@ public class PcapOutputStream implements FileShare.IFileShareable {
         }
     }
 
-    public void write(List<NfcComm> nfcComms) {
-        for (NfcComm nfcComm : nfcComms) {
-            write(new PcapPacket(nfcComm));
-        }
+    public PcapOutputStream append(List<NfcComm> nfcComms) {
+        for (NfcComm nfcComm : nfcComms)
+            append(nfcComm);
+
+        return this;
     }
 
-    public void write(NfcComm nfcComm) {
-        write(new PcapPacket(nfcComm));
+    public PcapOutputStream append(NfcComm nfcComm) {
+        return append(new PcapPacket(nfcComm));
     }
 
-    public void write(PcapPacket packet) {
+    public PcapOutputStream append(PcapPacket packet) {
         try {
             packet.write(mOut);
         } catch (IOException e) {
             Log.e("NFCGATE", "Internal pcap stream error", e);
         }
+
+        return this;
     }
 
     @Override
