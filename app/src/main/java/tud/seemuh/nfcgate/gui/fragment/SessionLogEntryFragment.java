@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -57,6 +58,7 @@ public class SessionLogEntryFragment extends Fragment {
     private Type mType;
 
     // current data
+    private SimpleDateFormat mIsoDate = new SimpleDateFormat("yyyy-MM-ddTHH:mm:ss.SSS");
     private List<NfcCommEntry> mLogData;
     private SessionLog mSessionLog;
 
@@ -155,25 +157,23 @@ public class SessionLogEntryFragment extends Fragment {
                 mCallback.onLogSelected(mSessionId);
                 return true;
             case R.id.action_share:
-                FileShare fileShare = new FileShare(getActivity(), mSessionLog.toString(), ".pcap");
-
-                // FIXME: insert real data
-                try {
-                    fileShare.getStream().write(new byte[] { 0x13, 0x37 });
-                    fileShare.getStream().close();
-                }
-                catch (IOException ignored) { }
-
-                fileShare.share();
+                new FileShare(getActivity())
+                        .setPrefix(mIsoDate.format(mSessionLog.getDate()))
+                        .setExtension(".pcap")
+                        .share(new FileShare.IFileShareable() {
+                            @Override
+                            public void write(OutputStream stream) throws IOException {
+                                stream.write(new byte[] { 0x13, 0x37 });
+                            }
+                        });
         }
         return super.onOptionsItemSelected(item);
     }
 
     private class SessionLogEntryListAdapter extends ArrayAdapter<NfcCommEntry> {
-        private SimpleDateFormat isoDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         private int mResource;
 
-        public SessionLogEntryListAdapter(@NonNull Context context, int resource) {
+        SessionLogEntryListAdapter(@NonNull Context context, int resource) {
             super(context, resource);
 
             mResource = resource;
@@ -230,8 +230,7 @@ public class SessionLogEntryFragment extends Fragment {
                         new ConfigBuilder(nfcComm.getData()).toString() : bytesToHexDump(nfcComm.getData()));
 
                 // set timestamp
-                v.<TextView>findViewById(R.id.timestamp).setText(isoDate.format(
-                        new Date(nfcComm.getTimestamp())));
+                v.<TextView>findViewById(R.id.timestamp).setText(mIsoDate.format(new Date(nfcComm.getTimestamp())));
             }
 
             return v;

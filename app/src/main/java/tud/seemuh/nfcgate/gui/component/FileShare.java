@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,45 +14,71 @@ import java.io.OutputStream;
 import tud.seemuh.nfcgate.BuildConfig;
 
 public class FileShare {
+    public interface IFileShareable {
+        void write(OutputStream stream) throws IOException;
+    }
+
+    // state variables
     private Context mContext;
-    private File mFile;
-    private OutputStream mStream;
+    private String mPrefix;
+    private String mExtension;
+    private String mMimeType;
 
-    public FileShare(Context context, String prefix, String extension) {
+    public FileShare(Context context) {
         mContext = context;
-        createShareFile(prefix, extension);
+
+        // defaults
+        mPrefix = "";
+        mExtension = ".bin";
+        mMimeType = "application/*";
     }
 
-    public OutputStream getStream() {
-        return mStream;
+    public FileShare setPrefix(String prefix) {
+        mPrefix = prefix;
+        return this;
     }
 
-    public void share() {
+    public FileShare setExtension(String extension) {
+        mExtension = extension;
+        return this;
+    }
+
+    public FileShare setMimeType(String mimeType) {
+        mMimeType = mimeType;
+        return this;
+    }
+
+    public void share(IFileShareable share) {
+        // ensure share directory exists
+        File shareDir = new File(mContext.getCacheDir() + "/share/");
+        shareDir.mkdir();
+
+        File file;
+        try {
+            // create random file in share directory with given prefix and extension
+            file = File.createTempFile(mPrefix, mExtension, shareDir);
+
+            // write to file
+            OutputStream stream = new FileOutputStream(file);
+            share.write(stream);
+            stream.close();
+        }
+        catch (IOException e) {
+            Toast.makeText(mContext, "Share error", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+            return;
+        }
+
         // generate file provider URI for the sharing app
-        Uri uri = FileProvider.getUriForFile(mContext, BuildConfig.APPLICATION_ID, mFile);
+        Uri uri = FileProvider.getUriForFile(mContext, BuildConfig.APPLICATION_ID, file);
 
         // create intent with binary content type
         Intent shareIntent = new Intent(Intent.ACTION_SEND)
-                .setType("application/*")
+                .setType(mMimeType)
                 .putExtra(Intent.EXTRA_STREAM, uri)
                 .setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
         // open chooser and start selected intent
         mContext.startActivity(Intent.createChooser(shareIntent, "Share file"));
-    }
-
-    private void createShareFile(String prefix, String extension) {
-        // ensure share directory exists
-        File shareDir = new File(mContext.getCacheDir() + "/share/");
-        shareDir.mkdir();
-
-        // create random file in share directory with given prefix and extension
-        try {
-            mFile = File.createTempFile(prefix, extension, shareDir);
-            mStream = new FileOutputStream(mFile);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
