@@ -30,7 +30,9 @@ import java.io.InputStream;
 import java.util.List;
 
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.db.SessionLog;
 import tud.seemuh.nfcgate.db.pcap.PcapInputStream;
+import tud.seemuh.nfcgate.db.worker.LogInserter;
 import tud.seemuh.nfcgate.gui.component.Semaphore;
 import tud.seemuh.nfcgate.gui.fragment.AboutFragment;
 import tud.seemuh.nfcgate.gui.fragment.CloneFragment;
@@ -202,8 +204,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void importPcap(Uri uri) {
         try {
-            List<NfcComm> elements = new PcapInputStream(getContentResolver().openInputStream(uri))
-                    .read();
+            LogInserter inserter = new LogInserter(this, SessionLog.SessionType.RELAY, null);
+
+            for (NfcComm e : new PcapInputStream(getContentResolver().openInputStream(uri)).read())
+                inserter.log(e);
+
             Toast.makeText(this, "Pcap import success", Toast.LENGTH_SHORT).show();
         }
         catch (IOException e) {
