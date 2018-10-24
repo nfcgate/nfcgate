@@ -163,7 +163,7 @@ public class SessionLogEntryFragment extends Fragment {
                 new FileShare(getActivity())
                         .setPrefix(mIsoDate.format(mSessionLog.getDate()))
                         .setExtension(".pcap")
-                        .setMimeType("application/vnd.tcpdump.pcap")
+                        .setMimeType("application/*")
                         .share(new PcapOutputStream().append(mLogData));
         }
         return super.onOptionsItemSelected(item);
