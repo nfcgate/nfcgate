@@ -13,9 +13,15 @@ public class ISO14443Packet implements PcapWriteableObject, PcapReadableObject {
     public static final int HEADER_LEN = 4;
 
     protected final PcapPacket mPacket;
+    protected long mTimestamp;
 
     public ISO14443Packet(PcapPacket packet) {
         mPacket = packet;
+    }
+
+    public ISO14443Packet(PcapPacket packet, long timestamp) {
+        this(packet);
+        mTimestamp = timestamp;
     }
 
     @Override
@@ -32,7 +38,7 @@ public class ISO14443Packet implements PcapWriteableObject, PcapReadableObject {
         byte[] data = new byte[length - 1];
         in.read(data, 0, data.length);
 
-        return new NfcComm(isCard, false, data);
+        return new NfcComm(isCard, false, data, mTimestamp);
     }
 
     @Override

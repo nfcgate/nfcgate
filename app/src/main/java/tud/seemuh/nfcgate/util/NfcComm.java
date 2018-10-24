@@ -16,10 +16,17 @@ public class NfcComm {
      * Instantiate a NfcComm object for regular NFC Traffic
      */
     public NfcComm(boolean fromCard, boolean isInitial, byte[] data) {
+        this(fromCard, isInitial, data, System.currentTimeMillis());
+    }
+
+    /**
+     * Instantiate a NfcComm object for regular NFC Traffic
+     */
+    public NfcComm(boolean fromCard, boolean isInitial, byte[] data, long timestamp) {
         mData = NFCData.newBuilder()
                 .setDataSource(fromCard ? NFCData.DataSource.CARD : NFCData.DataSource.READER)
                 .setDataType(isInitial ? NFCData.DataType.INITIAL : NFCData.DataType.CONTINUATION)
-                .setTimestamp(System.currentTimeMillis())
+                .setTimestamp(timestamp)
                 .setData(ByteString.copyFrom(data))
                 .build();
     }

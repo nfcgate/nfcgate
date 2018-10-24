@@ -9,26 +9,28 @@ import tud.seemuh.nfcgate.util.NfcComm;
 
 public class PcapPacket implements PcapWriteableObject, PcapReadableObject {
     public static final int HEADER_LEN = 16;
-    protected final ISO14443Packet mISOPacket;
     protected NfcComm mData;
 
     public PcapPacket() {
-        mISOPacket = new ISO14443Packet(this);
+
     }
 
     public PcapPacket(NfcComm data) {
         mData = data;
-        mISOPacket = new ISO14443Packet(this);
     }
 
     @Override
     public NfcComm read(DataInputStream in) throws IOException {
-        // TODO: recover timestamp and set it in NfcComm
+        // sec(4), usec(4)
+        int secs = in.readInt();
+        int usecs = in.readInt();
+        // orig len(4), act len(4)
+        in.skipBytes(8);
 
-        // sec(4), usec(4), orig len(4), act len(4)
-        in.skipBytes(16);
+        // timestamp in millis
+        long timestamp = secs * 1000 + usecs / 1000;
 
-        return mISOPacket.read(in);
+        return new ISO14443Packet(this, timestamp).read(in);
     }
 
     @Override
@@ -43,7 +45,7 @@ public class PcapPacket implements PcapWriteableObject, PcapReadableObject {
         // get data of containing ISO 14443 packet
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
         DataOutputStream packetOut = new DataOutputStream(byteOut);
-        int written = mISOPacket.write(packetOut);
+        int written = new ISO14443Packet(this).write(packetOut);
         packetOut.close();
         byte[] isoPacket = byteOut.toByteArray();
 
