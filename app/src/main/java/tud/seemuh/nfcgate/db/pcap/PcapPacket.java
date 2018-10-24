@@ -34,7 +34,7 @@ public class PcapPacket implements PcapWriteableObject, PcapReadableObject {
     @Override
     public int write(DataOutputStream out) throws IOException {
         final long secs = mData.getTimestamp() / 1000;
-        final long usecs = mData.getTimestamp() * 1000; // FIXME
+        final long usecs = (mData.getTimestamp() % 1000) * 1000;
 
         // timestamp
         out.writeInt((int) secs);

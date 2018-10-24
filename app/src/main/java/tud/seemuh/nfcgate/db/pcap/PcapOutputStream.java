@@ -33,7 +33,7 @@ public class PcapOutputStream implements FileShare.IFileShareable {
             // max length of captured packets
             mOut.writeInt(65535);
             // data link type
-            mOut.writeInt(264);      // LINKTYPE_ISO_14443
+            mOut.writeInt(ISO14443Packet.LINKTYPE);
         } catch (IOException e) {
             Log.e("NFCGATE", "Internal pcap stream error", e);
         }

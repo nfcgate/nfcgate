@@ -7,8 +7,9 @@ import java.io.IOException;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 public class ISO14443Packet implements PcapWriteableObject, PcapReadableObject {
-    public static final byte DATA_PICC_TO_PCD_CRC_DROPPED = (byte)0xFB;
-    public static final byte DATA_PCD_TO_PICC_CRC_DROPPED = (byte)0xFA;
+    public static final byte DATA_PICC_TO_PCD_CRC_DROPPED = (byte) 0xFB;
+    public static final byte DATA_PCD_TO_PICC_CRC_DROPPED = (byte) 0xFA;
+    public static final byte LINKTYPE = (byte) 264;
     public static final int HEADER_LEN = 4;
 
     protected final PcapPacket mPacket;

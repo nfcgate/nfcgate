@@ -15,19 +15,13 @@ public class PcapInputStream {
         mIn = new DataInputStream(in);
 
         // read global pcap header
-        // magic
-        assertFormat(mIn.readInt() == 0xa1b2c3d4);
-        // version
-        assertFormat(mIn.readShort() == 2);
-        assertFormat(mIn.readShort() == 4);
-        // GMT to local correction
-        assertFormat(mIn.readInt() == 0);
-        // accuracy
-        assertFormat(mIn.readInt() == 0);
-        // max length of packets
-        assertFormat(mIn.readInt() == 65535);
-        // link type
-        assertFormat(mIn.readInt() == 264);
+        assertFormat("magic", 0xa1b2c3d4, mIn.readInt());
+        assertFormat("version (major)", 2, mIn.readShort());
+        assertFormat("version (minor)", 4, mIn.readShort());
+        assertFormat("GMT to local correction", 0, mIn.readInt());
+        assertFormat("accuracy", 0, mIn.readInt());
+        assertFormat("max packet length", 65535, mIn.readInt());
+        assertFormat("link type", ISO14443Packet.LINKTYPE, mIn.readInt());
     }
 
     public List<NfcComm> read() throws IOException {
@@ -39,8 +33,8 @@ public class PcapInputStream {
         return result;
     }
 
-    private void assertFormat(boolean condition) throws IOException {
-        if (!condition)
-            throw new IOException("Pcap format error");
+    private void assertFormat(String what, int expected, int actual) throws IOException {
+        if (expected != actual)
+            throw new IOException(String.format("Pcap format error. %s: %d vs %d", what, expected, actual));
     }
 }
