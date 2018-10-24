@@ -11,33 +11,36 @@ import tud.seemuh.nfcgate.util.NfcComm;
 public class PcapInputStream {
     protected DataInputStream mIn;
 
-    public PcapInputStream(InputStream in) {
-        try {
-            mIn = new DataInputStream(in);
+    public PcapInputStream(InputStream in) throws IOException {
+        mIn = new DataInputStream(in);
 
-            // read global pcap header
-            // magic(4), version(4), GMT/local(4), accuracy(4), max lng(4)
-            mIn.skipBytes(20);
-            // link type
-            if (mIn.readInt() != 264)
-                throw new IOException("Wrong data link type. Expected ISO_14443");
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        // read global pcap header
+        // magic
+        assertFormat(mIn.readInt() == 0xa1b2c3d4);
+        // version
+        assertFormat(mIn.readShort() == 2);
+        assertFormat(mIn.readShort() == 4);
+        // GMT to local correction
+        assertFormat(mIn.readInt() == 0);
+        // accuracy
+        assertFormat(mIn.readInt() == 0);
+        // max length of packets
+        assertFormat(mIn.readInt() == 65535);
+        // link type
+        assertFormat(mIn.readInt() == 264);
     }
 
-    public List<NfcComm> read() {
-        List<NfcComm> results = new ArrayList<>();
+    public List<NfcComm> read() throws IOException {
+        List<NfcComm> result = new ArrayList<>();
 
-        try {
-            while (mIn.available() > 0)
-                results.add(new PcapPacket().read(mIn));
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        while (mIn.available() > 0)
+            result.add(new PcapPacket().read(mIn));
 
-        return results;
+        return result;
+    }
+
+    private void assertFormat(boolean condition) throws IOException {
+        if (!condition)
+            throw new IOException("Pcap format error");
     }
 }

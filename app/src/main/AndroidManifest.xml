@@ -53,10 +53,15 @@
 
             </intent-filter>
 
+            <!--
+                Accept share and view intents, but don't limit mimeType to PCAP, because other apps
+                may not be able to map .pcap to its mimeType and use generic mimeType instead.
+             -->
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="application/vnd.tcpdump.pcap" />
+                <data android:mimeType="application/*" />
             </intent-filter>
 
             <meta-data android:name="android.nfc.action.TECH_DISCOVERED"

@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -137,6 +138,8 @@ public class MainActivity extends AppCompatActivity {
             mNfc.onTagDiscovered(intent.<Tag>getParcelableExtra(NfcAdapter.EXTRA_TAG));
         else if (Intent.ACTION_SEND.equals(intent.getAction()))
             importPcap(intent.<Uri>getParcelableExtra(Intent.EXTRA_STREAM));
+        else if (Intent.ACTION_VIEW.equals(intent.getAction()))
+            importPcap(intent.getData());
         else
             super.onNewIntent(intent);
     }
@@ -197,17 +200,15 @@ public class MainActivity extends AppCompatActivity {
         mDrawerLayout.closeDrawers();
     }
 
-    private void importPcap(Uri pcapUri) {
-        if (pcapUri == null)
-            return;
-
+    private void importPcap(Uri uri) {
         try {
-            List<NfcComm> elements = new PcapInputStream(getContentResolver()
-                    .openInputStream(pcapUri))
+            List<NfcComm> elements = new PcapInputStream(getContentResolver().openInputStream(uri))
                     .read();
+            Toast.makeText(this, "Pcap import success", Toast.LENGTH_SHORT).show();
         }
         catch (IOException e) {
             e.printStackTrace();
+            Toast.makeText(this, "Pcap import error", Toast.LENGTH_SHORT).show();
         }
     }
 
