@@ -20,8 +20,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,7 +29,7 @@ import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.NfcCommEntry;
 import tud.seemuh.nfcgate.db.SessionLog;
 import tud.seemuh.nfcgate.db.SessionLogJoin;
-import tud.seemuh.nfcgate.db.export.PcapOutputStream;
+import tud.seemuh.nfcgate.db.pcap.PcapOutputStream;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModel;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModelFactory;
 import tud.seemuh.nfcgate.gui.component.FileShare;
@@ -165,6 +163,7 @@ public class SessionLogEntryFragment extends Fragment {
                 new FileShare(getActivity())
                         .setPrefix(mIsoDate.format(mSessionLog.getDate()))
                         .setExtension(".pcap")
+                        .setMimeType("application/vnd.tcpdump.pcap")
                         .share(new PcapOutputStream().append(mLogData));
         }
         return super.onOptionsItemSelected(item);

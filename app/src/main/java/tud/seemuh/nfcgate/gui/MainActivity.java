@@ -1,6 +1,7 @@
 package tud.seemuh.nfcgate.gui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -15,11 +16,20 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
 import tud.seemuh.nfcgate.R;
+import tud.seemuh.nfcgate.db.pcap.PcapInputStream;
 import tud.seemuh.nfcgate.gui.component.Semaphore;
 import tud.seemuh.nfcgate.gui.fragment.AboutFragment;
 import tud.seemuh.nfcgate.gui.fragment.CloneFragment;
@@ -28,6 +38,8 @@ import tud.seemuh.nfcgate.gui.fragment.RelayFragment;
 import tud.seemuh.nfcgate.gui.fragment.ReplayFragment;
 import tud.seemuh.nfcgate.gui.fragment.SettingsFragment;
 import tud.seemuh.nfcgate.nfc.NfcManager;
+import tud.seemuh.nfcgate.util.NfcComm;
+import tud.seemuh.nfcgate.util.Utils;
 
 public class MainActivity extends AppCompatActivity {
     // UI
@@ -123,6 +135,8 @@ public class MainActivity extends AppCompatActivity {
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction()) ||
                 NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction()))
             mNfc.onTagDiscovered(intent.<Tag>getParcelableExtra(NfcAdapter.EXTRA_TAG));
+        else if (Intent.ACTION_SEND.equals(intent.getAction()))
+            importPcap(intent.<Uri>getParcelableExtra(Intent.EXTRA_STREAM));
         else
             super.onNewIntent(intent);
     }
@@ -181,6 +195,20 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.tag_semaphore).setVisibility(View.GONE);
 
         mDrawerLayout.closeDrawers();
+    }
+
+    private void importPcap(Uri pcapUri) {
+        if (pcapUri == null)
+            return;
+
+        try {
+            List<NfcComm> elements = new PcapInputStream(getContentResolver()
+                    .openInputStream(pcapUri))
+                    .read();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

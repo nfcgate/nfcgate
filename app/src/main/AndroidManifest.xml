@@ -53,6 +53,12 @@
 
             </intent-filter>
 
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/vnd.tcpdump.pcap" />
+            </intent-filter>
+
             <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
                 android:resource="@xml/tech" />
         </activity>
