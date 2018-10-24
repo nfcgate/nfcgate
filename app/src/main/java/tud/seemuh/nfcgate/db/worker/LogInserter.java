@@ -34,7 +34,9 @@ public class LogInserter {
 
     private void setSessionId(long sid) {
         mSessionId = sid;
-        mListener.onSIDChanged(sid);
+
+        if (mListener != null)
+            mListener.onSIDChanged(sid);
     }
 
     public void log(NfcComm data) {
