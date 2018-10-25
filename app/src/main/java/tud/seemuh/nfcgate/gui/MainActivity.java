@@ -24,7 +24,7 @@ import java.io.IOException;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.SessionLog;
-import tud.seemuh.nfcgate.db.pcap.PcapInputStream;
+import tud.seemuh.nfcgate.db.pcapng.ISO14443Stream;
 import tud.seemuh.nfcgate.db.worker.LogInserter;
 import tud.seemuh.nfcgate.gui.fragment.AboutFragment;
 import tud.seemuh.nfcgate.gui.fragment.CloneFragment;
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             LogInserter inserter = new LogInserter(this, SessionLog.SessionType.RELAY, null);
 
-            for (NfcComm e : new PcapInputStream(getContentResolver().openInputStream(uri)).read())
+            for (NfcComm e : new ISO14443Stream().readAll(getContentResolver().openInputStream(uri)))
                 inserter.log(e);
 
             Toast.makeText(this, "Pcap import success", Toast.LENGTH_SHORT).show();

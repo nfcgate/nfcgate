@@ -29,9 +29,9 @@ import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.NfcCommEntry;
 import tud.seemuh.nfcgate.db.SessionLog;
 import tud.seemuh.nfcgate.db.SessionLogJoin;
-import tud.seemuh.nfcgate.db.pcap.PcapOutputStream;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModel;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModelFactory;
+import tud.seemuh.nfcgate.db.pcapng.ISO14443Stream;
 import tud.seemuh.nfcgate.gui.component.FileShare;
 import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
 import tud.seemuh.nfcgate.util.NfcComm;
@@ -162,9 +162,9 @@ public class SessionLogEntryFragment extends Fragment {
                 // share pcap
                 new FileShare(getActivity())
                         .setPrefix(mIsoDate.format(mSessionLog.getDate()))
-                        .setExtension(".pcap")
+                        .setExtension(".pcapng")
                         .setMimeType("application/*")
-                        .share(new PcapOutputStream().append(mLogData));
+                        .share(new ISO14443Stream().append(mLogData));
         }
         return super.onOptionsItemSelected(item);
     }
