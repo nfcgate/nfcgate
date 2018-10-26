@@ -11,10 +11,11 @@ import tud.seemuh.nfcgate.db.pcapng.base.PcapStream;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 public class ISO14443Stream extends PcapStream {
-    private final static short LINKTYPE = 264;
+    // interface 0 is ISO14443, 1 is DLT_USER_0
+    private final static short[] LINKTYPES = new short[] { 264, 147};
 
     public ISO14443Stream() {
-        super(LINKTYPE);
+        super(LINKTYPES);
     }
 
     public ISO14443Stream append(List<NfcComm> comms) {

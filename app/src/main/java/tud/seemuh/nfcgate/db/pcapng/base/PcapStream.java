@@ -18,10 +18,10 @@ public class PcapStream implements FileShare.IFileShareable {
     private static final int BYTE_ORDER_MAGIC =  0x1A2B3C4D;
 
     private List<PcapPacket> mPackets = new ArrayList<>();
-    private short mLinkType;
+    private short[] mLinkTypes;
 
-    public PcapStream(short linkType) {
-        mLinkType = linkType;
+    public PcapStream(short[] linkType) {
+        mLinkTypes = linkType;
     }
 
     public void append(PcapPacket packet) {
@@ -45,15 +45,17 @@ public class PcapStream implements FileShare.IFileShareable {
         in.skipBytes(8);
         assertEq("block len", BLOCK_LEN_SECTION, in.readInt());
 
-        // Interface Description Block
-        assertEq("block type", BLOCK_TYPE_INTERFACE, in.readInt());
-        assertEq("block len", BLOCK_LEN_INTERFACE, in.readInt());
-        assertEq("block len", mLinkType, in.readShort());
-        // ignore reserved
-        in.skipBytes(2);
-        // ignore snaplen
-        in.skipBytes(4);
-        assertEq("block len", BLOCK_LEN_INTERFACE, in.readInt());
+        // Interface Description Blocks
+        for (short linkType : mLinkTypes) {
+            assertEq("block type", BLOCK_TYPE_INTERFACE, in.readInt());
+            assertEq("block len", BLOCK_LEN_INTERFACE, in.readInt());
+            assertEq("block len", linkType, in.readShort());
+            // ignore reserved
+            in.skipBytes(2);
+            // ignore snaplen
+            in.skipBytes(4);
+            assertEq("block len", BLOCK_LEN_INTERFACE, in.readInt());
+        }
 
         while (in.available() > 0)
             mPackets.add(readPacket(in));
@@ -89,19 +91,21 @@ public class PcapStream implements FileShare.IFileShareable {
         // block total length
         out.writeInt(BLOCK_LEN_SECTION);
 
-        // Interface Description Block
-        // block type
-        out.writeInt(BLOCK_TYPE_INTERFACE);
-        // block total length
-        out.writeInt(BLOCK_LEN_INTERFACE);
-        // link type
-        out.writeShort(mLinkType);
-        // reserved
-        out.writeShort(0);
-        // snapLen (no limit)
-        out.writeInt(0);
-        // block total length
-        out.writeInt(BLOCK_LEN_INTERFACE);
+        // Interface Description Blocks
+        for (short linkType : mLinkTypes) {
+            // block type
+            out.writeInt(BLOCK_TYPE_INTERFACE);
+            // block total length
+            out.writeInt(BLOCK_LEN_INTERFACE);
+            // link type
+            out.writeShort(linkType);
+            // reserved
+            out.writeShort(0);
+            // snapLen (no limit)
+            out.writeInt(0);
+            // block total length
+            out.writeInt(BLOCK_LEN_INTERFACE);
+        }
 
         // write packets
         for (PcapPacket packet : mPackets)
