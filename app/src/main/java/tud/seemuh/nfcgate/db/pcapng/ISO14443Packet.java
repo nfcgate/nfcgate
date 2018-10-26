@@ -12,6 +12,7 @@ import tud.seemuh.nfcgate.util.NfcComm;
 public class ISO14443Packet extends PcapPacket {
     private static final byte DATA_PICC_TO_PCD_CRC_DROPPED = (byte) 0xFB;
     private static final byte DATA_PCD_TO_PICC_CRC_DROPPED = (byte) 0xFA;
+    private static final int BLOCK_TYPE_INITIAL = 0x314;
 
     private NfcComm mData;
 
@@ -51,7 +52,7 @@ public class ISO14443Packet extends PcapPacket {
         // close stream
         packetIn.close();
 
-        mData = new NfcComm(isCard, false, data, mTimestamp);
+        mData = new NfcComm(isCard, mBlockType == BLOCK_TYPE_INITIAL, data, mTimestamp);
         return this;
     }
 
@@ -78,6 +79,7 @@ public class ISO14443Packet extends PcapPacket {
         packetOut.write(data);
         packetOut.close();
 
+        mBlockType = mData.isInitial() ? BLOCK_TYPE_INITIAL : BLOCK_TYPE_EPB;
         mPayload = byteOut.toByteArray();
         mTimestamp = mData.getTimestamp();
         return super.write(out);

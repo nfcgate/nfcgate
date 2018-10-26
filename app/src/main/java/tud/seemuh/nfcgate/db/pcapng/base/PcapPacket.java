@@ -5,9 +5,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class PcapPacket {
-    private static final int BLOCK_TYPE_EPB = 6;
+    protected static final int BLOCK_TYPE_EPB = 6;
     private static final int BLOCK_LEN_EPB = 32;
 
+    protected int mBlockType = BLOCK_TYPE_EPB;
     protected long mTimestamp = 0;
     protected byte[] mPayload = null;
 
@@ -18,7 +19,7 @@ public class PcapPacket {
     public PcapPacket read(DataInputStream in) throws IOException {
         // Enhanced Packet Block
         // block type
-        in.skipBytes(4);
+        mBlockType = in.readInt();
         // block length with padding
         int blockLength = in.readInt();
         // interface ID
@@ -54,7 +55,7 @@ public class PcapPacket {
 
         // Enhanced Packet Block
         // block type
-        out.writeInt(BLOCK_TYPE_EPB);
+        out.writeInt(mBlockType);
         // total block length
         out.writeInt(blockLength);
         // interface ID
