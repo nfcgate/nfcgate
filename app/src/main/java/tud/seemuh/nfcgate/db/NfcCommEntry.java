@@ -8,7 +8,7 @@ import android.arch.persistence.room.PrimaryKey;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 @Entity(foreignKeys = {
-        @ForeignKey(entity = SessionLog.class, parentColumns = "id", childColumns = "sessionId")
+        @ForeignKey(entity = SessionLog.class, parentColumns = "id", childColumns = "sessionId", onDelete = ForeignKey.CASCADE)
 })
 public class NfcCommEntry {
     @PrimaryKey(autoGenerate = true)

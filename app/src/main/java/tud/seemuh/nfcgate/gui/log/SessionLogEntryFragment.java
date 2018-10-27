@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate.gui.fragment;
+package tud.seemuh.nfcgate.gui.log;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -58,7 +58,7 @@ public class SessionLogEntryFragment extends Fragment {
     private Type mType;
 
     // current data
-    private SimpleDateFormat mIsoDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    private LogAction mLogAction;
     private List<NfcComm> mLogData = new ArrayList<>();
     private SessionLog mSessionLog;
 
@@ -86,6 +86,7 @@ public class SessionLogEntryFragment extends Fragment {
 
         // setup
         mLogEntries = v.findViewById(R.id.log_entries);
+        mLogAction = new LogAction(this);
 
         // enable custom toolbar actions
         setHasOptionsMenu(true);
@@ -159,12 +160,12 @@ public class SessionLogEntryFragment extends Fragment {
                 mCallback.onLogSelected(mSessionId);
                 return true;
             case R.id.action_share:
-                // share pcap
-                new FileShare(getActivity())
-                        .setPrefix(mIsoDate.format(mSessionLog.getDate()))
-                        .setExtension(".pcapng")
-                        .setMimeType("application/*")
-                        .share(new ISO14443Stream().append(mLogData));
+                mLogAction.share(mSessionLog, mLogData);
+                return true;
+            case R.id.action_delete:
+                mLogAction.delete(mSessionLog);
+                getActivity().onBackPressed();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -197,7 +198,7 @@ public class SessionLogEntryFragment extends Fragment {
                         new ConfigBuilder(nfcComm.getData()).toString() : bytesToHexDump(nfcComm.getData()));
 
                 // set timestamp
-                v.<TextView>findViewById(R.id.timestamp).setText(mIsoDate.format(new Date(nfcComm.getTimestamp())));
+                v.<TextView>findViewById(R.id.timestamp).setText(LogAction.ISO_DATE.format(new Date(nfcComm.getTimestamp())));
             }
 
             return v;

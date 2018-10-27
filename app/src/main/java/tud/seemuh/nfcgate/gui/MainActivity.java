@@ -28,7 +28,7 @@ import tud.seemuh.nfcgate.db.pcapng.ISO14443Stream;
 import tud.seemuh.nfcgate.db.worker.LogInserter;
 import tud.seemuh.nfcgate.gui.fragment.AboutFragment;
 import tud.seemuh.nfcgate.gui.fragment.CloneFragment;
-import tud.seemuh.nfcgate.gui.fragment.LoggingFragment;
+import tud.seemuh.nfcgate.gui.log.LoggingFragment;
 import tud.seemuh.nfcgate.gui.fragment.RelayFragment;
 import tud.seemuh.nfcgate.gui.fragment.ReplayFragment;
 import tud.seemuh.nfcgate.gui.fragment.SettingsFragment;

@@ -1,4 +1,4 @@
-package tud.seemuh.nfcgate.gui.fragment;
+package tud.seemuh.nfcgate.gui.log;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -19,7 +19,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,8 +34,10 @@ public class LoggingFragment extends Fragment {
     ListView mLog;
     TextView mEmptyText;
     ActionMode mActionMode;
+    List<Integer> mActionSelections = new ArrayList<>();
 
     // db data
+    private LogAction mLogAction;
     private SessionLogViewModel mLogModel;
     private SessionLogListAdapter mLogAdapter;
 
@@ -50,6 +54,7 @@ public class LoggingFragment extends Fragment {
         // setup
         mLog = v.findViewById(R.id.session_log);
         mEmptyText = v.findViewById(R.id.txt_empty);
+        mLogAction = new LogAction(this);
 
         // setup db model
         mLogModel = ViewModelProviders.of(this).get(SessionLogViewModel.class);
@@ -69,20 +74,23 @@ public class LoggingFragment extends Fragment {
         mLog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (mActionMode != null)
-                    mActionMode.finish();
-
-                if (position >= 0)
+                if (position < 0)
+                    return;
+                else if (mActionMode != null)
+                    toggleSelection(position);
+                else
                     mCallback.onLogItemSelected(mLogAdapter.getItem(position).getId());
             }
         });
         mLog.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position < 0)
+                    return false;
+
                 mActionMode = getActivity().<Toolbar>findViewById(R.id.toolbar).startActionMode(new ActionModeCallback());
                 mActionMode.setTitle("Log Action");
-                mActionMode.setSubtitle("Session " + mLogAdapter.getItem(position).getId());
-                view.setSelected(true);
+                toggleSelection(position);
                 return true;
             }
         });
@@ -96,6 +104,14 @@ public class LoggingFragment extends Fragment {
 
         mLogAdapter = new SessionLogListAdapter(getActivity(), R.layout.list_log);
         mLog.setAdapter(mLogAdapter);
+    }
+
+    private void toggleSelection(int position) {
+        // remove if exists, add if it doesn't
+        if (!mActionSelections.remove(Integer.valueOf(position)))
+            mActionSelections.add(position);
+
+        mLogAdapter.notifyDataSetChanged();
     }
 
     private void setEmptyTextVisible(boolean visible) {
@@ -134,14 +150,23 @@ public class LoggingFragment extends Fragment {
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            if (mActionSelections.isEmpty())
+                return false;
+
             switch (item.getItemId()) {
                 case R.id.action_delete:
-                    // TODO:
+                    for (int selection : mActionSelections)
+                        mLogAction.delete(mLogAdapter.getItem(selection));
+
                     mode.finish();
                     return true;
                 case R.id.action_share:
-                    // TODO:
-                    mode.finish();
+                    if (mActionSelections.size() == 1) {
+                        mLogAction.share(mLogAdapter.getItem(mActionSelections.get(0)));
+                        mode.finish();
+                    }
+                    else
+                        Toast.makeText(getActivity(), "Cannot share multiple logs", Toast.LENGTH_LONG).show();
                     return true;
                 default:
                     return false;
@@ -151,6 +176,8 @@ public class LoggingFragment extends Fragment {
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             mActionMode = null;
+            mActionSelections.clear();
+            mLogAdapter.notifyDataSetChanged();
         }
     }
 
@@ -187,6 +214,10 @@ public class LoggingFragment extends Fragment {
                 }
                 v.<TextView>findViewById(R.id.title).setText(date.toString());
             }
+
+            // selection
+            boolean isSelected = mActionSelections.contains(position);
+            v.setBackgroundResource(isSelected ? android.R.color.darker_gray : android.R.color.transparent);
 
             return v;
         }

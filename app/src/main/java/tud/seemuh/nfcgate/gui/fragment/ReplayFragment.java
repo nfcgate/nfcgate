@@ -23,6 +23,8 @@ import tud.seemuh.nfcgate.db.SessionLogJoin;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModel;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModelFactory;
 import tud.seemuh.nfcgate.db.worker.LogInserter;
+import tud.seemuh.nfcgate.gui.log.LoggingFragment;
+import tud.seemuh.nfcgate.gui.log.SessionLogEntryFragment;
 import tud.seemuh.nfcgate.network.NetworkManager;
 import tud.seemuh.nfcgate.network.data.NetworkStatus;
 import tud.seemuh.nfcgate.nfc.NfcLogReplayer;
