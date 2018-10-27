@@ -76,7 +76,8 @@ public class LoggingFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position < 0)
                     return;
-                else if (mActionMode != null)
+
+                if (mActionMode != null)
                     toggleSelection(position);
                 else
                     mCallback.onLogItemSelected(mLogAdapter.getItem(position).getId());
@@ -85,7 +86,7 @@ public class LoggingFragment extends Fragment {
         mLog.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position < 0)
+                if (position < 0 || mActionMode != null)
                     return false;
 
                 mActionMode = getActivity().<Toolbar>findViewById(R.id.toolbar).startActionMode(new ActionModeCallback());
@@ -150,13 +151,14 @@ public class LoggingFragment extends Fragment {
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            if (mActionSelections.isEmpty())
-                return false;
+            List<SessionLog> sessionLogs = new ArrayList<>();
+            for (Integer selection : mActionSelections)
+                sessionLogs.add(mLogAdapter.getItem(selection));
 
             switch (item.getItemId()) {
                 case R.id.action_delete:
-                    for (int selection : mActionSelections)
-                        mLogAction.delete(mLogAdapter.getItem(selection));
+                    for (SessionLog sessionLog : sessionLogs)
+                        mLogAction.delete(sessionLog);
 
                     mode.finish();
                     return true;
@@ -164,13 +166,13 @@ public class LoggingFragment extends Fragment {
                     if (mActionSelections.size() == 1) {
                         mLogAction.share(mLogAdapter.getItem(mActionSelections.get(0)));
                         mode.finish();
+                        return true;
                     }
                     else
                         Toast.makeText(getActivity(), "Cannot share multiple logs", Toast.LENGTH_LONG).show();
-                    return true;
-                default:
-                    return false;
             }
+
+            return false;
         }
 
         @Override

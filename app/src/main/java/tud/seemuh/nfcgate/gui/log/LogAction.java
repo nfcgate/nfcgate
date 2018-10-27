@@ -20,8 +20,6 @@ import tud.seemuh.nfcgate.gui.component.FileShare;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 public class LogAction {
-    public static SimpleDateFormat ISO_DATE = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
-
     private Fragment mFragment;
     private SessionLogEntryViewModel mLogEntryModel;
     private List<NfcComm> mLogItems = new ArrayList<>();
@@ -64,7 +62,7 @@ public class LogAction {
     public void share(SessionLog sessionLog, List<NfcComm> logItems) {
         // share pcap
         new FileShare(mFragment.getActivity())
-                .setPrefix(ISO_DATE.format(sessionLog.getDate()))
+                .setPrefix(sessionLog.toString())
                 .setExtension(".pcapng")
                 .setMimeType("application/*")
                 .share(new ISO14443Stream().append(logItems));

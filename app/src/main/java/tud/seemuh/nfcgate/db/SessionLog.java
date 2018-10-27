@@ -4,10 +4,13 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
 public class SessionLog {
+    public static SimpleDateFormat ISO_DATE = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+
     public enum SessionType {
         RELAY,
         REPLAY
@@ -53,6 +56,6 @@ public class SessionLog {
 
     @Override
     public String toString() {
-        return date.toString();
+        return ISO_DATE.format(date);
     }
 }

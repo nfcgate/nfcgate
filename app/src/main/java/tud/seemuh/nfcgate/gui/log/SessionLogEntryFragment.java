@@ -198,7 +198,7 @@ public class SessionLogEntryFragment extends Fragment {
                         new ConfigBuilder(nfcComm.getData()).toString() : bytesToHexDump(nfcComm.getData()));
 
                 // set timestamp
-                v.<TextView>findViewById(R.id.timestamp).setText(LogAction.ISO_DATE.format(new Date(nfcComm.getTimestamp())));
+                v.<TextView>findViewById(R.id.timestamp).setText(SessionLog.ISO_DATE.format(new Date(nfcComm.getTimestamp())));
             }
 
             return v;
