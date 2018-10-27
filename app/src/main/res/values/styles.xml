@@ -1,6 +1,8 @@
 <resources>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowActionBar">false</item>
+        <!-- overlay action mode on Toolbar -->
+        <item name="windowActionModeOverlay">true</item>
         <!-- colorPrimary is used for coloring the Toolbar -->
         <item name="colorPrimary">#3F51B5</item>
         <!-- colorPrimaryDark is used for coloring the status bar -->

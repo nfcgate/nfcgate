@@ -7,7 +7,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,18 +24,14 @@ import java.util.Date;
 import java.util.List;
 
 import tud.seemuh.nfcgate.R;
-import tud.seemuh.nfcgate.db.NfcCommEntry;
 import tud.seemuh.nfcgate.db.SessionLog;
 import tud.seemuh.nfcgate.db.model.SessionLogViewModel;
-import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
-import tud.seemuh.nfcgate.util.NfcComm;
-
-import static tud.seemuh.nfcgate.util.Utils.bytesToHexDump;
 
 public class LoggingFragment extends Fragment {
     // UI references
     ListView mLog;
     TextView mEmptyText;
+    ActionMode mActionMode;
 
     // db data
     private SessionLogViewModel mLogModel;
@@ -69,8 +69,21 @@ public class LoggingFragment extends Fragment {
         mLog.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (mActionMode != null)
+                    mActionMode.finish();
+
                 if (position >= 0)
                     mCallback.onLogItemSelected(mLogAdapter.getItem(position).getId());
+            }
+        });
+        mLog.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                mActionMode = getActivity().<Toolbar>findViewById(R.id.toolbar).startActionMode(new ActionModeCallback());
+                mActionMode.setTitle("Log Action");
+                mActionMode.setSubtitle("Session " + mLogAdapter.getItem(position).getId());
+                view.setSelected(true);
+                return true;
             }
         });
 
@@ -104,6 +117,40 @@ public class LoggingFragment extends Fragment {
                     .replace(R.id.main_content, SessionLogEntryFragment.newInstance(sessionId, SessionLogEntryFragment.Type.VIEW, null), "log_entry")
                     .addToBackStack(null)
                     .commit();
+        }
+    }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate(R.menu.toolbar_log_view, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_delete:
+                    // TODO:
+                    mode.finish();
+                    return true;
+                case R.id.action_share:
+                    // TODO:
+                    mode.finish();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mActionMode = null;
         }
     }
 
