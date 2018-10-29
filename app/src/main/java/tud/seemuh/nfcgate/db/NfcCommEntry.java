@@ -3,13 +3,15 @@ package tud.seemuh.nfcgate.db;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 import tud.seemuh.nfcgate.util.NfcComm;
 
-@Entity(foreignKeys = {
-        @ForeignKey(entity = SessionLog.class, parentColumns = "id", childColumns = "sessionId", onDelete = ForeignKey.CASCADE)
-})
+@Entity(indices = {@Index("sessionId")},
+        foreignKeys = {
+                @ForeignKey(entity = SessionLog.class, parentColumns = "id", childColumns = "sessionId", onDelete = ForeignKey.CASCADE)
+        })
 public class NfcCommEntry {
     @PrimaryKey(autoGenerate = true)
     private int entryId;

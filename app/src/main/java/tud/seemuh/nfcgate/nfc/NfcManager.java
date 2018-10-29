@@ -174,7 +174,9 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      * Stops polling for new tags
      */
     public void disablePolling() {
-        mDaemon.disablePolling();
+        if (mPollingEnabled)
+            mDaemon.disablePolling();
+
         mPollingEnabled = false;
     }
 

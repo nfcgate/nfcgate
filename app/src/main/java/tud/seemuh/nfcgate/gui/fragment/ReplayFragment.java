@@ -91,9 +91,12 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
                 .get(SessionLogEntryViewModel.class)
                 .getSession()
                 .observe(this, new Observer<SessionLogJoin>() {
+                    boolean mOnce = true;
+
                     @Override
                     public void onChanged(@Nullable SessionLogJoin sessionLogJoin) {
-                        if (sessionLogJoin != null && mSessionLog == null) {
+                        if (sessionLogJoin != null && mSessionLog == null && mOnce) {
+                            mOnce = false;
                             mSessionLog = sessionLogJoin.getNfcCommEntries();
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override

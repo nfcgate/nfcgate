@@ -28,6 +28,7 @@ import tud.seemuh.nfcgate.db.pcapng.ISO14443Stream;
 import tud.seemuh.nfcgate.db.worker.LogInserter;
 import tud.seemuh.nfcgate.gui.fragment.AboutFragment;
 import tud.seemuh.nfcgate.gui.fragment.CloneFragment;
+import tud.seemuh.nfcgate.gui.fragment.StatusFragment;
 import tud.seemuh.nfcgate.gui.log.LoggingFragment;
 import tud.seemuh.nfcgate.gui.fragment.RelayFragment;
 import tud.seemuh.nfcgate.gui.fragment.ReplayFragment;
@@ -162,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
                 return new ReplayFragment();
             case R.id.nav_settings:
                 return new SettingsFragment();
+            case R.id.nav_status:
+                return new StatusFragment();
             case R.id.nav_about:
                 return new AboutFragment();
             case R.id.nav_logging:

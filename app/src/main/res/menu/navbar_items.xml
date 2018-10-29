@@ -36,6 +36,11 @@
             android:icon="@drawable/ic_settings_black_24dp"
             />
         <item
+            android:id="@+id/nav_status"
+            android:title="Status"
+            android:icon="@drawable/ic_perm_device_information_black_24dp"
+            />
+        <item
             android:id="@+id/nav_about"
             android:title="About"
             android:icon="@drawable/ic_about_black_24dp"

@@ -9,7 +9,7 @@ import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-@Database(entities = {TagInfo.class, SessionLog.class, NfcCommEntry.class}, version = 2)
+@Database(entities = {TagInfo.class, SessionLog.class, NfcCommEntry.class}, version = 2, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract TagInfoDao tagInfoDao();

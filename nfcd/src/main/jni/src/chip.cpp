@@ -28,11 +28,11 @@ void nci_SetRfCback(tNFC_CONN_CBACK *p_cback) {
 }
 
 tNFC_STATUS nci_NfcSetConfig (uint8_t size, uint8_t *tlv) {
-    adbi_log("HOOKNFC: nci_NfcSetConfig() ENTER");
+    LOGD("nci_NfcSetConfig() ENTER");
     hook_precall(&hook_config);
     tNFC_STATUS r = nci_orig_NfcSetConfig(size, tlv);
     hook_postcall(&hook_config);
-    adbi_log("HOOKNFC: nci_NfcSetConfig() LEAVE");
+    LOGD("nci_NfcSetConfig() LEAVE");
     return r;
 }
 
@@ -56,7 +56,7 @@ void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
 tNFC_STATUS hook_NfcDeactivate(UINT8 deactivate_type) {
     hook_precall(&hook_deactivate);
     tNFC_STATUS r;
-    adbi_log("HOOKNFC deactivate(), we got %d", deactivate_type);
+    LOGD("deactivate(), we got %d", deactivate_type);
     r = nfc_orig_deactivate(deactivate_type);
     hook_postcall(&hook_deactivate);
     return r;
@@ -64,8 +64,8 @@ tNFC_STATUS hook_NfcDeactivate(UINT8 deactivate_type) {
 
 tNFC_STATUS hook_NfcSenddata(UINT8 conn_id, BT_HDR *p_data) {
     hook_precall(&hook_senddata);
-    adbi_log("HOOKNFC senddata() offset: %d, len: %d", p_data->offset, p_data->len);
-    loghex("HOOKNFC data:",  ((UINT8 *)(p_data + 1) + p_data->offset), 16);
+    LOGD("senddata() offset: %d, len: %d", p_data->offset, p_data->len);
+    loghex("data:",  ((UINT8 *)(p_data + 1) + p_data->offset), 16);
     tNFC_STATUS r = nfc_orig_sendData(conn_id, p_data);
     hook_postcall(&hook_senddata);
     return r;
@@ -73,7 +73,7 @@ tNFC_STATUS hook_NfcSenddata(UINT8 conn_id, BT_HDR *p_data) {
 
 tNFA_STATUS  hook_NfaStopRfDiscovery(void) {
     hook_precall(&hook_nfa_stop_rf_discovery);
-    adbi_log("HOOKNFC hook_NfaStopRfDiscovery()");
+    LOGD("hook_NfaStopRfDiscovery()");
     tNFA_STATUS r = nfa_orig_stop_rf_discovery();
     hook_postcall(&hook_nfa_stop_rf_discovery);
     return r;
@@ -81,7 +81,7 @@ tNFA_STATUS  hook_NfaStopRfDiscovery(void) {
 
 tNFA_STATUS  hook_NfaDisablePolling(void) {
     hook_precall(&hook_nfa_disable_polling);
-    adbi_log("HOOKNFC hook_nfa_disable_polling()");
+    LOGD("hook_nfa_disable_polling()");
     tNFA_STATUS r = nfa_orig_disable_polling();
     hook_postcall(&hook_nfa_disable_polling);
     return r;
@@ -89,7 +89,7 @@ tNFA_STATUS  hook_NfaDisablePolling(void) {
 
 tNFA_STATUS hook_NfaStartRfDiscovery() {
     hook_precall(&hook_nfa_start_rf_discovery);
-    adbi_log("HOOKNFC hook_NfaStartRfDiscovery()");
+    LOGD("hook_NfaStartRfDiscovery()");
     tNFA_STATUS r = nfa_orig_start_rf_discovery();
     hook_postcall(&hook_nfa_start_rf_discovery);
     return r;
@@ -97,7 +97,7 @@ tNFA_STATUS hook_NfaStartRfDiscovery() {
 
 tNFA_STATUS hook_NfaEnablePolling(tNFA_TECHNOLOGY_MASK poll_mask) {
     hook_precall(&hook_nfa_enable_polling);
-    adbi_log("HOOKNFC hook_NfaEnablePolling() 0x%x", poll_mask);
+    LOGD("hook_NfaEnablePolling() 0x%x", poll_mask);
     tNFA_STATUS r = nfa_orig_enable_polling(poll_mask);
     hook_postcall(&hook_nfa_enable_polling);
     return r;
@@ -114,7 +114,7 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
      *
      * in any case: save the values to allow re-uploading them when disabling the patch
      */
-    loghex("HOOKNFC NfcSetConfig IN", tlv, size);
+    loghex("NfcSetConfig IN", tlv, size);
     LOGD("NfcSetConfig Enabled: %d", patchEnabled);
 
     Config cfg, actual;
@@ -138,7 +138,7 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
     // any of our values got modified and we are active those values are already changed in stream
     config_ref bin_stream;
     actual.build(bin_stream);
-    loghex("HOOKNFC NfcSetConfig OUT", bin_stream.get(), actual.total());
+    loghex("NfcSetConfig OUT", bin_stream.get(), actual.total());
     tNFC_STATUS r = nci_NfcSetConfig(actual.total(), bin_stream.get());
 
     return r;
@@ -156,7 +156,7 @@ static void uploadConfig(Config &config) {
 }
 
 void disablePolling() {
-    adbi_log("HOOKNFC disable polling");
+    LOGD("disable polling");
     hook_NfaStopRfDiscovery();
     usleep(10000);
     hook_NfaDisablePolling();
@@ -166,7 +166,7 @@ void disablePolling() {
 }
 
 void enablePolling() {
-    adbi_log("HOOKNFC enablePolling()");
+    LOGD("enablePolling()");
     hook_NfaStopRfDiscovery();
     usleep(10000);
     hook_NfaEnablePolling(0xff);

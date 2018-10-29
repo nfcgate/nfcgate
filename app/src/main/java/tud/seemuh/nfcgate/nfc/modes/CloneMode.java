@@ -12,8 +12,7 @@ public class CloneMode extends BaseMode {
 
     @Override
     public void onDisable() {
-        // ignore all further tags
-        mManager.disablePolling();
+        // no-op
     }
 
     @Override

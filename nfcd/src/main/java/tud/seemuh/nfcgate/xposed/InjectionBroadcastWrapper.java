@@ -30,7 +30,7 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getStringExtra("action");
-        Log.d("HOOKNFC", "Command: " + action);
+        Log.d("NATIVENFC", "Command: " + action);
 
         if("ENABLE".equals(action)) {
             Native.Instance.setEnabled(true);
