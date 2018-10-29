@@ -144,21 +144,20 @@ public class CloneFragment extends Fragment {
 
     private void setTagInfoDisplayed(boolean tagInfoDisplayed) {
         mTagInfoDisplayed = tagInfoDisplayed;
-        if (getActivity() != null)
-            getActivity().invalidateOptionsMenu();
+        getActivity().invalidateOptionsMenu();
     }
 
     void setCloneWait(boolean waiting) {
+        setTagInfoDisplayed(!waiting);
         mTagWaiting.setVisibility(waiting ? ViewGroup.VISIBLE : ViewGroup.GONE);
         mCloneContent.setVisibility(waiting ? ViewGroup.GONE : ViewGroup.VISIBLE);
+        mCloneType.setVisibility(waiting ? ViewGroup.GONE : ViewGroup.VISIBLE);
     }
 
     void setCloneContent(NfcComm data) {
         mCloneType.setImageResource(data.isCard() ? R.drawable.ic_tag_grey_60dp : R.drawable.ic_reader_grey_60dp);
         mCloneContent.setText(new ConfigBuilder(data.getData()).toString());
         mCloneData = data.toByteArray();
-
-        setTagInfoDisplayed(true);
     }
 
     void beginClone() {
