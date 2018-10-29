@@ -57,9 +57,6 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
             >
 
         </FrameLayout>

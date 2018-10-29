@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_centerInParent="true"
 
-    android:padding="5dp"
+    android:padding="10dp"
     >
     <ImageView
         android:id="@+id/type"

@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,12 +16,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,8 +30,7 @@ import tud.seemuh.nfcgate.db.SessionLog;
 import tud.seemuh.nfcgate.db.SessionLogJoin;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModel;
 import tud.seemuh.nfcgate.db.model.SessionLogEntryViewModelFactory;
-import tud.seemuh.nfcgate.db.pcapng.ISO14443Stream;
-import tud.seemuh.nfcgate.gui.component.FileShare;
+import tud.seemuh.nfcgate.gui.component.CustomArrayAdapter;
 import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
 import tud.seemuh.nfcgate.util.NfcComm;
 
@@ -170,36 +168,32 @@ public class SessionLogEntryFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private class SessionLogEntryListAdapter extends ArrayAdapter<NfcComm> {
-        private int mResource;
-
+    private class SessionLogEntryListAdapter extends CustomArrayAdapter<NfcComm> {
         SessionLogEntryListAdapter(@NonNull Context context, int resource) {
             super(context, resource);
+        }
 
-            mResource = resource;
+        @DrawableRes
+        private int byCard(boolean card) {
+            return card ? R.drawable.ic_tag_grey_60dp : R.drawable.ic_reader_grey_60dp;
+        }
+
+        private String byInitial(boolean initial, byte[] data) {
+            return initial ? new ConfigBuilder(data).toString() : bytesToHexDump(data);
         }
 
         @NonNull
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            View v = convertView;
+            View v = super.getView(position, convertView, parent);
+            final NfcComm comm = getItem(position);
 
-            if (v == null)
-                v = LayoutInflater.from(getContext()).inflate(mResource, null);
-
-            final NfcComm nfcComm = getItem(position);
-            if (nfcComm != null) {
-                // set image indicating card or reader
-                v.<ImageView>findViewById(R.id.type).setImageResource(nfcComm.isCard() ?
-                        R.drawable.ic_tag_grey_60dp : R.drawable.ic_reader_grey_60dp);
-
-                // set content to either config stream or binary content
-                v.<TextView>findViewById(R.id.data).setText(nfcComm.isInitial() ?
-                        new ConfigBuilder(nfcComm.getData()).toString() : bytesToHexDump(nfcComm.getData()));
-
-                // set timestamp
-                v.<TextView>findViewById(R.id.timestamp).setText(SessionLog.ISO_DATE.format(new Date(nfcComm.getTimestamp())));
-            }
+            // set image indicating card or reader
+            v.<ImageView>findViewById(R.id.type).setImageResource(byCard(comm.isCard()));
+            // set content to either config stream or binary content
+            v.<TextView>findViewById(R.id.data).setText(byInitial(comm.isInitial(), comm.getData()));
+            // set timestamp
+            v.<TextView>findViewById(R.id.timestamp).setText(SessionLog.ISO_DATE.format(new Date(comm.getTimestamp())));
 
             return v;
         }

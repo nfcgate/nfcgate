@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,6 +29,7 @@ import java.util.List;
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.SessionLog;
 import tud.seemuh.nfcgate.db.model.SessionLogViewModel;
+import tud.seemuh.nfcgate.gui.component.CustomArrayAdapter;
 
 public class LoggingFragment extends Fragment {
     // UI references
@@ -183,43 +185,39 @@ public class LoggingFragment extends Fragment {
         }
     }
 
-    private class SessionLogListAdapter extends ArrayAdapter<SessionLog> {
-        private int mResource;
-
-        public SessionLogListAdapter(@NonNull Context context, int resource) {
+    private class SessionLogListAdapter extends CustomArrayAdapter<SessionLog> {
+        SessionLogListAdapter(@NonNull Context context, int resource) {
             super(context, resource);
+        }
 
-            mResource = resource;
+        @DrawableRes
+        private int byType(SessionLog.SessionType type) {
+            switch (type) {
+                default:
+                case RELAY:
+                    return R.drawable.ic_relay_black_24dp;
+                case REPLAY:
+                    return R.drawable.ic_replay_black_24dp;
+            }
+        }
+
+        @DrawableRes
+        private int bySelection(boolean selected) {
+            return selected ? android.R.color.darker_gray : android.R.color.transparent;
         }
 
         @NonNull
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            View v = convertView;
-
-            if (v == null)
-                v = LayoutInflater.from(getContext()).inflate(mResource, null);
-
+            View v = super.getView(position, convertView, parent);
             final SessionLog entry = getItem(position);
-            if (entry != null) {
-                final SessionLog.SessionType type = entry.getType();
-                final Date date = entry.getDate();
 
-                // set image indicating card or reader
-                switch (type) {
-                    case RELAY:
-                        v.<ImageView>findViewById(R.id.type).setImageResource(R.drawable.ic_relay_black_24dp);
-                        break;
-                    case REPLAY:
-                        v.<ImageView>findViewById(R.id.type).setImageResource(R.drawable.ic_replay_black_24dp);
-                        break;
-                }
-                v.<TextView>findViewById(R.id.title).setText(date.toString());
-            }
-
-            // selection
-            boolean isSelected = mActionSelections.contains(position);
-            v.setBackgroundResource(isSelected ? android.R.color.darker_gray : android.R.color.transparent);
+            // set image indicating card or reader
+            v.<ImageView>findViewById(R.id.type).setImageResource(byType(entry.getType()));
+            // set title to date
+            v.<TextView>findViewById(R.id.title).setText(entry.getDate().toString());
+            // color selected items
+            v.setBackgroundResource(bySelection(mActionSelections.contains(position)));
 
             return v;
         }

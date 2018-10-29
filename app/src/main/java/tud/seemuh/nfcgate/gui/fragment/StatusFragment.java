@@ -3,44 +3,28 @@ package tud.seemuh.nfcgate.gui.fragment;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import com.jaredrummler.android.device.DeviceName;
 
 import tud.seemuh.nfcgate.R;
-import tud.seemuh.nfcgate.gui.MainActivity;
+import tud.seemuh.nfcgate.gui.component.CustomArrayAdapter;
+import tud.seemuh.nfcgate.gui.component.StatusItem;
+import tud.seemuh.nfcgate.nfc.NfcManager;
+import tud.seemuh.nfcgate.util.NfcConf;
 
-public class StatusFragment extends Fragment {
+public class StatusFragment extends BaseFragment {
     // ui references
     private ListView mStatus;
     private StatusListAdapter mStatusAdapter;
-
-    // logic
-    private Map<String, String> mNxpMap = new HashMap<>();
-
-    public StatusFragment() {
-        mNxpMap.put("0x01","PN547C2");
-        mNxpMap.put("0x02","PN65T");
-        mNxpMap.put("0x03","PN548AD");
-        mNxpMap.put("0x04","PN66T");
-        mNxpMap.put("0x05","PN551");
-        mNxpMap.put("0x06","PN67T");
-        mNxpMap.put("0x07","PN553");
-        mNxpMap.put("0x08","PN80T");
-    }
 
     @Nullable
     @Override
@@ -64,134 +48,87 @@ public class StatusFragment extends Fragment {
     }
 
     void detect() {
+        mStatusAdapter.add(detectDeviceName());
         mStatusAdapter.add(detectAndroidVersion());
         mStatusAdapter.add(detectNfcEnabled());
+        mStatusAdapter.add(detectModuleEnabled());
         mStatusAdapter.add(detectNfcModel());
 
         mStatusAdapter.notifyDataSetChanged();
     }
 
+    StatusItem detectDeviceName() {
+        // transform code name into market name
+        String deviceName = DeviceName.getDeviceName();
+
+        // No hist byte on this specific combination
+        boolean is5X601 = deviceName.equals("Nexus 5X") && Build.VERSION.RELEASE.equals("6.0.1");
+
+        return new StatusItem("Device Name")
+                .setState(is5X601 ? StatusItem.State.WARN: StatusItem.State.OK)
+                .setValue(deviceName);
+    }
+
     StatusItem detectAndroidVersion() {
-        return new StatusItem("Android Version", Build.VERSION.RELEASE);
+        return new StatusItem("Android Version")
+                .setState(Build.VERSION.SDK_INT < 26 ? StatusItem.State.OK : StatusItem.State.WARN)
+                .setValue(Build.VERSION.RELEASE);
     }
 
     StatusItem detectNfcEnabled() {
-        return new StatusItem("NFC capability", getMainActivity().getNfc().hasNfc());
+        // nfc capability and enabled
+        boolean hasNfc = getNfc().hasNfc();
+
+        return new StatusItem("NFC Capability")
+                .setState(hasNfc ? StatusItem.State.OK : StatusItem.State.ERROR)
+                .setValue(hasNfc);
+    }
+
+    StatusItem detectModuleEnabled() {
+        // xposed module enabled
+        boolean hasModule = NfcManager.isHookLoaded();
+
+        return new StatusItem("Xposed Module Enabled")
+                .setState(hasModule ? StatusItem.State.OK : StatusItem.State.WARN)
+                .setValue(hasModule);
     }
 
     StatusItem detectNfcModel() {
-        StatusItem chipName = new StatusItem("NFC Chip", "Unknown");
+        // null or chip model name
+        String chipName = new NfcConf().detectNfcc();
 
-        File confNxp = new File("/vendor/etc/libnfc-nxp.conf");
-        File confNxpOld = new File("/system/etc/libnfc-nxp.conf");
-        File confBrcm = new File("/vendor/etc/libnfc-brcm.conf");
-        File confBrcmOld = new File("/system/etc/libnfc-brcm.conf");
-
-        if (confNxp.exists())
-            readNxpConf(confNxp, chipName);
-        else if(confNxpOld.exists())
-            readNxpConf(confNxpOld, chipName);
-
-        if (confBrcm.exists())
-            readBrcmConf(confBrcm, chipName);
-        else if (confBrcmOld.exists())
-            readBrcmConf(confBrcmOld, chipName);
-
-        return chipName;
+        return new StatusItem("NFC Chip")
+                .setState(chipName != null ? StatusItem.State.OK : StatusItem.State.WARN)
+                .setValue(chipName != null ? chipName : "Unknown");
     }
 
-    void readNxpConf(File file, StatusItem item) {
-        // read nxp config
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.startsWith("NXP_NFC_CHIP=")) {
-                    String chipCode = line.substring(line.indexOf('=') + 1);
-                    item.setValue(mNxpMap.get(chipCode));
-                    break;
-                }
-            }
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    void readBrcmConf(File file, StatusItem item) {
-        // read brcm config
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.startsWith("FW_PRE_PATCH=")) {
-                    String firmware = line.substring(line.indexOf('\"') + 1, line.lastIndexOf('\"'));
-                    item.setValue(firmware.substring(17, firmware.length() - 17));
-                    break;
-                }
-                if (line.startsWith("FW_PATCH=")) {
-                    String firmware = line.substring(line.indexOf('\"') + 1, line.lastIndexOf('\"'));
-                    item.setValue(firmware.substring(17, firmware.length() - 13));
-                    break;
-                }
-            }
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    protected MainActivity getMainActivity() {
-        return ((MainActivity) getActivity());
-    }
-
-
-    private class StatusItem {
-        private String mName;
-        private String mValue;
-
-        StatusItem(String name, String value) {
-            mName = name;
-            mValue = value;
-        }
-
-        StatusItem(String name, boolean yesNo) {
-            this(name, yesNo ? "yes" : "no");
-        }
-
-        public String getName() {
-            return mName;
-        }
-
-        public String getValue() {
-            return mValue;
-        }
-
-        public void setValue(String value) {
-            mValue = value;
-        }
-    }
-
-    private class StatusListAdapter extends ArrayAdapter<StatusItem> {
-        private int mResource;
-
+    private class StatusListAdapter extends CustomArrayAdapter<StatusItem> {
         StatusListAdapter(@NonNull Context context, int resource) {
             super(context, resource);
+        }
 
-            mResource = resource;
+        @DrawableRes
+        private int byState(StatusItem.State state) {
+            switch (state) {
+                default:
+                case OK:
+                    return R.drawable.ic_check_circle_green_24dp;
+                case WARN:
+                    return R.drawable.ic_help_orange_24dp;
+                case ERROR:
+                    return R.drawable.ic_error_red_24dp;
+            }
         }
 
         @NonNull
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            View v = convertView;
+            View v = super.getView(position, convertView, parent);
+            final StatusItem item = getItem(position);
 
-            if (v == null)
-                v = LayoutInflater.from(getContext()).inflate(mResource, null);
-
-            final StatusItem entry = getItem(position);
-            if (entry != null) {
-                v.<TextView>findViewById(R.id.status_name).setText(entry.getName());
-                v.<TextView>findViewById(R.id.status_value).setText(entry.getValue());
-            }
+            v.<TextView>findViewById(R.id.status_name).setText(item.getName());
+            v.<TextView>findViewById(R.id.status_value).setText(item.getValue());
+            v.<ImageView>findViewById(R.id.status_icon).setImageResource(byState(item.getState()));
 
             return v;
         }

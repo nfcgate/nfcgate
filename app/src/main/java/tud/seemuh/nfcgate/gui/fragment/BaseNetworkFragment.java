@@ -7,7 +7,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.preference.PreferenceManagerFix;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,13 +19,11 @@ import android.widget.TextView;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.worker.LogInserter;
-import tud.seemuh.nfcgate.gui.MainActivity;
 import tud.seemuh.nfcgate.gui.component.Semaphore;
 import tud.seemuh.nfcgate.gui.log.SessionLogEntryFragment;
 import tud.seemuh.nfcgate.network.data.NetworkStatus;
-import tud.seemuh.nfcgate.nfc.NfcManager;
 
-public abstract class BaseNetworkFragment extends Fragment implements LogInserter.SIDChangedListener {
+public abstract class BaseNetworkFragment extends BaseFragment implements LogInserter.SIDChangedListener {
     // UI references
     View mTagWaiting;
     TextView mTagWaitingText;
@@ -181,12 +178,4 @@ public abstract class BaseNetworkFragment extends Fragment implements LogInserte
      * Setup method called when user selects reader or tag
      */
     protected abstract void onSelect(boolean reader);
-
-    protected MainActivity getMainActivity() {
-        return ((MainActivity) getActivity());
-    }
-
-    protected NfcManager getNfc() {
-        return getMainActivity().getNfc();
-    }
 }

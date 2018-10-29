@@ -6,7 +6,7 @@
 
     android:background="?attr/selectableItemBackground"
     android:orientation="horizontal"
-    android:padding="5dp"
+    android:padding="10dp"
     >
 
     <TextView

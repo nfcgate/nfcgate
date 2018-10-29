@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -27,8 +26,6 @@ import java.util.List;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.TagInfo;
-import tud.seemuh.nfcgate.gui.MainActivity;
-import tud.seemuh.nfcgate.gui.Util;
 import tud.seemuh.nfcgate.db.model.TagInfoViewModel;
 import tud.seemuh.nfcgate.gui.component.Semaphore;
 import tud.seemuh.nfcgate.nfc.NfcManager;
@@ -36,7 +33,7 @@ import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
 import tud.seemuh.nfcgate.nfc.modes.CloneMode;
 import tud.seemuh.nfcgate.util.NfcComm;
 
-public class CloneFragment extends Fragment {
+public class CloneFragment extends BaseFragment {
     // UI references
     View mTagWaiting;
     ImageView mCloneType;
@@ -119,7 +116,7 @@ public class CloneFragment extends Fragment {
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        Util.setMenuItemEnabled(menu, R.id.action_save, mTagInfoDisplayed);
+        setSaveEnabled(menu, mTagInfoDisplayed);
     }
 
     @Override
@@ -139,6 +136,14 @@ public class CloneFragment extends Fragment {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void setSaveEnabled(Menu menu, boolean enabled) {
+        MenuItem item = menu.findItem(R.id.action_save);
+        if (item != null) {
+            item.setEnabled(enabled);
+            item.getIcon().mutate().setAlpha(enabled ? 255 : 130);
         }
     }
 
@@ -186,14 +191,6 @@ public class CloneFragment extends Fragment {
             })
             .setNegativeButton("Cancel", null)
             .show();
-    }
-
-    public NfcManager getNfc() {
-        return ((MainActivity) getActivity()).getNfc();
-    }
-
-    protected MainActivity getMainActivity() {
-        return ((MainActivity) getActivity());
     }
 
     class UICloneMode extends CloneMode {
