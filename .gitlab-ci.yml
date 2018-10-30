@@ -1,10 +1,12 @@
-image: custom/openjdk:8-jdk
+image: custom/android-sdk
+
+variables:
+    GIT_SUBMODULE_STRATEGY: recursive
 
 before_script:
-  - export ANDROID_HOME=/opt/android-sdk-linux
+  - export ANDROID_HOME=/android/sdk
   - export PATH=$PATH:$ANDROID_HOME/platform-tools
   - export GRADLE_USER_HOME=/gradle-cache/.gradle
-  - chmod +x ./gradlew
 
 stages:
   - build
