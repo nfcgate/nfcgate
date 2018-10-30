@@ -65,7 +65,7 @@ tNFC_STATUS hook_NfcDeactivate(UINT8 deactivate_type) {
 tNFC_STATUS hook_NfcSenddata(UINT8 conn_id, BT_HDR *p_data) {
     hook_precall(&hook_senddata);
     LOGD("senddata() offset: %d, len: %d", p_data->offset, p_data->len);
-    loghex("data:",  ((UINT8 *)(p_data + 1) + p_data->offset), 16);
+    loghex("data:",  ((UINT8 *)(p_data + 1) + p_data->offset), p_data->len);
     tNFC_STATUS r = nfc_orig_sendData(conn_id, p_data);
     hook_postcall(&hook_senddata);
     return r;
