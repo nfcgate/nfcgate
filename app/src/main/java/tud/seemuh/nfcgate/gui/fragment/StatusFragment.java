@@ -8,6 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -17,8 +20,12 @@ import android.widget.TextView;
 
 import com.jaredrummler.android.device.DeviceName;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.gui.component.CustomArrayAdapter;
+import tud.seemuh.nfcgate.gui.component.FileShare;
 import tud.seemuh.nfcgate.gui.component.StatusItem;
 import tud.seemuh.nfcgate.nfc.NfcManager;
 import tud.seemuh.nfcgate.util.NfcConf;
@@ -35,6 +42,9 @@ public class StatusFragment extends BaseFragment {
 
         // setup listview
         mStatus = v.findViewById(R.id.status_list);
+
+        // custom toolbar actions
+        setHasOptionsMenu(true);
 
         // handlers
         mStatus.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -77,6 +87,40 @@ public class StatusFragment extends BaseFragment {
         mStatus.setAdapter(mStatusAdapter);
 
         detect();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.toolbar_status, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_export:
+                exportData();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    void exportData() {
+        final StringBuilder str = new StringBuilder();
+        for (int i = 0; i < mStatusAdapter.getCount();  i++)
+            str.append(str.length() == 0 ? "" : "\n").append(mStatusAdapter.getItem(i).toString());
+
+        new FileShare(getActivity())
+                .setPrefix("config")
+                .setExtension(".txt")
+                .setMimeType("text/plain")
+                .share(new FileShare.IFileShareable() {
+                    @Override
+                    public void write(OutputStream stream) throws IOException {
+                        stream.write(str.toString().getBytes());
+                    }
+                });
     }
 
     void detect() {

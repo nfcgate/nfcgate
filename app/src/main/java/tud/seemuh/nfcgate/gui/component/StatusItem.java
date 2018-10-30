@@ -52,4 +52,9 @@ public class StatusItem {
         mState = State.ERROR;
         mMessage = message;
     }
+
+    @Override
+    public String toString() {
+        return mName + ": " + mValue;
+    }
 }
