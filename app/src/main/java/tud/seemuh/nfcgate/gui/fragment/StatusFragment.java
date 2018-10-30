@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,6 +35,36 @@ public class StatusFragment extends BaseFragment {
 
         // setup listview
         mStatus = v.findViewById(R.id.status_list);
+
+        // handlers
+        mStatus.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @DrawableRes
+            private int byState(StatusItem.State state) {
+                switch (state) {
+                    default:
+                    case WARN:
+                        return R.drawable.ic_warning_grey_24dp;
+                    case ERROR:
+                        return R.drawable.ic_error_grey_24dp;
+                }
+            }
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                if (position >= 0) {
+                    final StatusItem item = mStatusAdapter.getItem(position);
+
+                    if (item.getState() != StatusItem.State.OK) {
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle(item.getState() == StatusItem.State.WARN ? "Warning" : "Error")
+                                .setPositiveButton("OK", null)
+                                .setIcon(byState(item.getState()))
+                                .setMessage(item.getMessage())
+                                .show();
+                    }
+                }
+            }
+        });
 
         return v;
     }
@@ -60,46 +92,62 @@ public class StatusFragment extends BaseFragment {
     StatusItem detectDeviceName() {
         // transform code name into market name
         String deviceName = DeviceName.getDeviceName();
+        // device name should be OK for all supported devices
+        StatusItem result = new StatusItem("Device Name").setValue(deviceName);
 
         // No hist byte on this specific combination
-        boolean is5X601 = deviceName.equals("Nexus 5X") && Build.VERSION.RELEASE.equals("6.0.1");
+        if (deviceName.equals("Nexus 5X") && Build.VERSION.RELEASE.equals("6.0.1"))
+            result.setWarn(getString(R.string.warn_5X601));
 
-        return new StatusItem("Device Name")
-                .setState(is5X601 ? StatusItem.State.WARN: StatusItem.State.OK)
-                .setValue(deviceName);
+        return result;
     }
 
     StatusItem detectAndroidVersion() {
-        return new StatusItem("Android Version")
-                .setState(Build.VERSION.SDK_INT < 26 ? StatusItem.State.OK : StatusItem.State.WARN)
-                .setValue(Build.VERSION.RELEASE);
+        // android version should be OK for all supported versions
+        StatusItem result = new StatusItem("Android Version").setValue(Build.VERSION.RELEASE);
+
+        // Android 8 and above is unsupported in tag mode
+        if (Build.VERSION.SDK_INT >= 26)
+            result.setWarn(getString(R.string.warn_A8));
+
+        return result;
     }
 
     StatusItem detectNfcEnabled() {
         // nfc capability and enabled
         boolean hasNfc = getNfc().hasNfc();
+        // NFC Capability should be OK if it is enabled
+        StatusItem result = new StatusItem("NFC Capability").setValue(hasNfc);
 
-        return new StatusItem("NFC Capability")
-                .setState(hasNfc ? StatusItem.State.OK : StatusItem.State.ERROR)
-                .setValue(hasNfc);
+        if (!hasNfc)
+            result.setError(getString(R.string.error_NFCCAP));
+
+        return result;
     }
 
     StatusItem detectModuleEnabled() {
         // xposed module enabled
         boolean hasModule = NfcManager.isHookLoaded();
+        // Xposed module should be OK if it is enabled
+        StatusItem result = new StatusItem("Xposed Module Enabled").setValue(hasModule);
 
-        return new StatusItem("Xposed Module Enabled")
-                .setState(hasModule ? StatusItem.State.OK : StatusItem.State.WARN)
-                .setValue(hasModule);
+        if (!hasModule)
+            result.setWarn(getString(R.string.warn_XPOMOD));
+
+        return result;
     }
 
     StatusItem detectNfcModel() {
         // null or chip model name
         String chipName = new NfcConf().detectNfcc();
-
-        return new StatusItem("NFC Chip")
-                .setState(chipName != null ? StatusItem.State.OK : StatusItem.State.WARN)
+        // Chip model should be OK if it can be detected
+        StatusItem result = new StatusItem("NFC Chip")
                 .setValue(chipName != null ? chipName : "Unknown");
+
+        if (chipName == null)
+            result.setWarn(getString(R.string.warn_NFCMOD));
+
+        return result;
     }
 
     private class StatusListAdapter extends CustomArrayAdapter<StatusItem> {

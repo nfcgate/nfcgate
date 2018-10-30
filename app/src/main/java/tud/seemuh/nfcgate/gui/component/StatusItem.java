@@ -10,6 +10,7 @@ public class StatusItem {
     // state
     private String mName;
     private String mValue;
+    private String mMessage;
     private State mState;
 
     public StatusItem(String name) {
@@ -25,13 +26,12 @@ public class StatusItem {
         return mValue;
     }
 
-    public State getState() {
-        return mState;
+    public String getMessage() {
+        return mMessage;
     }
 
-    public StatusItem setState(State state) {
-        mState = state;
-        return this;
+    public State getState() {
+        return mState;
     }
 
     public StatusItem setValue(String value) {
@@ -41,5 +41,15 @@ public class StatusItem {
 
     public StatusItem setValue(boolean yesNo) {
         return setValue(yesNo ? "Yes" : "No");
+    }
+
+    public void setWarn(String message) {
+        mState = State.WARN;
+        mMessage = message;
+    }
+
+    public void setError(String message) {
+        mState = State.ERROR;
+        mMessage = message;
     }
 }

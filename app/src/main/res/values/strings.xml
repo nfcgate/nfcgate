@@ -8,6 +8,8 @@
 <p>We take no responsibility for, and will not be liable for, the application misbehaving due to technical issues beyond our control.</p>
 ]]>
     </string>
+
+    <!-- Settings selections -->
     <string name="empty"/>
     <string-array name="replay_mode_names">
         <item>Index Mode</item>
@@ -17,4 +19,11 @@
         <item>index</item>
         <item>data</item>
     </string-array>
+
+    <!-- Status warnings -->
+    <string name="warn_5X601">A bug in Android 6.0.1 on the Nexus 5X prevents it from reading the hist bytes.</string>
+    <string name="warn_A8">Android 8 and above is not supported as Tag emulator in Relay/Replay mode.</string>
+    <string name="warn_XPOMOD">Xposed module could not be found. Ensure Xposed is installed and the module is enabled.</string>
+    <string name="warn_NFCMOD">Your NFC Chip could not be detected.</string>
+    <string name="error_NFCCAP">Your device does not support NFC or you turned it off. Please enable NFC to use NFCGate.</string>
 </resources>
