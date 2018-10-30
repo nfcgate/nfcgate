@@ -1,0 +1,18 @@
+image: custom/openjdk:8-jdk
+
+before_script:
+  - export ANDROID_HOME=/opt/android-sdk-linux
+  - export PATH=$PATH:$ANDROID_HOME/platform-tools
+  - export GRADLE_USER_HOME=/gradle-cache/.gradle
+  - chmod +x ./gradlew
+
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - ./gradlew assembleDebug
+  artifacts:
+    paths:
+    - app/build/outputs/
