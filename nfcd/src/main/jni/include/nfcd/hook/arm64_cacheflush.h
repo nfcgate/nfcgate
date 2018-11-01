@@ -1,8 +1,6 @@
 /**
  * Motivation for NOT using the builtin cacheflush:
  * http://www.mono-project.com/news/2016/09/12/arm64-icache/
-
-
  */
 
 #ifndef __arm__
@@ -20,13 +18,13 @@
  */
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
-void arm64_cacheflush(ulong p, size_t size)
+void arm64_cacheflush(unsigned long p, size_t size)
 {
     /* Don't rely on GCC's __clear_cache implementation, as it caches
      * icache/dcache cache line sizes, that can vary between cores on
      * big.LITTLE architectures. */
-    ulong end = (ulong) (p + size);
-    ulong addr, ctr_el0;
+    unsigned long end = p + size;
+    unsigned long addr, ctr_el0;
     static size_t icache_line_size = 0xffff, dcache_line_size = 0xffff;
     size_t isize, dsize;
 
@@ -38,12 +36,12 @@ void arm64_cacheflush(ulong p, size_t size)
     icache_line_size = isize = MIN (icache_line_size, isize);
     dcache_line_size = dsize = MIN (dcache_line_size, dsize);
 
-    addr = (ulong) p & ~(ulong) (dsize - 1);
+    addr = p & ~(unsigned long) (dsize - 1);
     for (; addr < end; addr += dsize)
             asm volatile("dc civac, %0" : : "r" (addr) : "memory");
     asm volatile("dsb ish" : : : "memory");
 
-    addr = (ulong) p & ~(ulong) (isize - 1);
+    addr = p & ~(unsigned long) (isize - 1);
     for (; addr < end; addr += isize)
             asm volatile("ic ivau, %0" : : "r" (addr) : "memory");
 

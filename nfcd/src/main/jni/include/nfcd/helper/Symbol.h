@@ -13,7 +13,7 @@ public:
         return mInstance;
     }
 
-    ulong getSize(std::string name) {
+    unsigned long getSize(std::string name) {
         auto it = mSymbols.find(name);
 
         if (it == mSymbols.end())
@@ -88,7 +88,7 @@ protected:
     }
 
     void *mBase;
-    std::unordered_map<std::string, ulong> mSymbols;
+    std::unordered_map<std::string, unsigned long> mSymbols;
 
     static SymbolTable *mInstance;
 };
