@@ -100,12 +100,12 @@ tNFA_STATUS hook_NFA_EnablePolling(tNFA_TECHNOLOGY_MASK poll_mask) {
 }
 
 static void hookNative() {
-    const char *lib_path = libnfc_path();
-    void *handle = dlopen(lib_path, RTLD_NOLOAD);
-
     // check if NCI library exists and is readable + is loaded
+    const char *lib_path = libnfc_path();
     if (access(lib_path, R_OK) != 0)
         LOGEX("Could not find libnfc-nci");
+
+    void *handle = dlopen(lib_path, RTLD_NOLOAD);
     if (!handle)
         LOGEX("Could not obtain handle of libnfc-nci");
 
