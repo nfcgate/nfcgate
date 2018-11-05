@@ -69,11 +69,11 @@ void Hook::constructTrampoline() {
         trampoline[14] = 0xaf; // mov pc, r5 ; just to pad to 4 byte boundary
 
         // insert hook address
-        memcpy(&trampoline[16], &hook, sizeof(unsigned long));
+        std::memcpy(&trampoline[16], &hook, sizeof(unsigned long));
 
         // store trampoline
         mTrampolineSize = sizeof(trampoline);
-        memcpy(mTrampoline, trampoline, mTrampolineSize);
+        std::memcpy(mTrampoline, trampoline, mTrampolineSize);
     } else if (!symbol_is_thumb && !hook_is_thumb) {
         LOGI("ARM");
         mIsThumb = false;
@@ -86,7 +86,7 @@ void Hook::constructTrampoline() {
 
         // store trampoline
         mTrampolineSize = sizeof(trampoline);
-        memcpy(mTrampoline, trampoline, mTrampolineSize);
+        std::memcpy(mTrampoline, trampoline, mTrampolineSize);
     } else
         LOGE("addr %p and hook %p don't match!", mSymbol, mHook);
 #else
@@ -105,7 +105,7 @@ void Hook::constructTrampoline() {
 
         // store trampoline
         mTrampolineSize = sizeof(trampoline);
-        memcpy(mTrampoline, trampoline, mTrampolineSize);
+        std::memcpy(mTrampoline, trampoline, mTrampolineSize);
     } else
         LOGE("addr %p and hook %p don't match!", mSymbol, mHook);
 #endif
@@ -120,11 +120,14 @@ void Hook::swapTrampoline(bool install) {
     else if (mAlignment == 0)
         LOGW("symbol has no alignment, overwrite possible");
 
-    // adjust symbol to thumb boundary
+    // adjust symbol to thumb boundary:
+    //   symbol points to first instruction, but in thumb mode (operand - instruction - operand)
+    //   a operand precedes the first instruction. In order to overwrite the operand,
+    //   subtract a byte from symbol so it points to the first operand.
     if (mIsThumb)
         symbol = (void *)((unsigned long) symbol - 1);
 
-    // store symbol bytes
+    // store original symbol bytes
     if (install)
         std::memcpy(mStored, symbol, mTrampolineSize);
 
