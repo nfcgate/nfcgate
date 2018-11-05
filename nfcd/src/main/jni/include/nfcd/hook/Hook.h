@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <functional>
 #include <android/log.h>
+#include <type_traits>
 
 // maximum trampoline size
 #define TR_MAX_SIZE 52
@@ -23,9 +24,17 @@ public:
 
     void postcall();
 
-    template <typename T>
-    T* call() {
-        return (T*)(mSymbol);
+    template <typename Fn, typename... Args>
+    typename std::result_of<Fn*(Args...)>::type call(Args&&... args) {
+        return ((Fn*)mSymbol)(std::forward<Args>(args)...);
+    }
+
+    template <typename Fn, typename... Args>
+    typename std::result_of<Fn*(Args...)>::type callOther(Args&&... args) {
+        precall();
+        auto r = ((Fn*)mSymbol)(std::forward<Args>(args)...);
+        postcall();
+        return r;
     }
 
 private:

@@ -23,9 +23,7 @@ void uploadConfig(Config &config) {
      */
     hook_NFC_Deactivate(0);
     // call original method instead of hooked one to prevent our config being overwritten by hook
-    hNFC_SetConfig->precall();
-    hNFC_SetConfig->call<decltype(hook_NFC_SetConfig)>()(config.total(), bin_stream.get());
-    hNFC_SetConfig->postcall();
+    hNFC_SetConfig->callOther<decltype(hook_NFC_SetConfig)>(config.total(), bin_stream.get());
     hook_NFC_Deactivate(3);
 }
 

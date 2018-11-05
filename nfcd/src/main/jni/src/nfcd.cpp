@@ -43,7 +43,7 @@ tNFC_STATUS hook_NFC_SetConfig(uint8_t size, uint8_t *tlv) {
     config_ref bin_stream;
     actual.build(bin_stream);
     loghex("NfcSetConfig OUT", bin_stream.get(), actual.total());
-    tNFC_STATUS r = hNFC_SetConfig->call<decltype(hook_NFC_SetConfig)>()(actual.total(), bin_stream.get());
+    tNFC_STATUS r = hNFC_SetConfig->call<decltype(hook_NFC_SetConfig)>(actual.total(), bin_stream.get());
 
     hNFC_SetConfig->postcall();
     return r;
@@ -53,7 +53,7 @@ tNFC_STATUS hook_NFC_Deactivate(UINT8 deactivate_type) {
     hNFC_Deactivate->precall();
 
     LOGD("hook_NFC_Deactivate(%d)", deactivate_type);
-    tNFC_STATUS r = hNFC_Deactivate->call<decltype(hook_NFC_Deactivate)>()(deactivate_type);
+    tNFC_STATUS r = hNFC_Deactivate->call<decltype(hook_NFC_Deactivate)>(deactivate_type);
 
     hNFC_Deactivate->postcall();
     return r;
@@ -63,7 +63,7 @@ tNFA_STATUS hook_NFA_StopRfDiscovery(void) {
     hNFA_StopRfDiscovery->precall();
 
     LOGD("hook_NFA_StopRfDiscovery()");
-    tNFA_STATUS r = hNFA_StopRfDiscovery->call<decltype(hook_NFA_StopRfDiscovery)>()();
+    tNFA_STATUS r = hNFA_StopRfDiscovery->call<decltype(hook_NFA_StopRfDiscovery)>();
 
     hNFA_StopRfDiscovery->postcall();
     return r;
@@ -73,7 +73,7 @@ tNFA_STATUS hook_NFA_DisablePolling(void) {
     hNFA_DisablePolling->precall();
 
     LOGD("hook_NFA_DisablePolling()");
-    tNFA_STATUS r = hNFA_DisablePolling->call<decltype(hook_NFA_DisablePolling)>()();
+    tNFA_STATUS r = hNFA_DisablePolling->call<decltype(hook_NFA_DisablePolling)>();
 
     hNFA_DisablePolling->postcall();
     return r;
@@ -83,7 +83,7 @@ tNFA_STATUS hook_NFA_StartRfDiscovery() {
     hNFA_StartRfDiscovery->precall();
 
     LOGD("hook_NFA_StartRfDiscovery()");
-    tNFA_STATUS r = hNFA_StartRfDiscovery->call<decltype(hook_NFA_StartRfDiscovery)>()();
+    tNFA_STATUS r = hNFA_StartRfDiscovery->call<decltype(hook_NFA_StartRfDiscovery)>();
 
     hNFA_StartRfDiscovery->postcall();
     return r;
@@ -93,7 +93,7 @@ tNFA_STATUS hook_NFA_EnablePolling(tNFA_TECHNOLOGY_MASK poll_mask) {
     hNFA_EnablePolling->precall();
 
     LOGD("hook_NFA_EnablePolling(0x%x)", poll_mask);
-    tNFA_STATUS r = hNFA_EnablePolling->call<decltype(hook_NFA_EnablePolling)>()(poll_mask);
+    tNFA_STATUS r = hNFA_EnablePolling->call<decltype(hook_NFA_EnablePolling)>(poll_mask);
 
     hNFA_EnablePolling->postcall();
     return r;
