@@ -11,6 +11,7 @@
 // hook definitions
 extern Config origValues, patchValues;
 extern bool patchEnabled;
+extern Hook *hNFC_SetConfig;
 tNFC_STATUS hook_NFC_SetConfig(UINT8 tlv_size, UINT8 *p_param_tlvs);
 tNFC_STATUS hook_NFC_Deactivate(UINT8 deactivate_type);
 tNFA_STATUS hook_NFA_StopRfDiscovery();

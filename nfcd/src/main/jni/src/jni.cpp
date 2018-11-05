@@ -22,7 +22,10 @@ void uploadConfig(Config &config) {
      * (even though broadcom permits it, nxp does not)
      */
     hook_NFC_Deactivate(0);
-    hook_NFC_SetConfig(config.total(), bin_stream.get());
+    // call original method instead of hooked one to prevent our config being overwritten by hook
+    hNFC_SetConfig->precall();
+    hNFC_SetConfig->call<decltype(hook_NFC_SetConfig)>()(config.total(), bin_stream.get());
+    hNFC_SetConfig->postcall();
     hook_NFC_Deactivate(3);
 }
 
