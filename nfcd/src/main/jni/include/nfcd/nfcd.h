@@ -32,6 +32,7 @@ inline const char *libnfc_path() {
 inline void loghex(const char *desc, const uint8_t *data, const int len) {
     int strlen = len * 3 + 1;
     char *msg = (char *) malloc((size_t) strlen);
+    msg[strlen - 1] = '\0';
     for (uint8_t i = 0; i < len; i++) {
         sprintf(msg + i * 3, " %02x", (unsigned int) *(data + i));
     }
