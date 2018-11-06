@@ -181,6 +181,8 @@ public class MainActivity extends AppCompatActivity {
         // every fragment must implement BaseFragment
         Fragment fragment = getFragmentByAction(item.getItemId());
 
+        // remove all currently opened on-top fragments (e.g. log entry)
+        getSupportFragmentManager().popBackStack();
         // no fancy animation for now
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_content, fragment)
