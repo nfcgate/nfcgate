@@ -2,6 +2,7 @@ package tud.seemuh.nfcgate.nfc;
 
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.NfcA;
@@ -65,6 +66,13 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      */
     public boolean hasNfc() {
         return mAdapter != null;
+    }
+
+    /**
+     * Indicates whether this device has HCE
+     */
+    public boolean hasHce() {
+        return mActivity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_NFC_HOST_CARD_EMULATION);
     }
 
     /**

@@ -127,6 +127,7 @@ public class StatusFragment extends BaseFragment {
         mStatusAdapter.add(detectDeviceName());
         mStatusAdapter.add(detectAndroidVersion());
         mStatusAdapter.add(detectNfcEnabled());
+        mStatusAdapter.add(detectHceEnabled());
         mStatusAdapter.add(detectModuleEnabled());
         mStatusAdapter.add(detectNfcModel());
 
@@ -165,6 +166,18 @@ public class StatusFragment extends BaseFragment {
 
         if (!hasNfc)
             result.setError(getString(R.string.error_NFCCAP));
+
+        return result;
+    }
+
+    StatusItem detectHceEnabled() {
+        // HCE capability
+        boolean hasHCE = getNfc().hasHce();
+        // HCE Capability
+        StatusItem result = new StatusItem("HCE Capability").setValue(hasHCE);
+
+        if (!hasHCE)
+            result.setWarn(getString(R.string.warn_HCE));
 
         return result;
     }
