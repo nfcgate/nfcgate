@@ -57,6 +57,17 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
     }
 
     @Override
+    public void onDestroyView() {
+        if (mLoggingFragment != null)
+            setSessionSelectionVisible(false);
+
+        if (mDetailFragment != null)
+            setSessionChooserVisible(false, 0);
+
+        super.onDestroyView();
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -159,7 +170,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
         if (visible)
             transaction.replace(R.id.lay_content, mLoggingFragment).commit();
         else
-            transaction.remove(mLoggingFragment).commit();
+            transaction.remove(mLoggingFragment).commitAllowingStateLoss();
     }
 
     void setSessionChooserVisible(boolean visible, int sessionId) {
@@ -169,7 +180,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
             transaction.replace(R.id.lay_content, mDetailFragment).commit();
         }
         else if (mDetailFragment != null)
-            transaction.remove(mDetailFragment).commit();
+            transaction.remove(mDetailFragment).commitAllowingStateLoss();
     }
 
     void tickleReplayer() {

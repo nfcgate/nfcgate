@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Handles all navbar actions by switching to an existing fragment or creating a new one
+     * Handles all navbar actions by creating a new fragment
      */
     private void onNavbarAction(MenuItem item) {
         // every fragment must implement BaseFragment
@@ -194,6 +194,9 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setSubtitle(null);
         // hide status bar
         findViewById(R.id.tag_semaphore).setVisibility(View.GONE);
+
+        // avoid carrying over actions from previous fragment
+        supportInvalidateOptionsMenu();
 
         mDrawerLayout.closeDrawers();
     }

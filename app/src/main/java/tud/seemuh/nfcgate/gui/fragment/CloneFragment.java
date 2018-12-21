@@ -42,7 +42,7 @@ public class CloneFragment extends BaseFragment {
 
     // clone data
     byte[] mCloneData;
-    boolean mTagInfoDisplayed;
+    boolean mTagInfoDisplayed = false;
 
     // db data
     private TagInfoViewModel mTagInfoViewModel;
@@ -60,8 +60,6 @@ public class CloneFragment extends BaseFragment {
 
         setHasOptionsMenu(true);
         beginClone();
-
-        mTagInfoDisplayed = false;
 
         // setup db model
         mTagInfoViewModel = ViewModelProviders.of(this).get(TagInfoViewModel.class);
