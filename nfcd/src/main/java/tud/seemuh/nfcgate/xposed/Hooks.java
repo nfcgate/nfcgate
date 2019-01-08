@@ -30,13 +30,11 @@ public class Hooks implements IXposedHookLoadPackage {
             findAndHookConstructor("com.android.nfc.NfcService", lpparam.classLoader, Application.class, new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    Log.i("HOOKNFC", "constructor");
-                    Application app = (Application) param.args[0];
 
                     // using context, inject our class into the nfc service class loader
-                    mReceiver = loadOrInjectClass(app, "tud.seemuh.nfcgate",
-                            getClass().getClassLoader(), lpparam.classLoader,
-                            "tud.seemuh.nfcgate.xposed.InjectionBroadcastWrapper");
+                    mReceiver = loadOrInjectClass((Application) param.args[0],
+                            "tud.seemuh.nfcgate", getClass().getClassLoader(),
+                            lpparam.classLoader, "tud.seemuh.nfcgate.xposed.InjectionBroadcastWrapper");
                 }
             });
 
@@ -45,7 +43,6 @@ public class Hooks implements IXposedHookLoadPackage {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
 
-                    Log.i("HOOKNFC", "beforeHookedMethod");
                     if (isNativeEnabled()) {
                         Log.i("HOOKNFC", "enabled");
                         // setting a result will prevent the original method to run.
@@ -67,6 +64,25 @@ public class Hooks implements IXposedHookLoadPackage {
                     }
                 }
             });
+
+            // hook transceive method for on-device capture
+            findAndHookMethod("com.android.nfc.NfcService.TagService", lpparam.classLoader, "transceive", int.class, byte[].class, boolean.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    // TODO: figure out where to store this and how to transfer it to the UI
+
+                    // nfc command
+                    byte[] cmd = (byte[]) param.args[1];
+                    // nfc response
+                    byte[] response = (byte[]) param.getResult().getClass().getMethod("getResponseOrThrow").invoke(param.getResult());
+                    // timestamp
+                    long timestamp = System.currentTimeMillis();
+
+                    Log.d("HOOKNFC", "Captured data: at " + timestamp + " got " + cmd.length + "/" + response.length);
+
+                }
+            });
+
         }
     }
 

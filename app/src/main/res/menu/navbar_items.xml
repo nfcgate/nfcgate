@@ -24,6 +24,11 @@
             android:icon="@drawable/ic_replay_black_24dp"
             />
         <item
+            android:id="@+id/nav_capture"
+            android:title="Capture Mode"
+            android:icon="@drawable/ic_capture_black_24dp"
+            />
+        <item
             android:id="@+id/nav_logging"
             android:title="Logging"
             android:icon="@drawable/ic_log_black_24dp"
