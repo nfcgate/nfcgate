@@ -183,7 +183,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      */
     public void disablePolling() {
         if (mPollingEnabled)
-            mDaemon.disablePolling();
+            mDaemon.setPolling(false);
 
         mPollingEnabled = false;
     }
@@ -193,9 +193,23 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      */
     public void enablePolling() {
         if (!mPollingEnabled)
-            mDaemon.enablePolling();
+            mDaemon.setPolling(true);
 
         mPollingEnabled = true;
+    }
+
+    /**
+     * Start capturing on-device NFC data
+     */
+    public void enableCapture() {
+        mDaemon.setCapture(true);
+    }
+
+    /**
+     * Stop capturing on-device NFC data
+     */
+    public void disableCapture() {
+        mDaemon.setCapture(false);
     }
 
     /**
@@ -205,9 +219,8 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
         Log.v(TAG, "applyData of " + data.getData().length + " bytes");
 
         if (data.isInitial()) {
-            // upload to service and enable
-            mDaemon.upload(data.getData());
-            mDaemon.enable();
+            // send configuration to service
+            mDaemon.setConfig(data.getData());
         }
         else if (mReaderMode) {
             // send data to tag and get reply

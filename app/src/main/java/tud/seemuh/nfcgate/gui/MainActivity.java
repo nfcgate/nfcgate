@@ -135,6 +135,8 @@ public class MainActivity extends AppCompatActivity {
             importPcap(intent.<Uri>getParcelableExtra(Intent.EXTRA_STREAM));
         else if (Intent.ACTION_VIEW.equals(intent.getAction()))
             importPcap(intent.getData());
+        else if ("tud.seemuh.nfcgate.capture".equals(intent.getAction()))
+            Toast.makeText(this, "GOT CAPTURE", Toast.LENGTH_SHORT).show();
         else
             super.onNewIntent(intent);
     }

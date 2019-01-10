@@ -3,17 +3,21 @@ package tud.seemuh.nfcgate.xposed;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.nfc.Tag;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 
-import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
-import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+
+import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
+import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 
 public class Hooks implements IXposedHookLoadPackage {
 
@@ -24,9 +28,8 @@ public class Hooks implements IXposedHookLoadPackage {
         if ("tud.seemuh.nfcgate".equals(lpparam.packageName)) {
             findAndHookMethod("tud.seemuh.nfcgate.nfc.NfcManager", lpparam.classLoader,
                     "isHookLoaded", XC_MethodReplacement.returnConstant(true));
-        }
-        else if ("com.android.nfc".equals(lpparam.packageName)) {
-            // hook construtor to catch application context
+        } else if ("com.android.nfc".equals(lpparam.packageName)) {
+            // hook constructor to catch application context
             findAndHookConstructor("com.android.nfc.NfcService", lpparam.classLoader, Application.class, new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -38,14 +41,13 @@ public class Hooks implements IXposedHookLoadPackage {
                 }
             });
 
-            // hook findSelectAid to route all APDUs to our app
+            // hook findSelectAid to route all HCE APDUs to our app
             findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager", lpparam.classLoader, "findSelectAid", byte[].class, new XC_MethodHook() {
                 @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 
-                    if (isNativeEnabled()) {
-                        Log.i("HOOKNFC", "enabled");
-                        // setting a result will prevent the original method to run.
+                    if (isHookEnabled() && param.getResult() != null) {
+                        // setting a result will overwrite the original result
                         // F0010203040506 is a aid registered by the nfcgate hce service
                         param.setResult("F0010203040506");
                     }
@@ -65,35 +67,112 @@ public class Hooks implements IXposedHookLoadPackage {
                 }
             });
 
-            // hook transceive method for on-device capture
+            // hook transceive method for on-device capture of request/response data
             findAndHookMethod("com.android.nfc.NfcService.TagService", lpparam.classLoader, "transceive", int.class, byte[].class, boolean.class, new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    // TODO: figure out where to store this and how to transfer it to the UI
 
-                    // nfc command
-                    byte[] cmd = (byte[]) param.args[1];
-                    // nfc response
-                    byte[] response = (byte[]) param.getResult().getClass().getMethod("getResponseOrThrow").invoke(param.getResult());
-                    // timestamp
-                    long timestamp = System.currentTimeMillis();
+                    if (isCaptureEnabled()) {
+                        byte[] commandData = (byte[]) param.args[1];
+                        addCaptureData(false, commandData);
 
-                    Log.d("HOOKNFC", "Captured data: at " + timestamp + " got " + cmd.length + "/" + response.length);
+                        byte[] responseData = (byte[]) param.getResult().getClass().getMethod("getResponseOrThrow").invoke(param.getResult());
+                        addCaptureData(true, responseData);
+
+                        Log.d("HOOKNFC", "Captured tag read");
+                    }
 
                 }
             });
 
+            // hook tag dispatch for on-device capture of initial data
+            findAndHookMethod("com.android.nfc.NfcDispatcher", lpparam.classLoader, "dispatchTag", Tag.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+
+                    if (isCaptureEnabled()) {
+                        Tag tag = (Tag) param.args[0];
+                        addCaptureInitial(tag);
+
+                        Log.d("HOOKNFC", "Captured initial data");
+                    }
+                }
+            });
+
+            // hook onHostEmulationData method for on-device HCE request capture
+            findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager", lpparam.classLoader, "onHostEmulationData", byte[].class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+
+                    if (isCaptureEnabled()) {
+                        byte[] commandData = (byte[]) param.args[0];
+                        addCaptureData(false, commandData);
+
+                        Log.d("HOOKNFC", "Captured HCE request");
+                    }
+                }
+            });
+
+            // hook sendData method for on-device HCE response capture
+            findAndHookMethod("com.android.nfc.NfcService", lpparam.classLoader, "sendData", byte[].class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+
+                    if (isCaptureEnabled()) {
+                        byte[] responseData = (byte[]) param.args[0];
+                        addCaptureData(true, responseData);
+
+                        Log.d("HOOKNFC", "Captured HCE response");
+                    }
+                }
+            });
         }
     }
 
-    private boolean isNativeEnabled() {
+    private void addCaptureInitial(Parcelable initial) {
+        Bundle capture = new Bundle();
+        capture.putString("type", "INITIAL");
+        capture.putParcelable("data", initial);
+        capture.putLong("timestamp", System.currentTimeMillis());
+
+        addCapture(capture);
+    }
+
+    private void addCaptureData(boolean tag, byte[] data) {
+        Bundle capture = new Bundle();
+        capture.putString("type", tag ? "TAG" : "READER");
+        capture.putByteArray("data", data);
+        capture.putLong("timestamp", System.currentTimeMillis());
+
+        addCapture(capture);
+    }
+
+    private boolean isHookEnabled() {
         try {
-            return (boolean)mReceiver.getClass().getMethod("isEnabled").invoke(mReceiver);
+            return (boolean)mReceiver.getClass().getMethod("isHookEnabled").invoke(mReceiver);
         } catch (Exception e) {
-            Log.e("HOOKNFC", "Failed to check native enabled", e);
+            Log.e("HOOKNFC", "Failed to get isHookEnabled", e);
         }
 
         return false;
+    }
+
+    private boolean isCaptureEnabled() {
+        try {
+            return (boolean)mReceiver.getClass().getMethod("isCaptureEnabled").invoke(mReceiver);
+        } catch (Exception e) {
+            Log.e("HOOKNFC", "Failed to get isCaptureEnabled", e);
+        }
+
+        return false;
+    }
+
+    private void addCapture(Bundle capture) {
+        try {
+            mReceiver.getClass().getMethod("addCapture", Bundle.class).invoke(mReceiver, capture);
+        } catch (Exception e) {
+            Log.e("HOOKNFC", "Failed to get addCaptureData", e);
+        }
     }
 
     private Object loadOrInjectClass(Context ctx, String sourcePackage,

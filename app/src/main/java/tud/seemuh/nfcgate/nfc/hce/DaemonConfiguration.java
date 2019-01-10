@@ -13,34 +13,40 @@ public class DaemonConfiguration {
         mCtx = ctx;
     }
 
-    public void upload(byte[] config) {
-        send("UPLOAD", config);
+    /**
+     * Sets the config in the NFC Service hook
+     *
+     * @param config A config stream enables the hook, null disables it
+     */
+    public void setConfig(byte[] config) {
+        send(getIntent("SET_CONFIG").putExtra("config", config));
     }
 
-    public void enable() {
-        send("ENABLE", null);
+    /**
+     * Sets the polling state
+     *
+     * @param enabled True enables polling, false disables it
+     */
+    public void setPolling(boolean enabled) {
+        send(getIntent("SET_POLLING").putExtra("enabled", enabled));
     }
 
-    public void disable() {
-        send("DISABLE", null);
+    /**
+     * Enables or disables on-device capture
+     *
+     * @param enabled True enables on-device capture, false disables it
+     */
+    public void setCapture(boolean enabled) {
+        send(getIntent("SET_CAPTURE").putExtra("enabled", enabled));
     }
 
-    public void enablePolling() {
-        send("ENABLE_POLLING", null);
+    private Intent getIntent(String op) {
+        return new Intent()
+                .setAction("tud.seemuh.nfcgate.daemoncall")
+                .putExtra("op", op);
     }
 
-    public void disablePolling() {
-        send("DISABLE_POLLING", null);
-    }
-
-    private void send(String action, byte[] config) {
-        Intent intent = new Intent();
-        intent.setAction("tud.seemuh.nfcgate.daemoncall");
-
-        intent.putExtra("action", action);
-        if (config != null)
-            intent.putExtra("config", config);
-
+    private void send(Intent intent) {
         mCtx.sendBroadcast(intent);
     }
 }

@@ -45,6 +45,7 @@
 
             <intent-filter>
                 <action android:name="tud.seemuh.nfcgate.main" />
+                <action android:name="tud.seemuh.nfcgate.capture" />
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
 

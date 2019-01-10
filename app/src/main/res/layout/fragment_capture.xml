@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+
+    android:orientation="vertical"
+    >
+    <TextView
+        android:id="@+id/capture_idle_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@android:style/TextAppearance.DeviceDefault.Medium"
+
+        android:textColor="#000000"
+        android:text="No capture in progress"
+        />
+    <TextView
+        android:id="@+id/capture_progress_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@android:style/TextAppearance.DeviceDefault.Medium"
+
+        android:visibility="gone"
+        android:textColor="#b71c1c"
+        android:text="Capture in progress..."
+        />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        >
+        <LinearLayout
+            android:id="@+id/capture_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:background="?android:attr/selectableItemBackground"
+            android:orientation="vertical"
+            android:padding="10dp"
+            >
+            <ImageView
+                android:id="@+id/capture_start_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+
+                android:scaleX="0.7"
+                android:scaleY="0.7"
+                android:src="@drawable/ic_record_grey_60dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+
+                android:text="Begin Capture"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/capture_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:background="?android:attr/selectableItemBackground"
+            android:orientation="vertical"
+            android:padding="10dp"
+            >
+            <ImageView
+                android:id="@+id/capture_stop_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+
+                android:src="@drawable/ic_stop_grey_60dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+
+                android:text="Stop Capture"
+                />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

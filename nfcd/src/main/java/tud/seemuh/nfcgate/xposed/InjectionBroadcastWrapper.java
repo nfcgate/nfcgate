@@ -5,47 +5,64 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.BroadcastReceiver;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Looper;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 public class InjectionBroadcastWrapper extends BroadcastReceiver {
+    private Context mCtx;
+    private boolean mCaptureEnabled = false;
+    private ArrayList<Bundle> mCaptured = new ArrayList<>();
+
 
     public InjectionBroadcastWrapper(Context ctx) {
+        mCtx = ctx;
+
         // load our native library
         loadForeignLibrary(ctx, "tud.seemuh.nfcgate", "nfcgate");
 
-        HandlerThread handlerThread = new HandlerThread("ht");
-        handlerThread.start();
-        Looper looper = handlerThread.getLooper();
-        Handler handler = new Handler(looper);
-        ctx.registerReceiver(this, new IntentFilter("tud.seemuh.nfcgate.daemoncall"), null, handler);
+        // start broadcast receiver on handler thread
+        HandlerThread ht = new HandlerThread("ht");
+        ht.start();
+        ctx.registerReceiver(this, new IntentFilter("tud.seemuh.nfcgate.daemoncall"), null, new Handler(ht.getLooper()));
     }
 
-    public boolean isEnabled() {
-        return Native.Instance.isEnabled();
+    public boolean isHookEnabled() {
+        return Native.Instance.isHookEnabled();
+    }
+
+    public boolean isCaptureEnabled() {
+        return mCaptureEnabled;
+    }
+
+    public void addCapture(Bundle capture) {
+        mCaptured.add(capture);
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        String action = intent.getStringExtra("action");
-        Log.d("NATIVENFC", "Command: " + action);
+        String op = intent.getStringExtra("op");
+        Log.d("NATIVENFC", "Command: " + op);
 
-        if("ENABLE".equals(action)) {
-            Native.Instance.setEnabled(true);
+        if ("SET_CONFIG".equals(op)) {
+            Native.Instance.setConfiguration(intent.getByteArrayExtra("config"));
         }
-        else if("DISABLE".equals(action)) {
-            Native.Instance.setEnabled(false);
+        else if ("SET_POLLING".equals(op)) {
+            Native.Instance.setPolling(intent.getBooleanExtra("enabled", false));
         }
-        else if("ENABLE_POLLING".equals(action)) {
-            Native.Instance.enablePolling();
-        }
-        else if("DISABLE_POLLING".equals(action)) {
-            Native.Instance.disablePolling();
-        }
-        else if("UPLOAD".equals(action)) {
-            Native.Instance.uploadConfiguration(intent.getByteArrayExtra("config"));
+        else if ("SET_CAPTURE".equals(op)) {
+            mCaptureEnabled = intent.getBooleanExtra("enabled", false);
+
+            if (!mCaptureEnabled) {
+                mCtx.startActivity(new Intent()
+                        .setPackage("tud.seemuh.nfcgate")
+                        .setAction("tud.seemuh.nfcgate.capture")
+                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .putParcelableArrayListExtra("capture", mCaptured));
+            }
         }
     }
 

@@ -2,8 +2,8 @@
 
 static void hookNative() __attribute__((constructor));
 SymbolTable *SymbolTable::mInstance;
-Config origValues, patchValues;
-bool patchEnabled = false;
+Config origValues, hookValues;
+bool hookEnabled = false;
 Hook *hNFC_SetConfig;
 Hook *hNFC_Deactivate;
 Hook *hNFA_StopRfDiscovery;
@@ -13,23 +13,23 @@ Hook *hNFA_EnablePolling;
 
 /**
  * Prevent already set values from being overwritten.
- * Save original values to reset them when disabling patch.
+ * Save original values to reset them when disabling hook.
  */
 tNFC_STATUS hook_NFC_SetConfig(uint8_t size, uint8_t *tlv) {
     hNFC_SetConfig->precall();
 
     loghex("NfcSetConfig IN", tlv, size);
-    LOGD("NfcSetConfig Enabled: %d", patchEnabled);
+    LOGD("NfcSetConfig Enabled: %d", hookEnabled);
 
     Config cfg, actual;
     cfg.parse(size, tlv);
 
     for (auto &opt : cfg.options()) {
-        // if this option would override one of the patch options, prevent it
+        // if this option would override one of the hook options, prevent it
         bool preventMe = false;
 
-        for (auto &patch_opt : patchValues.options())
-            if (patch_opt.type() == opt.type())
+        for (auto &hook_opt : hookValues.options())
+            if (hook_opt.type() == opt.type())
                 preventMe = true;
 
         if (!preventMe)

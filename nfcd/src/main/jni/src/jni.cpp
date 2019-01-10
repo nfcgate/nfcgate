@@ -28,29 +28,27 @@ void uploadConfig(Config &config) {
 }
 
 extern "C" {
-    JNIEXPORT jboolean JNICALL Java_tud_seemuh_nfcgate_xposed_Native_isEnabled(JNIEnv *, jobject) {
-        return patchEnabled;
+    JNIEXPORT jboolean JNICALL Java_tud_seemuh_nfcgate_xposed_Native_isHookEnabled(JNIEnv *, jobject) {
+        return hookEnabled;
     }
 
-    JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_xposed_Native_disablePolling(JNIEnv *, jobject) {
-        enableDisablePolling(false);
+    JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_xposed_Native_setConfiguration(JNIEnv *env, jobject, jbyteArray config) {
+        if (!env->IsSameObject(config, nullptr)) {
+            jsize config_len = env->GetArrayLength(config);
+            jbyte *config_data = env->GetByteArrayElements(config, 0);
+            hookValues.parse(config_len, (uint8_t *) config_data);
+            env->ReleaseByteArrayElements(config, config_data, 0);
+
+            hookEnabled = true;
+            uploadConfig(hookValues);
+        }
+        else {
+            hookEnabled = false;
+            uploadConfig(origValues);
+        }
     }
 
-    JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_xposed_Native_enablePolling(JNIEnv *, jobject) {
-        enableDisablePolling(true);
-    }
-
-    JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_xposed_Native_setEnabled(JNIEnv *, jobject, jboolean enabled) {
-        patchEnabled = enabled;
-        uploadConfig(enabled ? patchValues : origValues);
-    }
-
-    JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_xposed_Native_uploadConfiguration(JNIEnv *env, jobject, jbyteArray config) {
-        jsize config_len = env->GetArrayLength(config);
-        jbyte *config_data = env->GetByteArrayElements(config, 0);
-
-        patchValues.parse(config_len, (uint8_t *) config_data);
-
-        env->ReleaseByteArrayElements(config, config_data, 0);
+    JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_xposed_Native_setPolling(JNIEnv *, jobject, jboolean enabled) {
+        enableDisablePolling(enabled);
     }
 }

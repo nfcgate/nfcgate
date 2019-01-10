@@ -9,8 +9,8 @@
 #define NFCD_DEBUG true
 
 // hook definitions
-extern Config origValues, patchValues;
-extern bool patchEnabled;
+extern Config origValues, hookValues;
+extern bool hookEnabled;
 extern Hook *hNFC_SetConfig;
 tNFC_STATUS hook_NFC_SetConfig(UINT8 tlv_size, UINT8 *p_param_tlvs);
 tNFC_STATUS hook_NFC_Deactivate(UINT8 deactivate_type);
