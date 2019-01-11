@@ -5,8 +5,9 @@ import android.util.Log;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import tud.seemuh.nfcgate.network.data.NetworkStatus;
 import tud.seemuh.nfcgate.network.data.SendRecord;
@@ -28,7 +29,7 @@ public class ServerConnection {
     // threading
     private SendThread mSendThread;
     private ReceiveThread mReceiveThread;
-    private Queue<SendRecord> mSendQueue = new LinkedList<>();
+    private BlockingQueue<SendRecord> mSendQueue = new LinkedBlockingQueue<>();
 
     // metadata
     private Callback mCallback;
@@ -40,7 +41,7 @@ public class ServerConnection {
         mPort = port;
     }
 
-    public ServerConnection setCallback(Callback cb) {
+    ServerConnection setCallback(Callback cb) {
         mCallback = cb;
         return this;
     }
@@ -48,7 +49,7 @@ public class ServerConnection {
     /**
      * Connects to the socket, enables async I/O
      */
-    public ServerConnection connect() {
+    ServerConnection connect() {
         // I/O threads
         mSendThread = new SendThread(this);
         mReceiveThread = new ReceiveThread(this);
@@ -60,7 +61,7 @@ public class ServerConnection {
     /**
      * Closes the connection and releases all resources
      */
-    public void disconnect() {
+    void disconnect() {
         if (mSendThread != null)
             mSendThread.interrupt();
 
@@ -71,7 +72,7 @@ public class ServerConnection {
     /**
      * Wait some time to allow sendQueue to be processed
      */
-    public void sync() {
+    void sync() {
         if (mSendQueue.peek() != null) {
             try {
                 Thread.sleep(20);
@@ -136,7 +137,7 @@ public class ServerConnection {
     /**
      * SendThread accesses sendQueue
      */
-    public Queue<SendRecord> getSendQueue() {
+    public BlockingQueue<SendRecord> getSendQueue() {
         return mSendQueue;
     }
 

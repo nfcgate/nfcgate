@@ -38,12 +38,10 @@ public abstract class BaseThread extends Thread {
 
         while (!mExit && !Thread.currentThread().isInterrupted()) {
             try {
-                Thread.sleep(10);
                 runInternal();
             }
             catch (InterruptedException e) {
-                // This flag is important as sleep() resets the interrupted flag
-                mExit = true;
+                // loop
             }
             catch (IOException e) {
                 mExit = true;
@@ -56,6 +54,6 @@ public abstract class BaseThread extends Thread {
     }
 
     abstract void initThread() throws IOException;
-    abstract void runInternal() throws IOException;
+    abstract void runInternal() throws IOException, InterruptedException;
     abstract void onError(Exception e);
 }
