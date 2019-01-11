@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.List;
 
 import tud.seemuh.nfcgate.R;
 import tud.seemuh.nfcgate.db.SessionLog;
@@ -35,6 +36,7 @@ import tud.seemuh.nfcgate.gui.fragment.RelayFragment;
 import tud.seemuh.nfcgate.gui.fragment.ReplayFragment;
 import tud.seemuh.nfcgate.gui.fragment.SettingsFragment;
 import tud.seemuh.nfcgate.nfc.NfcManager;
+import tud.seemuh.nfcgate.nfc.reader.NFCTagReader;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 public class MainActivity extends AppCompatActivity {
@@ -136,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         else if (Intent.ACTION_VIEW.equals(intent.getAction()))
             importPcap(intent.getData());
         else if ("tud.seemuh.nfcgate.capture".equals(intent.getAction()))
-            Toast.makeText(this, "GOT CAPTURE", Toast.LENGTH_SHORT).show();
+            importCapture(intent.<Bundle>getParcelableArrayListExtra("capture"));
         else
             super.onNewIntent(intent);
     }
@@ -219,6 +221,26 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
             Toast.makeText(this, "Pcap import error", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void importCapture(List<Bundle> capture) {
+        LogInserter inserter = new LogInserter(this, SessionLog.SessionType.RELAY, null);
+
+        for (Bundle b : capture)
+            inserter.log(fromBundle(b));
+
+        Toast.makeText(this, "Capture data added to log", Toast.LENGTH_SHORT).show();
+    }
+
+    // TODO: move this
+    NfcComm fromBundle(Bundle b) {
+        String type = b.getString("type");
+        long timestamp = b.getLong("timestamp");
+
+        if ("INITIAL".equals(type))
+            return new NfcComm(true, true, NFCTagReader.create(b.<Tag>getParcelable("data")).getConfig().build(), timestamp);
+        else
+            return new NfcComm("TAG".equals(type), false, b.getByteArray("data"), timestamp);
     }
 
     @Override

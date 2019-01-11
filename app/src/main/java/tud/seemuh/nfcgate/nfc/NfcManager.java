@@ -29,7 +29,7 @@ import tud.seemuh.nfcgate.nfc.reader.NfcVReader;
 import tud.seemuh.nfcgate.util.NfcComm;
 
 public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Callback {
-    private final String TAG = "NfcManager";
+    private static final String TAG = "NfcManager";
 
     // singleton
     private static NfcManager mInstance;
@@ -47,7 +47,6 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     // state
     private boolean mReaderMode = false;
     private boolean mPollingEnabled = true;
-    private Tag mTag;
     private NFCTagReader mReader;
     private BaseMode mMode = null;
 
@@ -155,11 +154,13 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     @Override
     public void onTagDiscovered(Tag tag) {
         // Select technology by tag
-        mTag = tag;
-        mReader = fromTag();
+        mReader = NFCTagReader.create(tag);
 
         if (mReader != null) {
-            Log.i(TAG, "Discovered new Tag: " + mReader.getProtocol());
+            Log.i(TAG, "Discovered new Tag: " + mReader.getClass().getName());
+
+            // connect to tag
+            mReader.connect();
 
             // handle initial card data according to mode
             handleData(false, new NfcComm(true, true, mReader.getConfig().build()));
@@ -175,7 +176,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
         if (mMode != null)
             mMode.onData(isForeign, data);
         else
-            mReader.closeConnection();
+            mReader.close();
     }
 
     /**
@@ -224,7 +225,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
         }
         else if (mReaderMode) {
             // send data to tag and get reply
-            byte[] reply = mReader.sendCmd(data.getData());
+            byte[] reply = mReader.transceive(data.getData());
 
             // send reply
             if (reply == null)
@@ -241,8 +242,6 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
         }
     }
 
-    // PRIVATE
-
     /**
      * Forward status to current mode
      */
@@ -252,39 +251,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
             mMode.onNetworkStatus(status);
     }
 
-    /**
-     * Picks the highest available technology for a given Tag
-     */
-    private NFCTagReader fromTag() {
-        List<String> technologies = Arrays.asList(mTag.getTechList());
-
-        // look for higher layer technology
-        if (technologies.contains(Technologies.IsoDep)) {
-            // an IsoDep tag can be backed by either NfcA or NfcB technology
-            if (technologies.contains(Technologies.A))
-                return new IsoDepReader(mTag, NfcA.get(mTag));
-            else if (technologies.contains(Technologies.B))
-                return new IsoDepReader(mTag, NfcB.get(mTag));
-            else
-                Log.e(TAG, "Unknown tag technology backing IsoDep" +
-                        TextUtils.join(", ", technologies));
-        }
-
-        for (String tech : technologies) {
-            switch (tech) {
-                case Technologies.A:
-                    return new NfcAReader(mTag);
-                case Technologies.B:
-                    return new NfcBReader(mTag);
-                case Technologies.F:
-                    return new NfcFReader(mTag);
-                case Technologies.V:
-                    return new NfcVReader(mTag);
-            }
-        }
-
-        return null;
-    }
+    // PRIVATE
 
     @Override
     public void onReceive(final NfcComm data) {
