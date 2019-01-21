@@ -100,6 +100,7 @@ public class Hooks implements IXposedHookLoadPackage {
             });
 
             // hook onHostEmulationData method for on-device HCE request capture
+            // FIXME: this was renamed in lollipop: notifyHostEmulationData -> onHostEmulationData
             findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager", lpparam.classLoader, "onHostEmulationData", byte[].class, new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -109,6 +110,20 @@ public class Hooks implements IXposedHookLoadPackage {
                         addCaptureData(false, commandData);
 
                         Log.d("HOOKNFC", "Captured HCE request");
+                    }
+                }
+            });
+
+            // hook notifyHostEmulationActivated method for on-device HCE initial capture
+            // FIXME: this was renamed in lollipop: notifyHostEmulationActivated -> onHostEmulationActivated
+            findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager", lpparam.classLoader, "onHostEmulationActivated", new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+
+                    if (isCaptureEnabled()) {
+                        addCaptureInitial(null);
+
+                        Log.d("HOOKNFC", "Captured HCE initial data");
                     }
                 }
             });

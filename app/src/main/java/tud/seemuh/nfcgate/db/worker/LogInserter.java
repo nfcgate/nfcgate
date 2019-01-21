@@ -46,7 +46,7 @@ public class LogInserter {
     }
 
     public void reset() {
-        setSessionId(-1);
+        log(new NfcComm(false, true, null));
     }
 
     class LogInserterThread extends Thread {
@@ -61,10 +61,14 @@ public class LogInserter {
                 try {
                     NfcComm data = mQueue.take();
 
-                    if (mSessionId == -1)
+                    // set session id if none is set or reset it on new initial data
+                    if (mSessionId == -1 || data.isInitial())
                         setSessionId(mDatabase.sessionLogDao().insert(new SessionLog(new Date(), mSessionType)));
 
-                    mDatabase.nfcCommEntryDao().insert(new NfcCommEntry(data, mSessionId));
+                    // do not log empty initials only used for reset
+                    if (!data.isInitial() || data.getData() != null)
+                        mDatabase.nfcCommEntryDao().insert(new NfcCommEntry(data, mSessionId));
+
                 } catch (InterruptedException ignored) { }
             }
         }

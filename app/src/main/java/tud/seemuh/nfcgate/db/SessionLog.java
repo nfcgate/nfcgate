@@ -13,7 +13,8 @@ public class SessionLog {
 
     public enum SessionType {
         RELAY,
-        REPLAY
+        REPLAY,
+        CAPTURE
     }
 
     @PrimaryKey(autoGenerate = true)

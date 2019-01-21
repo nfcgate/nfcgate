@@ -198,6 +198,8 @@ public class LoggingFragment extends Fragment {
                     return R.drawable.ic_relay_black_24dp;
                 case REPLAY:
                     return R.drawable.ic_replay_black_24dp;
+                case CAPTURE:
+                    return R.drawable.ic_capture_black_24dp;
             }
         }
 
@@ -212,7 +214,7 @@ public class LoggingFragment extends Fragment {
             View v = super.getView(position, convertView, parent);
             final SessionLog entry = getItem(position);
 
-            // set image indicating card or reader
+            // set image indicating relay, replay, capture
             v.<ImageView>findViewById(R.id.type).setImageResource(byType(entry.getType()));
             // set title to date
             v.<TextView>findViewById(R.id.title).setText(entry.getDate().toString());

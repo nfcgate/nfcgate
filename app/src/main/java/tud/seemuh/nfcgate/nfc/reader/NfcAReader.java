@@ -2,6 +2,7 @@ package tud.seemuh.nfcgate.nfc.reader;
 
 import android.nfc.Tag;
 import android.nfc.tech.NfcA;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.IOException;
@@ -18,10 +19,11 @@ public class NfcAReader extends NFCTagReader {
      *
      * @param tag: A tag using the NfcA technology.
      */
-    public NfcAReader(Tag tag) {
+    NfcAReader(Tag tag) {
         super(NfcA.get(tag));
     }
 
+    @NonNull
     @Override
     public ConfigBuilder getConfig() {
         ConfigBuilder builder = new ConfigBuilder();

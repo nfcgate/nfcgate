@@ -5,6 +5,7 @@ import android.nfc.tech.IsoDep;
 import android.nfc.tech.NfcA;
 import android.nfc.tech.NfcB;
 import android.nfc.tech.TagTechnology;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.IOException;
@@ -39,6 +40,7 @@ public class IsoDepReader extends NFCTagReader {
             mUnderlying = new NfcBReader(tag);
     }
 
+    @NonNull
     @Override
     public ConfigBuilder getConfig() {
         ConfigBuilder builder = mUnderlying.getConfig();

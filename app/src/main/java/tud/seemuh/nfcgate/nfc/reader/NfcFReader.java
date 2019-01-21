@@ -2,6 +2,7 @@ package tud.seemuh.nfcgate.nfc.reader;
 
 import android.nfc.Tag;
 import android.nfc.tech.NfcF;
+import android.support.annotation.NonNull;
 
 import tud.seemuh.nfcgate.nfc.config.ConfigBuilder;
 import tud.seemuh.nfcgate.nfc.config.OptionType;
@@ -19,6 +20,7 @@ public class NfcFReader extends NFCTagReader {
         super(NfcF.get(tag));
     }
 
+    @NonNull
     @Override
     public ConfigBuilder getConfig() {
         ConfigBuilder builder = new ConfigBuilder();

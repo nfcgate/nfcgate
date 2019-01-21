@@ -224,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void importCapture(List<Bundle> capture) {
-        LogInserter inserter = new LogInserter(this, SessionLog.SessionType.RELAY, null);
+        LogInserter inserter = new LogInserter(this, SessionLog.SessionType.CAPTURE, null);
 
         for (Bundle b : capture)
             inserter.log(fromBundle(b));
@@ -236,9 +236,12 @@ public class MainActivity extends AppCompatActivity {
     NfcComm fromBundle(Bundle b) {
         String type = b.getString("type");
         long timestamp = b.getLong("timestamp");
+        Tag initial = b.getParcelable("data");
 
-        if ("INITIAL".equals(type))
-            return new NfcComm(true, true, NFCTagReader.create(b.<Tag>getParcelable("data")).getConfig().build(), timestamp);
+        if ("INITIAL".equals(type)) {
+            byte[] data = initial != null ? NFCTagReader.create(initial).getConfig().build() : null;
+            return new NfcComm(true, true, data, timestamp);
+        }
         else
             return new NfcComm("TAG".equals(type), false, b.getByteArray("data"), timestamp);
     }

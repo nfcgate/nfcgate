@@ -57,11 +57,15 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
             mCaptureEnabled = intent.getBooleanExtra("enabled", false);
 
             if (!mCaptureEnabled) {
+                // deliver capture
                 mCtx.startActivity(new Intent()
                         .setPackage("tud.seemuh.nfcgate")
                         .setAction("tud.seemuh.nfcgate.capture")
                         .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         .putParcelableArrayListExtra("capture", mCaptured));
+
+                // delete capture
+                mCaptured.clear();
             }
         }
     }
