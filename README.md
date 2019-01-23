@@ -1,23 +1,38 @@
-nfcgate
+NFCGate
 =======
 
-NFCGate is an Android application meant to relay communication between an NFC reader and a card. That way, NFC cards can be read over longer distances (we successfully read a card in Hamburg with a reader in Darmstadt). This also allows eavesdropping on the communication between card and reader, in order to reverse engineer the protocol, or modifying the traffic to test the security of the implementation, for example.
+NFCGate is an Android application meant to capture, analyze, or modify NFC traffic. It can be used to reverse engineer protocols or assess the security of protocols against traffic modifications.
 
 ## Notice
-This application was developed for security research purposes by students of the [TU Darmstadt](https://www.tu-darmstadt.de/), [Secure Mobile Networking Lab](https://www.seemoo.tu-darmstadt.de/). Please do not use this application for malicious purposes.
+This application was developed for security research purposes by students of the [Secure Mobile Networking Lab](https://www.seemoo.tu-darmstadt.de/) at [TU Darmstadt](https://www.tu-darmstadt.de/). Please do not use this application for malicious purposes.
 
-This application was presented at WiSec 2015. The [extended Abstract](https://blog.velcommuta.de/wp-content/uploads/2015/07/nfcgate-extended-abstract.pdf) (slightly outdated by now) and [poster](https://blog.velcommuta.de/wp-content/uploads/2015/07/NFCGate-Poster.pdf) (pretty up-to-date) can be found on the [website](https://blog.velcommuta.de/publications/) of one of the authors. It was also presented in a brief [Lightning Talk](https://media.ccc.de/browse/conferences/camp2015/camp2015-6862-lightning_talks_day_2.html#video&t=300) at the [Chaos Communication Camp 2015](https://events.ccc.de/camp/2015/wiki/Main_Page).
+## Features
+- **On-device capture**: Captures NFC traffic sent and received by other applications running on the device.
+- **Relay**: Relays NFC traffic between two devices. One device operates as a "reader" reading an NFC tag, the other device emulates an NFC tag using the Host Card Emulation (HCE).
+- **Replay**: Replays previously captured NFC traffic in either "reader" or "tag" mode.
+- **Clone**: Clones the initial tag information (e.g. ID).
+- PCAPNG export of captured NFC traffic, readable by Wireshark.
 
-## Requirements
-- Two android phones with NFC Chips, running Android 4.4+ (API-Level 19+).
-- At least one of these devices needs to support HCE (Host Card Emulation). Most NFC-Enabled phones of the last few years should support that.
+## Requirements for specific modes
+- NFC support
+- Android 4.4+ (API level 19+)
+- [Xposed](https://repo.xposed.info/): On-device capture, relay tag mode, replay tag mode, clone mode.
+- ARMv8-A, ARMv7: Relay tag mode, replay tag mode, clone mode.
+- [HCE](https://developer.android.com/guide/topics/connectivity/nfc/hce): Relay tag mode, replay tag mode, clone mode.
+
+
+
+### Android version compatibility
+See the [compatibility matrix](docs/Compatibility.md).  
+
+## Known Issues
+??
+
+### 
 - The HCE phone needs to use `libnfc-nci` (compatible phones include the Nexus 4 and 5, more on that below).
-- The HCE phone needs to be rooted and have [Xposed](http://repo.xposed.info/) installed and enabled
-- One server to proxy communication between the two phones (see [server](https://github.com/nfcgate/server) repository for relevant code)
 
-## Requirements for compilation
-- Android Studio
-- Android NDK (required to compile our native code patch)
+### 
+### 
 
 ## Usage
 The usage of this application is a bit fiddly right now, so follow these instructions exactly in order to make sure everything works.
@@ -44,8 +59,6 @@ The patch is also only compatible with devices that can run Xposed. For Android 
 
 NFCGate supports ARM, THUMB, and ARM64 ABIs only.
 
-### Android version compatibility
-NFCGate is successfully tested on Android 4.4, 6, 7, 7.1. Any other version remains untested. 
 
 ### DESFire workaround
 The Android NFC Libraries contain a bug which makes it impossible to use our application with MiFare DESFire cards (a common NFC card for payment systems). We are using a workaround to enable us to still read these cards, but that workaround has some side effects. When you start the application, you will get a warning. Please read the information carefully.
@@ -64,11 +77,24 @@ Some features of NFC are not supported by Android and thus cannot be used with o
 ### Confidentiality of data channel
 Right now, all data in relay mode is sent *unencrypted* over the network. We may or may not get around to implementing cryptographic protection, but for now, consider everything you send over the network to be readable by anyone interested, unless you use extra protection like VPNs. Keep that in mind while performing your own tests.
 
+
+
+### 
+### 
+
+
+## Publications and Media
+This application was presented at WiSec 2015. The [extended Abstract](https://blog.velcommuta.de/wp-content/uploads/2015/07/nfcgate-extended-abstract.pdf) (outdated by now) and [poster](https://blog.velcommuta.de/wp-content/uploads/2015/07/NFCGate-Poster.pdf) (slightly outdated) can be found on the [website](https://blog.velcommuta.de/publications/) of one of the authors. It was also presented in a brief [Lightning Talk](https://media.ccc.de/browse/conferences/camp2015/camp2015-6862-lightning_talks_day_2.html#video&t=300) at the [Chaos Communication Camp 2015](https://events.ccc.de/camp/2015/wiki/Main_Page).
+
 ## Used Libraries
-This application uses the following external libraries:
-- [Xposed](http://repo.xposed.info/) (Licensed under the [Apache License v2.0](http://opensource.org/licenses/Apache-2.0))
+- [Xposed Bridge](https://github.com/rovo89/XposedBridge) (Licensed under the [Apache License v2.0](http://opensource.org/licenses/Apache-2.0))
 - [LibNFC-NCI](https://android.googlesource.com/platform/external/libnfc-nci/) (Licensed under the [Apache License v2.0](http://opensource.org/licenses/Apache-2.0))
-- [Protobuf](https://code.google.com/p/protobuf/) (Licensed under the [BSD 3-Clause license](http://opensource.org/licenses/BSD-3-Clause))
+- [Protobuf](https://github.com/protocolbuffers/protobuf) (Licensed under the modified [BSD 3-Clause License](http://opensource.org/licenses/BSD-3-Clause))
+- [Android About Page](https://github.com/medyo/android-about-page) (Licensed under the [MIT License](https://opensource.org/licenses/MIT))
+- [Android Device Names](https://github.com/jaredrummler/AndroidDeviceNames) (Licensed under the [Apache License v2.0](http://opensource.org/licenses/Apache-2.0))
+- [Android Support library - preference v7 bugfix](https://github.com/Gericop/Android-Support-Preference-V7-Fix) (Released into the public domain and partly licensed under the [Apache License v2.0](http://opensource.org/licenses/Apache-2.0))
+- [Android Room](https://developer.android.com/topic/libraries/architecture/room) (Licensed under the [Apache License v2.0](http://opensource.org/licenses/Apache-2.0))
+- [Android Lifecycle](https://developer.android.com/topic/libraries/architecture/lifecycle) (Licensed under the [Apache License v2.0](http://opensource.org/licenses/Apache-2.0))
 
 ## Credits
 - [ADBI](https://github.com/crmulliner/adbi): ARM and THUMB inline hooking
