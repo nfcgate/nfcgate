@@ -74,20 +74,6 @@ This application was presented at WiSec 2015. The [extended Abstract](https://bl
 ### 
 ### 
 
-The usage of this application is a bit fiddly right now, so follow these instructions exactly in order to make sure everything works.
-
-After having installed and activated Xposed on at least one of the devices, install the application. Xposed will prompt you to reboot your phone, which you should do. Only the HCE device requires Xposed, the other one can work without it.
-
-Afterwards, launch the app on both phones. Enter the IP and Port of the Server (default Port is 5566, feel free to set default values in the settings to avoid having to type them in each time) and hit "Create session" on one of the devices. The device will connect and display a session token with 6 digits. Hit "Join session" on the other device and enter that code. You should now be connected.
-
-Now take the non-HCE-Phone and hold it to the card you want to read. The phone will detect the tag and read out some information, which will be sent to the HCE-Phone. There, it will be used to initialize and enable our patch to the Android NFC Daemon. Keep the phone attached to the card.
-
-Now (*and only now*), you can hold the HCE-Phone to the reader. **The first read may fail** if you are using a Device with a Broadcom BCM20793 chip like the Nexus 4. If this happens, just try again by removing the device from the reader and re-attaching it. So far, we have only observed this behaviour with the Nexus 4, other devices like the Nexus 5 seem to not be affected.
-
-If you have enabled it, the non-HCE-phone will display the raw bytes it received from the card in the debug window. In the future, we will add an option to dump them to a file for later analysis. The server will also display the bytes.
-
-Once you are done, you can remove the card and reader, and disconnect from the server using the disconnect button.
-
 ## Caveats
 ### DESFire workaround
 The Android NFC Libraries contain a bug which makes it impossible to use our application with MiFare DESFire cards (a common NFC card for payment systems). We are using a workaround to enable us to still read these cards, but that workaround has some side effects. When you start the application, you will get a warning. Please read the information carefully.
