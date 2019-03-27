@@ -69,14 +69,3 @@ This application was presented at WiSec 2015. The [extended Abstract](https://bl
 
 ## Credits
 - [ADBI](https://github.com/crmulliner/adbi): ARM and THUMB inline hooking
-
-
-### 
-### 
-
-## Caveats
-### DESFire workaround
-The Android NFC Libraries contain a bug which makes it impossible to use our application with MiFare DESFire cards (a common NFC card for payment systems). We are using a workaround to enable us to still read these cards, but that workaround has some side effects. When you start the application, you will get a warning. Please read the information carefully.
-
-### 
-### 
