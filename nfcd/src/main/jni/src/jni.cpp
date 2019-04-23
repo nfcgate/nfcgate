@@ -28,11 +28,11 @@ void uploadConfig(Config &config) {
 }
 
 extern "C" {
-    JNIEXPORT jboolean JNICALL Java_tud_seemuh_nfcgate_xposed_Native_isHookEnabled(JNIEnv *, jobject) {
+    JNIEXPORT jboolean JNICALL Java_de_tu_1darmstadt_seemoo_nfcgate_xposed_Native_isHookEnabled(JNIEnv *, jobject) {
         return hookEnabled;
     }
 
-    JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_xposed_Native_setConfiguration(JNIEnv *env, jobject, jbyteArray config) {
+    JNIEXPORT void JNICALL Java_de_tu_1darmstadt_seemoo_nfcgate_xposed_Native_setConfiguration(JNIEnv *env, jobject, jbyteArray config) {
         if (!env->IsSameObject(config, nullptr)) {
             jsize config_len = env->GetArrayLength(config);
             jbyte *config_data = env->GetByteArrayElements(config, 0);
@@ -48,7 +48,7 @@ extern "C" {
         }
     }
 
-    JNIEXPORT void JNICALL Java_tud_seemuh_nfcgate_xposed_Native_setPolling(JNIEnv *, jobject, jboolean enabled) {
+    JNIEXPORT void JNICALL Java_de_tu_1darmstadt_seemoo_nfcgate_xposed_Native_setPolling(JNIEnv *, jobject, jboolean enabled) {
         enableDisablePolling(enabled);
     }
 }

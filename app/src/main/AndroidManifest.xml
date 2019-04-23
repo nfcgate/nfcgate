@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="tud.seemuh.nfcgate" >
+    package="de.tu_darmstadt.seemoo.nfcgate" >
 
     <uses-permission
         android:name="android.permission.NFC"
@@ -44,8 +44,8 @@
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout">
 
             <intent-filter>
-                <action android:name="tud.seemuh.nfcgate.main" />
-                <action android:name="tud.seemuh.nfcgate.capture" />
+                <action android:name="de.tu_darmstadt.seemoo.nfcgate.main" />
+                <action android:name="de.tu_darmstadt.seemoo.nfcgate.capture" />
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
 
@@ -82,7 +82,7 @@
         </service>
 
         <provider
-            android:authorities="tud.seemuh.nfcgate"
+            android:authorities="de.tu_darmstadt.seemoo.nfcgate"
             android:name="android.support.v4.content.FileProvider"
             android:exported="false"
             android:grantUriPermissions="true">

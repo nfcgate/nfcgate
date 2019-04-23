@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="tud.seemuh.nfcgate.nfcd">
+    package="de.tu_darmstadt.seemoo.nfcgate.nfcd">
 
 
 </manifest>

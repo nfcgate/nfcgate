@@ -4,7 +4,7 @@ android {
     compileSdkVersion 27
 
     defaultConfig {
-        applicationId "tud.seemuh.nfcgate"
+        applicationId "de.tu_darmstadt.seemoo.nfcgate"
         minSdkVersion 19
         targetSdkVersion 27
         versionCode 3
