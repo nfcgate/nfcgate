@@ -7,6 +7,7 @@
         <CheckBoxPreference
             android:title="Enable Workaround"
             android:key="workaround"
+            android:enabled="false"
 
             android:summary="Enables the NFC Keep-Alive Workaround"
             />
@@ -46,6 +47,7 @@
     <PreferenceCategory
         android:title="Replay Settings"
         android:key="replay"
+        android:enabled="false"
         >
         <CheckBoxPreference
             android:title="Advanced Replay"
