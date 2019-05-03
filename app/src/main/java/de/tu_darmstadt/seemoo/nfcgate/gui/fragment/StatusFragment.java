@@ -126,6 +126,7 @@ public class StatusFragment extends BaseFragment {
     void detect() {
         mStatusAdapter.add(detectDeviceName());
         mStatusAdapter.add(detectAndroidVersion());
+        mStatusAdapter.add(detectBuildNumber());
         mStatusAdapter.add(detectNfcEnabled());
         mStatusAdapter.add(detectHceEnabled());
         mStatusAdapter.add(detectModuleEnabled());
@@ -154,6 +155,13 @@ public class StatusFragment extends BaseFragment {
         // Android 9 and above is unsupported in tag mode
         if (Build.VERSION.SDK_INT >= 28)
             result.setWarn(getString(R.string.warn_A9));
+
+        return result;
+    }
+
+    StatusItem detectBuildNumber() {
+        // build number
+        StatusItem result = new StatusItem("Build Number").setValue(Build.DISPLAY);
 
         return result;
     }
