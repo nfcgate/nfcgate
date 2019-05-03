@@ -26,6 +26,7 @@ public class Hooks implements IXposedHookLoadPackage {
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
         // hook our own NfcManager to indicate that the hook is loaded and active
         if ("de.tu_darmstadt.seemoo.nfcgate".equals(lpparam.packageName)) {
+            // indicate that the hook worked and the xposed module is active
             findAndHookMethod("de.tu_darmstadt.seemoo.nfcgate.nfc.NfcManager", lpparam.classLoader,
                     "isHookLoaded", XC_MethodReplacement.returnConstant(true));
         } else if ("com.android.nfc".equals(lpparam.packageName)) {

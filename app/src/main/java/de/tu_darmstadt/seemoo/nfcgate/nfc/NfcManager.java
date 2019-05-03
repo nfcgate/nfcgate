@@ -5,27 +5,15 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
-import android.nfc.tech.NfcA;
-import android.nfc.tech.NfcB;
-import android.text.TextUtils;
 import android.util.Log;
-
-import java.util.Arrays;
-import java.util.List;
 
 import de.tu_darmstadt.seemoo.nfcgate.gui.MainActivity;
 import de.tu_darmstadt.seemoo.nfcgate.network.NetworkManager;
 import de.tu_darmstadt.seemoo.nfcgate.network.data.NetworkStatus;
-import de.tu_darmstadt.seemoo.nfcgate.nfc.config.Technologies;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.hce.ApduService;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.hce.DaemonConfiguration;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.modes.BaseMode;
-import de.tu_darmstadt.seemoo.nfcgate.nfc.reader.IsoDepReader;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.reader.NFCTagReader;
-import de.tu_darmstadt.seemoo.nfcgate.nfc.reader.NfcAReader;
-import de.tu_darmstadt.seemoo.nfcgate.nfc.reader.NfcBReader;
-import de.tu_darmstadt.seemoo.nfcgate.nfc.reader.NfcFReader;
-import de.tu_darmstadt.seemoo.nfcgate.nfc.reader.NfcVReader;
 import de.tu_darmstadt.seemoo.nfcgate.util.NfcComm;
 
 public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Callback {

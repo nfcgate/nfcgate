@@ -1,10 +1,9 @@
 package de.tu_darmstadt.seemoo.nfcgate.gui.fragment;
 
-import android.content.res.ColorStateList;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.ImageViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import de.tu_darmstadt.seemoo.nfcgate.R;
+import de.tu_darmstadt.seemoo.nfcgate.nfc.reader.NFCTagReader;
+import de.tu_darmstadt.seemoo.nfcgate.util.NfcComm;
 
 public class CaptureFragment extends BaseFragment {
     // UI references
@@ -76,6 +77,21 @@ public class CaptureFragment extends BaseFragment {
         updateState();
 
         getNfc().disableCapture();
+    }
+
+    public static NfcComm fromBundle(Bundle b) {
+        String type = b.getString("type");
+        long timestamp = b.getLong("timestamp");
+
+        if ("INITIAL".equals(type)) {
+            Tag initial = b.getParcelable("data");
+            byte[] data = initial != null ? NFCTagReader.create(initial).getConfig().build() : null;
+            return new NfcComm(true, true, data, timestamp);
+        }
+        else {
+            byte[] data = b.getByteArray("data");
+            return new NfcComm("TAG".equals(type), false, data, timestamp);
+        }
     }
 
 }

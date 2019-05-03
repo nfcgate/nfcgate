@@ -227,25 +227,9 @@ public class MainActivity extends AppCompatActivity {
         LogInserter inserter = new LogInserter(this, SessionLog.SessionType.CAPTURE, null);
 
         for (Bundle b : capture)
-            inserter.log(fromBundle(b));
+            inserter.log(CaptureFragment.fromBundle(b));
 
         Toast.makeText(this, "Capture data added to log", Toast.LENGTH_SHORT).show();
-    }
-
-    // TODO: move this
-    NfcComm fromBundle(Bundle b) {
-        String type = b.getString("type");
-        long timestamp = b.getLong("timestamp");
-
-        if ("INITIAL".equals(type)) {
-            Tag initial = b.getParcelable("data");
-            byte[] data = initial != null ? NFCTagReader.create(initial).getConfig().build() : null;
-            return new NfcComm(true, true, data, timestamp);
-        }
-        else {
-            byte[] data = b.getByteArray("data");
-            return new NfcComm("TAG".equals(type), false, data, timestamp);
-        }
     }
 
     @Override

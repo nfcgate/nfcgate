@@ -1,6 +1,5 @@
 package de.tu_darmstadt.seemoo.nfcgate.xposed;
 
-
 public class Native {
     static {
         Instance = new Native();
