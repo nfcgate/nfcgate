@@ -19,7 +19,7 @@ public class LogInserter {
     // database
     private AppDatabase mDatabase;
     private SessionLog.SessionType mSessionType;
-    private BlockingQueue<NfcComm> mQueue = new LinkedBlockingQueue<>();
+    private BlockingQueue<LogEntry> mQueue = new LinkedBlockingQueue<>();
     private long mSessionId = -1;
 
     // callback
@@ -41,12 +41,14 @@ public class LogInserter {
 
     public void log(NfcComm data) {
         try {
-            mQueue.put(data);
+            mQueue.put(new LogEntry(data));
         } catch (InterruptedException ignored) { }
     }
 
     public void reset() {
-        log(new NfcComm(false, true, null));
+        try {
+            mQueue.put(new LogEntry());
+        } catch (InterruptedException ignored) { }
     }
 
     class LogInserterThread extends Thread {
@@ -59,15 +61,16 @@ public class LogInserter {
         public void run() {
             while (true) {
                 try {
-                    NfcComm data = mQueue.take();
+                    LogEntry entry = mQueue.take();
 
-                    // set session id if none is set or reset it on new initial data
-                    if (mSessionId == -1 || data.isInitial())
+                    // set session id if none is set or reset it on reset data
+                    if (!entry.isValid())
+                        mSessionId = -1;
+                    else if (mSessionId == -1)
                         setSessionId(mDatabase.sessionLogDao().insert(new SessionLog(new Date(), mSessionType)));
 
-                    // do not log empty initials only used for reset
-                    if (!data.isInitial() || data.getData() != null)
-                        mDatabase.nfcCommEntryDao().insert(new NfcCommEntry(data, mSessionId));
+                    if (entry.isValid())
+                        mDatabase.nfcCommEntryDao().insert(new NfcCommEntry(entry.getData(), mSessionId));
 
                 } catch (InterruptedException ignored) { }
             }

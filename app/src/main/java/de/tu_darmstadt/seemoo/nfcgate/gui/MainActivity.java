@@ -236,14 +236,16 @@ public class MainActivity extends AppCompatActivity {
     NfcComm fromBundle(Bundle b) {
         String type = b.getString("type");
         long timestamp = b.getLong("timestamp");
-        Tag initial = b.getParcelable("data");
 
         if ("INITIAL".equals(type)) {
+            Tag initial = b.getParcelable("data");
             byte[] data = initial != null ? NFCTagReader.create(initial).getConfig().build() : null;
             return new NfcComm(true, true, data, timestamp);
         }
-        else
-            return new NfcComm("TAG".equals(type), false, b.getByteArray("data"), timestamp);
+        else {
+            byte[] data = b.getByteArray("data");
+            return new NfcComm("TAG".equals(type), false, data, timestamp);
+        }
     }
 
     @Override
