@@ -15,6 +15,7 @@ import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+import de.tu_darmstadt.seemoo.nfcgate.nfcd.BuildConfig;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
@@ -31,7 +32,8 @@ public class Hooks implements IXposedHookLoadPackage {
                     "isHookLoaded", XC_MethodReplacement.returnConstant(true));
         } else if ("com.android.nfc".equals(lpparam.packageName)) {
             // hook constructor to catch application context
-            findAndHookConstructor("com.android.nfc.NfcService", lpparam.classLoader, Application.class, new XC_MethodHook() {
+            findAndHookConstructor("com.android.nfc.NfcService", lpparam.classLoader,
+                    Application.class, new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 
@@ -43,7 +45,9 @@ public class Hooks implements IXposedHookLoadPackage {
             });
 
             // hook findSelectAid to route all HCE APDUs to our app
-            findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager", lpparam.classLoader, "findSelectAid", byte[].class, new XC_MethodHook() {
+            findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager", lpparam.classLoader,
+                    "findSelectAid",
+                    byte[].class, new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 
@@ -57,7 +61,9 @@ public class Hooks implements IXposedHookLoadPackage {
 
             // support extended length apdus
             // see http://stackoverflow.com/questions/25913480/what-are-the-requirements-for-support-of-extended-length-apdus-and-which-smartph
-            findAndHookMethod("com.android.nfc.dhimpl.NativeNfcManager", lpparam.classLoader, "getMaxTransceiveLength", int.class, new XC_MethodHook() {
+            findAndHookMethod("com.android.nfc.dhimpl.NativeNfcManager", lpparam.classLoader,
+                    "getMaxTransceiveLength",
+                    int.class, new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
 
@@ -69,7 +75,9 @@ public class Hooks implements IXposedHookLoadPackage {
             });
 
             // hook transceive method for on-device capture of request/response data
-            findAndHookMethod("com.android.nfc.NfcService.TagService", lpparam.classLoader, "transceive", int.class, byte[].class, boolean.class, new XC_MethodHook() {
+            findAndHookMethod("com.android.nfc.NfcService.TagService", lpparam.classLoader,
+                    "transceive",
+                    int.class, byte[].class, boolean.class, new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 
@@ -87,7 +95,9 @@ public class Hooks implements IXposedHookLoadPackage {
             });
 
             // hook tag dispatch for on-device capture of initial data
-            findAndHookMethod("com.android.nfc.NfcDispatcher", lpparam.classLoader, "dispatchTag", Tag.class, new XC_MethodHook() {
+            findAndHookMethod("com.android.nfc.NfcDispatcher", lpparam.classLoader,
+                    "dispatchTag",
+                    Tag.class, new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 
@@ -101,8 +111,9 @@ public class Hooks implements IXposedHookLoadPackage {
             });
 
             // hook onHostEmulationData method for on-device HCE request capture
-            // FIXME: this was renamed in lollipop: notifyHostEmulationData -> onHostEmulationData
-            findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager", lpparam.classLoader, "onHostEmulationData", byte[].class, new XC_MethodHook() {
+            findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager", lpparam.classLoader,
+                    preLollipop("notifyHostEmulationData", "onHostEmulationData"),
+                    byte[].class, new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 
@@ -116,8 +127,9 @@ public class Hooks implements IXposedHookLoadPackage {
             });
 
             // hook notifyHostEmulationActivated method for on-device HCE initial capture
-            // FIXME: this was renamed in lollipop: notifyHostEmulationActivated -> onHostEmulationActivated
-            findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager", lpparam.classLoader, "onHostEmulationActivated", new XC_MethodHook() {
+            findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager", lpparam.classLoader,
+                    preLollipop("notifyHostEmulationActivated", "onHostEmulationActivated"),
+                    new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 
@@ -130,7 +142,9 @@ public class Hooks implements IXposedHookLoadPackage {
             });
 
             // hook sendData method for on-device HCE response capture
-            findAndHookMethod("com.android.nfc.NfcService", lpparam.classLoader, "sendData", byte[].class, new XC_MethodHook() {
+            findAndHookMethod("com.android.nfc.NfcService", lpparam.classLoader,
+                    "sendData",
+                    byte[].class, new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 
@@ -189,6 +203,10 @@ public class Hooks implements IXposedHookLoadPackage {
         } catch (Exception e) {
             Log.e("HOOKNFC", "Failed to get addCaptureData", e);
         }
+    }
+
+    private String preLollipop(String oldName, String newName) {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP ? oldName : newName;
     }
 
     private Object loadOrInjectClass(Context ctx, String sourcePackage,
