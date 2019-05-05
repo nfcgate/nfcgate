@@ -36,7 +36,8 @@ public class NfcLogReplayer {
         else if (request == null && next != null && next.isCard() != mReader) {
             // next entry matches our type
             mReplayIndex++;
-            return next;
+            // update date by creating new NfcComm from old one
+            return new NfcComm(next.isCard(), next.isInitial(), next.getData());
         }
 
         // either wrong request or next log entry does not match our type: wait
