@@ -65,7 +65,7 @@ public class LogInserter {
 
                     // set session id if none is set or reset it on reset data
                     if (!entry.isValid())
-                        mSessionId = -1;
+                        setSessionId(-1);
                     else if (mSessionId == -1)
                         setSessionId(mDatabase.sessionLogDao().insert(new SessionLog(new Date(), mSessionType)));
 

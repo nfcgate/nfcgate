@@ -128,7 +128,7 @@ public class StatusFragment extends BaseFragment {
         mStatusAdapter.add(detectAndroidVersion());
         mStatusAdapter.add(detectBuildNumber());
         mStatusAdapter.add(detectNfcEnabled());
-        mStatusAdapter.add(detectHceEnabled());
+        mStatusAdapter.add(detectHceCapability());
         mStatusAdapter.add(detectModuleEnabled());
         mStatusAdapter.add(detectNfcModel());
 
@@ -167,10 +167,10 @@ public class StatusFragment extends BaseFragment {
     }
 
     StatusItem detectNfcEnabled() {
-        // nfc capability and enabled
-        boolean hasNfc = getNfc().hasNfc();
+        // NFC capability and enabled
+        boolean hasNfc = getNfc().isEnabled();
         // NFC Capability should be OK if it is enabled
-        StatusItem result = new StatusItem("NFC Capability").setValue(hasNfc);
+        StatusItem result = new StatusItem("NFC Enabled").setValue(hasNfc);
 
         if (!hasNfc)
             result.setError(getString(R.string.error_NFCCAP));
@@ -178,7 +178,7 @@ public class StatusFragment extends BaseFragment {
         return result;
     }
 
-    StatusItem detectHceEnabled() {
+    StatusItem detectHceCapability() {
         // HCE capability
         boolean hasHCE = getNfc().hasHce();
         // HCE Capability

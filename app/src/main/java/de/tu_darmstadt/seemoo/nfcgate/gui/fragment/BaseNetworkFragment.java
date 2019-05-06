@@ -160,6 +160,11 @@ public abstract class BaseNetworkFragment extends BaseFragment implements LogIns
             return false;
         }
 
+        if (!getNfc().isEnabled()) {
+            getMainActivity().showWarning("NFC is not enabled.");
+            return false;
+        }
+
         return true;
     }
 

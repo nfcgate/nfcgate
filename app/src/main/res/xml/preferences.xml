@@ -47,7 +47,6 @@
     <PreferenceCategory
         android:title="Replay Settings"
         android:key="replay"
-        android:enabled="false"
         >
         <CheckBoxPreference
             android:title="Advanced Replay"
@@ -58,6 +57,7 @@
         <ListPreference
             android:title="Replay mode"
             android:key="mode"
+            android:enabled="false"
 
             android:summary="Sets reply mode for replay requests"
             android:entries="@array/replay_mode_names"
