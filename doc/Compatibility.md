@@ -11,7 +11,8 @@ On the device, one can find the NFC chipset on the NFCGate status page.
 In previous versions of this application, NFCGate included a workaround for an Android NFC bug, that made it impossible to use with MiFare DESFire cards. This workaround is no longer part of the application due to complete code overhaul. We have not experienced the bug again. If you encounter that issue, please open an issue so the workaround can be included in the new version as well.
 
 ## Matrix
-| Device                   | NFC chipset | Android ROM version    | Clone              | On-device capture  | Relay              | Replay             | Notes              |
-| :----------------------- | :---------- | :--------------------- | :----------------: | :----------------: | :----------------: | :----------------: | :----------------- |
-| Google Nexus 5X          | NXP (PN548AD)     | Stock 7.1.2 (N2G48C)   | y                  | y                  | y                  | y                  |                    |
-| Google Nexus 5X          | NXP (PN548AD)     | Stock 8.0.0 (OPR4.170623.020)         | y                  | y                  | y                  | y                  |                    |
+| Device                   | NFC chipset       | Android ROM version           | Clone              | On-device capture  | Relay              | Replay             | Notes                                               |
+| :----------------------- | :---------------- | :---------------------------- | :----------------: | :----------------: | :----------------: | :----------------: | :-------------------------------------------------- |
+| Google Nexus 5X          | NXP (PN548AD)     | Stock 8.0.0 (OPR4.170623.020) | y                  | y                  | y                  | y                  |                                                     |
+|                          |                   | Stock 7.1.2 (N2G48C)          | y                  | y                  | y                  | y                  |                                                     |
+|                          |                   | Stock 6.0.1 (MTC20F)          | y                  | y                  | y                  | y                  | No ISO-DEP historical bytes (HIST) due to ROM issue |
