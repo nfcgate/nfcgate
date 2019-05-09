@@ -57,6 +57,23 @@ Some features of NFC are not supported by Android and thus cannot be used with o
 ## Publications and Media
 This application was presented at WiSec 2015. The [extended Abstract](https://blog.velcommuta.de/wp-content/uploads/2015/07/nfcgate-extended-abstract.pdf) (outdated by now) and [poster](https://blog.velcommuta.de/wp-content/uploads/2015/07/NFCGate-Poster.pdf) (slightly outdated) can be found on the [website](https://blog.velcommuta.de/publications/) of one of the authors. It was also presented in a brief [Lightning Talk](https://media.ccc.de/browse/conferences/camp2015/camp2015-6862-lightning_talks_day_2.html#video&t=300) at the [Chaos Communication Camp 2015](https://events.ccc.de/camp/2015/wiki/Main_Page).
 
+## License
+```
+   Copyright 2015-2019 NFCGate Team
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+```
+
 ## Used Libraries
 - [Xposed Bridge](https://github.com/rovo89/XposedBridge) (Licensed under the [Apache License v2.0](http://opensource.org/licenses/Apache-2.0))
 - [LibNFC-NCI](https://android.googlesource.com/platform/external/libnfc-nci/) (Licensed under the [Apache License v2.0](http://opensource.org/licenses/Apache-2.0))
