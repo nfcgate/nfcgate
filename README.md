@@ -21,6 +21,10 @@ This application was developed for security research purposes by students of the
 - [HCE](https://developer.android.com/guide/topics/connectivity/nfc/hce): Relay tag mode, replay tag mode, clone mode.
 
 ## Usage
+### Building
+1. Initialize submodules: `git submodule update --init`
+2. Build using Android Studio or Gradle
+
 ### Operating Modes
 As instructions differ per mode, each mode is described in detail in its own document in `doc/mode/`:
 
