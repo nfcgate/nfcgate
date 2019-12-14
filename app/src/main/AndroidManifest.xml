@@ -62,7 +62,7 @@
                 <action android:name="android.intent.action.SEND" />
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="application/*" />
+                <data android:mimeType="application/*.pcap" />
             </intent-filter>
 
             <meta-data android:name="android.nfc.action.TECH_DISCOVERED"
