@@ -5,6 +5,8 @@ SymbolTable *SymbolTable::mInstance;
 Config origValues, hookValues;
 bool hookEnabled = false;
 Hook *hNFC_SetConfig;
+Hook *hce_select_t4t;
+Hook *hce_cb;
 Hook *hNFC_Deactivate;
 Hook *hNFA_StopRfDiscovery;
 Hook *hNFA_DisablePolling;
@@ -99,6 +101,23 @@ tNFA_STATUS hook_NFA_EnablePolling(tNFA_TECHNOLOGY_MASK poll_mask) {
     return r;
 }
 
+tNFC_STATUS hook_ce_select_t4t (void) {
+    hce_select_t4t->precall();
+
+    LOGD("hook_ce_select_t4t()");
+    LOGD("hook_ce_select_t4t Enabled: %d", hookEnabled);
+
+    tNFC_STATUS r = hce_select_t4t->call<decltype(hook_ce_select_t4t)>();
+    if (hookEnabled) {
+        auto ce_cb = (tCE_CB *) hce_cb->symbol();
+        // bypass ISO 7816 SELECT requirement for AID selection
+        ce_cb->mem.t4t.status |= CE_T4T_STATUS_WILDCARD_AID_SELECTED;
+    }
+
+    hce_select_t4t->postcall();
+    return r;
+}
+
 static void hookNative() {
     // check if NCI library exists and is readable + is loaded
     const char *lib_path = libnfc_path();
@@ -125,4 +144,6 @@ static void hookNative() {
     hNFA_StartRfDiscovery = new Hook(handle, "NFA_StartRfDiscovery", nullptr);
     hNFA_EnablePolling = new Hook(handle, "NFA_EnablePolling", nullptr);
 #endif
+    hce_select_t4t = new Hook(handle, "ce_select_t4t", (void *)&hook_ce_select_t4t);
+    hce_cb = new Hook(handle, "ce_cb", nullptr);
 }

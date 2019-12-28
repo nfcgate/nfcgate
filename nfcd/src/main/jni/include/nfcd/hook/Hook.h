@@ -39,6 +39,10 @@ public:
         return mHook != nullptr;
     }
 
+    void *symbol() {
+        return mSymbol;
+    }
+
 private:
     bool constructTrampoline();
 

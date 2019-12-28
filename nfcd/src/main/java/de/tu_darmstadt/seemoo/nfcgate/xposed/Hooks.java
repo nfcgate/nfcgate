@@ -51,7 +51,7 @@ public class Hooks implements IXposedHookLoadPackage {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 
-                    if (isHookEnabled() && param.getResult() != null) {
+                    if (isHookEnabled()) {
                         // setting a result will overwrite the original result
                         // F0010203040506 is a aid registered by the nfcgate hce service
                         param.setResult("F0010203040506");
