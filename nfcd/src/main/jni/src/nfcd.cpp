@@ -102,12 +102,11 @@ tNFA_STATUS hook_NFA_EnablePolling(tNFA_TECHNOLOGY_MASK poll_mask) {
 static void hookNative() {
     // check if NCI library exists and is readable + is loaded
     const char *lib_path = libnfc_path();
-    if (access(lib_path, R_OK) != 0)
-        LOGEX("Could not find libnfc-nci");
+    LOGI("Library expected at %s", lib_path);
+    LOG_ASSERT_X(access(lib_path, R_OK) == 0, "Library not accessible");
 
     void *handle = dlopen(lib_path, RTLD_NOLOAD);
-    if (!handle)
-        LOGEX("Could not obtain handle of libnfc-nci");
+    LOG_ASSERT_X(handle, "Could not obtain library handle");
 
     // create symbol mapping
     SymbolTable::create(lib_path);

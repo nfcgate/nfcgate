@@ -9,6 +9,7 @@
 Hook::Hook(void *handle, const char *symbol, void *redirect) {
     // find symbol
     mSymbol = dlsym(handle, symbol);
+    LOG_ASSERT_X(mSymbol, "Missing symbol: %s", symbol);
 
     // if redirect enabled
     if (redirect) {
@@ -17,27 +18,27 @@ Hook::Hook(void *handle, const char *symbol, void *redirect) {
         // get symbol alignment
         mAlignment = SymbolTable::instance()->getSize(symbol);
         // construct trampoline for this architecture
-        constructTrampoline();
+        LOG_ASSERT_X(constructTrampoline(), "Trampoline construction failed");
         // unprotect the region
-        unprotect();
+        LOG_ASSERT_X(unprotect(), "Unprotecting failed");
         // install the trampoline
-        swapTrampoline(true);
+        LOG_ASSERT_X(swapTrampoline(true), "Trampoline installation failed");
     }
 }
 
 void Hook::precall() {
     // uninstall trampoline while hook is running to avoid recursion
     if (mHook)
-        swapTrampoline(false);
+        LOG_ASSERT(swapTrampoline(false), "Precall uninstall failed");
 }
 
 void Hook::postcall() {
     // install trampoline again when hook is finished
     if (mHook)
-        swapTrampoline(true);
+        LOG_ASSERT(swapTrampoline(true), "Postcall install failed");
 }
 
-void Hook::constructTrampoline() {
+bool Hook::constructTrampoline() {
     unsigned long symbol = (unsigned long) mSymbol;
     unsigned long hook = (unsigned long) mHook;
 
@@ -46,11 +47,10 @@ void Hook::constructTrampoline() {
 
 #ifdef __arm__
     if (symbol_is_thumb && hook_is_thumb) {
-        LOGI("THUMB");
+        LOGI("Constructing THUMB trampoline");
         mIsThumb = true;
 
         unsigned char trampoline[20];
-
         trampoline[1] = 0xb4;
         trampoline[0] = 0x60; // push {r5,r6}
         trampoline[3] = 0xa5;
@@ -75,11 +75,10 @@ void Hook::constructTrampoline() {
         mTrampolineSize = sizeof(trampoline);
         std::memcpy(mTrampoline, trampoline, mTrampolineSize);
     } else if (!symbol_is_thumb && !hook_is_thumb) {
-        LOGI("ARM");
+        LOGI("Constructing ARM trampoline");
         mIsThumb = false;
 
         unsigned int trampoline[3];
-
         trampoline[0] = 0xe59ff000; // LDR pc, [pc, #0]
         trampoline[1] = hook;
         trampoline[2] = hook;
@@ -87,15 +86,16 @@ void Hook::constructTrampoline() {
         // store trampoline
         mTrampolineSize = sizeof(trampoline);
         std::memcpy(mTrampoline, trampoline, mTrampolineSize);
-    } else
-        LOGE("addr %p and hook %p don't match!", mSymbol, mHook);
+    } else {
+        LOGE("Alignment mismatch of symbol %p and hook %p", mSymbol, mHook);
+        return false;
+    }
 #else
     if (!symbol_is_thumb && !hook_is_thumb) {
-        LOGI("ARM64");
+        LOGI("Constructing ARM64 trampoline");
         mIsThumb = false;
 
         unsigned int trampoline[4];
-
         trampoline[0] = 0x58000050; // ldr x16, #8  -> x16 is IP0, load hook address
         trampoline[1] = 0xD61F0200; // br  x16      -> branch to register without modifying any regs
 
@@ -106,24 +106,30 @@ void Hook::constructTrampoline() {
         // store trampoline
         mTrampolineSize = sizeof(trampoline);
         std::memcpy(mTrampoline, trampoline, mTrampolineSize);
-    } else
-        LOGE("addr %p and hook %p don't match!", mSymbol, mHook);
+    } else {
+        LOGE("Alignment mismatch of symbol %p and hook %p", mSymbol, mHook);
+        return false;
+    }
 #endif
+    return true;
 }
 
-void Hook::swapTrampoline(bool install) {
+bool Hook::swapTrampoline(bool install) {
     void *symbol = mSymbol;
 
-    // prevent writing trampoline in potentially bigger symbol
-    if (mAlignment < mTrampolineSize)
-        LOGE("trampoline size larger than symbol alignment");
+    // prevent writing trampoline in potentially smaller symbol
+    if (mAlignment < mTrampolineSize) {
+        LOGE("Trampoline size %lu larger than approximate symbol size %lu", mTrampolineSize, mAlignment);
+        return false;
+    }
     else if (mAlignment == 0)
-        LOGW("symbol has no alignment, overwrite possible");
+        LOGW("Symbol has no approximate size, possible overwrite");
 
-    // adjust symbol to thumb boundary:
-    //   symbol points to first instruction, but in thumb mode (operand - instruction - operand)
-    //   a operand precedes the first instruction. In order to overwrite the operand,
-    //   subtract a byte from symbol so it points to the first operand.
+    /* adjust symbol to thumb boundary:
+     *   symbol points to first instruction, but in thumb mode (operand - instruction - operand)
+     *   a operand precedes the first instruction. In order to overwrite the operand,
+     *   subtract a byte from symbol so it points to the first operand.
+     */
     if (mIsThumb)
         symbol = (void *)((unsigned long) symbol - 1);
 
@@ -134,10 +140,10 @@ void Hook::swapTrampoline(bool install) {
     // install/restore trampoline bytes
     std::memcpy(symbol, install ? mTrampoline : mStored, mTrampolineSize);
     // flush cache in symbol
-    hookCacheflush();
+    return hookCacheflush();
 }
 
-void Hook::hookCacheflush() {
+bool Hook::hookCacheflush() {
     unsigned long begin = (unsigned long) mSymbol;
     unsigned long end = begin + mTrampolineSize;
 
@@ -156,15 +162,19 @@ void Hook::hookCacheflush() {
 #else
     arm64_cacheflush(begin, mTrampolineSize);
 #endif
+    return true;
 }
 
-void Hook::unprotect() {
+bool Hook::unprotect() {
     int RWX = PROT_READ | PROT_WRITE | PROT_EXEC;
     unsigned long page_size = sysconf(_SC_PAGESIZE);
 
     unsigned long first_page = ~(page_size - 1) & (unsigned long) mSymbol;
     unsigned long last_page = ~(page_size - 1) & ((unsigned long) mSymbol + mTrampolineSize);
 
-    if (mprotect((void *) first_page, page_size + (last_page - first_page), RWX) != 0)
-        LOGE("Error unprotecting pages");
+    if (mprotect((void *) first_page, page_size + (last_page - first_page), RWX) != 0) {
+        LOGE("Error unprotecting %p - %p: %d", (void*)first_page, (void*)last_page, errno);
+        return false;
+    }
+    return true;
 }

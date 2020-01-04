@@ -1,5 +1,5 @@
-#ifndef NFCD_CONFIG
-#define NFCD_CONFIG
+#ifndef NFCD_CONFIG_H
+#define NFCD_CONFIG_H
 
 #include <vector>
 
@@ -99,4 +99,4 @@ protected:
     std::vector<Option> mOptions;
 };
 
-#endif //NFCD_CONFIG
+#endif //NFCD_CONFIG_H

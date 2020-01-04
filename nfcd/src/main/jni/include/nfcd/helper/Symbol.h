@@ -1,7 +1,12 @@
+#ifndef NFCD_SYMBOL_H
+#define NFCD_SYMBOL_H
+
 #include <link.h>
 #include <string>
 #include <sys/mman.h>
 #include <unordered_map>
+
+#include <nfcd/error.h>
 
 class SymbolTable {
 public:
@@ -16,8 +21,10 @@ public:
     unsigned long getSize(std::string name) {
         auto it = mSymbols.find(name);
 
-        if (it == mSymbols.end())
+        if (it == mSymbols.end()) {
+            LOGE("Symbol %s missing from SymbolTable", name.c_str());
             return 0;
+        }
 
         return it->second;
     }
@@ -27,14 +34,16 @@ protected:
         FILE *phy = fopen(file, "rb");
         fseek(phy, 0, SEEK_END);
         long phy_size = ftell(phy);
+
         mBase = mmap(nullptr, (size_t)phy_size, PROT_READ, MAP_PRIVATE, fileno(phy), 0);
         fclose(phy);
+        LOG_ASSERT_X(mBase != MAP_FAILED, "Loading library via mmap failed with %d", errno);
 
-        parse();
+        LOG_ASSERT(parse(), "Symbol table missing from library");
         munmap(mBase, (size_t)phy_size);
     }
 
-    int parse() {
+    bool parse() {
         char *base = (char*)mBase;
         ElfW(Ehdr) *header = (ElfW(Ehdr) *) base;
 
@@ -72,7 +81,7 @@ protected:
         // not found -> should never happen
         if (tbl_string_off == 0 || tbl_string_sz == 0 || tbl_symbol_off == 0
             || tbl_symbol_sz == 0)
-            return 1;
+            return false;
 
         ElfW(Sym) *symbol = (ElfW(Sym) *)(base + tbl_symbol_off);
         ElfW(Sym) *end = (ElfW(Sym) *)(base + tbl_symbol_off + tbl_symbol_sz);
@@ -84,7 +93,7 @@ protected:
             }
         }
 
-        return 0;
+        return true;
     }
 
     void *mBase;
@@ -92,3 +101,5 @@ protected:
 
     static SymbolTable *mInstance;
 };
+
+#endif //NFCD_SYMBOL_H

@@ -3,18 +3,12 @@
 
 #include <cstdint>
 #include <functional>
-#include <android/log.h>
 #include <type_traits>
+
+#include <nfcd/error.h>
 
 // maximum trampoline size
 #define TR_MAX_SIZE 52
-
-#define LOG_TAG "NATIVENFC"
-#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__ )
-#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__ )
-#define LOGW(...) __android_log_print(ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__ )
-#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
-#define LOGEX(...) do { LOGE(__VA_ARGS__); return; } while(0)
 
 class Hook {
 public:
@@ -38,13 +32,13 @@ public:
     }
 
 private:
-    void constructTrampoline();
+    bool constructTrampoline();
 
-    void swapTrampoline(bool install);
+    bool swapTrampoline(bool install);
 
-    void hookCacheflush();
+    bool hookCacheflush();
 
-    void unprotect();
+    bool unprotect();
 
     // symbol address, hook address
     void *mSymbol = nullptr, *mHook = nullptr;

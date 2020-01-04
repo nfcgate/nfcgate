@@ -1,6 +1,7 @@
 #include <dlfcn.h>
 #include <unistd.h>
 
+#include <nfcd/error.h>
 #include <nfcd/libnfc-external.h>
 #include <nfcd/helper/Config.h>
 #include <nfcd/helper/Symbol.h>
@@ -21,10 +22,8 @@ tNFA_STATUS hook_NFA_EnablePolling(tNFA_TECHNOLOGY_MASK poll_mask);
 
 inline const char *libnfc_path() {
 #ifdef __aarch64__
-    LOGI("ARM64 detected!");
     return "/system/lib64/libnfc-nci.so";
 #elif __arm__
-    LOGI("ARM detected!");
     return "/system/lib/libnfc-nci.so";
 #endif
 }
