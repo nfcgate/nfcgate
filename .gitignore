@@ -8,3 +8,4 @@
 *.iml
 *.log
 nfcd/.externalNativeBuild/
+nfcd/.cxx/
