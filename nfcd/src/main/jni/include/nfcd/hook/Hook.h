@@ -31,6 +31,14 @@ public:
         return r;
     }
 
+    bool isFound() const {
+        return mSymbol != nullptr;
+    }
+
+    bool isHooked() const {
+        return mHook != nullptr;
+    }
+
 private:
     bool constructTrampoline();
 
