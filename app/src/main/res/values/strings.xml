@@ -13,11 +13,11 @@
     <string name="empty"/>
     <string-array name="replay_mode_names">
         <item>Index Mode</item>
-        <item>Data Mode</item>
+        <item>AI Mode</item>
     </string-array>
     <string-array name="replay_mode_values">
         <item>index</item>
-        <item>data</item>
+        <item>pattern</item>
     </string-array>
 
     <!-- Status warnings -->

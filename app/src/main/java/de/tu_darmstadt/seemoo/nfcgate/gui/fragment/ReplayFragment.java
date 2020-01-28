@@ -39,6 +39,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
     // replay data
     List<NfcCommEntry> mSessionLog = null;
     boolean mOfflineReplay = true;
+    String mReplayMode;
     UIReplayer mReplayer;
 
     @Override
@@ -77,6 +78,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
         // get preference data
         SharedPreferences prefs = PreferenceManagerFix.getDefaultSharedPreferences(getActivity());
         mOfflineReplay = !prefs.getBoolean("network", false);
+        mReplayMode = prefs.getString("mode", "index");
         mSemaphore.setVisibility(!mOfflineReplay);
     }
 
@@ -260,7 +262,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
         NetworkManager mReplayNetwork = null;
 
         UIReplayer(boolean reader) {
-            mReplayer = new NfcLogReplayer(reader, mSessionLog);
+            mReplayer = new NfcLogReplayer(reader, mReplayMode, mSessionLog);
 
             if (!mOfflineReplay) {
                 mReplayNetwork = new NetworkManager(getMainActivity(), this);
