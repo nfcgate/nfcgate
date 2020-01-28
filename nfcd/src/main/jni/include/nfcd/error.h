@@ -15,5 +15,6 @@
 #define LOG_ASSERT(x, ...) if (!(x)) { LOGE(__VA_ARGS__); }
 // assert x, print to error log, return on error
 #define LOG_ASSERT_X(x, ...) if (!(x)) { LOGE(__VA_ARGS__); return; }
+#define LOG_ASSERT_XR(x, r, ...) if (!(x)) { LOGE(__VA_ARGS__); return r; }
 
 #endif // NFCD_ERROR_H

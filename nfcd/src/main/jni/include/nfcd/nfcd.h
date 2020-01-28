@@ -2,26 +2,35 @@
 #include <unistd.h>
 
 #include <nfcd/error.h>
-#include <nfcd/libnfc-external.h>
 #include <nfcd/helper/Config.h>
-#include <nfcd/helper/Symbol.h>
-#include <nfcd/hook/Hook.h>
-
-#define NFCD_DEBUG true
+#include <nfcd/helper/SymbolTable.h>
+#include <nfcd/helper/System.h>
+#include <nfcd/hook/IHook.h>
 
 // hook definitions
 extern Config origValues, hookValues;
 extern bool hookEnabled;
-extern Hook *hNFC_SetConfig;
-extern Hook *hce_select_t4t;
-extern Hook *hce_cb;
-tNFC_STATUS hook_NFC_SetConfig(UINT8 tlv_size, UINT8 *p_param_tlvs);
-tNFC_STATUS hook_NFC_Deactivate(UINT8 deactivate_type);
-tNFA_STATUS hook_NFA_StopRfDiscovery();
-tNFA_STATUS hook_NFA_DisablePolling();
-tNFA_STATUS hook_NFA_StartRfDiscovery();
-tNFA_STATUS hook_NFA_EnablePolling(tNFA_TECHNOLOGY_MASK poll_mask);
-tNFC_STATUS hook_ce_select_t4t (void);
+extern bool guardConfig;
+extern IHook *hNFC_SetConfig;
+extern IHook *hce_select_t4t;
+extern Symbol *hce_cb;
+extern Symbol *hNFC_Deactivate;
+extern Symbol *hNFA_StopRfDiscovery;
+extern Symbol *hNFA_DisablePolling;
+extern Symbol *hNFA_StartRfDiscovery;
+extern Symbol *hNFA_EnablePolling;
+
+extern tNFC_STATUS hook_NFC_SetConfig(uint8_t tlv_size, uint8_t *p_param_tlvs);
+extern tNFC_STATUS hook_ce_select_t4t (void);
+
+using def_NFC_SetConfig = decltype(hook_NFC_SetConfig);
+using def_NFC_Deactivate = tNFC_STATUS(uint8_t deactivate_type);
+using def_NFA_StopRfDiscovery = tNFA_STATUS();
+using def_NFA_DisablePolling = tNFA_STATUS();
+using def_NFA_StartRfDiscovery = tNFA_STATUS();
+using def_NFA_EnablePolling = tNFA_STATUS(tNFA_TECHNOLOGY_MASK poll_mask);
+using def_ce_select_t4t = decltype(hook_ce_select_t4t);
+
 
 inline const char *libnfc_path() {
 #ifdef __aarch64__
@@ -29,6 +38,9 @@ inline const char *libnfc_path() {
 #elif __arm__
     return "/system/lib/libnfc-nci.so";
 #endif
+}
+inline const char *libnfc_re() {
+    return "^/system/lib.*/libnfc-nci\\.so$";
 }
 
 inline void loghex(const char *desc, const uint8_t *data, const int len) {

@@ -1,15 +1,28 @@
-cmake_minimum_required(VERSION 3.4.1)
+cmake_minimum_required(VERSION 3.6)
+
+# xHook target
+file(GLOB XH_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/xHook/libxhook/jni/*.c)
+set(XH_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/xHook/libxhook/jni/)
+add_library(xh STATIC ${XH_SOURCES})
+target_include_directories(xh PUBLIC ${XH_INCLUDE_DIR})
 
 # find files
 file(GLOB_RECURSE NFCD_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
 file(GLOB_RECURSE NFCD_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
+# cxx standard
 set(CMAKE_CXX_STANDARD 11)
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/main/jni/include/)
 
 # compile library
 add_library(nfcgate SHARED ${NFCD_HEADERS} ${NFCD_SOURCES})
 
+# platform specific flags
+if (CMAKE_SYSTEM_PROCESSOR STREQUAL aarch64)
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-execute-only -fuse-ld=lld -execute-only -ffixed-x18")
+endif()
+
 # link library
-target_link_libraries(nfcgate android log)
+target_link_libraries(nfcgate android log xh)
+# include directory
+target_include_directories(nfcgate PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/main/jni/include/)
+

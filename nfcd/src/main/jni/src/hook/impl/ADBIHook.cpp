@@ -1,46 +1,48 @@
-#include <dlfcn.h>
 #include <unistd.h>
 #include <sys/mman.h>
 
-#include <nfcd/hook/Hook.h>
-#include <nfcd/hook/arm64_cacheflush.h>
-#include <nfcd/helper/Symbol.h>
+#include <nfcd/helper/SymbolTable.h>
+#include <nfcd/hook/impl/ADBIHook.h>
+#include <nfcd/hook/impl/arm64_cacheflush.h>
 
-Hook::Hook(void *handle, const char *symbol, void *redirect) {
-    // find symbol
-    mSymbol = dlsym(handle, symbol);
-    LOG_ASSERT_X(mSymbol, "Missing symbol: %s", symbol);
-
-    // if redirect enabled
-    if (redirect) {
-        // redirect to this symbol
-        mHook = redirect;
-        // get symbol alignment
-        mAlignment = SymbolTable::instance()->getSize(symbol);
-        // construct trampoline for this architecture
-        LOG_ASSERT_X(constructTrampoline(), "Trampoline construction failed");
-        // unprotect the region
-        LOG_ASSERT_X(unprotect(), "Unprotecting failed");
-        // install the trampoline
-        LOG_ASSERT_X(swapTrampoline(true), "Trampoline installation failed");
-    }
+ADBIHook::ADBIHook(const std::string &name, void *hookFn, void *libraryHandle) :
+        IHook(name, hookFn, libraryHandle) {
+    hook();
 }
 
-void Hook::precall() {
+void ADBIHook::hook() {
+    // get symbol alignment
+    mAlignment = SymbolTable::instance()->getSize(mName);
+    // construct trampoline for this architecture
+    LOG_ASSERT_X(constructTrampoline(), "Trampoline construction failed");
+    // unprotect the region
+    LOG_ASSERT_X(unprotect(), "Unprotecting failed");
+    // install the trampoline
+    LOG_ASSERT_X(swapTrampoline(true), "Trampoline installation failed");
+
+    // success
+    mHooked = true;
+}
+
+void ADBIHook::precall() {
+    IHook::precall();
+
     // uninstall trampoline while hook is running to avoid recursion
-    if (mHook)
+    if (isHooked())
         LOG_ASSERT(swapTrampoline(false), "Precall uninstall failed");
 }
 
-void Hook::postcall() {
+void ADBIHook::postcall() {
+    IHook::postcall();
+
     // install trampoline again when hook is finished
-    if (mHook)
+    if (isHooked())
         LOG_ASSERT(swapTrampoline(true), "Postcall install failed");
 }
 
-bool Hook::constructTrampoline() {
-    unsigned long symbol = (unsigned long) mSymbol;
-    unsigned long hook = (unsigned long) mHook;
+bool ADBIHook::constructTrampoline() {
+    unsigned long symbol = (unsigned long) mAddress;
+    unsigned long hook = (unsigned long) mHookFn;
 
     // arm addresses are on a 4 byte boundary, thumb on 3
     bool symbol_is_thumb = symbol % 4 != 0, hook_is_thumb = hook % 4 != 0;
@@ -87,12 +89,12 @@ bool Hook::constructTrampoline() {
         mTrampolineSize = sizeof(trampoline);
         std::memcpy(mTrampoline, trampoline, mTrampolineSize);
     } else {
-        LOGE("Alignment mismatch of symbol %p and hook %p", mSymbol, mHook);
+        LOGE("Alignment mismatch of symbol %p and hook %p", mAddress, mHookFn);
         return false;
     }
 #else
     if (!symbol_is_thumb && !hook_is_thumb) {
-        LOGI("Constructing ARM64 trampoline");
+        LOGI("Constructing ARM64 trampoline for %s", mName.c_str());
         mIsThumb = false;
 
         unsigned int trampoline[4];
@@ -107,15 +109,15 @@ bool Hook::constructTrampoline() {
         mTrampolineSize = sizeof(trampoline);
         std::memcpy(mTrampoline, trampoline, mTrampolineSize);
     } else {
-        LOGE("Alignment mismatch of symbol %p and hook %p", mSymbol, mHook);
+        LOGE("Alignment mismatch of symbol %p and hook %p", mAddress, mHookFn);
         return false;
     }
 #endif
     return true;
 }
 
-bool Hook::swapTrampoline(bool install) {
-    void *symbol = mSymbol;
+bool ADBIHook::swapTrampoline(bool install) {
+    void *symbol = mAddress;
 
     // prevent writing trampoline in potentially smaller symbol
     if (mAlignment < mTrampolineSize) {
@@ -143,8 +145,8 @@ bool Hook::swapTrampoline(bool install) {
     return hookCacheflush();
 }
 
-bool Hook::hookCacheflush() {
-    unsigned long begin = (unsigned long) mSymbol;
+bool ADBIHook::hookCacheflush() {
+    unsigned long begin = (unsigned long) mAddress;
     unsigned long end = begin + mTrampolineSize;
 
 #ifdef __arm__
@@ -165,12 +167,12 @@ bool Hook::hookCacheflush() {
     return true;
 }
 
-bool Hook::unprotect() {
+bool ADBIHook::unprotect() {
     int RWX = PROT_READ | PROT_WRITE | PROT_EXEC;
     unsigned long page_size = sysconf(_SC_PAGESIZE);
 
-    unsigned long first_page = ~(page_size - 1) & (unsigned long) mSymbol;
-    unsigned long last_page = ~(page_size - 1) & ((unsigned long) mSymbol + mTrampolineSize);
+    unsigned long first_page = ~(page_size - 1) & (unsigned long) mAddress;
+    unsigned long last_page = ~(page_size - 1) & ((unsigned long) mAddress + mTrampolineSize);
 
     if (mprotect((void *) first_page, page_size + (last_page - first_page), RWX) != 0) {
         LOGE("Error unprotecting %p - %p: %d", (void*)first_page, (void*)last_page, errno);

@@ -1,10 +1,12 @@
-#ifndef NFCD_SYMBOL_H
-#define NFCD_SYMBOL_H
+#ifndef NFCD_SYMBOLTABLE_H
+#define NFCD_SYMBOLTABLE_H
 
 #include <link.h>
-#include <string>
 #include <sys/mman.h>
+
+#include <string>
 #include <unordered_map>
+#include <cxxabi.h>
 
 #include <nfcd/error.h>
 
@@ -18,12 +20,23 @@ public:
         return mInstance;
     }
 
-    unsigned long getSize(std::string name) {
-        auto it = mSymbols.find(name);
+    unsigned long getSize(const std::string &name) const {
+        auto it = mSymbols.find(getName(name));
 
         if (it == mSymbols.end()) {
             LOGE("Symbol %s missing from SymbolTable", name.c_str());
             return 0;
+        }
+
+        return it->second;
+    }
+
+    std::string getName(const std::string &name) const {
+        auto it = mSymbolsAlternativeName.find(name);
+
+        if (it == mSymbolsAlternativeName.end()) {
+            LOGE("Alternative symbol name for %s missing from SymbolTable", name.c_str());
+            return name;
         }
 
         return it->second;
@@ -41,6 +54,22 @@ protected:
 
         LOG_ASSERT(parse(), "Symbol table missing from library");
         munmap(mBase, (size_t)phy_size);
+    }
+
+    std::string demangle(const std::string &name) const {
+        std::string result = name;
+
+        char *res = abi::__cxa_demangle(name.c_str(), nullptr, nullptr, nullptr);
+        if (res != nullptr) {
+            std::string demangled(res);
+
+            auto pos = demangled.find("(");
+            if (pos != std::string::npos)
+                result = demangled.substr(0, pos);
+        }
+        free(res);
+
+        return result;
     }
 
     bool parse() {
@@ -90,6 +119,7 @@ protected:
             if (symbol->st_name != 0) {
                 std::string name(base + tbl_string_off + symbol->st_name);
                 mSymbols.emplace(name, symbol->st_size);
+                mSymbolsAlternativeName.emplace(demangle(name), name);
             }
         }
 
@@ -98,8 +128,10 @@ protected:
 
     void *mBase;
     std::unordered_map<std::string, unsigned long> mSymbols;
+    // demangled -> mangled
+    std::unordered_map<std::string, std::string> mSymbolsAlternativeName;
 
     static SymbolTable *mInstance;
 };
 
-#endif //NFCD_SYMBOL_H
+#endif //NFCD_SYMBOLTABLE_H

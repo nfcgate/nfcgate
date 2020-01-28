@@ -4,15 +4,20 @@
 void enableDisablePolling(bool enable) {
     LOGD("%s polling", (enable ? "enabling" : "disabling"));
 
-    hook_NFA_StopRfDiscovery();
+    hNFA_StopRfDiscovery->call<def_NFA_StopRfDiscovery>();
     usleep(10000);
-    enable ? hook_NFA_EnablePolling(0xff) : hook_NFA_DisablePolling();
+    if (enable)
+        hNFA_EnablePolling->call<def_NFA_EnablePolling>(0xff);
+    else
+        hNFA_DisablePolling->call<def_NFA_DisablePolling>();
     usleep(10000);
-    hook_NFA_StartRfDiscovery();
+    hNFA_StartRfDiscovery->call<def_NFA_StartRfDiscovery>();
     usleep(10000);
 }
 
 void uploadConfig(Config &config) {
+    LOGI("uploadConfig");
+
     config_ref bin_stream;
     config.build(bin_stream);
 
@@ -21,10 +26,13 @@ void uploadConfig(Config &config) {
      * because NFCID cannot be set during discovery according to the standard
      * (even though broadcom permits it, nxp does not)
      */
-    hook_NFC_Deactivate(0);
-    // call original method instead of hooked one to prevent our config being overwritten by hook
-    hNFC_SetConfig->callOther<decltype(hook_NFC_SetConfig)>(config.total(), bin_stream.get());
-    hook_NFC_Deactivate(3);
+    hNFC_Deactivate->call<def_NFC_Deactivate>(0);
+
+    guardConfig = false;
+    hNFC_SetConfig->call<def_NFC_SetConfig>(config.total(), bin_stream.get());
+    guardConfig = true;
+
+    hNFC_Deactivate->call<def_NFC_Deactivate>(3);
 }
 
 extern "C" {

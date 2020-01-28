@@ -1,3 +1,6 @@
 [submodule "protocol"]
 	path = protobuf/src/main/proto/protocol
 	url = ../protocol.git
+[submodule "nfcd/xHook"]
+	path = nfcd/xHook
+	url = https://github.com/iqiyi/xHook.git
