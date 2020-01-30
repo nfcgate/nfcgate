@@ -145,14 +145,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        mNfc.onResume();
         super.onResume();
+        mNfc.onResume();
     }
 
     @Override
     protected void onPause() {
-        mNfc.onPause();
         super.onPause();
+        mNfc.onPause();
     }
 
     /**
