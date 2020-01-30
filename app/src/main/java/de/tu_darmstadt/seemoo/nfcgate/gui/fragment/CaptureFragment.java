@@ -85,7 +85,7 @@ public class CaptureFragment extends BaseFragment {
 
         if ("INITIAL".equals(type)) {
             Tag initial = b.getParcelable("data");
-            byte[] data = initial != null ? NFCTagReader.create(initial).getConfig().build() : null;
+            byte[] data = initial != null ? NFCTagReader.create(initial).getConfig().build() : new byte[0];
             return new NfcComm(true, true, data, timestamp);
         }
         else {
