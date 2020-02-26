@@ -247,7 +247,8 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
             @Override
             public void run() {
                 // handle data on UI thread
-                handleData(true, data);
+                // use our timestamp instead of the remote
+                handleData(true, new NfcComm(data.isCard(), data.isInitial(), data.getData()));
             }
         });
     }
