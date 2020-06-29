@@ -22,7 +22,7 @@
 
     <!-- Status warnings -->
     <string name="warn_5X601">A bug in Android 6.0.1 on the Nexus 5X prevents it from reading the hist bytes.</string>
-    <string name="warn_A9">Android 9 Pie is not yet supported as Tag emulator in Relay/Replay mode.</string>
+    <string name="warn_A11">Android 11 is untested.</string>
     <string name="warn_XPOMOD">Xposed module could not be found. Ensure Xposed is installed and the module is enabled.</string>
     <string name="warn_NFCMOD">Your NFC Chip could not be detected.</string>
     <string name="warn_HCE">Your device does not support HostCardEmulation and is not supported as Tag emulator in Relay/Replay mode.</string>

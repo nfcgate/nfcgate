@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import de.tu_darmstadt.seemoo.nfcgate.BuildConfig;
 import mehdi.sakout.aboutpage.AboutPage;
 import mehdi.sakout.aboutpage.Element;
 import de.tu_darmstadt.seemoo.nfcgate.R;
@@ -22,7 +23,7 @@ public class AboutFragment extends Fragment {
         // custom elements
         Element versionElement = new Element()
                 .setIconDrawable(R.drawable.ic_about_black_24dp)
-                .setTitle("Version 2.0");
+                .setTitle("Version " + BuildConfig.VERSION_NAME);
         Element licenseElement = new Element()
                 .setIconDrawable(R.drawable.ic_copyright_black_24dp)
                 .setIntent(new Intent()

@@ -152,9 +152,9 @@ public class StatusFragment extends BaseFragment {
         // android version should be OK for all supported versions
         StatusItem result = new StatusItem("Android Version").setValue(Build.VERSION.RELEASE);
 
-        // Android 9 and above is unsupported in tag mode
-        if (Build.VERSION.SDK_INT >= 28)
-            result.setWarn(getString(R.string.warn_A9));
+        // Android 11 and above is untested
+        if (Build.VERSION.SDK_INT >= 30)
+            result.setWarn(getString(R.string.warn_A11));
 
         return result;
     }
