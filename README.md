@@ -78,6 +78,10 @@ This application was presented at WiSec 2015. The [extended Abstract](https://bl
    limitations under the License.
 ```
 
+## Contact
+* [Steffen Klee](https://www.informatik.tu-darmstadt.de/seemoo/team_seemoo/steffen_klee/steffen_klee.en.jsp) 
+* [Max Maass](https://www.informatik.tu-darmstadt.de/seemoo/team_seemoo/max_maass/index.en.jsp)
+
 ## Used Libraries
 - [Xposed Bridge](https://github.com/rovo89/XposedBridge) (Licensed under the [Apache License v2.0](http://opensource.org/licenses/Apache-2.0))
 - [LibNFC-NCI](https://android.googlesource.com/platform/external/libnfc-nci/) (Licensed under the [Apache License v2.0](http://opensource.org/licenses/Apache-2.0))
