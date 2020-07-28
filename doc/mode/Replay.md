@@ -5,7 +5,7 @@ Replay mode enables the user to replay previously captured NFC traffic. Every tr
 
 ## Requirements
 - Android 4.4+ (API level 19+)
-- [Xposed](https://repo.xposed.info/)
+- [EdXposed](https://github.com/ElderDrivers/EdXposed) or [Xposed](https://repo.xposed.info/)
 - Architecture: ARMv8-A, ARMv7
 - When replaying tag traffic, the device requires [HCE support](https://developer.android.com/guide/topics/connectivity/nfc/hce).
 - Logs in `Logging`

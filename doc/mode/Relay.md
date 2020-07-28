@@ -14,7 +14,7 @@ Relay mode enables the user to relay NFC traffic over a network. Every traffic o
 Relay devices:
 
 - Android 4.4+ (API level 19+)
-- [Xposed](https://repo.xposed.info/)
+- [EdXposed](https://github.com/ElderDrivers/EdXposed) or [Xposed](https://repo.xposed.info/)
 - Architecture: ARMv8-A, ARMv7
 - The device acting as tag (in "tag mode") requires [HCE support](https://developer.android.com/guide/topics/connectivity/nfc/hce).
 - Sharing network with the server application, so that TCP communication is possible.

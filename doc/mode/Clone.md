@@ -5,7 +5,7 @@ Clone mode enables the user to clone initial information of a tag, e.g. tag ID. 
 
 ## Requirements
 - Android 4.4+ (API level 19+)
-- [Xposed](https://repo.xposed.info/)
+- [EdXposed](https://github.com/ElderDrivers/EdXposed) or [Xposed](https://repo.xposed.info/)
 - Architecture: ARMv8-A, ARMv7
 - [HCE](https://developer.android.com/guide/topics/connectivity/nfc/hce): Relay tag mode, replay tag mode, clone mode.
 

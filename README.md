@@ -16,7 +16,7 @@ This application was developed for security research purposes by students of the
 ## Requirements for specific modes
 - NFC support
 - Android 4.4+ (API level 19+)
-- [Xposed](https://repo.xposed.info/): On-device capture, relay tag mode, replay tag mode, clone mode.
+- [EdXposed](https://github.com/ElderDrivers/EdXposed) or [Xposed](https://repo.xposed.info/): On-device capture, relay tag mode, replay tag mode, clone mode.
 - ARMv8-A, ARMv7: Relay tag mode, replay tag mode, clone mode.
 - [HCE](https://developer.android.com/guide/topics/connectivity/nfc/hce): Relay tag mode, replay tag mode, clone mode.
 

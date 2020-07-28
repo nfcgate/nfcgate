@@ -5,7 +5,7 @@ On-device capture mode enables the user to capture NFC traffic of 3rd party appl
 
 ## Requirements
 - Android 4.4+ (API level 19+)
-- [Xposed](https://repo.xposed.info/)
+- [EdXposed](https://github.com/ElderDrivers/EdXposed) or [Xposed](https://repo.xposed.info/)
 - 3rd party app must use [reader mode](https://developer.android.com/reference/android/nfc/NfcAdapter#enableReaderMode%28android.app.Activity,%20android.nfc.NfcAdapter.ReaderCallback,%20int,%20android.os.Bundle%29)
 
 ## Usage
