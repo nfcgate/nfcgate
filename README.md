@@ -100,6 +100,7 @@ Any use of this project which results in an academic publication or other public
 * [Max Maass](https://www.informatik.tu-darmstadt.de/seemoo/team_seemoo/max_maass/index.en.jsp)
 
 ## Used Libraries
+- [xHook](https://github.com/iqiyi/xHook) (Licensed under the [MIT License](https://opensource.org/licenses/MIT))
 - [Xposed Bridge](https://github.com/rovo89/XposedBridge) (Licensed under the [Apache License v2.0](http://opensource.org/licenses/Apache-2.0))
 - [LibNFC-NCI](https://android.googlesource.com/platform/external/libnfc-nci/) (Licensed under the [Apache License v2.0](http://opensource.org/licenses/Apache-2.0))
 - [Protobuf](https://github.com/protocolbuffers/protobuf) (Licensed under the modified [BSD 3-Clause License](http://opensource.org/licenses/BSD-3-Clause))
