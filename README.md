@@ -8,7 +8,7 @@ This application was developed for security research purposes by students of the
 
 ## Features
 - **On-device capture**: Captures NFC traffic sent and received by other applications running on the device.
-- **Relay**: Relays NFC traffic between two devices. One device operates as a "reader" reading an NFC tag, the other device emulates an NFC tag using the Host Card Emulation (HCE).
+- **Relay**: Relays NFC traffic between two devices using [a server](https://github.com/nfcgate/server). One device operates as a "reader" reading an NFC tag, the other device emulates an NFC tag using the Host Card Emulation (HCE).
 - **Replay**: Replays previously captured NFC traffic in either "reader" or "tag" mode.
 - **Clone**: Clones the initial tag information (e.g. ID).
 - [pcapng](https://github.com/pcapng/pcapng) export of captured NFC traffic, readable by Wireshark.
