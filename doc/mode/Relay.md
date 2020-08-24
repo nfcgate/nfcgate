@@ -8,7 +8,7 @@ Relay mode enables the user to relay NFC traffic over a network. Every traffic o
 ### Devices
 - Two Android devices that peform the relay (called *relay devices*). A device cannot be used as reader nor as tag (HCE) when participating in relay.
 - Reader and tag whose traffic should be relayed (called *relayed devices*). These devices can be Android devices.
-- Any device running the [NFCGate server](/../server/) application. This can also be one of the Android devices running Termux.
+- Any device running the [NFCGate server](https://github.com/nfcgate/server/) application. This can also be one of the Android devices running Termux.
 
 ### Configuration
 Relay devices:
