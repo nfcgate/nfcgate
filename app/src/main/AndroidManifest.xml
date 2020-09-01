@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="de.tu_darmstadt.seemoo.nfcgate" >
 
     <uses-permission
@@ -58,7 +59,7 @@
                 Accept share and view intents, but don't limit mimeType to PCAP, because other apps
                 may not be able to map .pcap to its mimeType and use generic mimeType instead.
              -->
-            <intent-filter>
+            <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.SEND" />
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
