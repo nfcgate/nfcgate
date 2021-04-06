@@ -61,13 +61,13 @@ Some features of NFC are not supported by Android and thus cannot be used with o
 ## Publications and Media
 This application was [presented at the 14th USENIX Workshop on Offensive Technologies (WOOT '20)](https://www.usenix.org/conference/woot20/presentation/klee). An [arXiv preprint can be found here](https://arxiv.org/abs/2008.03913).
 
-An early version of this application was presented at WiSec 2015. The [extended Abstract](https://blog.velcommuta.de/wp-content/uploads/2015/07/nfcgate-extended-abstract.pdf) and [poster](https://blog.velcommuta.de/wp-content/uploads/2015/07/NFCGate-Poster.pdf) can be found on the [website](https://blog.velcommuta.de/publications/) of one of the authors. It was also presented in a brief [Lightning Talk](https://media.ccc.de/browse/conferences/camp2015/camp2015-6862-lightning_talks_day_2.html#video&t=300) at the [Chaos Communication Camp 2015](https://events.ccc.de/camp/2015/wiki/Main_Page).
+An early version of this application was presented at WiSec 2015. The [extended Abstract](https://tuprints.ulb.tu-darmstadt.de/5414/1/NFCGate%20-%20Maass%20et%20al.pdf) and [poster](https://blog.velcommuta.de/wp-content/uploads/2015/07/NFCGate-Poster.pdf) can be found on the [website](https://blog.velcommuta.de/publications/) of one of the authors. It was also presented in a brief [Lightning Talk](https://media.ccc.de/browse/conferences/camp2015/camp2015-6862-lightning_talks_day_2.html#video&t=300) at the [Chaos Communication Camp 2015](https://events.ccc.de/camp/2015/wiki/Main_Page).
 
 ## Reference our Project
 Any use of this project which results in an academic publication or other publication which includes a bibliography should include a citation to NFCGate:
 
 ```
-@inproceedings {257188,
+@inproceedings {Klee2020Nfcgate,
     author = {Steffen Klee and Alexandros Roussos and Max Maass and Matthias Hollick},
     title = {NFCGate: Opening the Door for {NFC} Security Research with a Smartphone-Based Toolkit},
     booktitle = {14th {USENIX} Workshop on Offensive Technologies ({WOOT} 20)},
@@ -75,6 +75,17 @@ Any use of this project which results in an academic publication or other public
     url = {https://www.usenix.org/conference/woot20/presentation/klee},
     publisher = {{USENIX} Association},
     month = aug,
+}
+```
+
+The initial NFCGate paper describing the first version of NFCGate can be cited as follows:
+
+```
+@inproceedings{Maass2015Nfcgate,
+  title={DEMO: NFCGate: an NFC relay application for Android},
+  author={Max Maass and Uwe M{\"u}ller and Tom Schons and Daniel Wegemer and Matthias Schulz},
+  booktitle={Proceedings of the 8th ACM Conference on Security \& Privacy in Wireless and Mobile Networks},
+  year={2015}
 }
 ```
 
