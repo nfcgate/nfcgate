@@ -18,7 +18,12 @@ add_library(nfcgate SHARED ${NFCD_HEADERS} ${NFCD_SOURCES})
 
 # platform specific flags
 if (CMAKE_SYSTEM_PROCESSOR STREQUAL aarch64)
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-execute-only -fuse-ld=lld -execute-only -ffixed-x18")
+    # FIXME XOM removed in NDK versions >= 22, retaining pre-22 behavior for compatibility
+    if (ANDROID_NDK_REVISION VERSION_GREATER 21)
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fuse-ld=lld -execute-only -ffixed-x18")
+    else()
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,-execute-only -fuse-ld=lld -execute-only -ffixed-x18")
+    endif()
 endif()
 
 # link library
