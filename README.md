@@ -107,8 +107,8 @@ The initial NFCGate paper describing the first version of NFCGate can be cited a
 ```
 
 ## Contact
-* [Steffen Klee](https://www.informatik.tu-darmstadt.de/seemoo/team_seemoo/steffen_klee/steffen_klee.en.jsp) 
-* [Max Maass](https://www.informatik.tu-darmstadt.de/seemoo/team_seemoo/max_maass/index.en.jsp)
+* [Steffen Klee](https://www.seemoo.tu-darmstadt.de/team/sklee/)
+* [Max Maass](https://www.seemoo.tu-darmstadt.de/team/mmaass/)
 
 ## Used Libraries
 - [xHook](https://github.com/iqiyi/xHook) (Licensed under the [MIT License](https://opensource.org/licenses/MIT))
