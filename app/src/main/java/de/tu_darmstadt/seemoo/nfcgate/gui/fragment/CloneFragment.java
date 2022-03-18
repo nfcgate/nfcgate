@@ -106,8 +106,8 @@ public class CloneFragment extends BaseFragment {
         mCloneSaved.setAdapter(mTagInfoAdapter);
 
         // show warning if xposed module is missing
-        if (!NfcManager.isHookLoaded())
-            new Semaphore(getMainActivity()).setWarning("missing Xposed module");
+        if (!NfcManager.isModuleLoaded() || !getNfc().isHookEnabled())
+            new Semaphore(getMainActivity()).setWarning("Xposed module not working");
     }
 
     @Override

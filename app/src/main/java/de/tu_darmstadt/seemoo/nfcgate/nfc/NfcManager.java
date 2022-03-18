@@ -11,7 +11,7 @@ import de.tu_darmstadt.seemoo.nfcgate.gui.MainActivity;
 import de.tu_darmstadt.seemoo.nfcgate.network.NetworkManager;
 import de.tu_darmstadt.seemoo.nfcgate.network.data.NetworkStatus;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.hce.ApduService;
-import de.tu_darmstadt.seemoo.nfcgate.nfc.hce.DaemonConfiguration;
+import de.tu_darmstadt.seemoo.nfcgate.nfc.hce.DaemonManager;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.modes.BaseMode;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.reader.NFCTagReader;
 import de.tu_darmstadt.seemoo.nfcgate.util.NfcComm;
@@ -29,7 +29,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     private MainActivity mActivity;
     private NfcAdapter mAdapter;
     private ApduService mApduService;
-    private DaemonConfiguration mDaemon;
+    private DaemonManager mDaemon;
     private NetworkManager mNetwork;
 
     // state
@@ -41,7 +41,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     public NfcManager(MainActivity activity) {
         mActivity = activity;
         mAdapter = NfcAdapter.getDefaultAdapter(activity);
-        mDaemon = new DaemonConfiguration(mActivity);
+        mDaemon = new DaemonManager(mActivity);
         mNetwork = new NetworkManager(mActivity, this);
 
         // save instance for service communication
@@ -66,8 +66,15 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      * Indicates whether the Xposed module is enabled
      * This is hooked by the module to return true
      */
-    public static boolean isHookLoaded() {
+    public static boolean isModuleLoaded() {
         return false;
+    }
+
+    /**
+     * Indicates whether the native hook in the NfcService is enabled
+     */
+    public boolean isHookEnabled() {
+        return mDaemon.isHookEnabled();
     }
 
     /**
@@ -104,6 +111,13 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     }
 
     /**
+     *  Get current daemon manager
+     */
+    public DaemonManager getDaemon() {
+        return mDaemon;
+    }
+
+    /**
      * Get current network manager
      */
     public NetworkManager getNetwork() {
@@ -124,6 +138,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
         if (isEnabled()) {
             enableForegroundDispatch();
             enableDisableReaderMode();
+            mDaemon.beginGetHookEnabled();
         }
     }
 
@@ -172,7 +187,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      */
     public void disablePolling() {
         if (mPollingEnabled)
-            mDaemon.setPolling(false);
+            mDaemon.beginSetPolling(false);
 
         mPollingEnabled = false;
     }
@@ -182,7 +197,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      */
     public void enablePolling() {
         if (!mPollingEnabled)
-            mDaemon.setPolling(true);
+            mDaemon.beginSetPolling(true);
 
         mPollingEnabled = true;
     }
@@ -191,14 +206,14 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      * Start capturing on-device NFC data
      */
     public void enableCapture() {
-        mDaemon.setCapture(true);
+        mDaemon.beginSetCapture(true);
     }
 
     /**
      * Stop capturing on-device NFC data
      */
     public void disableCapture() {
-        mDaemon.setCapture(false);
+        mDaemon.beginSetCapture(false);
     }
 
     /**
@@ -209,7 +224,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
 
         if (data.isInitial()) {
             // send configuration to service
-            mDaemon.setConfig(data.getData());
+            mDaemon.beginSetConfig(data.getData());
         }
         else if (mReaderMode) {
             // send data to tag and get reply

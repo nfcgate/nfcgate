@@ -40,6 +40,10 @@ extern "C" {
         return hookEnabled;
     }
 
+    JNIEXPORT jboolean JNICALL Java_de_tu_1darmstadt_seemoo_nfcgate_xposed_Native_isPatchEnabled(JNIEnv *, jobject) {
+        return patchEnabled;
+    }
+
     JNIEXPORT void JNICALL Java_de_tu_1darmstadt_seemoo_nfcgate_xposed_Native_setConfiguration(JNIEnv *env, jobject, jbyteArray config) {
         if (!env->IsSameObject(config, nullptr)) {
             jsize config_len = env->GetArrayLength(config);
@@ -47,11 +51,11 @@ extern "C" {
             hookValues.parse(config_len, (uint8_t *) config_data);
             env->ReleaseByteArrayElements(config, config_data, 0);
 
-            hookEnabled = true;
+            patchEnabled = true;
             uploadConfig(hookValues);
         }
         else {
-            hookEnabled = false;
+            patchEnabled = false;
             uploadConfig(origValues);
         }
     }

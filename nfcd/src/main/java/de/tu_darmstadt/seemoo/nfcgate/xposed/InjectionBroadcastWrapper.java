@@ -17,12 +17,12 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
     private boolean mCaptureEnabled = false;
     private ArrayList<Bundle> mCaptured = new ArrayList<>();
 
-
     public InjectionBroadcastWrapper(Context ctx) {
         mCtx = ctx;
 
         // load our native library
         loadForeignLibrary(ctx, "de.tu_darmstadt.seemoo.nfcgate", "nfcgate");
+        Log.d("HOOKNFC", isHookEnabled() ? "Loaded library successfully" : "Library load failed");
 
         // start broadcast receiver on handler thread
         HandlerThread ht = new HandlerThread("ht");
@@ -32,6 +32,10 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
 
     public boolean isHookEnabled() {
         return Native.Instance.isHookEnabled();
+    }
+
+    public boolean isPatchEnabled() {
+        return Native.Instance.isPatchEnabled();
     }
 
     public boolean isCaptureEnabled() {
@@ -58,16 +62,27 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
 
             if (!mCaptureEnabled) {
                 // deliver capture
-                mCtx.startActivity(new Intent()
-                        .setPackage("de.tu_darmstadt.seemoo.nfcgate")
-                        .setAction("de.tu_darmstadt.seemoo.nfcgate.capture")
-                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                mCtx.startActivity(makeResponseIntent()
+                        .putExtra("type", "CAPTURE")
                         .putParcelableArrayListExtra("capture", mCaptured));
 
                 // delete capture
                 mCaptured.clear();
             }
         }
+        else if ("GET_HOOK_STATUS".equals(op)) {
+            // deliver hook status
+            mCtx.startActivity(makeResponseIntent()
+                    .putExtra("type", "HOOK_STATUS")
+                    .putExtra("hookEnabled", isHookEnabled()));
+        }
+    }
+
+    private Intent makeResponseIntent() {
+        return new Intent()
+                .setPackage("de.tu_darmstadt.seemoo.nfcgate")
+                .setAction("de.tu_darmstadt.seemoo.nfcgate.daemoncall")
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     }
 
     private void loadForeignLibrary(Context ctx, String foreignPkg, String name) {
@@ -85,7 +100,6 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
 
         // try to load the library
         System.load(libPath);
-        Log.d("HOOKNFC", "Loaded library successfully");
     }
 
     private String combinePath(String p1, String p2) {
