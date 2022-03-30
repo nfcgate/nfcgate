@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="xposed_scope">
+        <item>de.tu_darmstadt.seemoo.nfcgate</item>
+        <item>com.android.nfc</item>
+    </string-array>
+</resources>
