@@ -51,11 +51,13 @@
                 <action android:name="de.tu_darmstadt.seemoo.nfcgate.main" />
                 <action android:name="de.tu_darmstadt.seemoo.nfcgate.capture" />
                 <action android:name="android.intent.action.MAIN" />
+
+                <!-- Required for foreground dispatch -->
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
+                <action android:name="android.nfc.action.TAG_DISCOVERED" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
-
             </intent-filter>
 
             <!--
