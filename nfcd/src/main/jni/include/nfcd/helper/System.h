@@ -10,6 +10,17 @@ using tNFA_TECHNOLOGY_MASK = uint8_t;
 // offset to ce_cb->mem.t4t.status field (ce_int.h)
 #define CE_CB_STATUS_POST_O 0xd0
 #define CE_CB_STATUS_PRE_O 0xd8
+// offset to nfa_dm_cb->p_conn_cback field (nfa_dm_int.h)
+#define NFA_DM_CB_CONN_CBACK (8 * sizeof(void*))
+
+// modified from nfa_api.h
+#define NFA_POLL_ENABLED_EVT 0
+#define NFA_POLL_DISABLED_EVT 1
+#define NFA_RF_DISCOVERY_STARTED_EVT 30
+#define NFA_RF_DISCOVERY_STOPPED_EVT 31
+
+// modified from DEFAULT_TECH_MASK in NativeNfcManager.cpp
+#define SAFE_TECH_MASK (0x01 | 0x02 | 0x04 | 0x08 | 0x40 | 0x80 | 0x20)
 
 class System {
 public:

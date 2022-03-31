@@ -264,8 +264,9 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
         Log.v(TAG, "applyData of " + data.getData().length + " bytes");
 
         if (data.isInitial()) {
-            // send configuration to service
+            // send configuration to service, also disables polling
             mDaemon.beginSetConfig(data.getData());
+            mPollingEnabled = false;
         }
         else if (mReaderMode) {
             // send data to tag and get reply

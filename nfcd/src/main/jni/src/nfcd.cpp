@@ -2,12 +2,15 @@
 
 static void hookNative() __attribute__((constructor));
 SymbolTable *SymbolTable::mInstance;
+EventQueue EventQueue::mInstance;
 Config origValues, hookValues;
+def_NFA_CONN_CBACK *origNfaConnCBack;
 bool hookEnabled = false;
 bool patchEnabled = false;
 bool guardConfig = true;
 IHook *hNFC_SetConfig;
 IHook *hce_select_t4t;
+Symbol *nfa_dm_cb;
 Symbol *hce_cb;
 Symbol *hNFC_Deactivate;
 Symbol *hNFA_StopRfDiscovery;
@@ -71,6 +74,28 @@ tNFC_STATUS hook_ce_select_t4t() {
     return r;
 }
 
+void hook_nfaConnectionCallback(uint8_t event, void *eventData) {
+    if (eventData)
+        LOGD("hook_NFA_Event: event %d with status %d", event, *(uint8_t *)eventData);
+    else
+        LOGD("hook_NFA_Event: event %d without status", event);
+
+    // call original callback
+    origNfaConnCBack(event, eventData);
+    // enqueue event
+    EventQueue::instance().enqueue(event, eventData ? *(uint8_t*)eventData : 0);
+}
+
+void hookNFA_CB() {
+    auto **p_nfa_conn_cback = (def_NFA_CONN_CBACK**)(nfa_dm_cb->address<uint8_t>() +
+            NFA_DM_CB_CONN_CBACK);
+
+    // save old nfa connection callback
+    origNfaConnCBack = *p_nfa_conn_cback;
+    // set new nfa connection callback
+    *p_nfa_conn_cback = &hook_nfaConnectionCallback;
+}
+
 static void hookNative() {
     IHook::init();
 
@@ -95,6 +120,9 @@ static void hookNative() {
 
     hce_select_t4t = IHook::hook("ce_select_t4t", (void *)&hook_ce_select_t4t, handle, libnfc_re());
     hce_cb = new Symbol("ce_cb", handle);
+
+    nfa_dm_cb = new Symbol("nfa_dm_cb", handle);
+    hookNFA_CB();
 
     hookEnabled = true;
     IHook::finish();

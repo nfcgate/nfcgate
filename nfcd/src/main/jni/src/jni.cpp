@@ -1,38 +1,66 @@
 #include <nfcd/nfcd.h>
 #include <jni.h>
 
-void enableDisablePolling(bool enable) {
-    LOGD("%s polling", (enable ? "enabling" : "disabling"));
+static void beginCollectingEvents() {
+    EventQueue::instance().beginCollecting();
+}
 
-    hNFA_StopRfDiscovery->call<def_NFA_StopRfDiscovery>();
-    usleep(10000);
-    if (enable)
-        hNFA_EnablePolling->call<def_NFA_EnablePolling>(0xff);
+static void waitForEvent(uint8_t event, bool checkStatus = true) {
+    uint8_t status;
+    if (EventQueue::instance().waitFor(event, status, 500)) {
+        if (checkStatus && status != 0)
+            LOGD("[event] Unexpected status for event %d: expected 0, got %d", event, status);
+    }
     else
+        LOGD("[event] Waiting for event %d failed: timeout reached", event);
+}
+
+void enableDisablePolling(bool enable) {
+    LOGD("[polling] %s", (enable ? "Enabling" : "Disabling"));
+
+    beginCollectingEvents();
+    hNFA_StopRfDiscovery->call<def_NFA_StopRfDiscovery>();
+    waitForEvent(NFA_RF_DISCOVERY_STOPPED_EVT, false);
+    LOGD("[polling] Stopped RF discovery");
+
+    if (enable) {
+        /*
+         * Note: only enable known technologies, since enabling all (0xFF) also enabled exotic
+         * proprietary ones, which may fail to start without special configuration
+         */
+        beginCollectingEvents();
+        hNFA_EnablePolling->call<def_NFA_EnablePolling>(SAFE_TECH_MASK);
+        waitForEvent(NFA_POLL_ENABLED_EVT);
+        LOGD("[polling] Enabled polling");
+
+        beginCollectingEvents();
+        hNFA_StartRfDiscovery->call<def_NFA_StartRfDiscovery>();
+        waitForEvent(NFA_RF_DISCOVERY_STARTED_EVT);
+        LOGD("[polling] Started RF discovery");
+    }
+    else {
+        beginCollectingEvents();
         hNFA_DisablePolling->call<def_NFA_DisablePolling>();
-    usleep(10000);
-    hNFA_StartRfDiscovery->call<def_NFA_StartRfDiscovery>();
-    usleep(10000);
+        waitForEvent(NFA_POLL_DISABLED_EVT);
+        LOGD("[polling] Disabled polling");
+    }
 }
 
 void uploadConfig(Config &config) {
-    LOGI("uploadConfig");
+    LOGI("[config]");
 
     config_ref bin_stream;
     config.build(bin_stream);
 
-    /*
-     * Note: Disable discovery before setting the config,
-     * because NFCID cannot be set during discovery according to the standard
-     * (even though broadcom permits it, nxp does not)
-     */
-    hNFC_Deactivate->call<def_NFC_Deactivate>(0);
+    // NCI standard states that NFCID cannot be set during discovery
+    enableDisablePolling(false);
 
     guardConfig = false;
     hNFC_SetConfig->call<def_NFC_SetConfig>(config.total(), bin_stream.get());
     guardConfig = true;
 
-    hNFC_Deactivate->call<def_NFC_Deactivate>(3);
+    // wait for config to set before returning
+    usleep(35000);
 }
 
 extern "C" {

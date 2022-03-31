@@ -3,6 +3,7 @@
 
 #include <nfcd/error.h>
 #include <nfcd/helper/Config.h>
+#include <nfcd/helper/EventQueue.h>
 #include <nfcd/helper/SymbolTable.h>
 #include <nfcd/helper/System.h>
 #include <nfcd/hook/IHook.h>
@@ -30,6 +31,7 @@ using def_NFA_StopRfDiscovery = tNFA_STATUS();
 using def_NFA_DisablePolling = tNFA_STATUS();
 using def_NFA_StartRfDiscovery = tNFA_STATUS();
 using def_NFA_EnablePolling = tNFA_STATUS(tNFA_TECHNOLOGY_MASK poll_mask);
+using def_NFA_CONN_CBACK = void(uint8_t event, void *data);
 using def_ce_select_t4t = decltype(hook_ce_select_t4t);
 
 
