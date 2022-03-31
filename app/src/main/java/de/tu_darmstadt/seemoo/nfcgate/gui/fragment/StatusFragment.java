@@ -217,7 +217,7 @@ public class StatusFragment extends BaseFragment {
 
     StatusItem detectNfcModel() {
         // null or chip model name
-        String chipName = new NfcConf().detectNfcc();
+        String chipName = new NfcConf().detectNFCC();
         // Chip model should be OK if it can be detected
         StatusItem result = new StatusItem("NFC Chip")
                 .setValue(chipName != null ? chipName : "Unknown");
