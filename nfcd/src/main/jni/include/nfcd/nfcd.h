@@ -1,4 +1,3 @@
-#include <dlfcn.h>
 #include <unistd.h>
 
 #include <nfcd/error.h>
@@ -31,18 +30,6 @@ using def_NFA_StartRfDiscovery = tNFA_STATUS();
 using def_NFA_EnablePolling = tNFA_STATUS(tNFA_TECHNOLOGY_MASK poll_mask);
 using def_NFA_CONN_CBACK = void(uint8_t event, void *data);
 using def_ce_select_t4t = decltype(hook_ce_select_t4t);
-
-
-inline const char *libnfc_path() {
-#ifdef __aarch64__
-    return "/system/lib64/libnfc-nci.so";
-#elif __arm__
-    return "/system/lib/libnfc-nci.so";
-#endif
-}
-inline const char *libnfc_re() {
-    return "^/system/lib.*/libnfc-nci\\.so$";
-}
 
 inline void loghex(const char *desc, const uint8_t *data, const int len) {
     int strlen = len * 3 + 1;

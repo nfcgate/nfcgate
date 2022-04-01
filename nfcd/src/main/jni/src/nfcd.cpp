@@ -1,4 +1,5 @@
 #include <nfcd/nfcd.h>
+#include <dlfcn.h>
 
 static void hookNative() __attribute__((constructor));
 SymbolTable *SymbolTable::mInstance;
@@ -95,13 +96,37 @@ void hookNFA_CB() {
     *p_nfa_conn_cback = &hook_nfaConnectionCallback;
 }
 
-static void hookNative() {
-    IHook::init();
+static std::string findLibNFC() {
+    std::string bases[] = {
+#ifdef __aarch64__
+        "/system/lib64/",
+#elif __arm__
+        "/system/lib/",
+#endif
+    };
+    std::string names[] = {
+        "libnfc-nci.so",
+        "libnqnfc-nci.so",
+    };
 
+    for (auto &base : bases) {
+        for (auto &name : names) {
+            auto path = base + name;
+
+            if (access(path.c_str(), R_OK) == 0)
+                return path;
+        }
+    }
+
+    return "";
+}
+
+static void hookNative() {
     // check if NCI library exists and is readable + is loaded
-    const char *lib_path = libnfc_path();
-    LOGI("Library expected at %s", lib_path);
-    LOG_ASSERT_X(access(lib_path, R_OK) == 0, "Library not accessible");
+    auto libPath = findLibNFC();
+    auto *lib_path = libPath.c_str();
+    LOG_ASSERT_X(!libPath.empty(), "Library not found or not accessible");
+    LOGI("Library found at %s", lib_path);
 
     void *handle = dlopen(lib_path, RTLD_NOLOAD);
     LOG_ASSERT_X(handle, "Could not obtain library handle");
@@ -109,14 +134,14 @@ static void hookNative() {
     // create symbol mapping
     SymbolTable::create(lib_path);
 
-    hNFC_SetConfig = IHook::hook("NFC_SetConfig", (void *) &hook_NFC_SetConfig, handle, libnfc_re());
+    hNFC_SetConfig = IHook::hook("NFC_SetConfig", (void *) &hook_NFC_SetConfig, handle, lib_path);
 
     hNFA_StopRfDiscovery = new Symbol("NFA_StopRfDiscovery", handle);
     hNFA_DisablePolling = new Symbol("NFA_DisablePolling", handle);
     hNFA_StartRfDiscovery = new Symbol("NFA_StartRfDiscovery", handle);
     hNFA_EnablePolling = new Symbol("NFA_EnablePolling", handle);
 
-    hce_select_t4t = IHook::hook("ce_select_t4t", (void *)&hook_ce_select_t4t, handle, libnfc_re());
+    hce_select_t4t = IHook::hook("ce_select_t4t", (void *)&hook_ce_select_t4t, handle, lib_path);
     hce_cb = new Symbol("ce_cb", handle);
 
     nfa_dm_cb = new Symbol("nfa_dm_cb", handle);
