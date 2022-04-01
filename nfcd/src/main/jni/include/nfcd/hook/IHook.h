@@ -16,14 +16,14 @@ public:
     static void init();
     static IHook *hook(const std::string &name, void *hook, void *libraryHandle,
                        const std::string &reLibrary);
-    static void finish();
+    static bool finish();
 
 protected:
     IHook(const std::string &name, void *hook, void *libraryHandle);
 
     static bool useXHook;
 
-    virtual void hook() = 0;
+    virtual void hookInternal() = 0;
 
     void *mHookFn = nullptr;
     bool mHooked = false;

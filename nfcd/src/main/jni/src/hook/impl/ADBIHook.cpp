@@ -7,10 +7,10 @@
 
 ADBIHook::ADBIHook(const std::string &name, void *hookFn, void *libraryHandle) :
         IHook(name, hookFn, libraryHandle) {
-    hook();
+    ADBIHook::hookInternal();
 }
 
-void ADBIHook::hook() {
+void ADBIHook::hookInternal() {
     // get symbol alignment
     mAlignment = SymbolTable::instance()->getSize(mName);
     // construct trampoline for this architecture

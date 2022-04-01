@@ -15,7 +15,7 @@ public:
     void postcall() override;
 
 protected:
-    void hook() override;
+    void hookInternal() override;
 
     bool constructTrampoline();
 

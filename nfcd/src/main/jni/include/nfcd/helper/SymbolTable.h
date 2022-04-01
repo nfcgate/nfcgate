@@ -12,8 +12,9 @@
 
 class SymbolTable {
 public:
-    static void create(const char *file) {
+    static bool create(const char *file) {
         mInstance = new SymbolTable(file);
+        return mInstance->mBase != MAP_FAILED;
     }
 
     static SymbolTable *instance() {

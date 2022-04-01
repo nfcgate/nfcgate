@@ -8,7 +8,7 @@ public:
     XHook(const std::string &name, void *hook, void *libraryHandle, const std::string &reLibrary);
 
 protected:
-    void hook() override;
+    void hookInternal() override;
 
     std::string mReLibrary;
 };

@@ -1,5 +1,6 @@
 #include <nfcd/nfcd.h>
 #include <dlfcn.h>
+#include <sstream>
 
 static void hookNative() __attribute__((constructor));
 SymbolTable *SymbolTable::mInstance;
@@ -86,14 +87,41 @@ void hook_nfaConnectionCallback(uint8_t event, void *eventData) {
     EventQueue::instance().enqueue(event, eventData ? *(uint8_t*)eventData : 0);
 }
 
-void hookNFA_CB() {
+bool hookNFA_CB() {
     auto **p_nfa_conn_cback = (def_NFA_CONN_CBACK**)(nfa_dm_cb->address<uint8_t>() +
             NFA_DM_CB_CONN_CBACK);
+    LOG_ASSERT_XR(p_nfa_conn_cback && *p_nfa_conn_cback, false, "NFA_CB invalid");
 
     // save old nfa connection callback
     origNfaConnCBack = *p_nfa_conn_cback;
     // set new nfa connection callback
     *p_nfa_conn_cback = &hook_nfaConnectionCallback;
+
+    return true;
+}
+
+static std::string escapeBRE(const std::string &in) {
+    std::stringstream bruce;
+
+    for (char c : in) {
+        switch (c) {
+            case '.':
+            case '[':
+            case ']':
+            case '^':
+            case '$':
+            case '*':
+            case '\\':
+                bruce << "\\" << c;
+                break;
+
+            default:
+                bruce << c;
+                break;
+        }
+    }
+
+    return bruce.str();
 }
 
 static std::string findLibNFC() {
@@ -123,30 +151,54 @@ static std::string findLibNFC() {
 
 static void hookNative() {
     // check if NCI library exists and is readable + is loaded
-    auto libPath = findLibNFC();
-    auto *lib_path = libPath.c_str();
-    LOG_ASSERT_X(!libPath.empty(), "Library not found or not accessible");
-    LOGI("Library found at %s", lib_path);
+    auto libStr = findLibNFC();
+    auto libReStr = "^" + escapeBRE(libStr) + "$";
+    auto *lib = libStr.c_str();
+    auto *lib_re = libReStr.c_str();
 
-    void *handle = dlopen(lib_path, RTLD_NOLOAD);
+    LOG_ASSERT_X(!libStr.empty(), "Library not found or not accessible");
+    LOGI("Library found at %s", lib);
+
+    // try to obtain handle of already loaded library
+    void *handle = dlopen(lib, RTLD_NOLOAD);
     LOG_ASSERT_X(handle, "Could not obtain library handle");
 
-    // create symbol mapping
-    SymbolTable::create(lib_path);
+    // create symbol -> size mapping
+    LOG_ASSERT_X(SymbolTable::create(lib), "Hooking failed");
 
-    hNFC_SetConfig = IHook::hook("NFC_SetConfig", (void *) &hook_NFC_SetConfig, handle, lib_path);
+    // begin installing hooks
+    IHook::init();
+    {
+        // NFC config
+        hNFC_SetConfig = IHook::hook("NFC_SetConfig", (void *) &hook_NFC_SetConfig, handle, lib_re);
+        LOG_ASSERT_X(hNFC_SetConfig->isHooked(), "Hooking failed");
 
-    hNFA_StopRfDiscovery = new Symbol("NFA_StopRfDiscovery", handle);
-    hNFA_DisablePolling = new Symbol("NFA_DisablePolling", handle);
-    hNFA_StartRfDiscovery = new Symbol("NFA_StartRfDiscovery", handle);
-    hNFA_EnablePolling = new Symbol("NFA_EnablePolling", handle);
+        // discovery
+        hNFA_StartRfDiscovery = new Symbol("NFA_StartRfDiscovery", handle);
+        hNFA_StopRfDiscovery = new Symbol("NFA_StopRfDiscovery", handle);
+        LOG_ASSERT_X(hNFA_StartRfDiscovery->address<void>(), "Hooking failed");
+        LOG_ASSERT_X(hNFA_StopRfDiscovery->address<void>(), "Hooking failed");
 
-    hce_select_t4t = IHook::hook("ce_select_t4t", (void *)&hook_ce_select_t4t, handle, lib_path);
-    hce_cb = new Symbol("ce_cb", handle);
+        // polling
+        hNFA_EnablePolling = new Symbol("NFA_EnablePolling", handle);
+        hNFA_DisablePolling = new Symbol("NFA_DisablePolling", handle);
+        LOG_ASSERT_X(hNFA_EnablePolling->address<void>(), "Hooking failed");
+        LOG_ASSERT_X(hNFA_DisablePolling->address<void>(), "Hooking failed");
 
-    nfa_dm_cb = new Symbol("nfa_dm_cb", handle);
-    hookNFA_CB();
+        // NFC routing
+        hce_select_t4t = IHook::hook("ce_select_t4t", (void *) &hook_ce_select_t4t, handle, lib_re);
+        LOG_ASSERT_X(hce_select_t4t->isHooked(), "Hooking failed");
+        hce_cb = new Symbol("ce_cb", handle);
+        LOG_ASSERT_X(hce_cb->address<void>(), "Hooking failed");
 
+        // NFA callback
+        nfa_dm_cb = new Symbol("nfa_dm_cb", handle);
+        LOG_ASSERT_X(nfa_dm_cb->address<void>(), "Hooking failed");
+        LOG_ASSERT_X(hookNFA_CB(), "Hooking failed");
+    }
+    // finish installing hooks
+    LOG_ASSERT_X(IHook::finish(), "Hooking failed");
+
+    // hooking success
     hookEnabled = true;
-    IHook::finish();
 }
