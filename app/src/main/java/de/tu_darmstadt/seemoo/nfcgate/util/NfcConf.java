@@ -1,12 +1,14 @@
 package de.tu_darmstadt.seemoo.nfcgate.util;
 
+import android.util.Log;
 import android.util.Pair;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,11 @@ public class NfcConf {
     private static class ParserStatus {
         public String chipName = null;
         public boolean confirmed = false;
+
+        @Override
+        public String toString() {
+            return "chipName: " + chipName + ", confirmed: " + confirmed;
+        }
     }
     private static abstract class ILineParser {
         ParserStatus status = new ParserStatus();
@@ -33,7 +40,7 @@ public class NfcConf {
             if (keyVal != null) {
                 // existence of this device node confirms this is (or is not) the correct config
                 if ("NXP_NFC_DEV_NODE".equals(keyVal.first))
-                    if (!(status.confirmed = new File(keyVal.second).exists()))
+                    if (!(status.confirmed = fileExists(keyVal.second)))
                         return false;
 
                 if ("NXP_NFC_CHIP".equals(keyVal.first))
@@ -51,7 +58,7 @@ public class NfcConf {
             if (keyVal != null) {
                 // existence of this device node confirms this is (or is not) the correct config
                 if ("TRANSPORT_DRIVER".equals(keyVal.first)) {
-                    if (!(status.confirmed = new File(keyVal.second).exists()))
+                    if (!(status.confirmed = fileExists(keyVal.second)))
                         return false;
 
                     status.chipName = keyVal.second.replace("/dev/", "");
@@ -77,17 +84,59 @@ public class NfcConf {
         return NXPMap.containsKey(code) ? NXPMap.get(code) : "Unknown NXP";
     }
 
-    // list of config files and their parsers in system search order
-    private final List<Pair<String, ILineParser>> configPaths = Arrays.asList(
-        new Pair<>("/odm/etc/libnfc-brcm.conf", BRCM_PARSER),
-        new Pair<>("/odm/etc/libnfc-nxp.conf", NXP_PARSER),
+    private final String[] configDirs = new String[] {
+            "/odm/etc/",
+            "/vendor/etc/",
+            "/etc/",
+    };
+    private final String[] configNamesBRCM = new String[] {
+            "libnfc-brcm.conf",
+    };
+    private final String[] configNamesNXP = new String[] {
+            "libnfc-nxp.conf",
+    };
 
-        new Pair<>("/vendor/etc/libnfc-brcm.conf", BRCM_PARSER),
-        new Pair<>("/vendor/etc/libnfc-nxp.conf", NXP_PARSER),
+    // search standard config dirs and return all paths resulting from dir+fileName which exist
+    private List<Pair<String, ILineParser>> findConfigs(String[] fileNames, ILineParser parser) {
+        List<Pair<String, ILineParser>> result = new ArrayList<>();
 
-        new Pair<>("/system/etc/libnfc-brcm.conf", BRCM_PARSER),
-        new Pair<>("/system/etc/libnfc-nxp.conf", NXP_PARSER)
-    );
+        for (String dir : configDirs) {
+            for (String fileName : fileNames) {
+                String path = dir + fileName;
+
+                if (fileExists(path))
+                    result.add(new Pair<>(path, parser));
+            }
+        }
+
+        return result;
+    }
+
+    // get a list of existing config file paths
+    private List<Pair<String, ILineParser>> getConfigPaths() {
+        // build list of existing config files to parse in reverse order of precedence
+        List<Pair<String, ILineParser>> result = new ArrayList<>();
+
+        // try to find old broadcom configs first
+        result.addAll(findConfigs(configNamesBRCM, BRCM_PARSER));
+        // try to find old NXP configs next
+        result.addAll(findConfigs(configNamesNXP, NXP_PARSER));
+
+        // if this prop exists, try to find configs with SKU names
+        String propHWSKU = getSystemProp("ro.boot.product.hardware.sku");
+        if (!propHWSKU.isEmpty())
+            result.addAll(findConfigs(new String[]{
+                    "libnfc-" + propHWSKU + ".conf",
+                    "libnfc-nxp-" + propHWSKU + ".conf",
+            }, NXP_PARSER));
+
+        // if this prop exists, try to find configs with its name
+        String propCFN = getSystemProp("persist.vendor.nfc.config_file_name");
+        if (!propCFN.isEmpty())
+            result.addAll(findConfigs(new String[]{propCFN}, NXP_PARSER));
+
+        return result;
+    }
 
     /**
      * Detects the NFCC on this device
@@ -98,11 +147,13 @@ public class NfcConf {
         String chipName = null;
 
         // search configuration files in order
-        for (Pair<String, ILineParser> path : configPaths) {
-            ParserStatus result = readConf(path.first, path.second);
+        for (Pair<String, ILineParser> entry : getConfigPaths()) {
+            ParserStatus result = readConf(entry.first, entry.second);
 
             // ignore confirmed misses
             if (result != null) {
+                Log.d("NFCCONFIG", "Guess {" + result + "} from " + entry.first);
+
                 // save guess
                 if (result.chipName != null)
                     chipName = result.chipName;
@@ -149,5 +200,40 @@ public class NfcConf {
             return new Pair<>(parts[0].trim(), parts[1].trim().replaceAll("(^\")|(\"$)", ""));
 
         return null;
+    }
+
+    /**
+     * Checks if file exists
+     *
+     * @param fileName Path to file to check
+     * @return True if exists
+     */
+    private static boolean fileExists(String fileName) {
+        return new File(fileName).exists();
+    }
+
+    /**
+     * Gets a system prop
+     *
+     * @param prop Full name of property to get
+     * @return Value of property on success or empty String otherwise
+     */
+    private String getSystemProp(String prop) {
+        String value = "";
+        Process p = null;
+
+        try {
+            p = new ProcessBuilder("getprop", prop).redirectErrorStream(true).start();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            for (String line; (line = br.readLine()) != null; )
+                value = line.trim();
+        }
+        catch (IOException ignored) { }
+
+        if (p != null)
+            p.destroy();
+
+        return !value.isEmpty() ? value : "";
     }
 }
