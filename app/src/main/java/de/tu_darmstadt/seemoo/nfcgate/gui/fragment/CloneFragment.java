@@ -112,13 +112,13 @@ public class CloneFragment extends BaseFragment {
             public void onChange() {
                 mSemaphore.reset();
 
-                // show error if NFC is disabled
-                if (!getNfc().isEnabled())
-                    mSemaphore.setError("NFC is disabled or unsupported");
-
                 // show warning if xposed module does not respond
                 if (!NfcManager.isModuleLoaded() || !getNfc().isHookEnabled())
                     mSemaphore.setWarning("Xposed module is not working properly");
+
+                // show error if NFC is disabled
+                if (!getNfc().isEnabled())
+                    mSemaphore.setError("NFC is disabled or unsupported");
             }
         });
     }
