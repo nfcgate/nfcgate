@@ -79,7 +79,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
         SharedPreferences prefs = PreferenceManagerFix.getDefaultSharedPreferences(getActivity());
         mOfflineReplay = !prefs.getBoolean("network", false);
         mReplayMode = prefs.getString("mode", "index");
-        mSemaphore.setVisibility(!mOfflineReplay);
+        mStatusBanner.setVisibility(!mOfflineReplay);
     }
 
     @Override
@@ -127,8 +127,8 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
     protected void reset() {
         super.reset();
 
-        // hide semaphore in offline case
-        mSemaphore.setVisibility(!mOfflineReplay);
+        // hide banner in offline case
+        mStatusBanner.setVisibility(!mOfflineReplay);
 
         // clear saved session data
         mSessionLog = null;

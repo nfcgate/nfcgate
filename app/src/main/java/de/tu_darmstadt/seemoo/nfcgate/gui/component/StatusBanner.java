@@ -8,7 +8,7 @@ import android.widget.TextView;
 import de.tu_darmstadt.seemoo.nfcgate.R;
 import de.tu_darmstadt.seemoo.nfcgate.gui.MainActivity;
 
-public class Semaphore {
+public class StatusBanner {
     // state for each color
     public enum State {
         GREEN,
@@ -18,13 +18,13 @@ public class Semaphore {
     }
 
     // UI references
-    private RelativeLayout mSemaphore;
-    private TextView mSemaphoreText;
+    private RelativeLayout mBanner;
+    private TextView mBannerText;
 
-    public Semaphore(MainActivity act) {
+    public StatusBanner(MainActivity act) {
         // get components
-        mSemaphore = act.findViewById(R.id.tag_semaphore);
-        mSemaphoreText = act.findViewById(R.id.tag_semaphore_text);
+        mBanner = act.findViewById(R.id.banner);
+        mBannerText = act.findViewById(R.id.banner_text);
     }
 
     private int colorByState(State state) {
@@ -42,17 +42,17 @@ public class Semaphore {
     @DrawableRes
     private int backgroundByState(State state) {
         switch (state) {
-            case RED: return R.color.semaphore_red;
-            case YELLOW: return R.color.semaphore_yellow;
-            case GREEN: return R.color.semaphore_green;
-            default: case IDLE: return R.color.semaphore_idle;
+            case RED: return R.color.status_red;
+            case YELLOW: return R.color.status_yellow;
+            case GREEN: return R.color.status_green;
+            default: case IDLE: return R.color.status_idle;
         }
     }
 
     public void set(State state, String message) {
-        mSemaphore.setBackgroundResource(backgroundByState(state));
-        mSemaphoreText.setTextColor(colorByState(state));
-        mSemaphoreText.setText(message);
+        mBanner.setBackgroundResource(backgroundByState(state));
+        mBannerText.setTextColor(colorByState(state));
+        mBannerText.setText(message);
         setVisibility(true);
     }
 
@@ -65,7 +65,7 @@ public class Semaphore {
     }
 
     public void setVisibility(boolean visible) {
-        mSemaphore.setVisibility(visible ? View.VISIBLE : View.GONE);
+        mBanner.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     public void reset() {

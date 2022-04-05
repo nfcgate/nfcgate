@@ -36,7 +36,6 @@ import de.tu_darmstadt.seemoo.nfcgate.gui.fragment.RelayFragment;
 import de.tu_darmstadt.seemoo.nfcgate.gui.fragment.ReplayFragment;
 import de.tu_darmstadt.seemoo.nfcgate.gui.fragment.SettingsFragment;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.NfcManager;
-import de.tu_darmstadt.seemoo.nfcgate.nfc.reader.NFCTagReader;
 import de.tu_darmstadt.seemoo.nfcgate.util.NfcComm;
 
 public class MainActivity extends AppCompatActivity {
@@ -200,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
         // reset the subtitle because a fragment might have changed it
         getSupportActionBar().setSubtitle(null);
         // hide status bar
-        findViewById(R.id.tag_semaphore).setVisibility(View.GONE);
+        findViewById(R.id.banner).setVisibility(View.GONE);
 
         // avoid carrying over actions from previous fragment
         supportInvalidateOptionsMenu();

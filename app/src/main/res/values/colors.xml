@@ -3,8 +3,8 @@
     <item name="black" type="color">#000000</item>
     <color name="ic_launcher_background">#FD9600</color>
 
-    <item name="semaphore_green" type="color">#388e3c</item>
-    <item name="semaphore_yellow" type="color">#f57f17</item>
-    <item name="semaphore_red" type="color">#c62828</item>
-    <item name="semaphore_idle" type="color">#CFD8DC</item>
+    <item name="status_green" type="color">#388e3c</item>
+    <item name="status_yellow" type="color">#f57f17</item>
+    <item name="status_red" type="color">#c62828</item>
+    <item name="status_idle" type="color">#CFD8DC</item>
 </resources>

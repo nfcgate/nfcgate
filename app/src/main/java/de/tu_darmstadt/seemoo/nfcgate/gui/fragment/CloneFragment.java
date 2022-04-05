@@ -27,7 +27,7 @@ import java.util.List;
 import de.tu_darmstadt.seemoo.nfcgate.R;
 import de.tu_darmstadt.seemoo.nfcgate.db.TagInfo;
 import de.tu_darmstadt.seemoo.nfcgate.db.model.TagInfoViewModel;
-import de.tu_darmstadt.seemoo.nfcgate.gui.component.Semaphore;
+import de.tu_darmstadt.seemoo.nfcgate.gui.component.StatusBanner;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.NfcManager;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.config.ConfigBuilder;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.modes.CloneMode;
@@ -39,7 +39,7 @@ public class CloneFragment extends BaseFragment {
     ImageView mCloneType;
     TextView mCloneContent;
     ListView mCloneSaved;
-    Semaphore mSemaphore;
+    StatusBanner mStatusBanner;
 
     // clone data
     byte[] mCloneData;
@@ -58,7 +58,7 @@ public class CloneFragment extends BaseFragment {
         mCloneType = v.findViewById(R.id.type);
         mCloneContent = v.findViewById(R.id.data);
         mCloneSaved = v.findViewById(R.id.clone_saved);
-        mSemaphore = new Semaphore(getMainActivity());
+        mStatusBanner = new StatusBanner(getMainActivity());
 
         setHasOptionsMenu(true);
         beginClone();
@@ -110,15 +110,15 @@ public class CloneFragment extends BaseFragment {
         getNfc().setStatusChangedHandler(new NfcManager.StatusChangedListener() {
             @Override
             public void onChange() {
-                mSemaphore.reset();
+                mStatusBanner.reset();
 
                 // show warning if xposed module does not respond
                 if (!NfcManager.isModuleLoaded() || !getNfc().isHookEnabled())
-                    mSemaphore.setWarning("Xposed module is not working properly");
+                    mStatusBanner.setWarning("Xposed module is not working properly");
 
                 // show error if NFC is disabled
                 if (!getNfc().isEnabled())
-                    mSemaphore.setError("NFC is disabled or unsupported");
+                    mStatusBanner.setError("NFC is disabled or unsupported");
             }
         });
     }

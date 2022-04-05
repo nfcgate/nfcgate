@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import de.tu_darmstadt.seemoo.nfcgate.R;
 import de.tu_darmstadt.seemoo.nfcgate.db.worker.LogInserter;
-import de.tu_darmstadt.seemoo.nfcgate.gui.component.Semaphore;
+import de.tu_darmstadt.seemoo.nfcgate.gui.component.StatusBanner;
 import de.tu_darmstadt.seemoo.nfcgate.gui.log.SessionLogEntryFragment;
 import de.tu_darmstadt.seemoo.nfcgate.network.data.NetworkStatus;
 
@@ -28,7 +28,7 @@ public abstract class BaseNetworkFragment extends BaseFragment implements LogIns
     View mTagWaiting;
     TextView mTagWaitingText;
     LinearLayout mSelector;
-    Semaphore mSemaphore;
+    StatusBanner mStatusBanner;
 
     // database log reference
     LogInserter mLogInserter;
@@ -42,7 +42,7 @@ public abstract class BaseNetworkFragment extends BaseFragment implements LogIns
         mTagWaiting = v.findViewById(R.id.tag_wait);
         mTagWaitingText = v.findViewById(R.id.tag_wait_text);
         mSelector = v.findViewById(R.id.selector);
-        mSemaphore = new Semaphore(getMainActivity());
+        mStatusBanner = new StatusBanner(getMainActivity());
 
         // selector setup
         v.<LinearLayout>findViewById(R.id.select_reader).setOnClickListener(new View.OnClickListener() {
@@ -109,19 +109,19 @@ public abstract class BaseNetworkFragment extends BaseFragment implements LogIns
     protected void handleStatus(NetworkStatus status) {
         switch (status) {
             case ERROR:
-                mSemaphore.set(Semaphore.State.RED, "Network: Error");
+                mStatusBanner.set(StatusBanner.State.RED, "Network: Error");
                 break;
             case CONNECTING:
-                mSemaphore.set(Semaphore.State.RED, "Network: Connecting to network");
+                mStatusBanner.set(StatusBanner.State.RED, "Network: Connecting to network");
                 break;
             case CONNECTED:
-                mSemaphore.set(Semaphore.State.YELLOW, "Network: Connected, wait for partner");
+                mStatusBanner.set(StatusBanner.State.YELLOW, "Network: Connected, wait for partner");
                 break;
             case PARTNER_CONNECT:
-                mSemaphore.set(Semaphore.State.GREEN, "Network: Connected to partner");
+                mStatusBanner.set(StatusBanner.State.GREEN, "Network: Connected to partner");
                 break;
             case PARTNER_LEFT:
-                mSemaphore.set(Semaphore.State.RED, "Network: Partner left");
+                mStatusBanner.set(StatusBanner.State.RED, "Network: Partner left");
                 break;
         }
     }
@@ -173,7 +173,7 @@ public abstract class BaseNetworkFragment extends BaseFragment implements LogIns
      */
     protected void reset() {
         getNfc().stopMode();
-        mSemaphore.set(Semaphore.State.IDLE, "Idle");
+        mStatusBanner.set(StatusBanner.State.IDLE, "Idle");
 
         if (mLogInserter != null)
             mLogInserter.reset();
