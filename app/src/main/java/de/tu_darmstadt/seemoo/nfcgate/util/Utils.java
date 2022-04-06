@@ -7,6 +7,8 @@ public class Utils {
     /**
      * Convert a byte-array to a hexadecimal String.
      *
+     * from https://stackoverflow.com/a/9855338/207861
+     *
      * @param bytes Byte[] to convert to String
      * @return Byte[] as hex-string
      */

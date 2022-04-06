@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
 
-        android:text="Waiting for Tag..."
+        android:text="@string/tag_waiting"
         style="@style/TextAppearance.AppCompat.Body1"
         android:gravity="center"
         />

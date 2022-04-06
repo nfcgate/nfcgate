@@ -66,8 +66,9 @@ public class StatusFragment extends BaseFragment {
 
                     if (item.getState() != StatusItem.State.OK) {
                         new AlertDialog.Builder(getActivity())
-                                .setTitle(item.getState() == StatusItem.State.WARN ? "Warning" : "Error")
-                                .setPositiveButton("OK", null)
+                                .setTitle(getString(item.getState() == StatusItem.State.WARN ?
+                                        R.string.status_warning : R.string.status_error))
+                                .setPositiveButton(getString(R.string.button_ok), null)
                                 .setIcon(byState(item.getState()))
                                 .setMessage(item.getMessage())
                                 .show();
@@ -140,7 +141,7 @@ public class StatusFragment extends BaseFragment {
         // transform code name into market name
         String deviceName = DeviceName.getDeviceName();
         // device name should be OK for all supported devices
-        StatusItem result = new StatusItem("Device Name").setValue(deviceName);
+        StatusItem result = new StatusItem(getContext(), getString(R.string.status_devname)).setValue(deviceName);
 
         // No hist byte on this specific combination
         if (deviceName.equals("Nexus 5X") && Build.VERSION.RELEASE.equals("6.0.1"))
@@ -151,7 +152,7 @@ public class StatusFragment extends BaseFragment {
 
     StatusItem detectAndroidVersion() {
         // android version should be OK for all supported versions
-        StatusItem result = new StatusItem("Android Version").setValue(Build.VERSION.RELEASE);
+        StatusItem result = new StatusItem(getContext(), getString(R.string.status_version)).setValue(Build.VERSION.RELEASE);
 
         // Android 11 and above is untested
         if (Build.VERSION.SDK_INT >= 30)
@@ -162,7 +163,7 @@ public class StatusFragment extends BaseFragment {
 
     StatusItem detectBuildNumber() {
         // build number
-        StatusItem result = new StatusItem("Build Number").setValue(Build.DISPLAY);
+        StatusItem result = new StatusItem(getContext(), getString(R.string.status_build)).setValue(Build.DISPLAY);
 
         return result;
     }
@@ -171,7 +172,7 @@ public class StatusFragment extends BaseFragment {
         // NFC capability and enabled
         boolean hasNfc = getNfc().isEnabled();
         // NFC Capability should be OK if it is enabled
-        StatusItem result = new StatusItem("NFC Enabled").setValue(hasNfc);
+        StatusItem result = new StatusItem(getContext(), getString(R.string.status_nfc)).setValue(hasNfc);
 
         if (!hasNfc)
             result.setError(getString(R.string.error_NFCCAP));
@@ -183,7 +184,7 @@ public class StatusFragment extends BaseFragment {
         // HCE capability
         boolean hasHCE = getNfc().hasHce();
         // HCE Capability
-        StatusItem result = new StatusItem("HCE Capability").setValue(hasHCE);
+        StatusItem result = new StatusItem(getContext(), getString(R.string.status_hce)).setValue(hasHCE);
 
         if (!hasHCE)
             result.setWarn(getString(R.string.warn_HCE));
@@ -195,7 +196,7 @@ public class StatusFragment extends BaseFragment {
         // xposed module enabled
         boolean hasModule = NfcManager.isModuleLoaded();
         // Xposed module should be OK if it is enabled
-        StatusItem result = new StatusItem("Xposed Module Enabled").setValue(hasModule);
+        StatusItem result = new StatusItem(getContext(), getString(R.string.status_xposed)).setValue(hasModule);
 
         if (!hasModule)
             result.setWarn(getString(R.string.warn_XPOMOD));
@@ -207,7 +208,7 @@ public class StatusFragment extends BaseFragment {
         // native hook enabled
         boolean hasNativeHook = getNfc().isHookEnabled();
         // native hook is OK if enabled
-        StatusItem result = new StatusItem("Native hook enabled").setValue(hasNativeHook);
+        StatusItem result = new StatusItem(getContext(), getString(R.string.status_hook)).setValue(hasNativeHook);
 
         if (!hasNativeHook)
             result.setWarn(getString(R.string.warn_NATMOD));
@@ -219,8 +220,8 @@ public class StatusFragment extends BaseFragment {
         // null or chip model name
         String chipName = new NfcConf().detectNFCC();
         // Chip model should be OK if it can be detected
-        StatusItem result = new StatusItem("NFC Chip")
-                .setValue(chipName != null ? chipName : "Unknown");
+        StatusItem result = new StatusItem(getContext(), getString(R.string.status_chip))
+                .setValue(chipName != null ? chipName : getString(R.string.status_unknown));
 
         if (chipName == null)
             result.setWarn(getString(R.string.warn_NFCMOD));

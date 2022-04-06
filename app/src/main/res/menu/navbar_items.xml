@@ -3,46 +3,46 @@
     <group android:id="@+id/group1" android:checkableBehavior="single">
         <item
             android:id="@+id/nav_status"
-            android:title="Status"
+            android:title="@string/menu_status"
             android:icon="@drawable/ic_perm_device_information_black_24dp"
             />
     </group>
     <group android:id="@+id/group2" android:checkableBehavior="single">
         <item
             android:id="@+id/nav_clone"
-            android:title="Clone Mode"
+            android:title="@string/menu_clone"
             android:icon="@drawable/ic_clone_black_24dp"
             />
         <item
             android:id="@+id/nav_relay"
-            android:title="Relay Mode"
+            android:title="@string/menu_relay"
             android:icon="@drawable/ic_relay_black_24dp"
             />
         <item
             android:id="@+id/nav_replay"
-            android:title="Replay Mode"
+            android:title="@string/menu_replay"
             android:icon="@drawable/ic_replay_black_24dp"
             />
         <item
             android:id="@+id/nav_capture"
-            android:title="Capture Mode"
+            android:title="@string/menu_capture"
             android:icon="@drawable/ic_capture_black_24dp"
             />
         <item
             android:id="@+id/nav_logging"
-            android:title="Logging"
+            android:title="@string/nav_logging"
             android:icon="@drawable/ic_log_black_24dp"
             />
     </group>
     <group android:id="@+id/group3" android:checkableBehavior="single">
         <item
             android:id="@+id/nav_settings"
-            android:title="Settings"
+            android:title="@string/menu_settings"
             android:icon="@drawable/ic_settings_black_24dp"
             />
         <item
             android:id="@+id/nav_about"
-            android:title="About"
+            android:title="@string/menu_about"
             android:icon="@drawable/ic_about_black_24dp"
             />
     </group>

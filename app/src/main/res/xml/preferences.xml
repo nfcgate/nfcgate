@@ -1,64 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:title="General Settings"
+        android:title="@string/settings_title"
         android:key="general"
         >
         <CheckBoxPreference
-            android:title="Enable Workaround"
+            android:title="@string/settings_workaround"
             android:key="workaround"
             android:enabled="false"
 
-            android:summary="Enables the NFC Keep-Alive Workaround"
+            android:summary="@string/settings_workaround_summary"
             />
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="Network Settings"
+        android:title="@string/settings_network"
         android:key="network"
         >
         <EditTextPreference
-            android:title="Hostname"
+            android:title="@string/settings_hostname"
             android:key="host"
 
-            android:summary="Server Hostname or IP Address"
-            android:dialogMessage="Enter a valid hostname or IP address"
+            android:summary="@string/settings_hostname_summary"
+            android:dialogMessage="@string/settings_hostname_dialog"
             />
         <EditTextPreference
-            android:title="Port"
+            android:title="@string/settings_port"
             android:key="port"
 
-            android:summary="Server Port"
-            android:dialogMessage="Enter a valid port number"
+            android:summary="@string/settings_port_summary"
+            android:dialogMessage="@string/settings_port_dialog"
             android:inputType="number"
             android:maxLength="5"
             android:defaultValue="5566"
             />
         <EditTextPreference
-            android:title="Session"
+            android:title="@string/settings_session"
             android:key="session"
 
-            android:summary="Shared Session Number"
-            android:dialogMessage="Enter a two-digit session number"
+            android:summary="@string/settings_session_summary"
+            android:dialogMessage="@string/settings_session_dialog"
             android:inputType="number"
             android:maxLength="2"
             android:defaultValue="1"
             />
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="Replay Settings"
+        android:title="@string/settings_replay"
         android:key="replay"
         >
         <CheckBoxPreference
-            android:title="Advanced Replay"
+            android:title="@string/settings_adv_replay"
             android:key="network"
 
-            android:summary="Enables replay over network"
+            android:summary="@string/settings_adv_replay_summary"
             />
         <ListPreference
-            android:title="Replay mode"
+            android:title="@string/settings_replay_mode"
             android:key="mode"
 
-            android:summary="Sets reply mode for replay requests"
+            android:summary="@string/settings_replay_mode_summary"
             android:entries="@array/replay_mode_names"
             android:entryValues="@array/replay_mode_values"
             android:defaultValue="index"

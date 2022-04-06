@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+
 
     android:id="@+id/main_drawer_layout"
     android:layout_width="match_parent"
@@ -42,7 +43,7 @@
 
                 android:layout_centerInParent="true"
 
-                android:text="Connecting to network"
+                tools:text="Connecting to network"
                 style="@style/TextAppearance.AppCompat.Body1"
                 />
         </RelativeLayout>
@@ -56,8 +57,7 @@
             android:layout_below="@+id/banner"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            >
+            android:layout_alignParentBottom="true">
 
         </FrameLayout>
     </RelativeLayout>

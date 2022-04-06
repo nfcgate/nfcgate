@@ -47,7 +47,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
         // set relay action text
-        v.<TextView>findViewById(R.id.txt_action).setText("Replay");
+        v.<TextView>findViewById(R.id.txt_action).setText(getString(R.string.replay_action));
 
         // setup log item callback
         mLoggingFragment.setLogItemSelectedCallback(this);
@@ -94,7 +94,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
     @Override
     public void onLogSelected(long sessionId) {
         // set subtitle
-        getMainActivity().getSupportActionBar().setSubtitle("Session " + sessionId);
+        getMainActivity().getSupportActionBar().setSubtitle(getString(R.string.replay_session, sessionId));
 
         // hide details chooser
         setSessionChooserVisible(false, -1);
@@ -143,7 +143,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
             mReplayer.reset();
 
         // clear subtitle
-        getMainActivity().getSupportActionBar().setSubtitle("Select session");
+        getMainActivity().getSupportActionBar().setSubtitle(getString(R.string.replay_session_select));
     }
 
     protected void onSelect(boolean reader) {

@@ -14,7 +14,7 @@
         style="@android:style/TextAppearance.DeviceDefault.Medium"
 
         android:textColor="#000000"
-        android:text="No capture in progress"
+        android:text="@string/capture_none"
         />
     <TextView
         android:id="@+id/capture_progress_text"
@@ -24,7 +24,7 @@
 
         android:visibility="gone"
         android:textColor="#b71c1c"
-        android:text="Capture in progress..."
+        android:text="@string/capture_progress"
         />
     <LinearLayout
         android:layout_width="wrap_content"
@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
 
-                android:text="Begin Capture"
+                android:text="@string/capture_start"
                 />
         </LinearLayout>
         <LinearLayout
@@ -80,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
 
-                android:text="Stop Capture"
+                android:text="@string/capture_stop"
                 />
         </LinearLayout>
     </LinearLayout>

@@ -22,7 +22,7 @@ public class RelayFragment extends BaseNetworkFragment {
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
         // set relay action text
-        v.<TextView>findViewById(R.id.txt_action).setText("Emulate");
+        v.<TextView>findViewById(R.id.txt_action).setText(getString(R.string.relay_action));
 
         return v;
     }

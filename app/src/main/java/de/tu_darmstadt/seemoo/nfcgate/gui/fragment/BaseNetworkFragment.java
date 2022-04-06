@@ -102,26 +102,27 @@ public abstract class BaseNetworkFragment extends BaseFragment implements LogIns
     }
 
     protected void setTagWaitVisible(boolean visible, boolean reader) {
-        mTagWaitingText.setText("Waiting for " + (reader ? "Reader" : "Tag") + "...");
+        mTagWaitingText.setText(getString(R.string.network_waiting_for,
+                getString(reader ? R.string.network_reader : R.string.network_tag)));
         mTagWaiting.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     protected void handleStatus(NetworkStatus status) {
         switch (status) {
             case ERROR:
-                mStatusBanner.set(StatusBanner.State.RED, "Network: Error");
+                mStatusBanner.set(StatusBanner.State.RED, getString(R.string.network_error));
                 break;
             case CONNECTING:
-                mStatusBanner.set(StatusBanner.State.RED, "Network: Connecting to network");
+                mStatusBanner.set(StatusBanner.State.RED, getString(R.string.network_connecting));
                 break;
             case CONNECTED:
-                mStatusBanner.set(StatusBanner.State.YELLOW, "Network: Connected, wait for partner");
+                mStatusBanner.set(StatusBanner.State.YELLOW, getString(R.string.network_connected_wait));
                 break;
             case PARTNER_CONNECT:
-                mStatusBanner.set(StatusBanner.State.GREEN, "Network: Connected to partner");
+                mStatusBanner.set(StatusBanner.State.GREEN, getString(R.string.network_connected));
                 break;
             case PARTNER_LEFT:
-                mStatusBanner.set(StatusBanner.State.RED, "Network: Partner left");
+                mStatusBanner.set(StatusBanner.State.RED, getString(R.string.network_disconnected));
                 break;
         }
     }
@@ -150,18 +151,18 @@ public abstract class BaseNetworkFragment extends BaseFragment implements LogIns
     protected boolean checkNetwork() {
         // check if any network connection is available
         if (!isNetworkAvailable()) {
-            getMainActivity().showWarning("No network connection available.");
+            getMainActivity().showWarning(getString(R.string.error_no_connection));
             return false;
         }
 
         // check if the server connection is properly configured
         if (!isServerConfigured()) {
-            getMainActivity().showWarning("No hostname configured in settings.");
+            getMainActivity().showWarning(getString(R.string.error_no_hostname));
             return false;
         }
 
         if (!getNfc().isEnabled()) {
-            getMainActivity().showWarning("NFC is not enabled.");
+            getMainActivity().showWarning(getString(R.string.error_nfc_disabled));
             return false;
         }
 
@@ -173,7 +174,7 @@ public abstract class BaseNetworkFragment extends BaseFragment implements LogIns
      */
     protected void reset() {
         getNfc().stopMode();
-        mStatusBanner.set(StatusBanner.State.IDLE, "Idle");
+        mStatusBanner.set(StatusBanner.State.IDLE, getString(R.string.network_idle));
 
         if (mLogInserter != null)
             mLogInserter.reset();

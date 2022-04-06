@@ -90,7 +90,7 @@ public class LoggingFragment extends Fragment {
                     return false;
 
                 mActionMode = getActivity().<Toolbar>findViewById(R.id.toolbar).startActionMode(new ActionModeCallback());
-                mActionMode.setTitle("Log Action");
+                mActionMode.setTitle(getString(R.string.log_action));
                 toggleSelection(position);
                 return true;
             }
@@ -169,7 +169,7 @@ public class LoggingFragment extends Fragment {
                         return true;
                     }
                     else
-                        Toast.makeText(getActivity(), "Cannot share multiple logs", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), getActivity().getString(R.string.log_error_multiple), Toast.LENGTH_LONG).show();
             }
 
             return false;

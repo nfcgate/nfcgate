@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/action_clone"
         android:icon="@drawable/ic_refresh_white_24dp"
-        android:title="Clone"
+        android:title="@string/clone_action"
         app:showAsAction="always" />
     <item android:id="@+id/action_save"
         android:icon="@drawable/ic_save_white_24dp"
-        android:title="Save"
+        android:title="@string/clone_save"
         app:showAsAction="ifRoom"
         />
 </menu>

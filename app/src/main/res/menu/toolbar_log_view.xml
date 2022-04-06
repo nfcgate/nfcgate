@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/action_delete"
         android:icon="@drawable/ic_delete_white_24dp"
-        android:title="Delete"
+        android:title="@string/log_delete"
         app:showAsAction="always" />
     <item android:id="@+id/action_share"
         android:icon="@drawable/ic_share_white_24dp"
-        android:title="Share"
+        android:title="@string/log_share"
         app:showAsAction="always" />
 </menu>

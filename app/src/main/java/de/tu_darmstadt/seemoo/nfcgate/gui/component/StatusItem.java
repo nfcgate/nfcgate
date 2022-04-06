@@ -1,5 +1,9 @@
 package de.tu_darmstadt.seemoo.nfcgate.gui.component;
 
+import android.content.Context;
+
+import de.tu_darmstadt.seemoo.nfcgate.R;
+
 public class StatusItem {
     public enum State {
         OK,
@@ -7,13 +11,16 @@ public class StatusItem {
         ERROR
     }
 
+    private Context mContext;
+
     // state
     private String mName;
     private String mValue;
     private String mMessage;
     private State mState;
 
-    public StatusItem(String name) {
+    public StatusItem(Context context, String name) {
+        mContext = context;
         mName = name;
         mState = State.OK;
     }
@@ -39,8 +46,8 @@ public class StatusItem {
         return this;
     }
 
-    public StatusItem setValue(boolean yesNo) {
-        return setValue(yesNo ? "Yes" : "No");
+    public StatusItem setValue(boolean yes) {
+        return setValue(mContext.getString(yes ? R.string.status_yes : R.string.status_no));
     }
 
     public void setWarn(String message) {

@@ -1,5 +1,6 @@
 package de.tu_darmstadt.seemoo.nfcgate.gui.component;
 
+import android.content.Context;
 import android.support.annotation.DrawableRes;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -18,10 +19,13 @@ public class StatusBanner {
     }
 
     // UI references
+    private Context mContext;
     private RelativeLayout mBanner;
     private TextView mBannerText;
 
     public StatusBanner(MainActivity act) {
+        mContext = act;
+
         // get components
         mBanner = act.findViewById(R.id.banner);
         mBannerText = act.findViewById(R.id.banner_text);
@@ -57,11 +61,11 @@ public class StatusBanner {
     }
 
     public void setWarning(String message) {
-        set(State.YELLOW, "Warning: " + message);
+        set(State.YELLOW, mContext.getString(R.string.banner_warning, message));
     }
 
     public void setError(String message) {
-        set(State.RED, "Error: " + message);
+        set(State.RED, mContext.getString(R.string.banner_error, message));
     }
 
     public void setVisibility(boolean visible) {

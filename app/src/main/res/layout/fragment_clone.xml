@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
 
-        android:text="Saved:"
+        android:text="@string/clone_saved"
         style="@style/TextAppearance.AppCompat.Caption"
         />
     <ListView

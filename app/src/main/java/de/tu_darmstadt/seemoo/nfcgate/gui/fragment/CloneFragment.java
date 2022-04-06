@@ -114,11 +114,11 @@ public class CloneFragment extends BaseFragment {
 
                 // show warning if xposed module does not respond
                 if (!NfcManager.isModuleLoaded() || !getNfc().isHookEnabled())
-                    mStatusBanner.setWarning("Xposed module is not working properly");
+                    mStatusBanner.setWarning(getString(R.string.error_xposed));
 
                 // show error if NFC is disabled
                 if (!getNfc().isEnabled())
-                    mStatusBanner.setError("NFC is disabled or unsupported");
+                    mStatusBanner.setError(getString(R.string.error_nfc_disabled));
             }
         });
     }
@@ -189,9 +189,9 @@ public class CloneFragment extends BaseFragment {
         input.setInputType(InputType.TYPE_CLASS_TEXT);
 
         new AlertDialog.Builder(getContext())
-            .setTitle("Enter a description")
+            .setTitle(getString(R.string.clone_save_title))
             .setView(input)
-            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            .setPositiveButton(getString(R.string.button_ok), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     final String description = input.getText().toString();
@@ -200,7 +200,7 @@ public class CloneFragment extends BaseFragment {
                         mTagInfoViewModel.insert(new TagInfo(description, mCloneData));
                 }
             })
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.button_cancel), null)
             .show();
     }
 

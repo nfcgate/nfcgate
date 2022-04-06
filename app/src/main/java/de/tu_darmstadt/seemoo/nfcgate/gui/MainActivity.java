@@ -107,8 +107,8 @@ public class MainActivity extends AppCompatActivity {
 
         // NFC setup
         mNfc = new NfcManager(this);
-        if (!mNfc.hasNfc())
-            showWarning("This device seems to be missing the NFC capability.");
+        if (!mNfc.hasNfc() || !mNfc.isEnabled())
+            showWarning(getString(R.string.error_NFCCAP));
     }
 
     @Override
@@ -213,12 +213,11 @@ public class MainActivity extends AppCompatActivity {
 
             for (NfcComm e : new ISO14443Stream().readAll(getContentResolver().openInputStream(uri)))
                 inserter.log(e);
-
-            Toast.makeText(this, "Pcap import success", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.pcap_success), Toast.LENGTH_SHORT).show();
         }
         catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(this, "Pcap import error", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.pcap_error), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -228,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
         for (Bundle b : capture)
             inserter.log(CaptureFragment.fromBundle(b));
 
-        Toast.makeText(this, "Capture data added to log", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.pcap_log), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -244,9 +243,9 @@ public class MainActivity extends AppCompatActivity {
      */
     public void showWarning(String warning) {
         new AlertDialog.Builder(this)
-                .setTitle("Warning")
+                .setTitle(getString(R.string.status_warning))
                 .setMessage(warning)
-                .setNegativeButton("OK", null)
+                .setNegativeButton(R.string.button_ok, null)
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .show();
     }
