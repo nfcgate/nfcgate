@@ -130,6 +130,7 @@ public class StatusFragment extends BaseFragment {
         mStatusAdapter.add(detectNfcEnabled());
         mStatusAdapter.add(detectHceCapability());
         mStatusAdapter.add(detectModuleEnabled());
+        mStatusAdapter.add(detectNativeHookEnabled());
         mStatusAdapter.add(detectNfcModel());
 
         mStatusAdapter.notifyDataSetChanged();
@@ -192,12 +193,24 @@ public class StatusFragment extends BaseFragment {
 
     StatusItem detectModuleEnabled() {
         // xposed module enabled
-        boolean hasModule = NfcManager.isHookLoaded();
+        boolean hasModule = NfcManager.isModuleLoaded();
         // Xposed module should be OK if it is enabled
         StatusItem result = new StatusItem("Xposed Module Enabled").setValue(hasModule);
 
         if (!hasModule)
             result.setWarn(getString(R.string.warn_XPOMOD));
+
+        return result;
+    }
+
+    StatusItem detectNativeHookEnabled() {
+        // native hook enabled
+        boolean hasNativeHook = getNfc().isHookEnabled();
+        // native hook is OK if enabled
+        StatusItem result = new StatusItem("Native hook enabled").setValue(hasNativeHook);
+
+        if (!hasNativeHook)
+            result.setWarn(getString(R.string.warn_NATMOD));
 
         return result;
     }

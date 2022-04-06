@@ -7,6 +7,7 @@ public class Native {
     static final Native Instance;
 
     public native boolean isHookEnabled();
+    public native boolean isPatchEnabled();
     public native void setConfiguration(byte[] config);
     public native void setPolling(boolean enabled);
 }

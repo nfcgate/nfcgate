@@ -39,6 +39,7 @@ public class CloneFragment extends BaseFragment {
     ImageView mCloneType;
     TextView mCloneContent;
     ListView mCloneSaved;
+    Semaphore mSemaphore;
 
     // clone data
     byte[] mCloneData;
@@ -57,6 +58,7 @@ public class CloneFragment extends BaseFragment {
         mCloneType = v.findViewById(R.id.type);
         mCloneContent = v.findViewById(R.id.data);
         mCloneSaved = v.findViewById(R.id.clone_saved);
+        mSemaphore = new Semaphore(getMainActivity());
 
         setHasOptionsMenu(true);
         beginClone();
@@ -105,9 +107,20 @@ public class CloneFragment extends BaseFragment {
         mTagInfoAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
         mCloneSaved.setAdapter(mTagInfoAdapter);
 
-        // show warning if xposed module is missing
-        if (!NfcManager.isHookLoaded())
-            new Semaphore(getMainActivity()).setWarning("missing Xposed module");
+        getNfc().setStatusChangedHandler(new NfcManager.StatusChangedListener() {
+            @Override
+            public void onChange() {
+                mSemaphore.reset();
+
+                // show error if NFC is disabled
+                if (!getNfc().isEnabled())
+                    mSemaphore.setError("NFC is disabled or unsupported");
+
+                // show warning if xposed module does not respond
+                if (!NfcManager.isModuleLoaded() || !getNfc().isHookEnabled())
+                    mSemaphore.setWarning("Xposed module is not working properly");
+            }
+        });
     }
 
     @Override

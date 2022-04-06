@@ -29,7 +29,7 @@ public class Hooks implements IXposedHookLoadPackage {
         if ("de.tu_darmstadt.seemoo.nfcgate".equals(lpparam.packageName)) {
             // indicate that the hook worked and the xposed module is active
             findAndHookMethod("de.tu_darmstadt.seemoo.nfcgate.nfc.NfcManager", lpparam.classLoader,
-                    "isHookLoaded", XC_MethodReplacement.returnConstant(true));
+                    "isModuleLoaded", XC_MethodReplacement.returnConstant(true));
         } else if ("com.android.nfc".equals(lpparam.packageName)) {
             // hook constructor to catch application context
             findAndHookConstructor("com.android.nfc.NfcService", lpparam.classLoader,
@@ -51,7 +51,7 @@ public class Hooks implements IXposedHookLoadPackage {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
 
-                    if (isHookEnabled()) {
+                    if (isPatchEnabled()) {
                         // setting a result will overwrite the original result
                         // F0010203040506 is a aid registered by the nfcgate hce service
                         param.setResult("F0010203040506");
@@ -177,11 +177,11 @@ public class Hooks implements IXposedHookLoadPackage {
         addCapture(capture);
     }
 
-    private boolean isHookEnabled() {
+    private boolean isPatchEnabled() {
         try {
-            return (boolean)mReceiver.getClass().getMethod("isHookEnabled").invoke(mReceiver);
+            return (boolean)mReceiver.getClass().getMethod("isPatchEnabled").invoke(mReceiver);
         } catch (Exception e) {
-            Log.e("HOOKNFC", "Failed to get isHookEnabled", e);
+            Log.e("HOOKNFC", "Failed to get isPatchEnabled", e);
         }
 
         return false;

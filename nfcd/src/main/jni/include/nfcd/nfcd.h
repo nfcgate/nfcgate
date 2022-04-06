@@ -10,6 +10,7 @@
 // hook definitions
 extern Config origValues, hookValues;
 extern bool hookEnabled;
+extern bool patchEnabled;
 extern bool guardConfig;
 extern IHook *hNFC_SetConfig;
 extern IHook *hce_select_t4t;

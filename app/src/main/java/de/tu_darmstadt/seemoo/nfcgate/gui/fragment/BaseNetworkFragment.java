@@ -109,19 +109,19 @@ public abstract class BaseNetworkFragment extends BaseFragment implements LogIns
     protected void handleStatus(NetworkStatus status) {
         switch (status) {
             case ERROR:
-                mSemaphore.set(Semaphore.State.RED, "Error");
+                mSemaphore.set(Semaphore.State.RED, "Network: Error");
                 break;
             case CONNECTING:
-                mSemaphore.set(Semaphore.State.RED, "Connecting to network");
+                mSemaphore.set(Semaphore.State.RED, "Network: Connecting to network");
                 break;
             case CONNECTED:
-                mSemaphore.set(Semaphore.State.YELLOW, "Connected, wait for partner");
+                mSemaphore.set(Semaphore.State.YELLOW, "Network: Connected, wait for partner");
                 break;
             case PARTNER_CONNECT:
-                mSemaphore.set(Semaphore.State.GREEN, "Connected to partner");
+                mSemaphore.set(Semaphore.State.GREEN, "Network: Connected to partner");
                 break;
             case PARTNER_LEFT:
-                mSemaphore.set(Semaphore.State.RED, "Partner left");
+                mSemaphore.set(Semaphore.State.RED, "Network: Partner left");
                 break;
         }
     }
@@ -173,7 +173,7 @@ public abstract class BaseNetworkFragment extends BaseFragment implements LogIns
      */
     protected void reset() {
         getNfc().stopMode();
-        mSemaphore.reset();
+        mSemaphore.set(Semaphore.State.IDLE, "Idle");
 
         if (mLogInserter != null)
             mLogInserter.reset();

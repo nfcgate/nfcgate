@@ -49,7 +49,7 @@
 
             <intent-filter>
                 <action android:name="de.tu_darmstadt.seemoo.nfcgate.main" />
-                <action android:name="de.tu_darmstadt.seemoo.nfcgate.capture" />
+                <action android:name="de.tu_darmstadt.seemoo.nfcgate.daemoncall" />
                 <action android:name="android.intent.action.MAIN" />
 
                 <!-- Required for foreground dispatch -->

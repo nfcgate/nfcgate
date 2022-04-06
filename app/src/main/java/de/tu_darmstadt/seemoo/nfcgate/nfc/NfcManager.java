@@ -1,23 +1,41 @@
 package de.tu_darmstadt.seemoo.nfcgate.nfc;
 
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
+import android.nfc.tech.NfcA;
 import android.util.Log;
 
 import de.tu_darmstadt.seemoo.nfcgate.gui.MainActivity;
 import de.tu_darmstadt.seemoo.nfcgate.network.NetworkManager;
 import de.tu_darmstadt.seemoo.nfcgate.network.data.NetworkStatus;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.hce.ApduService;
-import de.tu_darmstadt.seemoo.nfcgate.nfc.hce.DaemonConfiguration;
+import de.tu_darmstadt.seemoo.nfcgate.nfc.hce.DaemonManager;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.modes.BaseMode;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.reader.NFCTagReader;
 import de.tu_darmstadt.seemoo.nfcgate.util.NfcComm;
 
 public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Callback {
     private static final String TAG = "NfcManager";
+
+    public interface StatusChangedListener {
+        // NFC status changed (nfc adapter on/off, native hook loaded, etc)
+        void onChange();
+    }
+
+    // receiver for NFC adapter state change broadcasts
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED))
+                    notifyStatusChanged();
+        }
+    };
 
     // singleton
     private static NfcManager mInstance;
@@ -29,8 +47,9 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     private MainActivity mActivity;
     private NfcAdapter mAdapter;
     private ApduService mApduService;
-    private DaemonConfiguration mDaemon;
+    private DaemonManager mDaemon;
     private NetworkManager mNetwork;
+    private StatusChangedListener mStatusChanged;
 
     // state
     private boolean mReaderMode = false;
@@ -41,7 +60,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     public NfcManager(MainActivity activity) {
         mActivity = activity;
         mAdapter = NfcAdapter.getDefaultAdapter(activity);
-        mDaemon = new DaemonConfiguration(mActivity);
+        mDaemon = new DaemonManager(mActivity);
         mNetwork = new NetworkManager(mActivity, this);
 
         // save instance for service communication
@@ -66,8 +85,15 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      * Indicates whether the Xposed module is enabled
      * This is hooked by the module to return true
      */
-    public static boolean isHookLoaded() {
+    public static boolean isModuleLoaded() {
         return false;
+    }
+
+    /**
+     * Indicates whether the native hook in the NfcService is enabled
+     */
+    public boolean isHookEnabled() {
+        return mDaemon.isHookEnabled();
     }
 
     /**
@@ -75,6 +101,25 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      */
     public boolean isEnabled() {
         return hasNfc() && mAdapter.isEnabled();
+    }
+
+    public void setStatusChangedHandler(StatusChangedListener statusChanged) {
+        mStatusChanged = statusChanged;
+        mStatusChanged.onChange();
+    }
+
+    private void setBroadcastReceiverEnabled(boolean enabled) {
+        IntentFilter filter = new IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
+
+        if (enabled)
+            mActivity.registerReceiver(mReceiver, filter);
+        else
+            mActivity.unregisterReceiver(mReceiver);
+    }
+
+    public void notifyStatusChanged() {
+        if (mStatusChanged != null)
+            mStatusChanged.onChange();
     }
 
     /**
@@ -104,6 +149,13 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     }
 
     /**
+     *  Get current daemon manager
+     */
+    public DaemonManager getDaemon() {
+        return mDaemon;
+    }
+
+    /**
      * Get current network manager
      */
     public NetworkManager getNetwork() {
@@ -121,6 +173,8 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      * Resume NFC activity
      */
     public void onResume() {
+        setBroadcastReceiverEnabled(true);
+
         if (isEnabled()) {
             enableForegroundDispatch();
             enableDisableReaderMode();
@@ -131,6 +185,8 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      * Pause NFC activity
      */
     public void onPause() {
+        setBroadcastReceiverEnabled(false);
+
         if (isEnabled()) {
             disableForegroundDispatch();
         }
@@ -172,7 +228,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      */
     public void disablePolling() {
         if (mPollingEnabled)
-            mDaemon.setPolling(false);
+            mDaemon.beginSetPolling(false);
 
         mPollingEnabled = false;
     }
@@ -182,7 +238,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      */
     public void enablePolling() {
         if (!mPollingEnabled)
-            mDaemon.setPolling(true);
+            mDaemon.beginSetPolling(true);
 
         mPollingEnabled = true;
     }
@@ -191,14 +247,14 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      * Start capturing on-device NFC data
      */
     public void enableCapture() {
-        mDaemon.setCapture(true);
+        mDaemon.beginSetCapture(true);
     }
 
     /**
      * Stop capturing on-device NFC data
      */
     public void disableCapture() {
-        mDaemon.setCapture(false);
+        mDaemon.beginSetCapture(false);
     }
 
     /**
@@ -209,7 +265,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
 
         if (data.isInitial()) {
             // send configuration to service
-            mDaemon.setConfig(data.getData());
+            mDaemon.beginSetConfig(data.getData());
         }
         else if (mReaderMode) {
             // send data to tag and get reply

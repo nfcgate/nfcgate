@@ -25,9 +25,6 @@ public class Semaphore {
         // get components
         mSemaphore = act.findViewById(R.id.tag_semaphore);
         mSemaphoreText = act.findViewById(R.id.tag_semaphore_text);
-
-        // enable semaphore and set default
-        reset();
     }
 
     private int colorByState(State state) {
@@ -55,13 +52,16 @@ public class Semaphore {
     public void set(State state, String message) {
         mSemaphore.setBackgroundResource(backgroundByState(state));
         mSemaphoreText.setTextColor(colorByState(state));
-        mSemaphoreText.setText("Network: " + message);
+        mSemaphoreText.setText(message);
+        setVisibility(true);
     }
 
     public void setWarning(String message) {
-        mSemaphore.setBackgroundResource(backgroundByState(State.YELLOW));
-        mSemaphoreText.setTextColor(colorByState(State.YELLOW));
-        mSemaphoreText.setText("Warning: " + message);
+        set(State.YELLOW, "Warning: " + message);
+    }
+
+    public void setError(String message) {
+        set(State.RED, "Error: " + message);
     }
 
     public void setVisibility(boolean visible) {
@@ -69,7 +69,6 @@ public class Semaphore {
     }
 
     public void reset() {
-        setVisibility(true);
-        set(State.IDLE, "Idle");
+        setVisibility(false);
     }
 }

@@ -137,8 +137,8 @@ public class MainActivity extends AppCompatActivity {
             importPcap(intent.<Uri>getParcelableExtra(Intent.EXTRA_STREAM));
         else if (Intent.ACTION_VIEW.equals(intent.getAction()))
             importPcap(intent.getData());
-        else if ("de.tu_darmstadt.seemoo.nfcgate.capture".equals(intent.getAction()))
-            importCapture(intent.<Bundle>getParcelableArrayListExtra("capture"));
+        else if ("de.tu_darmstadt.seemoo.nfcgate.daemoncall".equals(intent.getAction()))
+            mNfc.getDaemon().onResponse(intent);
         else
             super.onNewIntent(intent);
     }
@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void importCapture(List<Bundle> capture) {
+    public void importCapture(List<Bundle> capture) {
         LogInserter inserter = new LogInserter(this, SessionLog.SessionType.CAPTURE, null);
 
         for (Bundle b : capture)

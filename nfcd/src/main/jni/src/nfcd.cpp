@@ -4,6 +4,7 @@ static void hookNative() __attribute__((constructor));
 SymbolTable *SymbolTable::mInstance;
 Config origValues, hookValues;
 bool hookEnabled = false;
+bool patchEnabled = false;
 bool guardConfig = true;
 IHook *hNFC_SetConfig;
 IHook *hce_select_t4t;
@@ -22,7 +23,7 @@ tNFC_STATUS hook_NFC_SetConfig(uint8_t tlv_size, uint8_t *p_param_tlvs) {
     hNFC_SetConfig->precall();
 
     loghex("NfcSetConfig IN", p_param_tlvs, tlv_size);
-    LOGD("NfcSetConfig Enabled: %d", hookEnabled);
+    LOGD("NfcSetConfig Enabled: %d", patchEnabled);
 
     Config cfg, actual;
     cfg.parse(tlv_size, p_param_tlvs);
@@ -52,15 +53,14 @@ tNFC_STATUS hook_NFC_SetConfig(uint8_t tlv_size, uint8_t *p_param_tlvs) {
     return r;
 }
 
-
-tNFC_STATUS hook_ce_select_t4t(void) {
+tNFC_STATUS hook_ce_select_t4t() {
     hce_select_t4t->precall();
 
     LOGD("hook_ce_select_t4t()");
-    LOGD("hook_ce_select_t4t Enabled: %d", hookEnabled);
+    LOGD("hook_ce_select_t4t Enabled: %d", patchEnabled);
 
     tNFC_STATUS r = hce_select_t4t->call<def_ce_select_t4t>();
-    if (hookEnabled) {
+    if (patchEnabled) {
         int offset = System::sdkInt() < System::O_1 ? CE_CB_STATUS_PRE_O : CE_CB_STATUS_POST_O;
         auto ce_cb_status = hce_cb->address<uint8_t>() + offset;
         // bypass ISO 7816 SELECT requirement for AID selection
@@ -96,5 +96,6 @@ static void hookNative() {
     hce_select_t4t = IHook::hook("ce_select_t4t", (void *)&hook_ce_select_t4t, handle, libnfc_re());
     hce_cb = new Symbol("ce_cb", handle);
 
+    hookEnabled = true;
     IHook::finish();
 }
