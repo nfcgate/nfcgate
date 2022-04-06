@@ -12,7 +12,6 @@ IHook *hNFC_SetConfig;
 IHook *hce_select_t4t;
 Symbol *nfa_dm_cb;
 Symbol *hce_cb;
-Symbol *hNFC_Deactivate;
 Symbol *hNFA_StopRfDiscovery;
 Symbol *hNFA_DisablePolling;
 Symbol *hNFA_StartRfDiscovery;
@@ -112,7 +111,6 @@ static void hookNative() {
 
     hNFC_SetConfig = IHook::hook("NFC_SetConfig", (void *) &hook_NFC_SetConfig, handle, libnfc_re());
 
-    hNFC_Deactivate = new Symbol("NFC_Deactivate", handle);
     hNFA_StopRfDiscovery = new Symbol("NFA_StopRfDiscovery", handle);
     hNFA_DisablePolling = new Symbol("NFA_DisablePolling", handle);
     hNFA_StartRfDiscovery = new Symbol("NFA_StartRfDiscovery", handle);

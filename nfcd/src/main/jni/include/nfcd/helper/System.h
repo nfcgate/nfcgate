@@ -35,7 +35,6 @@ public:
 
 protected:
     static int sSdkInt;
-
 };
 
 #endif //NFCGATE_SYSTEM_H

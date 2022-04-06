@@ -13,16 +13,11 @@ public class RelayMode extends BaseMode {
 
     @Override
     public void onEnable() {
-        // look for a tag in reader mode
-        if (mReader)
-            mManager.enablePolling();
+        // look for a tag in reader mode, do not look for tags in tag mode
+        mManager.setPollingEnabled(mReader);
 
         // enable or disable reader mode
         mManager.setReaderMode(mReader);
-
-        // do not look for tags in tag mode
-        if (!mReader)
-            mManager.disablePolling();
 
         // connect to the network
         if (mOnline)
@@ -31,9 +26,8 @@ public class RelayMode extends BaseMode {
 
     @Override
     public void onDisable() {
-        // restore polling if disabled
-        mManager.enablePolling();
-
+        // re-enable polling if disabled
+        mManager.setPollingEnabled(true);
         // disable reader mode
         mManager.setReaderMode(false);
 

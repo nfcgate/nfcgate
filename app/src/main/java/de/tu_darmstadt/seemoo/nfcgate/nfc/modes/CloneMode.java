@@ -7,7 +7,7 @@ public class CloneMode extends BaseMode {
     @Override
     public void onEnable() {
         // enable polling because we are looking for a tag
-        mManager.enablePolling();
+        mManager.setPollingEnabled(true);
     }
 
     @Override
@@ -17,7 +17,7 @@ public class CloneMode extends BaseMode {
 
     @Override
     public void onData(boolean isForeign, NfcComm data) {
-        // clone tag, this disables polling as needed
+        // clone tag, also disables polling
         mManager.applyData(data);
     }
 

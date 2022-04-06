@@ -69,14 +69,14 @@ public class CaptureFragment extends BaseFragment {
         mCaptureActive = true;
         updateState();
 
-        getNfc().enableCapture();
+        getNfc().setCaptureEnabled(true);
     }
 
     void stopCapture() {
         mCaptureActive = false;
         updateState();
 
-        getNfc().disableCapture();
+        getNfc().setCaptureEnabled(false);
     }
 
     public static NfcComm fromBundle(Bundle b) {

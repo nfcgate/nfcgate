@@ -16,7 +16,6 @@ extern bool guardConfig;
 extern IHook *hNFC_SetConfig;
 extern IHook *hce_select_t4t;
 extern Symbol *hce_cb;
-extern Symbol *hNFC_Deactivate;
 extern Symbol *hNFA_StopRfDiscovery;
 extern Symbol *hNFA_DisablePolling;
 extern Symbol *hNFA_StartRfDiscovery;
@@ -26,7 +25,6 @@ extern tNFC_STATUS hook_NFC_SetConfig(uint8_t tlv_size, uint8_t *p_param_tlvs);
 extern tNFC_STATUS hook_ce_select_t4t (void);
 
 using def_NFC_SetConfig = decltype(hook_NFC_SetConfig);
-using def_NFC_Deactivate = tNFC_STATUS(uint8_t deactivate_type);
 using def_NFA_StopRfDiscovery = tNFA_STATUS();
 using def_NFA_DisablePolling = tNFA_STATUS();
 using def_NFA_StartRfDiscovery = tNFA_STATUS();

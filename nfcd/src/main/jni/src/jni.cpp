@@ -15,13 +15,13 @@ static void waitForEvent(uint8_t event, bool checkStatus = true) {
         LOGD("[event] Waiting for event %d failed: timeout reached", event);
 }
 
-void enableDisablePolling(bool enable) {
+void setPollingEnabled(bool enable) {
     LOGD("[polling] %s", (enable ? "Enabling" : "Disabling"));
 
     beginCollectingEvents();
     hNFA_StopRfDiscovery->call<def_NFA_StopRfDiscovery>();
+    LOGD("[polling] Stopping RF discovery");
     waitForEvent(NFA_RF_DISCOVERY_STOPPED_EVT, false);
-    LOGD("[polling] Stopped RF discovery");
 
     if (enable) {
         /*
@@ -30,20 +30,20 @@ void enableDisablePolling(bool enable) {
          */
         beginCollectingEvents();
         hNFA_EnablePolling->call<def_NFA_EnablePolling>(SAFE_TECH_MASK);
+        LOGD("[polling] Enabling polling");
         waitForEvent(NFA_POLL_ENABLED_EVT);
-        LOGD("[polling] Enabled polling");
-
-        beginCollectingEvents();
-        hNFA_StartRfDiscovery->call<def_NFA_StartRfDiscovery>();
-        waitForEvent(NFA_RF_DISCOVERY_STARTED_EVT);
-        LOGD("[polling] Started RF discovery");
     }
     else {
         beginCollectingEvents();
         hNFA_DisablePolling->call<def_NFA_DisablePolling>();
+        LOGD("[polling] Disabling polling");
         waitForEvent(NFA_POLL_DISABLED_EVT);
-        LOGD("[polling] Disabled polling");
     }
+
+    beginCollectingEvents();
+    hNFA_StartRfDiscovery->call<def_NFA_StartRfDiscovery>();
+    LOGD("[polling] Starting RF discovery");
+    waitForEvent(NFA_RF_DISCOVERY_STARTED_EVT);
 }
 
 void uploadConfig(Config &config) {
@@ -53,7 +53,10 @@ void uploadConfig(Config &config) {
     config.build(bin_stream);
 
     // NCI standard states that NFCID cannot be set during discovery
-    enableDisablePolling(false);
+    beginCollectingEvents();
+    hNFA_StopRfDiscovery->call<def_NFA_StopRfDiscovery>();
+    LOGD("[config] Stopping RF discovery");
+    waitForEvent(NFA_RF_DISCOVERY_STOPPED_EVT, false);
 
     guardConfig = false;
     hNFC_SetConfig->call<def_NFC_SetConfig>(config.total(), bin_stream.get());
@@ -81,14 +84,20 @@ extern "C" {
 
             patchEnabled = true;
             uploadConfig(hookValues);
+
+            // disable polling after setting config, re-enable discovery
+            setPollingEnabled(false);
         }
         else {
             patchEnabled = false;
             uploadConfig(origValues);
+
+            // re-enable polling after reset
+            setPollingEnabled(true);
         }
     }
 
     JNIEXPORT void JNICALL Java_de_tu_1darmstadt_seemoo_nfcgate_xposed_Native_setPolling(JNIEnv *, jobject, jboolean enabled) {
-        enableDisablePolling(enabled);
+        setPollingEnabled(enabled);
     }
 }

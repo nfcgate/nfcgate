@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
-import android.nfc.tech.NfcA;
 import android.util.Log;
 
 import de.tu_darmstadt.seemoo.nfcgate.gui.MainActivity;
@@ -224,37 +223,20 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     }
 
     /**
-     * Stops polling for new tags
+     * Start/stop polling for new tags
      */
-    public void disablePolling() {
-        if (mPollingEnabled)
-            mDaemon.beginSetPolling(false);
+    public void setPollingEnabled(boolean enabled) {
+        if (mPollingEnabled != enabled)
+            mDaemon.beginSetPolling(enabled);
 
-        mPollingEnabled = false;
+        mPollingEnabled = enabled;
     }
 
     /**
-     * Starts polling for new tags
+     * Start/stop capturing on-device NFC data
      */
-    public void enablePolling() {
-        if (!mPollingEnabled)
-            mDaemon.beginSetPolling(true);
-
-        mPollingEnabled = true;
-    }
-
-    /**
-     * Start capturing on-device NFC data
-     */
-    public void enableCapture() {
-        mDaemon.beginSetCapture(true);
-    }
-
-    /**
-     * Stop capturing on-device NFC data
-     */
-    public void disableCapture() {
-        mDaemon.beginSetCapture(false);
+    public void setCaptureEnabled(boolean enabled) {
+        mDaemon.beginSetCapture(enabled);
     }
 
     /**
