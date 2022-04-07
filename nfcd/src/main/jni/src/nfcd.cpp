@@ -176,14 +176,14 @@ static void hookNative() {
         // discovery
         hNFA_StartRfDiscovery = new Symbol("NFA_StartRfDiscovery", handle);
         hNFA_StopRfDiscovery = new Symbol("NFA_StopRfDiscovery", handle);
-        LOG_ASSERT_X(hNFA_StartRfDiscovery->address<void>(), "Hooking failed");
-        LOG_ASSERT_X(hNFA_StopRfDiscovery->address<void>(), "Hooking failed");
+        LOG_ASSERT_X(hNFA_StartRfDiscovery->address<void>(), "Symbol lookup failed");
+        LOG_ASSERT_X(hNFA_StopRfDiscovery->address<void>(), "Symbol lookup failed");
 
         // polling
         hNFA_EnablePolling = new Symbol("NFA_EnablePolling", handle);
         hNFA_DisablePolling = new Symbol("NFA_DisablePolling", handle);
-        LOG_ASSERT_X(hNFA_EnablePolling->address<void>(), "Hooking failed");
-        LOG_ASSERT_X(hNFA_DisablePolling->address<void>(), "Hooking failed");
+        LOG_ASSERT_X(hNFA_EnablePolling->address<void>(), "Symbol lookup failed");
+        LOG_ASSERT_X(hNFA_DisablePolling->address<void>(), "Symbol lookup failed");
 
         // NFC routing
         hce_select_t4t = IHook::hook("ce_select_t4t", (void *) &hook_ce_select_t4t, handle, lib_re);
