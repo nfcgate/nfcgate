@@ -128,13 +128,16 @@ static std::string findLibNFC() {
     std::string bases[] = {
 #ifdef __aarch64__
         "/system/lib64/",
+        "/system/system_ext/lib64/",
 #elif __arm__
         "/system/lib/",
+        "/system/system_ext/lib/",
 #endif
     };
     std::string names[] = {
         "libnfc-nci.so",
         "libnqnfc-nci.so",
+        "libnxpnfc-nci.so",
     };
 
     for (auto &base : bases) {
