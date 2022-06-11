@@ -12,13 +12,17 @@
 
 class SymbolTable {
 public:
-    static bool create(const char *file) {
-        mInstance = new SymbolTable(file);
+    static bool create(const std::string &file) {
+        mInstance.reset(new SymbolTable(file));
         return mInstance->mBase != MAP_FAILED;
     }
 
     static SymbolTable *instance() {
-        return mInstance;
+        return mInstance.get();
+    }
+
+    bool contains(const std::string &name) const {
+        return mSymbols.find(getName(name)) != mSymbols.end();
     }
 
     unsigned long getSize(const std::string &name) const {
@@ -34,18 +38,12 @@ public:
 
     std::string getName(const std::string &name) const {
         auto it = mSymbolsAlternativeName.find(name);
-
-        if (it == mSymbolsAlternativeName.end()) {
-            LOGE("Alternative symbol name for %s missing from SymbolTable", name.c_str());
-            return name;
-        }
-
-        return it->second;
+        return it == mSymbolsAlternativeName.end() ? name : it->second;
     }
 
 protected:
-    SymbolTable(const char *file) {
-        FILE *phy = fopen(file, "rb");
+    SymbolTable(const std::string &file) {
+        FILE *phy = fopen(file.c_str(), "rb");
         fseek(phy, 0, SEEK_END);
         long phy_size = ftell(phy);
 
@@ -132,7 +130,7 @@ protected:
     // demangled -> mangled
     std::unordered_map<std::string, std::string> mSymbolsAlternativeName;
 
-    static SymbolTable *mInstance;
+    static std::unique_ptr<SymbolTable> mInstance;
 };
 
 #endif //NFCD_SYMBOLTABLE_H

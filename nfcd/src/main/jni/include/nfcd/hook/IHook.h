@@ -10,8 +10,12 @@ public:
     }
 
     virtual void precall() {};
-
     virtual void postcall() {};
+
+    template <typename Fn, typename... Args>
+    typename std::result_of<Fn*(Args...)>::type callHook(Args&&... args) {
+        return ((Fn*)mHookFn)(std::forward<Args>(args)...);
+    }
 
     static void init();
     static IHook *hook(const std::string &name, void *hook, void *libraryHandle,

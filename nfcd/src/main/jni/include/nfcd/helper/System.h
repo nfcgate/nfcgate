@@ -14,6 +14,8 @@ using tNFA_TECHNOLOGY_MASK = uint8_t;
 #define NFA_DM_CB_CONN_CBACK (8 * sizeof(void*))
 
 // modified from nfa_api.h
+
+/* NFA Connection Callback Events */
 #define NFA_POLL_ENABLED_EVT 0
 #define NFA_POLL_DISABLED_EVT 1
 #define NFA_RF_DISCOVERY_STARTED_EVT 30
@@ -32,6 +34,8 @@ public:
     };
 
     static int sdkInt();
+
+    static std::string nfaEventName(uint8_t event);
 
 protected:
     static int sSdkInt;

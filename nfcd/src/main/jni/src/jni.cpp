@@ -58,9 +58,9 @@ void uploadConfig(Config &config) {
     LOGD("[config] Stopping RF discovery");
     waitForEvent(NFA_RF_DISCOVERY_STOPPED_EVT, false);
 
-    guardConfig = false;
-    hNFC_SetConfig->call<def_NFC_SetConfig>(config.total(), bin_stream.get());
-    guardConfig = true;
+    guardEnabled = false;
+    hNFC_SetConfig->callHook<def_NFC_SetConfig>(config.total(), bin_stream.get());
+    guardEnabled = true;
 
     // wait for config to set before returning
     usleep(35000);
@@ -78,7 +78,7 @@ extern "C" {
     JNIEXPORT void JNICALL Java_de_tu_1darmstadt_seemoo_nfcgate_xposed_Native_setConfiguration(JNIEnv *env, jobject, jbyteArray config) {
         if (!env->IsSameObject(config, nullptr)) {
             jsize config_len = env->GetArrayLength(config);
-            jbyte *config_data = env->GetByteArrayElements(config, 0);
+            jbyte *config_data = env->GetByteArrayElements(config, nullptr);
             hookValues.parse(config_len, (uint8_t *) config_data);
             env->ReleaseByteArrayElements(config, config_data, 0);
 
@@ -90,10 +90,6 @@ extern "C" {
         }
         else {
             patchEnabled = false;
-            uploadConfig(origValues);
-
-            // re-enable polling after reset
-            setPollingEnabled(true);
         }
     }
 

@@ -11,7 +11,7 @@
 extern Config origValues, hookValues;
 extern bool hookEnabled;
 extern bool patchEnabled;
-extern bool guardConfig;
+extern bool guardEnabled;
 extern IHook *hNFC_SetConfig;
 extern IHook *hce_select_t4t;
 extern Symbol *hce_cb;
