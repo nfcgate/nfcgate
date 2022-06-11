@@ -21,36 +21,34 @@ Symbol *hNFA_EnablePolling;
 
 /**
  * Prevent already set values from being overwritten.
- * Save original values to reset them when disabling hook.
  */
 tNFC_STATUS hook_NFC_SetConfig(uint8_t tlv_size, uint8_t *p_param_tlvs) {
     hNFC_SetConfig->precall();
 
-    loghex("NfcSetConfig IN", p_param_tlvs, tlv_size);
-    LOGD("NfcSetConfig Enabled: %d", patchEnabled);
+    LOGD("NFC_SetConfig()");
 
     Config cfg, actual;
     cfg.parse(tlv_size, p_param_tlvs);
 
     for (auto &opt : cfg.options()) {
-        // if this option would override one of the hook options, prevent it
-        bool preventMe = false;
-
+        // indicates whether this option would override one of the hook options
+        bool conflict = false;
         for (auto &hook_opt : hookValues.options())
             if (hook_opt.type() == opt.type())
-                preventMe = true;
+                conflict = true;
 
-        if (!preventMe || !guardConfig)
+        // log config values with type codes
+        std::stringstream bruce;
+        bruce << "NFC_SetConfig Option " << opt.name() << "(" << (int)opt.type() << "):";
+        loghex(bruce.str().c_str(), opt.value(), opt.len());
+
+        // prevent config values from overriding hook iff guard is enabled
+        if (!guardEnabled || !conflict)
             actual.add(opt);
-        else
-            // keep for restore
-            origValues.add(opt);
     }
 
-    // any of our values got modified and we are active those values are already changed in stream
     config_ref bin_stream;
     actual.build(bin_stream);
-    loghex("NfcSetConfig OUT", bin_stream.get(), actual.total());
     tNFC_STATUS r = hNFC_SetConfig->call<def_NFC_SetConfig>(actual.total(), bin_stream.get());
 
     hNFC_SetConfig->postcall();
@@ -61,7 +59,7 @@ tNFC_STATUS hook_ce_select_t4t() {
     hce_select_t4t->precall();
 
     LOGD("hook_ce_select_t4t()");
-    LOGD("hook_ce_select_t4t Enabled: %d", patchEnabled);
+    LOGD("Patch enabled: %d", patchEnabled);
 
     tNFC_STATUS r = hce_select_t4t->call<def_ce_select_t4t>();
     if (patchEnabled) {
@@ -76,10 +74,12 @@ tNFC_STATUS hook_ce_select_t4t() {
 }
 
 void hook_nfaConnectionCallback(uint8_t event, void *eventData) {
+    auto eventName = System::nfaEventName(event);
+
     if (eventData)
-        LOGD("hook_NFA_Event: event %d with status %d", event, *(uint8_t *)eventData);
+        LOGD("hook_NFA_Event: %s(%d) with status %d", eventName.c_str(), event, *(uint8_t *)eventData);
     else
-        LOGD("hook_NFA_Event: event %d without status", event);
+        LOGD("hook_NFA_Event: %s(%d)", eventName.c_str(), event);
 
     // call original callback
     origNfaConnCBack(event, eventData);

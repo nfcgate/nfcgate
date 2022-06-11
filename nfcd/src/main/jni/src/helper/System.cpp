@@ -1,0 +1,69 @@
+#include <sys/system_properties.h>
+#include <string>
+
+#include <nfcd/helper/System.h>
+
+/* static */ int System::sSdkInt = -1;
+
+int System::sdkInt() {
+    if (sSdkInt != -1)
+        return sSdkInt;
+
+    char osVersion[PROP_VALUE_MAX+1];
+    __system_property_get("ro.build.version.sdk", osVersion);
+    int sdk_int = std::stoi(std::string(osVersion));
+
+    sSdkInt = sdk_int;
+    return sSdkInt;
+}
+
+#define MAKE_NFA_CASE(val, name) case val: return #name
+
+/*static*/ std::string System::nfaEventName(uint8_t event) {
+    switch (event) {
+        MAKE_NFA_CASE(0, NFA_POLL_ENABLED_EVT);
+        MAKE_NFA_CASE(1, NFA_POLL_DISABLED_EVT);
+        MAKE_NFA_CASE(2, NFA_DISC_RESULT_EVT);
+        MAKE_NFA_CASE(3, NFA_SELECT_RESULT_EVT);
+        MAKE_NFA_CASE(4, NFA_DEACTIVATE_FAIL_EVT);
+        MAKE_NFA_CASE(5, NFA_ACTIVATED_EVT);
+        MAKE_NFA_CASE(6, NFA_DEACTIVATED_EVT);
+        MAKE_NFA_CASE(7, NFA_TLV_DETECT_EVT);
+        MAKE_NFA_CASE(8, NFA_NDEF_DETECT_EVT);
+        MAKE_NFA_CASE(9, NFA_DATA_EVT);
+        MAKE_NFA_CASE(10, NFA_SELECT_CPLT_EVT);
+        MAKE_NFA_CASE(11, NFA_READ_CPLT_EVT);
+        MAKE_NFA_CASE(12, NFA_WRITE_CPLT_EVT);
+        MAKE_NFA_CASE(13, NFA_LLCP_ACTIVATED_EVT);
+        MAKE_NFA_CASE(14, NFA_LLCP_DEACTIVATED_EVT);
+        MAKE_NFA_CASE(15, NFA_PRESENCE_CHECK_EVT);
+        MAKE_NFA_CASE(16, NFA_FORMAT_CPLT_EVT);
+        MAKE_NFA_CASE(17, NFA_I93_CMD_CPLT_EVT);
+        MAKE_NFA_CASE(18, NFA_SET_TAG_RO_EVT);
+        MAKE_NFA_CASE(19, NFA_EXCLUSIVE_RF_CONTROL_STARTED_EVT);
+        MAKE_NFA_CASE(20, NFA_EXCLUSIVE_RF_CONTROL_STOPPED_EVT);
+        MAKE_NFA_CASE(21, NFA_CE_REGISTERED_EVT);
+        MAKE_NFA_CASE(22, NFA_CE_DEREGISTERED_EVT);
+        MAKE_NFA_CASE(23, NFA_CE_DATA_EVT);
+        MAKE_NFA_CASE(24, NFA_CE_ACTIVATED_EVT);
+        MAKE_NFA_CASE(25, NFA_CE_DEACTIVATED_EVT);
+        MAKE_NFA_CASE(26, NFA_CE_LOCAL_TAG_CONFIGURED_EVT);
+        MAKE_NFA_CASE(27, NFA_CE_NDEF_WRITE_START_EVT);
+        MAKE_NFA_CASE(28, NFA_CE_NDEF_WRITE_CPLT_EVT);
+        MAKE_NFA_CASE(29, NFA_CE_UICC_LISTEN_CONFIGURED_EVT);
+        MAKE_NFA_CASE(30, NFA_RF_DISCOVERY_STARTED_EVT);
+        MAKE_NFA_CASE(31, NFA_RF_DISCOVERY_STOPPED_EVT);
+        MAKE_NFA_CASE(32, NFA_UPDATE_RF_PARAM_RESULT_EVT);
+        MAKE_NFA_CASE(33, NFA_SET_P2P_LISTEN_TECH_EVT);
+        MAKE_NFA_CASE(34, NFA_RW_INTF_ERROR_EVT);
+        MAKE_NFA_CASE(35, NFA_LLCP_FIRST_PACKET_RECEIVED_EVT);
+        MAKE_NFA_CASE(36, NFA_LISTEN_ENABLED_EVT);
+        MAKE_NFA_CASE(37, NFA_LISTEN_DISABLED_EVT);
+        MAKE_NFA_CASE(38, NFA_P2P_PAUSED_EVT);
+        MAKE_NFA_CASE(39, NFA_P2P_RESUMED_EVT);
+        MAKE_NFA_CASE(40, NFA_T2T_CMD_CPLT_EVT);
+
+        default:
+            return "Unknown";
+    }
+}
