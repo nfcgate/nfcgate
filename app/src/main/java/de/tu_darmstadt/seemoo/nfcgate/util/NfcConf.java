@@ -39,12 +39,16 @@ public class NfcConf {
 
             if (keyVal != null) {
                 // existence of this device node confirms this is (or is not) the correct config
-                if ("NXP_NFC_DEV_NODE".equals(keyVal.first))
+                if ("NXP_NFC_DEV_NODE".equals(keyVal.first)) {
                     if (!(status.confirmed = fileExists(keyVal.second)))
                         return false;
 
+                    if (status.chipName == null)
+                        status.chipName = "NXP " + keyVal.second.replace("/dev/", "");
+                }
+
                 if ("NXP_NFC_CHIP".equals(keyVal.first))
-                    status.chipName = resolveNXPChipCode(keyVal.second);
+                    status.chipName = "NXP " + resolveNXPChipCode(keyVal.second);
             }
 
             return true;
@@ -61,7 +65,8 @@ public class NfcConf {
                     if (!(status.confirmed = fileExists(keyVal.second)))
                         return false;
 
-                    status.chipName = keyVal.second.replace("/dev/", "");
+                    if (status.chipName == null)
+                        status.chipName = "BRCM " + keyVal.second.replace("/dev/", "");
                 }
             }
 
@@ -81,7 +86,7 @@ public class NfcConf {
         put("0x08","PN80T");
     }};
     private static String resolveNXPChipCode(String code) {
-        return NXPMap.containsKey(code) ? NXPMap.get(code) : "Unknown NXP";
+        return NXPMap.containsKey(code) ? NXPMap.get(code) : "Unknown";
     }
 
     private final String[] configDirs = new String[] {
@@ -125,7 +130,7 @@ public class NfcConf {
         // if this prop exists, try to find configs with SKU names
         String propHWSKU = getSystemProp("ro.boot.product.hardware.sku");
         if (!propHWSKU.isEmpty())
-            result.addAll(findConfigs(new String[]{
+            result.addAll(findConfigs(new String[] {
                     "libnfc-" + propHWSKU + ".conf",
                     "libnfc-nxp-" + propHWSKU + ".conf",
             }, NXP_PARSER));
@@ -133,7 +138,7 @@ public class NfcConf {
         // if this prop exists, try to find configs with its name
         String propCFN = getSystemProp("persist.vendor.nfc.config_file_name");
         if (!propCFN.isEmpty())
-            result.addAll(findConfigs(new String[]{propCFN}, NXP_PARSER));
+            result.addAll(findConfigs(new String[]{ propCFN }, NXP_PARSER));
 
         return result;
     }
