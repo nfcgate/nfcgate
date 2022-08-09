@@ -12,6 +12,7 @@ using tNFA_TECHNOLOGY_MASK = uint8_t;
 #define CE_CB_STATUS_PRE_O 0xd8
 // offset to nfa_dm_cb->p_conn_cback field (nfa_dm_int.h)
 #define NFA_DM_CB_CONN_CBACK (8 * sizeof(void*))
+#define NFA_DM_CB_CONN_CBACK_NQ (9 * sizeof(void*))
 
 // modified from nfa_api.h
 

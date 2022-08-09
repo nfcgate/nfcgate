@@ -23,6 +23,113 @@ Symbol *hNFA_DisablePolling;
 Symbol *hNFA_StartRfDiscovery;
 Symbol *hNFA_EnablePolling;
 
+
+static bool strContains(const std::string &s, const std::string &q) {
+    return s.find(q) != std::string::npos;
+}
+static bool strStartsWith(const std::string &s, const std::string &q) {
+    return q.size() < s.size() && std::equal(q.begin(), q.end(), s.begin());
+}
+static bool strEndsWith(const std::string &s, const std::string &q) {
+    return q.size() < s.size() && std::equal(q.rbegin(), q.rend(), s.rbegin());
+}
+
+static std::set<std::string> getLoadedLibraries() {
+    std::ifstream maps("/proc/self/maps");
+    LOG_ASSERT_XR(maps.is_open(), {}, "Error loading proc maps");
+
+    std::set<std::string> result;
+    for (std::string line; std::getline(maps, line); ) {
+        auto inx = line.find_last_of(' ');
+
+        if (inx != std::string::npos) {
+            auto name = line.substr(inx + 1);
+
+            if (strEndsWith(name, ".so"))
+                result.emplace(name);
+        }
+    }
+
+    return result;
+}
+
+static uint8_t getAddressPermissions(uintptr_t addr, uint64_t size = 0) {
+    std::ifstream maps("/proc/self/maps");
+    LOG_ASSERT_XR(maps.is_open(), {}, "Error loading proc maps");
+
+    std::set<std::string> result;
+    for (std::string line; std::getline(maps, line); ) {
+        auto inx_1 = line.find_first_of(' ');
+        auto inx_2 = line.find_first_of(' ', inx_1 + 1);
+
+        if (inx_1 != std::string::npos && inx_2 != std::string::npos) {
+            // has format "<range> <perm> "
+            auto range = line.substr(0, inx_1), perm = line.substr(inx_1 + 1, inx_2 - inx_1 - 1);
+            auto inx_3 = range.find_first_of('-');
+
+            if (inx_3 != std::string::npos && perm.size() == 4) {
+                // range has format "<start>-<end>"
+                uint64_t start = std::stoull(range.substr(0, inx_3), nullptr, 16);
+                uint64_t end = std::stoull(range.substr(inx_3 + 1), nullptr, 16);
+
+                if (addr >= start && (addr + size) <= end) {
+                    // address is in range
+
+                    int read = perm[0] == 'r' ? 4 : 0;
+                    int write = perm[1] == 'w' ? 2 : 0;
+                    int execute = perm[2] == 'x' ? 1 : 0;
+                    return read + write + execute;
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+
+static std::string findLibNFC() {
+    for (const auto &candidate : getLoadedLibraries()) {
+        // library path must contain "nfc" somewhere
+        if (!strContains(candidate, "nfc"))
+            continue;
+
+        // library file must be accessible
+        if (access(candidate.c_str(), R_OK) != 0)
+            continue;
+
+        // library symbol table must contain the expected symbol
+        if (SymbolTable::create(candidate) &&
+            SymbolTable::instance()->contains("NFC_SetConfig"))
+            return candidate;
+    }
+
+    return "";
+}
+
+static std::string escapeBRE(const std::string &in) {
+    std::stringstream bruce;
+
+    for (char c : in) {
+        switch (c) {
+            case '.':
+            case '[':
+            case ']':
+            case '^':
+            case '$':
+            case '*':
+            case '\\':
+                bruce << "\\" << c;
+                break;
+
+            default:
+                bruce << c;
+                break;
+        }
+    }
+
+    return bruce.str();
+}
+
 /**
  * Prevent already set values from being overwritten.
  */
@@ -91,10 +198,14 @@ void hook_nfaConnectionCallback(uint8_t event, void *eventData) {
     EventQueue::instance().enqueue(event, eventData ? *(uint8_t*)eventData : 0);
 }
 
-bool hookNFA_CB() {
-    auto **p_nfa_conn_cback = (def_NFA_CONN_CBACK**)(nfa_dm_cb->address<uint8_t>() +
-            NFA_DM_CB_CONN_CBACK);
-    LOG_ASSERT_XR(p_nfa_conn_cback && *p_nfa_conn_cback, false, "NFA_CB invalid");
+bool hookNFA_CB(const std::string &lib) {
+    uint32_t offset = strEndsWith(lib, "libnqnfc-nci.so") ? NFA_DM_CB_CONN_CBACK_NQ :
+            NFA_DM_CB_CONN_CBACK;
+    LOGD("hookNFA_CB: using offset 0x%x", offset);
+    auto **p_nfa_conn_cback = (def_NFA_CONN_CBACK**)(nfa_dm_cb->address<uint8_t>() + offset);
+    auto perms = getAddressPermissions(reinterpret_cast<uintptr_t>(*p_nfa_conn_cback));
+    LOGD("hookNFA_CB: found p_nfa_conn_cback %p with permissions %d", *p_nfa_conn_cback, perms);
+    LOG_ASSERT_XR(*p_nfa_conn_cback && (perms & 5) == 5, false, "NFA_CB invalid or not read+execute");
 
     // save old nfa connection callback
     origNfaConnCBack = *p_nfa_conn_cback;
@@ -102,78 +213,6 @@ bool hookNFA_CB() {
     *p_nfa_conn_cback = &hook_nfaConnectionCallback;
 
     return true;
-}
-
-static bool strContains(const std::string &s, const std::string &q) {
-    return s.find(q) != std::string::npos;
-}
-static bool strStartsWith(const std::string &s, const std::string &q) {
-    return q.size() < s.size() && std::equal(q.begin(), q.end(), s.begin());
-}
-static bool strEndsWith(const std::string &s, const std::string &q) {
-    return q.size() < s.size() && std::equal(q.rbegin(), q.rend(), s.rbegin());
-}
-
-static std::set<std::string> getLoadedLibraries() {
-    std::ifstream maps("/proc/self/maps");
-    LOG_ASSERT_XR(maps.is_open(), {}, "Error loading proc maps");
-
-    std::set<std::string> result;
-    for (std::string line; std::getline(maps, line); ) {
-        auto inx = line.find_last_of(' ');
-
-        if (inx != std::string::npos) {
-            auto name = line.substr(inx + 1);
-
-            if (strEndsWith(name, ".so"))
-                result.emplace(name);
-        }
-    }
-
-    return result;
-}
-
-static std::string findLibNFC() {
-    for (const auto &candidate : getLoadedLibraries()) {
-        // library path must contain "nfc" somewhere
-        if (!strContains(candidate, "nfc"))
-            continue;
-
-        // library file must be accessible
-        if (access(candidate.c_str(), R_OK) != 0)
-            continue;
-
-        // library symbol table must contain the expected symbol
-        if (SymbolTable::create(candidate) &&
-                SymbolTable::instance()->contains("NFC_SetConfig"))
-            return candidate;
-    }
-
-    return "";
-}
-
-static std::string escapeBRE(const std::string &in) {
-    std::stringstream bruce;
-
-    for (char c : in) {
-        switch (c) {
-            case '.':
-            case '[':
-            case ']':
-            case '^':
-            case '$':
-            case '*':
-            case '\\':
-                bruce << "\\" << c;
-                break;
-
-            default:
-                bruce << c;
-                break;
-        }
-    }
-
-    return bruce.str();
 }
 
 static void hookNative() {
@@ -219,7 +258,7 @@ static void hookNative() {
         // NFA callback
         nfa_dm_cb = new Symbol("nfa_dm_cb", handle);
         LOG_ASSERT_X(nfa_dm_cb->address<void>(), "Symbol lookup failed for nfa_dm_cb");
-        LOG_ASSERT_X(hookNFA_CB(), "Hooking nfa_cb failed");
+        LOG_ASSERT_X(hookNFA_CB(lib), "Hooking nfa_cb failed");
     }
     // finish installing hooks
     LOG_ASSERT_X(IHook::finish(), "Hooking failed");
