@@ -11,8 +11,8 @@ android {
         applicationId "de.tu_darmstadt.seemoo.nfcgate"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 6
-        versionName "2.1.1"
+        versionCode 7
+        versionName "2.2.0"
     }
     buildTypes {
         release {
