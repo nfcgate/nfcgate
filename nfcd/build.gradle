@@ -32,6 +32,7 @@ android {
             path 'CMakeLists.txt'
         }
     }
+    namespace 'de.tu_darmstadt.seemoo.nfcgate.nfcd'
 }
 
 dependencies {
