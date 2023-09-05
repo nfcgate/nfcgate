@@ -1,9 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
+    compileSdk 27
+    ndkVersion "22.1.7171670"
 
-    lintOptions {
+    lint {
         disable 'ExpiredTargetSdkVersion'
     }
 
@@ -20,6 +21,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    namespace 'de.tu_darmstadt.seemoo.nfcgate'
 }
 
 dependencies {
