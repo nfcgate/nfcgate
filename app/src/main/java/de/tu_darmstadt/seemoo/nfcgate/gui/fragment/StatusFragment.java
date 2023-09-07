@@ -28,7 +28,7 @@ import de.tu_darmstadt.seemoo.nfcgate.gui.component.CustomArrayAdapter;
 import de.tu_darmstadt.seemoo.nfcgate.gui.component.FileShare;
 import de.tu_darmstadt.seemoo.nfcgate.gui.component.StatusItem;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.NfcManager;
-import de.tu_darmstadt.seemoo.nfcgate.util.NfcConf;
+import de.tu_darmstadt.seemoo.nfcgate.nfc.chip.NfcChip;
 
 public class StatusFragment extends BaseFragment {
     // ui references
@@ -218,7 +218,7 @@ public class StatusFragment extends BaseFragment {
 
     StatusItem detectNfcModel() {
         // null or chip model name
-        String chipName = new NfcConf().detectNFCC();
+        String chipName = new NfcChip().detect();
         // Chip model should be OK if it can be detected
         StatusItem result = new StatusItem(getContext(), getString(R.string.status_chip))
                 .setValue(chipName != null ? chipName : getString(R.string.status_unknown));
