@@ -15,7 +15,8 @@ There are unidentified issues with applying NFC config streams. It looks like sp
 
 ## Matrix
 | Device                     | NFC chipset   | Android version | Android ROM version                 | Clone | On-device capture | Relay | Replay | Notes                                                 |
-| :------------------------- | :------------ | --------------- | :---------------------------------- | :---: | :---------------: | :---: | :----: | :---------------------------------------------------- |
+|:---------------------------|:--------------|-----------------|:------------------------------------|:-----:|:-----------------:|:-----:|:------:|:------------------------------------------------------|
+| Google Pixel 6a            | ST54J         | 13              | Stock 13.0.0 (TQ3A.230605.010)      |   y   |         y         |   y   |   y    |                                                       |
 | Google Nexus 5X (bullhead) | NXP (PN548AD) | 11              | LineageOS 18.1 (RQ3A.211001.001)    |   y   |         y         |   y   |   y    |                                                       |
 |                            |               | 10              | PixelExperience 10 (20200511-1150)  |   y   |         y         |   y   |   y    |                                                       |
 |                            |               | 9               | PixelExperience 9 (20191212-0124)   |   y   |         y         |   y   |   y    |                                                       |
