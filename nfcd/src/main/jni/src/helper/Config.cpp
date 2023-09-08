@@ -94,7 +94,9 @@ std::unordered_map<uint8_t, std::string> knownConfigTypes = {
         {0x80, "RF_FIELD_INFO"},
         {0x81, "RF_NFCEE_ACTION"},
         {0x82, "NFCDEP_OP"},
-        // 0x83 - 0x9F RFU
+        // 0x83 - 0x84 RFU
+        {0x85, "NFCC_CONFIG_CONTROL"},
+        // 0x86 - 0x9F RFU
 };
 
 std::string Option::name() const {
@@ -109,11 +111,11 @@ void Option::push(config_ref &config, uint8_t &offset) {
      * - 1 byte length
      * - length byte data
      */
-    config.get()[offset + 0] = mType;
-    config.get()[offset + 1] = mLen;
+    config.get()[offset + 0] = type();
+    config.get()[offset + 1] = len();
 
-    memcpy(&config.get()[offset + 2], mValue, mLen);
-    offset += mLen + 2;
+    memcpy(&config.get()[offset + 2], value(), len());
+    offset += len() + 2;
 }
 
 void Config::build(config_ref &config) {

@@ -2,65 +2,81 @@
 #include <jni.h>
 
 static void beginCollectingEvents() {
-    EventQueue::instance().beginCollecting();
+    globals.eventQueue.beginCollecting();
 }
 
 static void waitForEvent(uint8_t event, bool checkStatus = true) {
     uint8_t status;
-    if (EventQueue::instance().waitFor(event, status, 500)) {
+    if (globals.eventQueue.waitFor(event, status, 500)) {
         if (checkStatus && status != 0)
-            LOGD("[event] Unexpected status for event %d: expected 0, got %d", event, status);
+            LOGW("[event] Unexpected status for %s: expected 0, got %d",
+                 System::nfaEventName(event).c_str(), status);
     }
     else
-        LOGD("[event] Waiting for event %d failed: timeout reached", event);
+        LOGW("[event] Waiting for %s failed: timeout reached", System::nfaEventName(event).c_str());
 }
 
-void setPollingEnabled(bool enable) {
-    LOGD("[polling] %s", (enable ? "Enabling" : "Disabling"));
+tNFA_TECHNOLOGY_MASK maskFromConfig(const Config &config) {
+    tNFA_TECHNOLOGY_MASK result = 0;
 
-    beginCollectingEvents();
-    hNFA_StopRfDiscovery->call<def_NFA_StopRfDiscovery>();
-    LOGD("[polling] Stopping RF discovery");
-    waitForEvent(NFA_RF_DISCOVERY_STOPPED_EVT, false);
-
-    if (enable) {
-        /*
-         * Note: only enable known technologies, since enabling all (0xFF) also enabled exotic
-         * proprietary ones, which may fail to start without special configuration
-         */
-        beginCollectingEvents();
-        hNFA_EnablePolling->call<def_NFA_EnablePolling>(SAFE_TECH_MASK);
-        LOGD("[polling] Enabling polling");
-        waitForEvent(NFA_POLL_ENABLED_EVT);
-    }
-    else {
-        beginCollectingEvents();
-        hNFA_DisablePolling->call<def_NFA_DisablePolling>();
-        LOGD("[polling] Disabling polling");
-        waitForEvent(NFA_POLL_DISABLED_EVT);
+    for (const auto &option : config.options()) {
+        if (option.name().find("LA") == 0)
+            result |= NFA_TECHNOLOGY_MASK_A | NFA_TECHNOLOGY_MASK_A_ACTIVE;
+        else if (option.name().find("LB") == 0)
+            result |= NFA_TECHNOLOGY_MASK_B;
+        else if (option.name().find("LF") == 0)
+            result |= NFA_TECHNOLOGY_MASK_F | NFA_TECHNOLOGY_MASK_F_ACTIVE;
     }
 
+    return result;
+}
+
+void nfaEnableDiscovery() {
     beginCollectingEvents();
-    hNFA_StartRfDiscovery->call<def_NFA_StartRfDiscovery>();
-    LOGD("[polling] Starting RF discovery");
+    globals.hNFA_StartRfDiscovery->call<def_NFA_StartRfDiscovery>();
+    LOGD("[nfcd] Starting RF discovery");
     waitForEvent(NFA_RF_DISCOVERY_STARTED_EVT);
 }
 
-void uploadConfig(Config &config) {
-    LOGI("[config]");
+void nfaDisableDiscovery() {
+    beginCollectingEvents();
+    globals.hNFA_StopRfDiscovery->call<def_NFA_StopRfDiscovery>();
+    LOGD("[nfcd] Stopping RF discovery");
+    waitForEvent(NFA_RF_DISCOVERY_STOPPED_EVT, false);
+}
 
+void nfaEnablePolling() {
+    /*
+     * Note: only enable known technologies, since enabling all (0xFF) also enabled exotic
+     * proprietary ones, which may fail to start without special configuration
+     */
+    beginCollectingEvents();
+    globals.hNFA_EnablePolling->call<def_NFA_EnablePolling>(SAFE_TECH_MASK);
+    LOGD("[nfcd] Enabling polling");
+    waitForEvent(NFA_POLL_ENABLED_EVT);
+}
+
+void nfaDisablePolling() {
+    beginCollectingEvents();
+    globals.hNFA_DisablePolling->call<def_NFA_DisablePolling>();
+    LOGD("[nfcd] Disabling polling");
+    waitForEvent(NFA_POLL_DISABLED_EVT);
+}
+
+void nfaSetListenTech(tNFA_TECHNOLOGY_MASK tech) {
+    beginCollectingEvents();
+    globals.hNFA_SetP2pListenTech->call<def_NFA_SetP2pListenTech>(tech);
+    LOGD("[nfcd] Setting listen tech to %d", tech);
+    waitForEvent(NFA_SET_P2P_LISTEN_TECH_EVT);
+}
+
+void applyConfig(Config &config) {
     config_ref bin_stream;
     config.build(bin_stream);
 
-    // NCI standard states that NFCID cannot be set during discovery
-    beginCollectingEvents();
-    hNFA_StopRfDiscovery->call<def_NFA_StopRfDiscovery>();
-    LOGD("[config] Stopping RF discovery");
-    waitForEvent(NFA_RF_DISCOVERY_STOPPED_EVT, false);
-
-    guardEnabled = false;
-    hNFC_SetConfig->callHook<def_NFC_SetConfig>(config.total(), bin_stream.get());
-    guardEnabled = true;
+    globals.guardEnabled = false;
+    globals.hNFC_SetConfig->callHook<def_NFC_SetConfig>(config.total(), bin_stream.get());
+    globals.guardEnabled = true;
 
     // wait for config to set before returning
     usleep(35000);
@@ -68,32 +84,52 @@ void uploadConfig(Config &config) {
 
 extern "C" {
     JNIEXPORT jboolean JNICALL Java_de_tu_1darmstadt_seemoo_nfcgate_xposed_Native_isHookEnabled(JNIEnv *, jobject) {
-        return hookEnabled;
+        return globals.hookEnabled;
     }
 
     JNIEXPORT jboolean JNICALL Java_de_tu_1darmstadt_seemoo_nfcgate_xposed_Native_isPatchEnabled(JNIEnv *, jobject) {
-        return patchEnabled;
+        return globals.patchEnabled;
     }
 
     JNIEXPORT void JNICALL Java_de_tu_1darmstadt_seemoo_nfcgate_xposed_Native_setConfiguration(JNIEnv *env, jobject, jbyteArray config) {
         if (!env->IsSameObject(config, nullptr)) {
+            // parse config value stream
             jsize config_len = env->GetArrayLength(config);
             jbyte *config_data = env->GetByteArrayElements(config, nullptr);
-            hookValues.parse(config_len, (uint8_t *) config_data);
+            globals.hookValues.parse(config_len, (uint8_t *) config_data);
             env->ReleaseByteArrayElements(config, config_data, 0);
 
-            patchEnabled = true;
-            uploadConfig(hookValues);
+            // begin re-routing AIDs
+            globals.patchEnabled = true;
 
-            // disable polling after setting config, re-enable discovery
-            setPollingEnabled(false);
+            // disable discovery before changing anything
+            nfaDisableDiscovery();
+            {
+                // apply the config stream
+                applyConfig(globals.hookValues);
+                // disable polling
+                nfaDisablePolling();
+                // enable listening only for the selected technologies
+                auto mask = maskFromConfig(globals.hookValues);
+                if (mask != 0)
+                    nfaSetListenTech(mask);
+            }
+            // re-enable discovery after changes were made
+            nfaEnableDiscovery();
         }
         else {
-            patchEnabled = false;
+            globals.patchEnabled = false;
         }
     }
 
     JNIEXPORT void JNICALL Java_de_tu_1darmstadt_seemoo_nfcgate_xposed_Native_setPolling(JNIEnv *, jobject, jboolean enabled) {
-        setPollingEnabled(enabled);
+        // disable discovery before changing anything
+        nfaDisableDiscovery();
+        {
+            // enable / disable polling
+            enabled ? nfaEnablePolling() : nfaDisablePolling();
+        }
+        // re-enable discovery after changes were made
+        nfaEnableDiscovery();
     }
 }

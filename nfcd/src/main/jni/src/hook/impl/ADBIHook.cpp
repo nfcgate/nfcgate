@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
-#include <nfcd/helper/SymbolTable.h>
+#include <nfcd/nfcd.h>
 #include <nfcd/hook/impl/ADBIHook.h>
 #include <nfcd/hook/impl/arm64_cacheflush.h>
 
@@ -12,13 +12,13 @@ ADBIHook::ADBIHook(const std::string &name, void *hookFn, void *libraryHandle) :
 
 void ADBIHook::hookInternal() {
     // get symbol alignment
-    mAlignment = SymbolTable::instance()->getSize(mName);
+    mAlignment = globals.symbolTable.getSize(mName);
     // construct trampoline for this architecture
-    LOG_ASSERT_X(constructTrampoline(), "Trampoline construction failed");
+    LOG_ASSERT_S(constructTrampoline(), return, "Trampoline construction failed");
     // unprotect the region
-    LOG_ASSERT_X(unprotect(), "Unprotecting failed");
+    LOG_ASSERT_S(unprotect(), return, "Unprotecting failed");
     // install the trampoline
-    LOG_ASSERT_X(swapTrampoline(true), "Trampoline installation failed");
+    LOG_ASSERT_S(swapTrampoline(true), return, "Trampoline installation failed");
 
     // success
     mHooked = true;

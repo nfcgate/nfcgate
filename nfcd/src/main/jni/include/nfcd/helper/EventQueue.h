@@ -23,10 +23,6 @@ class EventQueue {
     };
 
 public:
-    static EventQueue &instance() {
-        return mInstance;
-    }
-
     // Start collecting incoming events into the queue
     void beginCollecting() {
         std::lock_guard<std::mutex> lock(mMutex);
@@ -79,8 +75,6 @@ protected:
 
     // queue backed by std::deque
     std::stack<EventEntry> mQueue;
-
-    static EventQueue mInstance;
 };
 
 #endif //NFCD_EVENTQUEUE_H

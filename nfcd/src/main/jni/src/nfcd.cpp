@@ -2,141 +2,15 @@
 #include <link.h>
 #include <dlfcn.h>
 
-#include <set>
-#include <fstream>
-#include <sstream>
-
-__attribute__((unused)) static void hookNative() __attribute__((constructor));
-std::unique_ptr<SymbolTable> SymbolTable::mInstance;
-EventQueue EventQueue::mInstance;
-Config hookValues;
-def_NFA_CONN_CBACK *origNfaConnCBack;
-bool hookEnabled = false;
-bool patchEnabled = false;
-bool guardEnabled = true;
-IHook *hNFC_SetConfig;
-IHook *hce_select_t4t;
-Symbol *nfa_dm_cb;
-Symbol *hce_cb;
-Symbol *hNFA_StopRfDiscovery;
-Symbol *hNFA_DisablePolling;
-Symbol *hNFA_StartRfDiscovery;
-Symbol *hNFA_EnablePolling;
-
-
-static bool strContains(const std::string &s, const std::string &q) {
-    return s.find(q) != std::string::npos;
-}
-static bool strStartsWith(const std::string &s, const std::string &q) {
-    return q.size() < s.size() && std::equal(q.begin(), q.end(), s.begin());
-}
-static bool strEndsWith(const std::string &s, const std::string &q) {
-    return q.size() < s.size() && std::equal(q.rbegin(), q.rend(), s.rbegin());
-}
-
-static std::set<std::string> getLoadedLibraries() {
-    std::ifstream maps("/proc/self/maps");
-    LOG_ASSERT_XR(maps.is_open(), {}, "Error loading proc maps");
-
-    std::set<std::string> result;
-    for (std::string line; std::getline(maps, line); ) {
-        auto inx = line.find_last_of(' ');
-
-        if (inx != std::string::npos) {
-            auto name = line.substr(inx + 1);
-
-            if (strEndsWith(name, ".so"))
-                result.emplace(name);
-        }
-    }
-
-    return result;
-}
-
-static uint8_t getAddressPermissions(uintptr_t addr, uint64_t size = 0) {
-    std::ifstream maps("/proc/self/maps");
-    LOG_ASSERT_XR(maps.is_open(), {}, "Error loading proc maps");
-
-    std::set<std::string> result;
-    for (std::string line; std::getline(maps, line); ) {
-        auto inx_1 = line.find_first_of(' ');
-        auto inx_2 = line.find_first_of(' ', inx_1 + 1);
-
-        if (inx_1 != std::string::npos && inx_2 != std::string::npos) {
-            // has format "<range> <perm> "
-            auto range = line.substr(0, inx_1), perm = line.substr(inx_1 + 1, inx_2 - inx_1 - 1);
-            auto inx_3 = range.find_first_of('-');
-
-            if (inx_3 != std::string::npos && perm.size() == 4) {
-                // range has format "<start>-<end>"
-                uint64_t start = std::stoull(range.substr(0, inx_3), nullptr, 16);
-                uint64_t end = std::stoull(range.substr(inx_3 + 1), nullptr, 16);
-
-                if (addr >= start && (addr + size) <= end) {
-                    // address is in range
-
-                    int read = perm[0] == 'r' ? 4 : 0;
-                    int write = perm[1] == 'w' ? 2 : 0;
-                    int execute = perm[2] == 'x' ? 1 : 0;
-                    return read + write + execute;
-                }
-            }
-        }
-    }
-
-    return 0;
-}
-
-static std::string findLibNFC() {
-    for (const auto &candidate : getLoadedLibraries()) {
-        // library path must contain "nfc" somewhere
-        if (!strContains(candidate, "nfc"))
-            continue;
-
-        // library file must be accessible
-        if (access(candidate.c_str(), R_OK) != 0)
-            continue;
-
-        // library symbol table must contain the expected symbol
-        if (SymbolTable::create(candidate) &&
-            SymbolTable::instance()->contains("NFC_SetConfig"))
-            return candidate;
-    }
-
-    return "";
-}
-
-static std::string escapeBRE(const std::string &in) {
-    std::stringstream bruce;
-
-    for (char c : in) {
-        switch (c) {
-            case '.':
-            case '[':
-            case ']':
-            case '^':
-            case '$':
-            case '*':
-            case '\\':
-                bruce << "\\" << c;
-                break;
-
-            default:
-                bruce << c;
-                break;
-        }
-    }
-
-    return bruce.str();
-}
+HookGlobals globals;
 
 /**
  * Prevent already set values from being overwritten.
  */
 tNFC_STATUS hook_NFC_SetConfig(uint8_t tlv_size, uint8_t *p_param_tlvs) {
-    hNFC_SetConfig->precall();
+    globals.hNFC_SetConfig->precall();
 
-    LOGD("NFC_SetConfig()");
+    LOGI("NFC_SetConfig()");
 
     Config cfg, actual;
     cfg.parse(tlv_size, p_param_tlvs);
@@ -144,43 +18,45 @@ tNFC_STATUS hook_NFC_SetConfig(uint8_t tlv_size, uint8_t *p_param_tlvs) {
     for (auto &opt : cfg.options()) {
         // indicates whether this option would override one of the hook options
         bool conflict = false;
-        for (auto &hook_opt : hookValues.options())
+        for (auto &hook_opt : globals.hookValues.options())
             if (hook_opt.type() == opt.type())
                 conflict = true;
 
         // log config values with type codes
         std::stringstream bruce;
-        bruce << "NFC_SetConfig Option " << opt.name() << "(" << (int)opt.type() << "):";
+        bruce << "NFC_SetConfig Option " << opt.name() << "(" << (int)opt.type() << ", "
+              << (!globals.guardEnabled ? "own" : "system") << ", "
+              << (globals.guardEnabled && conflict ? "blocked" : "pass") << ")";
         loghex(bruce.str().c_str(), opt.value(), opt.len());
 
         // prevent config values from overriding hook iff guard is enabled
-        if (!guardEnabled || !conflict)
+        if (!globals.guardEnabled || !conflict)
             actual.add(opt);
     }
 
     config_ref bin_stream;
     actual.build(bin_stream);
-    tNFC_STATUS r = hNFC_SetConfig->call<def_NFC_SetConfig>(actual.total(), bin_stream.get());
+    tNFC_STATUS r = globals.hNFC_SetConfig->call<def_NFC_SetConfig>(actual.total(), bin_stream.get());
 
-    hNFC_SetConfig->postcall();
+    globals.hNFC_SetConfig->postcall();
     return r;
 }
 
 tNFC_STATUS hook_ce_select_t4t() {
-    hce_select_t4t->precall();
+    globals.hce_select_t4t->precall();
 
     LOGD("hook_ce_select_t4t()");
-    LOGD("Patch enabled: %d", patchEnabled);
+    LOGD("Patch enabled: %d", globals.patchEnabled);
 
-    tNFC_STATUS r = hce_select_t4t->call<def_ce_select_t4t>();
-    if (patchEnabled) {
+    tNFC_STATUS r = globals.hce_select_t4t->call<def_ce_select_t4t>();
+    if (globals.patchEnabled) {
         int offset = System::sdkInt() < System::O_1 ? CE_CB_STATUS_PRE_O : CE_CB_STATUS_POST_O;
-        auto ce_cb_status = hce_cb->address<uint8_t>() + offset;
+        auto ce_cb_status = globals.hce_cb->address<uint8_t>() + offset;
         // bypass ISO 7816 SELECT requirement for AID selection
         *ce_cb_status |= CE_T4T_STATUS_WILDCARD_AID_SELECTED;
     }
 
-    hce_select_t4t->postcall();
+    globals.hce_select_t4t->postcall();
     return r;
 }
 
@@ -188,24 +64,120 @@ void hook_nfaConnectionCallback(uint8_t event, void *eventData) {
     auto eventName = System::nfaEventName(event);
 
     if (eventData)
-        LOGD("hook_NFA_Event: %s(%d) with status %d", eventName.c_str(), event, *(uint8_t *)eventData);
+        LOGI("hook_NFA_Event: %s(%d) with status %d", eventName.c_str(), event, *(uint8_t *)eventData);
     else
-        LOGD("hook_NFA_Event: %s(%d)", eventName.c_str(), event);
+        LOGI("hook_NFA_Event: %s(%d)", eventName.c_str(), event);
 
     // call original callback
-    origNfaConnCBack(event, eventData);
+    globals.origNfaConnCBack(event, eventData);
     // enqueue event
-    EventQueue::instance().enqueue(event, eventData ? *(uint8_t*)eventData : 0);
+    globals.eventQueue.enqueue(event, eventData ? *(uint8_t*)eventData : 0);
 }
 
-bool hookNFA_CB(const std::string &lib) {
-    uint32_t offset = strEndsWith(lib, "libnqnfc-nci.so") ? NFA_DM_CB_CONN_CBACK_NQ :
-            NFA_DM_CB_CONN_CBACK;
-    LOGD("hookNFA_CB: using offset 0x%x", offset);
+HookGlobals::HookGlobals() {
+    LOG_ASSERT_S(mapInfo.create(), return, "Could not create map");
+
+    // check if NCI library exists and is readable + is loaded
+    mLibrary = findLibNFC();
+    LOG_ASSERT_S(!mLibrary.empty(), return, "Library not found or not accessible");
+
+    LOGI("Library found at %s", mLibrary.c_str());
+    mLibraryRe = "^" + StringUtil::escapeBRE(mLibrary) + "$";
+
+    // create library symbol table
+    LOG_ASSERT_S(symbolTable.create(mLibrary), return, "Building symbol table failed");
+
+    // try to obtain handle of already loaded library
+    mHandle = dlopen(mLibrary.c_str(), RTLD_NOLOAD);
+    LOG_ASSERT_S(mHandle, return, "Could not obtain library handle");
+
+    // begin installing hooks
+    IHook::init();
+    {
+        // NFC config
+        ASSERT_X(hNFC_SetConfig = hookSymbol("NFC_SetConfig", (void *)&hook_NFC_SetConfig));
+
+        // discovery
+        ASSERT_X(hNFA_StartRfDiscovery = lookupSymbol("NFA_StartRfDiscovery"));
+        ASSERT_X(hNFA_StopRfDiscovery = lookupSymbol("NFA_StopRfDiscovery"));
+
+        // polling / listening
+        ASSERT_X(hNFA_EnablePolling = lookupSymbol("NFA_EnablePolling"));
+        ASSERT_X(hNFA_DisablePolling = lookupSymbol("NFA_DisablePolling"));
+        ASSERT_X(hNFA_SetP2pListenTech = lookupSymbol("NFA_SetP2pListenTech"));
+
+        // NFC routing
+        ASSERT_X(hce_select_t4t = hookSymbol("ce_select_t4t", (void *)&hook_ce_select_t4t));
+        ASSERT_X(hce_cb = lookupSymbol("ce_cb"));
+
+        // NFA callback
+        ASSERT_X(nfa_dm_cb = lookupSymbol("nfa_dm_cb"));
+        LOG_ASSERT_S(hookNFACB(), return, "Hooking nfa_cb failed");
+    }
+    // finish installing hooks
+    LOG_ASSERT_S(IHook::finish(), return, "Hooking failed");
+
+    // hooking success
+    hookEnabled = true;
+}
+
+std::string HookGlobals::findLibNFC() const {
+    for (const auto &candidate : globals.mapInfo.loadedLibraries()) {
+        // library path must contain "nfc" somewhere
+        if (!StringUtil::strContains(candidate, "nfc"))
+            continue;
+
+        // library file must be accessible
+        if (access(candidate.c_str(), R_OK) != 0)
+            continue;
+
+        // library symbol table must contain the expected symbol
+        SymbolTable table;
+        if (table.create(candidate) && table.contains("NFC_SetConfig"))
+            return candidate;
+    }
+
+    return "";
+}
+
+bool HookGlobals::checkNFACBOffset(uint32_t offset) {
+    LOGD("checkOffset: trying offset 0x%x", offset);
+
+    // try to get nfa_dm_cb[offset]
     auto **p_nfa_conn_cback = (def_NFA_CONN_CBACK**)(nfa_dm_cb->address<uint8_t>() + offset);
-    auto perms = getAddressPermissions(reinterpret_cast<uintptr_t>(*p_nfa_conn_cback));
-    LOGD("hookNFA_CB: found p_nfa_conn_cback %p with permissions %d", *p_nfa_conn_cback, perms);
-    LOG_ASSERT_XR(*p_nfa_conn_cback && (perms & 5) == 5, false, "NFA_CB invalid or not read+execute");
+    LOG_ASSERT_S(*p_nfa_conn_cback, return false, "p_conn_cback is null, offset likely invalid");
+
+    auto rangeInfo = mapInfo.rangeFromAddress(reinterpret_cast<uintptr_t>(*p_nfa_conn_cback));
+    LOG_ASSERT_S(rangeInfo, return false, "p_conn_cback range info invalid");
+    LOGD("checkOffset: candidate p_conn_cback %p with permissions %d in object file %s",
+         *p_nfa_conn_cback, rangeInfo->perms, rangeInfo->label.c_str());
+    LOG_ASSERT_S((rangeInfo->perms & 5) == 5, return false,
+                 "p_conn_cback permissions not read+execute, offset likely invalid");
+    LOG_ASSERT_S(rangeInfo->label.find("jni") != std::string::npos, return false,
+                 "p_conn_cback not in JNI object, offset likely invalid");
+
+    LOGD("checkOffset: success");
+    return true;
+}
+
+uint32_t HookGlobals::findNFACBOffset() {
+    // search [standard_offset, standard_offset + 2]
+    for (uint32_t i = 0; i < 2; i++) {
+        uint32_t offset = NFA_DM_CB_CONN_CBACK + (i * sizeof(void*));
+
+        if (checkNFACBOffset(offset))
+            return offset;
+    }
+
+    return 0;
+}
+
+bool HookGlobals::hookNFACB() {
+    uint32_t offset = findNFACBOffset();
+    LOG_ASSERT_S(offset != 0, return false, "Finding p_conn_cback offset failed");
+
+    auto **p_nfa_conn_cback = (def_NFA_CONN_CBACK**)(nfa_dm_cb->address<uint8_t>() + offset);
+    LOG_ASSERT_S(*p_nfa_conn_cback, return false, "NFA_CB is null");
 
     // save old nfa connection callback
     origNfaConnCBack = *p_nfa_conn_cback;
@@ -215,54 +187,14 @@ bool hookNFA_CB(const std::string &lib) {
     return true;
 }
 
-static void hookNative() {
-    // check if NCI library exists and is readable + is loaded
-    auto lib = findLibNFC();
-    auto libRe = "^" + escapeBRE(lib) + "$";
+Symbol_ref HookGlobals::lookupSymbol(const std::string &name) const {
+    Symbol_ref result(new Symbol(name, mHandle));
+    LOG_ASSERT_S(result, return nullptr, "Symbol lookup failed for %s", name.c_str());
+    return result;
+}
 
-    LOG_ASSERT_X(!lib.empty(), "Library not found or not accessible");
-    LOGI("Library found at %s", lib.c_str());
-
-    // try to obtain handle of already loaded library
-    void *handle = dlopen(lib.c_str(), RTLD_NOLOAD);
-    LOG_ASSERT_X(handle, "Could not obtain library handle");
-
-    // create symbol -> size mapping
-    LOG_ASSERT_X(SymbolTable::create(lib), "Building symbol table failed");
-
-    // begin installing hooks
-    IHook::init();
-    {
-        // NFC config
-        hNFC_SetConfig = IHook::hook("NFC_SetConfig", (void *) &hook_NFC_SetConfig, handle, libRe);
-        LOG_ASSERT_X(hNFC_SetConfig->isHooked(), "Hooking NFC_SetConfig failed");
-
-        // discovery
-        hNFA_StartRfDiscovery = new Symbol("NFA_StartRfDiscovery", handle);
-        hNFA_StopRfDiscovery = new Symbol("NFA_StopRfDiscovery", handle);
-        LOG_ASSERT_X(hNFA_StartRfDiscovery->address<void>(), "Symbol lookup failed for NFA_StartRfDiscovery");
-        LOG_ASSERT_X(hNFA_StopRfDiscovery->address<void>(), "Symbol lookup failed for NFA_StopRfDiscovery");
-
-        // polling
-        hNFA_EnablePolling = new Symbol("NFA_EnablePolling", handle);
-        hNFA_DisablePolling = new Symbol("NFA_DisablePolling", handle);
-        LOG_ASSERT_X(hNFA_EnablePolling->address<void>(), "Symbol lookup failed for NFA_EnablePolling");
-        LOG_ASSERT_X(hNFA_DisablePolling->address<void>(), "Symbol lookup failed for NFA_DisablePolling");
-
-        // NFC routing
-        hce_select_t4t = IHook::hook("ce_select_t4t", (void *) &hook_ce_select_t4t, handle, libRe);
-        LOG_ASSERT_X(hce_select_t4t->isHooked(), "Hooking ce_select_t4t failed");
-        hce_cb = new Symbol("ce_cb", handle);
-        LOG_ASSERT_X(hce_cb->address<void>(), "Symbol lookup failed for ce_cb");
-
-        // NFA callback
-        nfa_dm_cb = new Symbol("nfa_dm_cb", handle);
-        LOG_ASSERT_X(nfa_dm_cb->address<void>(), "Symbol lookup failed for nfa_dm_cb");
-        LOG_ASSERT_X(hookNFA_CB(lib), "Hooking nfa_cb failed");
-    }
-    // finish installing hooks
-    LOG_ASSERT_X(IHook::finish(), "Hooking failed");
-
-    // hooking success
-    hookEnabled = true;
+IHook_ref HookGlobals::hookSymbol(const std::string &name, void *hook) const {
+    auto result = IHook::hook(name, hook, mHandle, mLibraryRe);
+    LOG_ASSERT_S(result, return nullptr, "Hooking failed for %s", name.c_str());
+    return result;
 }

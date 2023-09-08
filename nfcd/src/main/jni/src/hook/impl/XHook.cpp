@@ -13,7 +13,7 @@ XHook::XHook(const std::string &name, void *hookFn, void *libraryHandle, const s
 
 void XHook::hookInternal() {
     int r = xhook_register(mReLibrary.c_str(), mName.c_str(), mHookFn, &mAddress);
-    LOG_ASSERT_X(r == 0, "XHook failed: %d", r);
+    LOG_ASSERT_S(r == 0, return, "XHook failed: %d", r);
 
     mHooked = true;
 }

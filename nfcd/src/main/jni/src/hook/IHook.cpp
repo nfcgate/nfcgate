@@ -14,12 +14,12 @@ void IHook::init() {
     IHook::useXHook = System::sdkInt() >= System::P;
 }
 
-IHook *IHook::hook(const std::string &name, void *hook, void *libraryHandle,
+IHook_ref IHook::hook(const std::string &name, void *hook, void *libraryHandle,
                    const std::string &reLibrary) {
     if (useXHook)
-        return new XHook(name, hook, libraryHandle, reLibrary);
+        return IHook_ref(new XHook(name, hook, libraryHandle, reLibrary));
     else
-        return new ADBIHook(name, hook, libraryHandle);
+        return IHook_ref(new ADBIHook(name, hook, libraryHandle));
 }
 
 bool IHook::finish() {

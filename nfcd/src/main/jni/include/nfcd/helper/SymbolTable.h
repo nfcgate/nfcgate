@@ -12,13 +12,20 @@
 
 class SymbolTable {
 public:
-    static bool create(const std::string &file) {
-        mInstance.reset(new SymbolTable(file));
-        return mInstance->mBase != MAP_FAILED;
-    }
+    bool create(const std::string &file) {
+        FILE *phy = fopen(file.c_str(), "rb");
+        LOG_ASSERT_S(phy, return false, "Failed to open %s", file.c_str());
+        fseek(phy, 0, SEEK_END);
+        long phy_size = ftell(phy);
 
-    static SymbolTable *instance() {
-        return mInstance.get();
+        mBase = mmap(nullptr, (size_t)phy_size, PROT_READ, MAP_PRIVATE, fileno(phy), 0);
+        fclose(phy);
+        LOG_ASSERT_S(mBase != MAP_FAILED, return false, "Loading library via mmap failed with %d", errno);
+
+        LOG_ASSERT_S(parse(), return false, "Symbol table missing from library");
+        munmap(mBase, (size_t)phy_size);
+
+        return true;
     }
 
     bool contains(const std::string &name) const {
@@ -42,19 +49,6 @@ public:
     }
 
 protected:
-    SymbolTable(const std::string &file) {
-        FILE *phy = fopen(file.c_str(), "rb");
-        fseek(phy, 0, SEEK_END);
-        long phy_size = ftell(phy);
-
-        mBase = mmap(nullptr, (size_t)phy_size, PROT_READ, MAP_PRIVATE, fileno(phy), 0);
-        fclose(phy);
-        LOG_ASSERT_X(mBase != MAP_FAILED, "Loading library via mmap failed with %d", errno);
-
-        LOG_ASSERT(parse(), "Symbol table missing from library");
-        munmap(mBase, (size_t)phy_size);
-    }
-
     std::string demangle(const std::string &name) const {
         std::string result = name;
 
@@ -129,8 +123,6 @@ protected:
     std::unordered_map<std::string, unsigned long> mSymbols;
     // demangled -> mangled
     std::unordered_map<std::string, std::string> mSymbolsAlternativeName;
-
-    static std::unique_ptr<SymbolTable> mInstance;
 };
 
 #endif //NFCD_SYMBOLTABLE_H
