@@ -27,4 +27,6 @@ protected:
     std::string mName;
 };
 
+using Symbol_ref = std::shared_ptr<Symbol>;
+
 #endif //NFCD_SYMBOL_H

@@ -18,7 +18,7 @@ public:
     }
 
     static void init();
-    static IHook *hook(const std::string &name, void *hook, void *libraryHandle,
+    static std::shared_ptr<IHook> hook(const std::string &name, void *hook, void *libraryHandle,
                        const std::string &reLibrary);
     static bool finish();
 
@@ -32,5 +32,7 @@ protected:
     void *mHookFn = nullptr;
     bool mHooked = false;
 };
+
+using IHook_ref = std::shared_ptr<IHook>;
 
 #endif //NFCD_IHOOK_H
