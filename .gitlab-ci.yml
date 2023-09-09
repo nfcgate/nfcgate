@@ -1,4 +1,4 @@
-image: custom/android-sdk
+image: viaduck/ci:android
 
 variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -14,7 +14,7 @@ stages:
 build:
   stage: build
   script:
-    - ./gradlew assembleDebug
+    - ./gradlew assembleDebug --info
   artifacts:
     paths:
     - app/build/outputs/
