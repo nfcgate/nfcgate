@@ -1,17 +1,9 @@
-apply plugin: 'java-library'
-apply plugin: 'com.google.protobuf'
-
-sourceSets {
-    main.java.srcDirs += "${protobuf.generatedFilesBaseDir}/main/javalite"
-    main.proto.srcDirs += "src/main/proto/protocol/protobuf/"
-    main {
-        proto {
-        }
-    }
+plugins {
+    id 'java-library'
+    id 'com.google.protobuf'
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.google.protobuf:protobuf-lite:3.0.1'
 }
 
