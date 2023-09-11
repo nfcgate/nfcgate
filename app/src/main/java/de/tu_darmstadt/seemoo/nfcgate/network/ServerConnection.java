@@ -9,6 +9,9 @@ import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import javax.net.ssl.*;
+
+
 import de.tu_darmstadt.seemoo.nfcgate.network.data.NetworkStatus;
 import de.tu_darmstadt.seemoo.nfcgate.network.data.SendRecord;
 import de.tu_darmstadt.seemoo.nfcgate.network.threading.ReceiveThread;
@@ -35,10 +38,12 @@ public class ServerConnection {
     private Callback mCallback;
     private String mHostname;
     private int mPort;
+    private boolean mTLSEnable;
 
-    ServerConnection(String hostname, int port) {
+    ServerConnection(String hostname, int port, boolean TLSEnable) {
         mHostname = hostname;
         mPort = port;
+        mTLSEnable = TLSEnable;
     }
 
     ServerConnection setCallback(Callback cb) {
@@ -76,7 +81,8 @@ public class ServerConnection {
         if (mSendQueue.peek() != null) {
             try {
                 Thread.sleep(20);
-            } catch (InterruptedException ignored) { }
+            } catch (InterruptedException ignored) {
+            }
         }
     }
 
@@ -95,8 +101,64 @@ public class ServerConnection {
         synchronized (mSocketLock) {
             if (mSocket == null) {
                 try {
-                    mSocket = new Socket();
-                    mSocket.connect(new InetSocketAddress(mHostname, mPort), 10000);
+                    if (mTLSEnable) {
+                        SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+                        // As the certificate is self-signed, there is no way to validate the CA
+                        // Overwrite and disable X509 checking. Another implementation would be
+                        // calling external SDK for TLS-PSK and set the passphrase on both sides.
+                        TrustManager[] trustAllCerts = new TrustManager[]{
+                                new X509TrustManager() {
+                                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                                        return null;
+                                    }
+
+                                    public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+                                    }
+
+                                    public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
+                                    }
+                                }
+                        };
+
+                        sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+                        SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+                        SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(mHostname, mPort);
+
+                        // Initialize the socket
+                        sslSocket.setEnabledProtocols(new String[]{"TLSv1.2"});
+                        sslSocket.startHandshake();
+
+                        // Get server certificates
+                        java.security.cert.Certificate[] serverCerts = sslSocket.getSession().getPeerCertificates();
+
+                        // Get server main certificate (first in the chain)
+                        java.security.cert.X509Certificate serverCert = (java.security.cert.X509Certificate) serverCerts[0];
+
+                        // Get server CN
+                        String dn = serverCert.getSubjectDN().getName();
+                        String cn = null;
+                        for (String entry : dn.split(",")) {
+                            if (entry.trim().startsWith("CN=")) {
+                                cn = entry.trim().split("=")[1];
+                                break;
+                            }
+                        }
+
+                        Log.v(TAG, "Server Cert CN:" + cn);
+
+
+                        // Check CN
+                        if ("NFCGate_Server".equals(cn)) {
+                            Log.v(TAG, "Server CN match.");
+                        } else {
+                            Log.e(TAG, "Something wrong with TLS maybe MITM!");
+                        }
+
+                        mSocket = sslSocket; // Use the SSL socket
+                    } else {
+                        mSocket = new Socket();
+                        mSocket.connect(new InetSocketAddress(mHostname, mPort), 10000);
+                    }
                     mSocket.setTcpNoDelay(true);
 
                     reportStatus(NetworkStatus.CONNECTED);
