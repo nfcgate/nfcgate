@@ -118,9 +118,11 @@
     <string name="settings_workaround">Enable Workaround</string>
     <string name="settings_network">Network Settings</string>
     <string name="settings_hostname">Hostname</string>
+    <string name="settings_enable_tls">Enable TLS</string>
     <string name="settings_workaround_summary">Enables the NFC Keep-Alive Workaround</string>
     <string name="settings_hostname_summary">Server Hostname or IP Address</string>
     <string name="settings_hostname_dialog">Enter a valid hostname or IP address</string>
+    <string name="settings_enable_tls_summary">Recommend to encrypt when using public network</string>
     <string name="settings_port">Port</string>
     <string name="settings_port_summary">Server Port</string>
     <string name="settings_port_dialog">Enter a valid port number</string>
