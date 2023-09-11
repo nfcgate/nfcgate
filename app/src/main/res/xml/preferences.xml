@@ -11,6 +11,14 @@
 
             android:summary="@string/settings_workaround_summary"
             />
+        <CheckBoxPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="true"
+
+            android:key="tls"
+            android:summary="@string/settings_enable_tls_summary"
+            android:title="@string/settings_enable_tls" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/settings_network"
