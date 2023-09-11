@@ -30,6 +30,7 @@ public class NetworkManager implements ServerConnection.Callback {
     // preference data
     private String mHostname;
     private int mPort, mSessionNumber;
+    private boolean mTLSEnable;
 
     public NetworkManager(MainActivity activity, Callback cb) {
         mActivity = activity;
@@ -45,7 +46,7 @@ public class NetworkManager implements ServerConnection.Callback {
             disconnect();
 
         // establish connection
-        mConnection = new ServerConnection(mHostname, mPort)
+        mConnection = new ServerConnection(mHostname, mPort, mTLSEnable)
                 .setCallback(this)
                 .connect();
 
@@ -115,6 +116,7 @@ public class NetworkManager implements ServerConnection.Callback {
         mHostname = prefs.getString("host", null);
         mPort = Integer.parseInt(prefs.getString("port", "0"));
         mSessionNumber = Integer.parseInt(prefs.getString("session", "0"));
+        mTLSEnable = prefs.getBoolean("tls", false);
     }
 
     private void sendServer(Opcode opcode, byte[] data) {
