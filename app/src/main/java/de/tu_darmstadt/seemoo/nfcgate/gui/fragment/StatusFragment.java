@@ -23,6 +23,7 @@ import com.jaredrummler.android.device.DeviceName;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import de.tu_darmstadt.seemoo.nfcgate.BuildConfig;
 import de.tu_darmstadt.seemoo.nfcgate.R;
 import de.tu_darmstadt.seemoo.nfcgate.gui.component.CustomArrayAdapter;
 import de.tu_darmstadt.seemoo.nfcgate.gui.component.FileShare;
@@ -45,6 +46,8 @@ public class StatusFragment extends BaseFragment {
 
         // custom toolbar actions
         setHasOptionsMenu(true);
+        // set version as subtitle
+        getMainActivity().getSupportActionBar().setSubtitle(getString(R.string.about_version, BuildConfig.VERSION_NAME));
 
         // handlers
         mStatus.setOnItemClickListener(new AdapterView.OnItemClickListener() {
