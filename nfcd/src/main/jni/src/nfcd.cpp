@@ -4,6 +4,20 @@
 
 HookGlobals globals;
 
+void hook_nfaConnectionCallback(uint8_t event, void *eventData) {
+    auto eventName = System::nfaEventName(event);
+
+    if (eventData)
+        LOGI("hook_NFA_Event: %s(%d) with status %d", eventName.c_str(), event, *(uint8_t *)eventData);
+    else
+        LOGI("hook_NFA_Event: %s(%d)", eventName.c_str(), event);
+
+    // call original callback
+    globals.origNfaConnCBack(event, eventData);
+    // enqueue event
+    globals.eventQueue.enqueue(event, eventData ? *(uint8_t*)eventData : 0);
+}
+
 /**
  * Prevent already set values from being overwritten.
  */
@@ -42,6 +56,23 @@ tNFC_STATUS hook_NFC_SetConfig(uint8_t tlv_size, uint8_t *p_param_tlvs) {
     return r;
 }
 
+tNFA_STATUS hook_NFA_Enable(void *p_dm_cback, void *p_conn_cback) {
+    globals.hNFA_Enable->precall();
+
+    std::lock_guard<std::mutex> lock(globals.nfaConnCBackMutex);
+    LOGD("hook_NFA_Enable: Hooking p_conn_cback");
+
+    globals.origNfaConnCBack = (def_NFA_CONN_CBACK *) p_conn_cback;
+    auto result = globals.hNFA_Enable->call<decltype(hook_NFA_Enable)>(p_dm_cback,
+        (void *) hook_nfaConnectionCallback);
+
+    LOGD("Delayed hook success");
+    globals.hookEnabled = true;
+
+    globals.hNFA_Enable->postcall();
+    return result;
+}
+
 tNFC_STATUS hook_ce_select_t4t() {
     globals.hce_select_t4t->precall();
 
@@ -58,20 +89,6 @@ tNFC_STATUS hook_ce_select_t4t() {
 
     globals.hce_select_t4t->postcall();
     return r;
-}
-
-void hook_nfaConnectionCallback(uint8_t event, void *eventData) {
-    auto eventName = System::nfaEventName(event);
-
-    if (eventData)
-        LOGI("hook_NFA_Event: %s(%d) with status %d", eventName.c_str(), event, *(uint8_t *)eventData);
-    else
-        LOGI("hook_NFA_Event: %s(%d)", eventName.c_str(), event);
-
-    // call original callback
-    globals.origNfaConnCBack(event, eventData);
-    // enqueue event
-    globals.eventQueue.enqueue(event, eventData ? *(uint8_t*)eventData : 0);
 }
 
 HookGlobals::HookGlobals() {
@@ -93,9 +110,11 @@ HookGlobals::HookGlobals() {
 
     // begin installing hooks
     IHook::init();
+    bool success = false;
     {
-        // NFC config
+        // NFC/NFA main functions
         ASSERT_X(hNFC_SetConfig = hookSymbol("NFC_SetConfig", (void *)&hook_NFC_SetConfig));
+        ASSERT_X(hNFA_Enable = hookSymbol("NFA_Enable", (void *)&hook_NFA_Enable));
 
         // discovery
         ASSERT_X(hNFA_StartRfDiscovery = lookupSymbol("NFA_StartRfDiscovery"));
@@ -112,13 +131,14 @@ HookGlobals::HookGlobals() {
 
         // NFA callback
         ASSERT_X(nfa_dm_cb = lookupSymbol("nfa_dm_cb"));
-        LOG_ASSERT_S(hookNFACB(), return, "Hooking nfa_cb failed");
+        if (!(success = hookNFACB()))
+            LOGW("Hooking NFA_CB failed, hook may be delayed (waiting for NFA_Enable)");
     }
     // finish installing hooks
     LOG_ASSERT_S(IHook::finish(), return, "Hooking failed");
 
     // hooking success
-    hookEnabled = true;
+    hookEnabled = success;
 }
 
 std::string HookGlobals::findLibNFC() const {
@@ -173,16 +193,25 @@ uint32_t HookGlobals::findNFACBOffset() {
 }
 
 bool HookGlobals::hookNFACB() {
+    std::lock_guard<std::mutex> lock(nfaConnCBackMutex);
+
     uint32_t offset = findNFACBOffset();
     LOG_ASSERT_S(offset != 0, return false, "Finding p_conn_cback offset failed");
 
     auto **p_nfa_conn_cback = (def_NFA_CONN_CBACK**)(nfa_dm_cb->address<uint8_t>() + offset);
     LOG_ASSERT_S(*p_nfa_conn_cback, return false, "NFA_CB is null");
 
-    // save old nfa connection callback
-    origNfaConnCBack = *p_nfa_conn_cback;
-    // set new nfa connection callback
-    *p_nfa_conn_cback = &hook_nfaConnectionCallback;
+    // ensure to hook only once
+    if (*p_nfa_conn_cback != &hook_nfaConnectionCallback) {
+        LOGD("hookNFACB: Hooking NFA_CB");
+
+        // save old nfa connection callback
+        origNfaConnCBack = *p_nfa_conn_cback;
+        // set new nfa connection callback
+        *p_nfa_conn_cback = &hook_nfaConnectionCallback;
+    }
+    else
+        LOGD("hookNFACB: NFA_CB already hooked");
 
     return true;
 }

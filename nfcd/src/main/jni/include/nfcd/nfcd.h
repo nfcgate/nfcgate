@@ -10,8 +10,10 @@
 #include <nfcd/hook/IHook.h>
 
 extern tNFC_STATUS hook_NFC_SetConfig(uint8_t tlv_size, uint8_t *p_param_tlvs);
+extern tNFA_STATUS hook_NFA_Enable(void *p_dm_cback, void *p_conn_cback);
 extern tNFC_STATUS hook_ce_select_t4t (void);
 
+using def_NFC_SetConfig = decltype(hook_NFC_SetConfig);
 using def_NFC_SetConfig = decltype(hook_NFC_SetConfig);
 using def_NFA_StopRfDiscovery = tNFA_STATUS();
 using def_NFA_DisablePolling = tNFA_STATUS();
@@ -36,6 +38,7 @@ public:
     bool guardEnabled = true;
 
     IHook_ref hNFC_SetConfig;
+    IHook_ref hNFA_Enable;
     IHook_ref hce_select_t4t;
     Symbol_ref nfa_dm_cb;
     Symbol_ref hce_cb;
@@ -46,6 +49,7 @@ public:
     Symbol_ref hNFA_SetP2pListenTech;
 
     def_NFA_CONN_CBACK *origNfaConnCBack = nullptr;
+    std::mutex nfaConnCBackMutex;
 
 protected:
     std::string findLibNFC() const;
