@@ -37,7 +37,7 @@ bool MapInfo::create() {
     return true;
 }
 
-std::set<std::string> MapInfo::loadedLibraries() {
+std::set<std::string> MapInfo::loadedLibraries() const {
     std::set<std::string> result;
 
     for (auto &range : mRanges) {
@@ -49,7 +49,7 @@ std::set<std::string> MapInfo::loadedLibraries() {
     return result;
 }
 
-const MapInfo::RangeData *MapInfo::rangeFromAddress(uintptr_t addr, uint64_t size) {
+const MapInfo::RangeData *MapInfo::rangeFromAddress(uintptr_t addr, uint64_t size) const {
     for (auto &range : mRanges)
         if (addr >= range.start && (addr + size) <= range.end)
             return &range;

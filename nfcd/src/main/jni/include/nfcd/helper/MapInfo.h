@@ -15,8 +15,8 @@ public:
 
     bool create();
 
-    std::set<std::string> loadedLibraries();
-    const RangeData *rangeFromAddress(uintptr_t addr, uint64_t size = 0);
+    std::set<std::string> loadedLibraries() const;
+    const RangeData *rangeFromAddress(uintptr_t addr, uint64_t size = 0) const;
 
 protected:
     std::vector<RangeData> mRanges;

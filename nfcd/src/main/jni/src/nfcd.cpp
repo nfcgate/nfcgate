@@ -142,7 +142,7 @@ HookGlobals::HookGlobals() {
 }
 
 std::string HookGlobals::findLibNFC() const {
-    for (const auto &candidate : globals.mapInfo.loadedLibraries()) {
+    for (const auto &candidate : mapInfo.loadedLibraries()) {
         // library path must contain "nfc" somewhere
         if (!StringUtil::strContains(candidate, "nfc"))
             continue;
