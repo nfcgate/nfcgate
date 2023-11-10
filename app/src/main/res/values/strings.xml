@@ -25,7 +25,7 @@
 
     <!-- Status warnings -->
     <string name="warn_5X601">A bug in Android 6.0.1 on the Nexus 5X prevents it from reading the hist bytes.</string>
-    <string name="warn_AV">Android 12 is untested.</string>
+    <string name="warn_AV">Android 14 is untested.</string>
     <string name="warn_XPOMOD">Xposed module could not be found. Ensure Xposed is installed and the module is enabled.</string>
     <string name="warn_NATMOD">Native hook could not be found. Cloning and relaying in Tag mode may not work properly.</string>
     <string name="warn_NFCMOD">Your NFC Chip could not be detected.</string>

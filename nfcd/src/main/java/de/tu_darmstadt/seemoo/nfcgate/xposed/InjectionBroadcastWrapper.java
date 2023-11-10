@@ -27,7 +27,7 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
         // start broadcast receiver on handler thread
         HandlerThread ht = new HandlerThread("ht");
         ht.start();
-        ctx.registerReceiver(this, new IntentFilter("de.tu_darmstadt.seemoo.nfcgate.daemoncall"), null, new Handler(ht.getLooper()));
+        ctx.registerReceiver(this, new IntentFilter("de.tu_darmstadt.seemoo.nfcgate.daemoncall"), null, new Handler(ht.getLooper()), Context.RECEIVER_EXPORTED);
     }
 
     public boolean isHookEnabled() {
