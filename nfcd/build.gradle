@@ -4,7 +4,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        minSdkVersion 26
+        minSdkVersion 19
         targetSdkVersion 33
         ndk {
             moduleName "nfcgate-native"
@@ -31,6 +31,9 @@ android {
         cmake {
             path 'CMakeLists.txt'
         }
+    }
+    lint {
+        baseline = file("lint-baseline.xml")
     }
     namespace 'de.tu_darmstadt.seemoo.nfcgate.nfcd'
 }

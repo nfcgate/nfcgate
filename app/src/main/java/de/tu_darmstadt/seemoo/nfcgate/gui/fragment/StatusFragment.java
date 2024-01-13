@@ -157,8 +157,8 @@ public class StatusFragment extends BaseFragment {
         // android version should be OK for all supported versions
         StatusItem result = new StatusItem(getContext(), getString(R.string.status_version)).setValue(Build.VERSION.RELEASE);
 
-        // Android 14 and above is untested
-        if (Build.VERSION.SDK_INT >= 34)
+        // Android 15 and above is untested
+        if (Build.VERSION.SDK_INT > 34)
             result.setWarn(getString(R.string.warn_AV));
 
         return result;

@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "de.tu_darmstadt.seemoo.nfcgate"
-        minSdkVersion 26
+        minSdkVersion 19
         targetSdkVersion 33
         versionCode 10
         versionName "2.3.1-rc"
@@ -16,6 +16,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    lint {
+        baseline = file("lint-baseline.xml")
     }
     namespace 'de.tu_darmstadt.seemoo.nfcgate'
 }

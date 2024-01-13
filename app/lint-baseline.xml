@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.1.3" type="baseline" client="gradle" dependencies="false" name="AGP (8.1.3)" variant="all" version="8.1.3">
+
+    <issue
+        id="GradleCompatible"
+        message="Version 28 (intended for Android Pie and below) is the last version of the legacy support library, so we recommend that you migrate to AndroidX libraries when using Android Q and moving forward. The IDE can help with this: Refactor > Migrate to AndroidX..."
+        errorLine1="    implementation &apos;com.google.protobuf:protobuf-lite:3.0.1&apos;"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="31"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="GradleCompatible"
+        message="Version 28 (intended for Android Pie and below) is the last version of the legacy support library, so we recommend that you migrate to AndroidX libraries when using Android Q and moving forward. The IDE can help with this: Refactor > Migrate to AndroidX..."
+        errorLine1=""
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="32"
+            column="20"/>
+    </issue>
+
+    <issue
+        id="GradleCompatible"
+        message="Dependencies using groupId `com.android.support` and `androidx.*` can not be combined but found `com.android.support:design:27.1.1` and `androidx.annotation:annotation:1.0.0` incompatible dependencies"
+        errorLine1="    implementation &apos;com.android.support:design:27.1.1&apos;"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="35"
+            column="21"/>
+        <location
+            file="build.gradle"
+            line="51"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ScopedStorage"
+        message="WRITE_EXTERNAL_STORAGE is deprecated (and is not granted) when targeting Android 13+. If you need to write to shared storage, use the `MediaStore.createWriteRequest` intent."
+        errorLine1="        android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot;"
+        errorLine2="                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="21"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="        return String.format(&quot;{chipName: \&quot;%s\&quot;, confidence: %.2f&quot;, chipName, confidence);"
+        errorLine2="               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/nfc/chip/NfcChipGuess.java"
+            line="24"
+            column="16"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `toUpperCase(Locale)` instead. For strings meant to be internal use `Locale.ROOT`, otherwise `Locale.getDefault()`."
+        errorLine1="                matcher.group(1).toUpperCase() : null;"
+        errorLine2="                                 ~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/nfc/chip/detectors/STDetector.java"
+            line="58"
+            column="34"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `toUpperCase(Locale)` instead. For strings meant to be internal use `Locale.ROOT`, otherwise `Locale.getDefault()`."
+        errorLine1="                matcher.group(1).toUpperCase() : null;"
+        errorLine2="                                 ~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/nfc/chip/detectors/SamsungDetector.java"
+            line="54"
+            column="34"/>
+    </issue>
+
+    <issue
+        id="OldTargetApi"
+        message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details."
+        errorLine1="        targetSdkVersion 33"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="10"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="SimpleDateFormat"
+        message="To get local formatting use `getDateInstance()`, `getDateTimeInstance()`, or `getTimeInstance()`, or use `new SimpleDateFormat(String template, Locale locale)` with for example `Locale.US` for ASCII dates."
+        errorLine1="    public static SimpleDateFormat ISO_DATE = new SimpleDateFormat(&quot;yyyy-MM-dd&apos;T&apos;HH:mm:ss.SSS&quot;);"
+        errorLine2="                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/db/SessionLog.java"
+            line="12"
+            column="47"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.action_refresh:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/gui/fragment/BaseNetworkFragment.java"
+            line="75"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.action_clone:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/gui/fragment/CloneFragment.java"
+            line="142"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.action_save:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/gui/fragment/CloneFragment.java"
+            line="145"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.id.action_delete:"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/gui/log/LoggingFragment.java"
+            line="159"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.id.action_share:"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/gui/log/LoggingFragment.java"
+            line="165"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.nav_clone:"
+        errorLine2="                 ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/gui/MainActivity.java"
+            line="162"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.nav_relay:"
+        errorLine2="                 ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/gui/MainActivity.java"
+            line="164"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.nav_replay:"
+        errorLine2="                 ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/gui/MainActivity.java"
+            line="166"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.nav_capture:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/gui/MainActivity.java"
+            line="168"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.nav_settings:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/gui/MainActivity.java"
+            line="170"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.nav_status:"
+        errorLine2="                 ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/gui/MainActivity.java"
+            line="172"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.nav_about:"
+        errorLine2="                 ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/gui/MainActivity.java"
+            line="174"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.nav_logging:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/gui/MainActivity.java"
+            line="176"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.action_yes:"
+        errorLine2="                 ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/gui/log/SessionLogEntryFragment.java"
+            line="157"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.action_share:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/gui/log/SessionLogEntryFragment.java"
+            line="160"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.action_delete:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/gui/log/SessionLogEntryFragment.java"
+            line="163"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.action_export:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/de/tu_darmstadt/seemoo/nfcgate/gui/fragment/StatusFragment.java"
+            line="105"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="DataExtractionRules"
+        message="The attribute `android:allowBackup` is deprecated from Android 12 and higher and may be removed in future versions. Consider adding the attribute `android:dataExtractionRules` specifying an `@xml` resource which configures cloud backups and device transfers on Android 12 and higher."
+        errorLine1="        android:allowBackup=&quot;false&quot;"
+        errorLine2="                             ~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="25"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="LifecycleAnnotationProcessorWithJava8"
+        message="Use the Lifecycle Java 8 API provided by the `lifecycle-common` library instead of Lifecycle annotations for faster incremental build."
+        errorLine1=""
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="52"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.black` appears to be unused"
+        errorLine1="    &lt;item name=&quot;black&quot; type=&quot;color&quot;>#000000&lt;/item>"
+        errorLine2="          ~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="3"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.ic_launcher_background` appears to be unused"
+        errorLine1="    &lt;color name=&quot;ic_launcher_background&quot;>#FD9600&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="4"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.dimen.activity_horizontal_margin` appears to be unused"
+        errorLine1="    &lt;dimen name=&quot;activity_horizontal_margin&quot;>16dp&lt;/dimen>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/dimens.xml"
+            line="3"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.dimen.activity_vertical_margin` appears to be unused"
+        errorLine1="    &lt;dimen name=&quot;activity_vertical_margin&quot;>16dp&lt;/dimen>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/dimens.xml"
+            line="4"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_clone_white_24dp` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable-mdpi/ic_clone_white_24dp.xml"
+            line="1"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_drawer_black_24dp` appears to be unused"
+        errorLine1="&lt;vector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable/ic_drawer_black_24dp.xml"
+            line="1"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.mipmap.ic_launcher_round` appears to be unused"
+        errorLine1="&lt;adaptive-icon xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.log_background` appears to be unused"
+        errorLine1="&lt;selector xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="src/main/res/drawable/log_background.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.style.Divider` appears to be unused"
+        errorLine1="    &lt;style name=&quot;Divider&quot;>"
+        errorLine2="           ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/styles.xml"
+            line="18"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UselessParent"
+        message="This `RelativeLayout` layout or its `LinearLayout` parent is possibly unnecessary"
+        errorLine1="    &lt;RelativeLayout"
+        errorLine2="     ~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/fragment_network.xml"
+            line="9"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="MonochromeLauncherIcon"
+        message="The application adaptive icon is missing a monochrome tag"
+        errorLine1="&lt;adaptive-icon xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;>"
+        errorLine2="^">
+        <location
+            file="src/main/res/mipmap-anydpi-v26/ic_launcher.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="IconMissingDensityFolder"
+        message="Missing density variation folders in `src/main/res`: drawable-hdpi, drawable-xhdpi, drawable-xxhdpi">
+        <location
+            file="src/main/res"/>
+    </issue>
+
+    <issue
+        id="AlwaysShowAction"
+        message="Prefer &quot;`ifRoom`&quot; instead of &quot;`always`&quot;"
+        errorLine1="        app:showAsAction=&quot;always&quot; />"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/menu/toolbar_log_view.xml"
+            line="7"
+            column="9"/>
+        <location
+            file="src/main/res/menu/toolbar_log_view.xml"
+            line="11"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="            &lt;ImageView"
+        errorLine2="             ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/fragment_capture.xml"
+            line="43"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="            &lt;ImageView"
+        errorLine2="             ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/fragment_capture.xml"
+            line="70"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="                    &lt;ImageView"
+        errorLine2="                     ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/fragment_network.xml"
+            line="50"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="                    &lt;ImageView"
+        errorLine2="                     ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/fragment_network.xml"
+            line="81"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageView"
+        errorLine2="     ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/list_log.xml"
+            line="20"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageView"
+        errorLine2="     ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/list_log_entry.xml"
+            line="10"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageView"
+        errorLine2="     ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/list_status.xml"
+            line="34"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageView"
+        errorLine2="     ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/navbar_header.xml"
+            line="11"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageView"
+        errorLine2="     ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/tag_wait.xml"
+            line="12"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="RelativeOverlap"
+        message="`@id/title` can overlap `@id/type` if @id/title grows due to localized text expansion"
+        errorLine1="    &lt;TextView"
+        errorLine2="     ~~~~~~~~">
+        <location
+            file="src/main/res/layout/list_log.xml"
+            line="12"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Consider replacing `android:layout_alignParentLeft` with `android:layout_alignParentStart=&quot;true&quot;` to better support right-to-left layouts"
+        errorLine1="            android:layout_alignParentLeft=&quot;true&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_main.xml"
+            line="58"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Consider replacing `android:layout_alignParentRight` with `android:layout_alignParentEnd=&quot;true&quot;` to better support right-to-left layouts"
+        errorLine1="            android:layout_alignParentRight=&quot;true&quot;"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_main.xml"
+            line="59"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Consider replacing `android:layout_marginLeft` with `android:layout_marginStart=&quot;5dp&quot;` to better support right-to-left layouts"
+        errorLine1="        android:layout_marginLeft=&quot;5dp&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/fragment_clone.xml"
+            line="28"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Consider replacing `android:layout_toRightOf` with `android:layout_toEndOf=&quot;@+id/type&quot;` to better support right-to-left layouts"
+        errorLine1="        android:layout_toRightOf=&quot;@+id/type&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/list_log_entry.xml"
+            line="22"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Consider replacing `android:layout_alignParentRight` with `android:layout_alignParentEnd=&quot;true&quot;` to better support right-to-left layouts"
+        errorLine1="        android:layout_alignParentRight=&quot;true&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/list_log_entry.xml"
+            line="32"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Use &quot;`start`&quot; instead of &quot;`left`&quot; to ensure correct behavior in right-to-left locales"
+        errorLine1="            android:layout_gravity=&quot;left&quot;"
+        errorLine2="                                    ~~~~">
+        <location
+            file="src/main/res/layout/list_status.xml"
+            line="20"
+            column="37"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Use &quot;`start`&quot; instead of &quot;`left`&quot; to ensure correct behavior in right-to-left locales"
+        errorLine1="            android:layout_gravity=&quot;left&quot;"
+        errorLine2="                                    ~~~~">
+        <location
+            file="src/main/res/layout/list_status.xml"
+            line="29"
+            column="37"/>
+    </issue>
+
+    <issue
+        id="RtlHardcoded"
+        message="Consider replacing `android:layout_marginLeft` with `android:layout_marginStart=&quot;10dp&quot;` to better support right-to-left layouts"
+        errorLine1="        android:layout_marginLeft=&quot;10dp&quot;"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/tag_wait.xml"
+            line="23"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="RtlEnabled"
+        message="The project references RTL attributes, but does not explicitly enable or disable RTL support with `android:supportsRtl` in the manifest">
+        <location
+            file="src/main/AndroidManifest.xml"/>
+    </issue>
+
+</issues>
