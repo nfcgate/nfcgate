@@ -318,7 +318,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     private void enableForegroundDispatch() {
         Intent intent = new Intent(mActivity, mActivity.getClass());
         PendingIntent pendingIntent =
-                PendingIntent.getActivity(mActivity, 0, intent, 0);
+                PendingIntent.getActivity(mActivity, 0, intent, PendingIntent.FLAG_MUTABLE);
 
         // Register the activity, pass null techLists as a wildcard
         mAdapter.enableForegroundDispatch(mActivity, pendingIntent, null, null);
