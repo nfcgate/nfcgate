@@ -10,10 +10,10 @@ public:
         return s.find(q) != std::string::npos;
     }
     static bool strStartsWith(const std::string &s, const std::string &q) {
-        return q.size() < s.size() && std::equal(q.begin(), q.end(), s.begin());
+        return q.size() <= s.size() && std::equal(q.begin(), q.end(), s.begin());
     }
     static bool strEndsWith(const std::string &s, const std::string &q) {
-        return q.size() < s.size() && std::equal(q.rbegin(), q.rend(), s.rbegin());
+        return q.size() <= s.size() && std::equal(q.rbegin(), q.rend(), s.rbegin());
     }
 
     static std::string escapeBRE(const std::string &in) {
