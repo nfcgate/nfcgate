@@ -49,6 +49,26 @@ std::set<std::string> MapInfo::loadedLibraries() const {
     return result;
 }
 
+void *MapInfo::getBaseAddress(const std::string &library) const {
+    for (auto &range : mRanges) {
+        // skip range that does not match the library
+        if (!StringUtil::strEndsWith(range.label, library))
+            continue;
+
+        // skip range without read permission or without enough space for ELF header
+        if ((range.perms & 4) != 4 || range.end - range.start <= 4)
+            continue;
+
+        // check ELF magic bytes to confirm this region as the base
+        if (memcmp((void *)range.start, "\x7f" "ELF", 4) != 0)
+            continue;
+
+        return (void *)range.start;
+    }
+
+    return nullptr;
+}
+
 const MapInfo::RangeData *MapInfo::rangeFromAddress(uintptr_t addr, uint64_t size) const {
     for (auto &range : mRanges)
         if (addr >= range.start && (addr + size) <= range.end)

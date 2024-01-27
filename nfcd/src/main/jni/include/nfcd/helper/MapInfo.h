@@ -16,6 +16,7 @@ public:
     bool create();
 
     std::set<std::string> loadedLibraries() const;
+    void *getBaseAddress(const std::string &library) const;
     const RangeData *rangeFromAddress(uintptr_t addr, uint64_t size = 0) const;
 
 protected:

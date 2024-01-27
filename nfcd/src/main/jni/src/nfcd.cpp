@@ -147,14 +147,14 @@ std::string HookGlobals::findLibNFC() const {
         if (!StringUtil::strContains(candidate, "nfc"))
             continue;
 
-        // library file must be accessible
-        if (access(candidate.c_str(), R_OK) != 0)
-            continue;
+        LOGD("findLibNFC: candidate contains 'nfc', checking symbols: %s", candidate.c_str());
 
         // library symbol table must contain the expected symbol
         SymbolTable table;
-        if (table.create(candidate) && table.contains("NFC_SetConfig"))
+        if (table.create(candidate) && table.contains("NFC_SetConfig")) {
+            LOGD("findLibNFC: candidate contains symbol 'NFC_SetConfig': %s", candidate.c_str());
             return candidate;
+        }
     }
 
     return "";
