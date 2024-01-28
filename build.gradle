@@ -1,5 +1,9 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+ext {
+    protobufVersion = '3.25.2'
+}
+
 buildscript {
     repositories {
         google()

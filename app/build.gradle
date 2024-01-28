@@ -28,7 +28,7 @@ dependencies {
     //compile fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':nfcd')
     implementation project(':protobuf')
-    implementation 'com.google.protobuf:protobuf-lite:3.0.1'
+    implementation "com.google.protobuf:protobuf-javalite:${protobufVersion}"
 
     // support libraries
     implementation 'com.android.support:appcompat-v7:27.1.1'
