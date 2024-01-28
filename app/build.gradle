@@ -31,26 +31,20 @@ dependencies {
     implementation "com.google.protobuf:protobuf-javalite:${protobufVersion}"
 
     // support libraries
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:design:27.1.1'
-
-    // Fixes most of the issues with the support-preference libraries (contains v7 and v14)
-    implementation 'com.takisoft.fix:preference-v7:27.1.1.1'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
 
     // About
-    implementation "com.github.medyo:android-about-page:1.2.4"
+    implementation 'com.github.medyo:android-about-page:1.2.4'
 
     // Detect phone model
-    implementation 'com.jaredrummler:android-device-names:1.1.8'
-
-    def room_version = "1.1.1"
-    def archLifecycleVersion = '1.1.1'
+    implementation 'com.jaredrummler:android-device-names:2.1.1'
 
     // Room
-    implementation "android.arch.persistence.room:runtime:$room_version"
-    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
+    implementation 'androidx.room:room-runtime:2.0.0'
+    annotationProcessor 'androidx.room:room-compiler:2.0.0'
 
     // Lifecycle
-    implementation "android.arch.lifecycle:extensions:$archLifecycleVersion"
-    annotationProcessor "android.arch.lifecycle:compiler:$archLifecycleVersion"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.0.0'
 }

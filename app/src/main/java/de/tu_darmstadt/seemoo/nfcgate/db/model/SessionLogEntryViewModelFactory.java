@@ -1,8 +1,8 @@
 package de.tu_darmstadt.seemoo.nfcgate.db.model;
 
 import android.app.Application;
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 public class SessionLogEntryViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     private Application mApplication;

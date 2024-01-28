@@ -1,7 +1,7 @@
 package de.tu_darmstadt.seemoo.nfcgate.network;
 
 import android.content.SharedPreferences;
-import android.support.v7.preference.PreferenceManagerFix;
+import androidx.preference.PreferenceManagerFix;
 import android.util.Log;
 
 import com.google.protobuf.ByteString;

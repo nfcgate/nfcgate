@@ -1,7 +1,7 @@
 package de.tu_darmstadt.seemoo.nfcgate.db;
 
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Insert;
+import androidx.room.Dao;
+import androidx.room.Insert;
 
 @Dao
 public interface NfcCommEntryDao {

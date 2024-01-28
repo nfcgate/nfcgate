@@ -2,18 +2,12 @@ package de.tu_darmstadt.seemoo.nfcgate.nfc.reader;
 
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
-import android.nfc.tech.NfcA;
-import android.nfc.tech.NfcB;
-import android.nfc.tech.TagTechnology;
-import android.support.annotation.NonNull;
-import android.util.Log;
 
-import java.io.IOException;
+import androidx.annotation.NonNull;
 
 import de.tu_darmstadt.seemoo.nfcgate.nfc.config.ConfigBuilder;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.config.OptionType;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.config.Technologies;
-import de.tu_darmstadt.seemoo.nfcgate.util.Utils;
 
 /**
  * Implements an NFCTagReader using the IsoDep technology
