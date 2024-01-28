@@ -13,7 +13,7 @@ protobuf {
     }
     plugins {
         javalite {
-            artifact = "com.google.protobuf:protoc-gen-javalite:${protobufVersion}"
+            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
         }
     }
     generateProtoTasks {
