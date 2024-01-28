@@ -14,7 +14,7 @@ android {
         }
         externalNativeBuild {
             cmake {
-                arguments "-DANDROID_STL=c++_static", "-DANDROID_ARM_MODE=arm"
+                arguments '-DANDROID_STL=c++_static', '-DANDROID_ARM_MODE=arm'
             }
         }
     }
@@ -33,7 +33,7 @@ android {
         }
     }
     lint {
-        baseline = file("lint-baseline.xml")
+        baseline = file('lint-baseline.xml')
     }
     namespace 'de.tu_darmstadt.seemoo.nfcgate.nfcd'
 }

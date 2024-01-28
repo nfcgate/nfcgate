@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdk 33
-    ndkVersion "22.1.7171670"
+    ndkVersion '22.1.7171670'
 
     defaultConfig {
-        applicationId "de.tu_darmstadt.seemoo.nfcgate"
+        applicationId 'de.tu_darmstadt.seemoo.nfcgate'
         minSdkVersion 19
         targetSdkVersion 33
         versionCode 9
-        versionName "2.3.0"
+        versionName '2.3.0'
     }
     buildTypes {
         release {
@@ -18,7 +18,7 @@ android {
         }
     }
     lint {
-        baseline = file("lint-baseline.xml")
+        baseline = file('lint-baseline.xml')
     }
     namespace 'de.tu_darmstadt.seemoo.nfcgate'
 }
