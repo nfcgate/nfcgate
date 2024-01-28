@@ -21,6 +21,9 @@ android {
         baseline = file('lint-baseline.xml')
     }
     namespace 'de.tu_darmstadt.seemoo.nfcgate'
+    buildFeatures {
+        buildConfig true
+    }
 }
 
 dependencies {
