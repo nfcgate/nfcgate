@@ -7,7 +7,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 33
         ndk {
-            moduleName "nfcgate-native"
+            moduleName 'nfcgate-native'
             //cFlags "-std=c++11" //  -fexceptions -marm -g -fPIE
             ldLibs "log"
             abiFilters "armeabi-v7a", "arm64-v8a"

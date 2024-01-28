@@ -19,12 +19,9 @@ protobuf {
     generateProtoTasks {
         all().each { task ->
             task.builtins {
-                // In most cases you don't need the full Java output
-                // if you use the lite output.
-                remove java
-            }
-            task.plugins {
-                javalite {}
+                java {
+                    option 'lite'
+                }
             }
         }
     }
