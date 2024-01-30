@@ -4,12 +4,12 @@ plugins {
 }
 
 dependencies {
-    implementation 'com.google.protobuf:protobuf-lite:3.0.1'
+    implementation "com.google.protobuf:protobuf-javalite:${protobufVersion}"
 }
 
 protobuf {
     protoc {
-        artifact = 'com.google.protobuf:protoc:3.0.0'
+        artifact = "com.google.protobuf:protoc:${protobufVersion}"
     }
     plugins {
         javalite {
@@ -19,12 +19,9 @@ protobuf {
     generateProtoTasks {
         all().each { task ->
             task.builtins {
-                // In most cases you don't need the full Java output
-                // if you use the lite output.
-                remove java
-            }
-            task.plugins {
-                javalite {}
+                java {
+                    option 'lite'
+                }
             }
         }
     }

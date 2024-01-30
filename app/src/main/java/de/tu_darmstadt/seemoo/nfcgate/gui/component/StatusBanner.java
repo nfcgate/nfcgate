@@ -1,7 +1,7 @@
 package de.tu_darmstadt.seemoo.nfcgate.gui.component;
 
 import android.content.Context;
-import android.support.annotation.DrawableRes;
+import androidx.annotation.DrawableRes;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;

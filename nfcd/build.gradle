@@ -32,10 +32,11 @@ android {
             path 'CMakeLists.txt'
         }
     }
-    lint {
-        baseline = file("lint-baseline.xml")
-    }
+
     namespace 'de.tu_darmstadt.seemoo.nfcgate.nfcd'
+    buildFeatures {
+        buildConfig true
+    }
 }
 
 dependencies {

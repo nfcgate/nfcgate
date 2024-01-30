@@ -2,7 +2,7 @@ package de.tu_darmstadt.seemoo.nfcgate.nfc.reader;
 
 import android.nfc.Tag;
 import android.nfc.tech.TagTechnology;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
