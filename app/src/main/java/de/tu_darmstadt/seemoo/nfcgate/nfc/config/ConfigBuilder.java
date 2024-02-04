@@ -8,7 +8,7 @@ import java.util.List;
  * Parses an existing stream or builds a new one from options.
  */
 public class ConfigBuilder {
-    private List<ConfigOption> mOptions = new ArrayList<>();
+    private final List<ConfigOption> mOptions = new ArrayList<>();
 
     public ConfigBuilder() { }
 

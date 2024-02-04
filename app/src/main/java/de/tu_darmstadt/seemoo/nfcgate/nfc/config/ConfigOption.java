@@ -6,8 +6,8 @@ import de.tu_darmstadt.seemoo.nfcgate.util.Utils;
  * Represents a single NCI configuration option with an option code, its length and data
  */
 public class ConfigOption {
-    private OptionType mID;
-    private byte[] mData;
+    private final OptionType mID;
+    private final byte[] mData;
 
     ConfigOption(OptionType ID, byte[] data) {
         mID = ID;
