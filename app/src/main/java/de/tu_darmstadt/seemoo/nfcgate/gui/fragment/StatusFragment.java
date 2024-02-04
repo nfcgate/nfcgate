@@ -119,12 +119,7 @@ public class StatusFragment extends BaseFragment {
                 .setPrefix("config")
                 .setExtension(".txt")
                 .setMimeType("text/plain")
-                .share(new FileShare.IFileShareable() {
-                    @Override
-                    public void write(OutputStream stream) throws IOException {
-                        stream.write(str.toString().getBytes());
-                    }
-                });
+                .share(stream -> stream.write(str.toString().getBytes()));
     }
 
     void detect() {

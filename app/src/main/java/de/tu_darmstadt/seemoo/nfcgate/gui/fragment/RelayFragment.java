@@ -75,12 +75,7 @@ public class RelayFragment extends BaseNetworkFragment {
             mLogInserter.log(data);
 
             // hide wait indicator
-            runOnUI(new Runnable() {
-                @Override
-                public void run() {
-                    setTagWaitVisible(false, false);
-                }
-            });
+            runOnUI(() -> setTagWaitVisible(false, false));
 
             // forward data to NFC or network
             super.onData(isForeign, data);
@@ -91,12 +86,7 @@ public class RelayFragment extends BaseNetworkFragment {
             super.onNetworkStatus(status);
 
             // report status
-            runOnUI(new Runnable() {
-                @Override
-                public void run() {
-                    handleStatus(status);
-                }
-            });
+            runOnUI(() -> handleStatus(status));
         }
     }
 }

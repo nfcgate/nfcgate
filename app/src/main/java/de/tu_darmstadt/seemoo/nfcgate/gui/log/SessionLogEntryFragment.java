@@ -107,28 +107,25 @@ public class SessionLogEntryFragment extends Fragment {
         mLogEntryModel = ViewModelProviders.of(this, new SessionLogEntryViewModelFactory(getActivity().getApplication(), mSessionId))
                 .get(SessionLogEntryViewModel.class);
 
-        mLogEntryModel.getSession().observe(this, new Observer<SessionLogJoin>() {
-            @Override
-            public void onChanged(@Nullable SessionLogJoin sessionLogJoin) {
-                mLogEntriesAdapter.clear();
-                mLogData.clear();
+        mLogEntryModel.getSession().observe(this, sessionLogJoin -> {
+            mLogEntriesAdapter.clear();
+            mLogData.clear();
 
-                if (sessionLogJoin != null) {
-                    // save current log data
-                    mSessionLog = sessionLogJoin.getSessionLog();
-                    for (NfcCommEntry nfcCommEntry : sessionLogJoin.getNfcCommEntries())
-                        mLogData.add(nfcCommEntry.getNfcComm());
+            if (sessionLogJoin != null) {
+                // save current log data
+                mSessionLog = sessionLogJoin.getSessionLog();
+                for (NfcCommEntry nfcCommEntry : sessionLogJoin.getNfcCommEntries())
+                    mLogData.add(nfcCommEntry.getNfcComm());
 
-                    // add log data to list adapter
-                    mLogEntriesAdapter.addAll(mLogData);
-                    mLogEntriesAdapter.notifyDataSetChanged();
+                // add log data to list adapter
+                mLogEntriesAdapter.addAll(mLogData);
+                mLogEntriesAdapter.notifyDataSetChanged();
 
-                    // live requires autoscroll, view and select require subtitle
-                    if (mType == Type.LIVE)
-                        mLogEntries.setSelection(mLogEntriesAdapter.getCount() - 1);
-                    else
-                        actionBar.setSubtitle(mSessionLog.toString());
-                }
+                // live requires autoscroll, view and select require subtitle
+                if (mType == Type.LIVE)
+                    mLogEntries.setSelection(mLogEntriesAdapter.getCount() - 1);
+                else
+                    actionBar.setSubtitle(mSessionLog.toString());
             }
         });
 

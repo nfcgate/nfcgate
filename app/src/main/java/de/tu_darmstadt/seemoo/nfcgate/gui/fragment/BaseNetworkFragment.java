@@ -45,18 +45,8 @@ public abstract class BaseNetworkFragment extends BaseFragment implements LogIns
         mStatusBanner = new StatusBanner(getMainActivity());
 
         // selector setup
-        v.<LinearLayout>findViewById(R.id.select_reader).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onSelect(true);
-            }
-        });
-        v.<LinearLayout>findViewById(R.id.select_tag).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onSelect(false);
-            }
-        });
+        v.<LinearLayout>findViewById(R.id.select_reader).setOnClickListener(view -> onSelect(true));
+        v.<LinearLayout>findViewById(R.id.select_tag).setOnClickListener(view -> onSelect(false));
 
         setHasOptionsMenu(true);
         reset();
