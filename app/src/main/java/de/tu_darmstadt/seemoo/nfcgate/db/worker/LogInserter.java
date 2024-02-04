@@ -42,13 +42,17 @@ public class LogInserter {
     public void log(NfcComm data) {
         try {
             mQueue.put(new LogEntry(data));
-        } catch (InterruptedException ignored) { }
+        } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public void reset() {
         try {
             mQueue.put(new LogEntry());
-        } catch (InterruptedException ignored) { }
+        } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     class LogInserterThread extends Thread {
@@ -72,7 +76,9 @@ public class LogInserter {
                     if (entry.isValid())
                         mDatabase.nfcCommEntryDao().insert(new NfcCommEntry(entry.getData(), mSessionId));
 
-                } catch (InterruptedException ignored) { }
+                } catch (InterruptedException ignored) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
     }
