@@ -1,8 +1,8 @@
 package de.tu_darmstadt.seemoo.nfcgate.network.data;
 
 public class SendRecord {
-    private int mSession;
-    private byte[] mData;
+    private final int mSession;
+    private final byte[] mData;
 
     public SendRecord(int session, byte[] data) {
         mSession = session;

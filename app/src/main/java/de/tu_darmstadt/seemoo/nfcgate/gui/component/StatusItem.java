@@ -11,10 +11,10 @@ public class StatusItem {
         ERROR
     }
 
-    private Context mContext;
+    private final Context mContext;
 
     // state
-    private String mName;
+    private final String mName;
     private String mValue;
     private String mMessage;
     private State mState;

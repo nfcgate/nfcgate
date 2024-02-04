@@ -4,7 +4,7 @@ import de.tu_darmstadt.seemoo.nfcgate.network.data.NetworkStatus;
 import de.tu_darmstadt.seemoo.nfcgate.util.NfcComm;
 
 public class RelayMode extends BaseMode {
-    private boolean mReader;
+    private final boolean mReader;
     protected boolean mOnline = true;
 
     public RelayMode(boolean reader) {

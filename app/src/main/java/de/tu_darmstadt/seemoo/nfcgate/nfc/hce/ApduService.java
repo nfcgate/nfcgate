@@ -15,7 +15,7 @@ import de.tu_darmstadt.seemoo.nfcgate.util.Utils;
 public class ApduService extends HostApduService {
     private final static String TAG = "ApduService";
 
-    private NfcManager mNfcManager = NfcManager.getInstance();
+    private final NfcManager mNfcManager = NfcManager.getInstance();
 
     /**
      * Returning an empty APDU response causes the hce service to wait

@@ -23,9 +23,9 @@ public class NetworkManager implements ServerConnection.Callback {
     }
 
     // references
-    private MainActivity mActivity;
+    private final MainActivity mActivity;
     private ServerConnection mConnection;
-    private Callback mCallback;
+    private final Callback mCallback;
 
     // preference data
     private String mHostname;

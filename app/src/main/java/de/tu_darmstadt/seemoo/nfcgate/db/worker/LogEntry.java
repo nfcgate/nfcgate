@@ -3,8 +3,8 @@ package de.tu_darmstadt.seemoo.nfcgate.db.worker;
 import de.tu_darmstadt.seemoo.nfcgate.util.NfcComm;
 
 public class LogEntry {
-    private boolean mValid;
-    private NfcComm mData;
+    private final boolean mValid;
+    private final NfcComm mData;
 
     LogEntry() {
         mData = null;

@@ -17,8 +17,8 @@ public class PcapStream implements FileShare.IFileShareable {
     private static final int BLOCK_LEN_INTERFACE = 4*5;
     private static final int BYTE_ORDER_MAGIC =  0x1A2B3C4D;
 
-    private List<PcapPacket> mPackets = new ArrayList<>();
-    private short[] mLinkTypes;
+    private final List<PcapPacket> mPackets = new ArrayList<>();
+    private final short[] mLinkTypes;
 
     public PcapStream(short[] linkType) {
         mLinkTypes = linkType;

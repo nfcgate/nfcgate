@@ -18,7 +18,7 @@ import de.tu_darmstadt.seemoo.nfcgate.nfc.config.Technologies;
  * Interface to all NFCTagReader-Classes.
  */
 public abstract class NFCTagReader {
-    TagTechnology mReader;
+    final TagTechnology mReader;
 
     NFCTagReader(TagTechnology reader) {
         mReader = reader;

@@ -20,7 +20,7 @@ public class FileShare {
     }
 
     // state variables
-    private Context mContext;
+    private final Context mContext;
     private String mPrefix;
     private String mExtension;
     private String mMimeType;

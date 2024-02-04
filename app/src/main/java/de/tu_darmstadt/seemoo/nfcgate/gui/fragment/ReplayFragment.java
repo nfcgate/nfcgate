@@ -33,7 +33,7 @@ import de.tu_darmstadt.seemoo.nfcgate.util.NfcComm;
 
 public class ReplayFragment extends BaseNetworkFragment implements LoggingFragment.LogItemSelectedCallback, SessionLogEntryFragment.LogSelectedCallback {
     // session selection reference
-    LoggingFragment mLoggingFragment = new LoggingFragment();
+    final LoggingFragment mLoggingFragment = new LoggingFragment();
     SessionLogEntryFragment mDetailFragment = null;
 
     // replay data
@@ -258,7 +258,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
     }
 
     class UIReplayer implements NetworkManager.Callback {
-        NfcLogReplayer mReplayer;
+        final NfcLogReplayer mReplayer;
         NetworkManager mReplayNetwork = null;
 
         UIReplayer(boolean reader) {
