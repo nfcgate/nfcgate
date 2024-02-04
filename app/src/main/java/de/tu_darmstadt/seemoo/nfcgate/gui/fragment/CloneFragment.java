@@ -1,9 +1,9 @@
 package de.tu_darmstadt.seemoo.nfcgate.gui.fragment;
 
 import android.app.AlertDialog;
-import androidx.lifecycle.Observer;
+
 import androidx.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
+
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,7 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;

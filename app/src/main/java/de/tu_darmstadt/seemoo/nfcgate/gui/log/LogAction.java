@@ -1,8 +1,6 @@
 package de.tu_darmstadt.seemoo.nfcgate.gui.log;
 
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
