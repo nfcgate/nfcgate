@@ -225,7 +225,7 @@ public class StatusFragment extends BaseFragment {
         return result;
     }
 
-    private class StatusListAdapter extends CustomArrayAdapter<StatusItem> {
+    private static class StatusListAdapter extends CustomArrayAdapter<StatusItem> {
         StatusListAdapter(@NonNull Context context, int resource) {
             super(context, resource);
         }

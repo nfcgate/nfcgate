@@ -164,7 +164,7 @@ public class SessionLogEntryFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private class SessionLogEntryListAdapter extends CustomArrayAdapter<NfcComm> {
+    private static class SessionLogEntryListAdapter extends CustomArrayAdapter<NfcComm> {
         SessionLogEntryListAdapter(@NonNull Context context, int resource) {
             super(context, resource);
         }
