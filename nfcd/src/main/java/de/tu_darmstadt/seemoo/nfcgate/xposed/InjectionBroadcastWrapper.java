@@ -23,7 +23,7 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
 
         // load our native library
         loadForeignLibrary(ctx, "de.tu_darmstadt.seemoo.nfcgate", "nfcgate");
-        Log.d("HOOKNFC", isHookEnabled() ? "Loaded library successfully" : "Library load failed");
+        Log.d("HOOKNFC", isHookEnabled() ? "Native hook success" : "Native hook failed (for now)");
 
         // start broadcast receiver on handler thread
         HandlerThread ht = new HandlerThread("ht");

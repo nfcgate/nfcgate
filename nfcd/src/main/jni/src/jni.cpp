@@ -84,7 +84,7 @@ void applyConfig(Config &config) {
 
 extern "C" {
     JNIEXPORT jboolean JNICALL Java_de_tu_1darmstadt_seemoo_nfcgate_xposed_Native_isHookEnabled(JNIEnv *, jobject) {
-        return globals.hookEnabled;
+        return globals.hookStaticEnabled && globals.hookDynamicEnabled;
     }
 
     JNIEXPORT jboolean JNICALL Java_de_tu_1darmstadt_seemoo_nfcgate_xposed_Native_isPatchEnabled(JNIEnv *, jobject) {

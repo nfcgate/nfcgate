@@ -33,7 +33,9 @@ public:
     SymbolTable symbolTable;
     MapInfo mapInfo;
 
-    bool hookEnabled = false;
+    bool hookStaticEnabled = false;
+    bool hookDynamicEnabled = false;
+
     bool patchEnabled = false;
     bool guardEnabled = true;
 
@@ -51,12 +53,13 @@ public:
     def_NFA_CONN_CBACK *origNfaConnCBack = nullptr;
     std::mutex nfaConnCBackMutex;
 
+    bool tryHookNFACB();
+
 protected:
     std::string findLibNFC() const;
 
     bool checkNFACBOffset(uint32_t offset);
     uint32_t findNFACBOffset();
-    bool hookNFACB();
 
     Symbol_ref lookupSymbol(const std::string &name) const;
     IHook_ref hookSymbol(const std::string &name, void *hook) const;

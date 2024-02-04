@@ -24,11 +24,10 @@ void hook_nfaConnectionCallback(uint8_t event, void *eventData) {
 tNFC_STATUS hook_NFC_SetConfig(uint8_t tlv_size, uint8_t *p_param_tlvs) {
     globals.hNFC_SetConfig->precall();
 
-    LOGI("NFC_SetConfig()");
+    LOGI("hook_NFC_SetConfig: filtering config stream");
 
     Config cfg, actual;
     cfg.parse(tlv_size, p_param_tlvs);
-
     for (auto &opt : cfg.options()) {
         // indicates whether this option would override one of the hook options
         bool conflict = false;
@@ -48,12 +47,23 @@ tNFC_STATUS hook_NFC_SetConfig(uint8_t tlv_size, uint8_t *p_param_tlvs) {
             actual.add(opt);
     }
 
+    // build new config stream
     config_ref bin_stream;
     actual.build(bin_stream);
-    tNFC_STATUS r = globals.hNFC_SetConfig->call<def_NFC_SetConfig>(actual.total(), bin_stream.get());
+
+    // call original function with new config stream
+    auto result = globals.hNFC_SetConfig->call<def_NFC_SetConfig>(actual.total(), bin_stream.get());
+
+    // fix hook if needed
+    if (!globals.hookDynamicEnabled) {
+        if (globals.tryHookNFACB())
+            LOGI("hook_NFC_SetConfig: Delayed hook success");
+        else
+            LOGW("hook_NFC_SetConfig: Failed to establish late p_conn_cback hook");
+    }
 
     globals.hNFC_SetConfig->postcall();
-    return r;
+    return result;
 }
 
 tNFA_STATUS hook_NFA_Enable(void *p_dm_cback, void *p_conn_cback) {
@@ -62,12 +72,18 @@ tNFA_STATUS hook_NFA_Enable(void *p_dm_cback, void *p_conn_cback) {
     std::lock_guard<std::mutex> lock(globals.nfaConnCBackMutex);
     LOGD("hook_NFA_Enable: Hooking p_conn_cback");
 
+    // save original callback, replace with hook callback
     globals.origNfaConnCBack = (def_NFA_CONN_CBACK *) p_conn_cback;
-    auto result = globals.hNFA_Enable->call<decltype(hook_NFA_Enable)>(p_dm_cback,
-        (void *) hook_nfaConnectionCallback);
+    p_conn_cback = (void *) hook_nfaConnectionCallback;
 
-    LOGD("Delayed hook success");
-    globals.hookEnabled = true;
+    // call original function with hook connection callback
+    auto result = globals.hNFA_Enable->call<decltype(hook_NFA_Enable)>(p_dm_cback, p_conn_cback);
+    if (!globals.hookDynamicEnabled) {
+        LOGI("hook_NFA_Enable: Delayed hook success");
+        globals.hookDynamicEnabled = true;
+    }
+    else
+        LOGW("hook_NFA_Enable: Double hook detected");
 
     globals.hNFA_Enable->postcall();
     return result;
@@ -110,7 +126,6 @@ HookGlobals::HookGlobals() {
 
     // begin installing hooks
     IHook::init();
-    bool success = false;
     {
         // NFC/NFA main functions
         ASSERT_X(hNFC_SetConfig = hookSymbol("NFC_SetConfig", (void *)&hook_NFC_SetConfig));
@@ -131,14 +146,14 @@ HookGlobals::HookGlobals() {
 
         // NFA callback
         ASSERT_X(nfa_dm_cb = lookupSymbol("nfa_dm_cb"));
-        if (!(success = hookNFACB()))
-            LOGW("Hooking NFA_CB failed, hook may be delayed (waiting for NFA_Enable)");
+        if (!tryHookNFACB())
+            LOGW("Hooking NFA_CB failed, hook may be delayed (waiting for NFA_Enable or NFC_SetConfig)");
     }
     // finish installing hooks
-    LOG_ASSERT_S(IHook::finish(), return, "Hooking failed");
+    LOG_ASSERT_S(IHook::finish(), return, "Hooking install failed");
 
-    // hooking success
-    hookEnabled = success;
+    // save hook success
+    hookStaticEnabled = true;
 }
 
 std::string HookGlobals::findLibNFC() const {
@@ -165,7 +180,7 @@ bool HookGlobals::checkNFACBOffset(uint32_t offset) {
 
     // try to get nfa_dm_cb[offset]
     auto **p_nfa_conn_cback = (def_NFA_CONN_CBACK**)(nfa_dm_cb->address<uint8_t>() + offset);
-    LOG_ASSERT_S(*p_nfa_conn_cback, return false, "p_conn_cback is null, offset likely invalid");
+    LOG_ASSERT_S(*p_nfa_conn_cback, return false, "p_conn_cback is null, offset may be invalid");
 
     auto rangeInfo = mapInfo.rangeFromAddress(reinterpret_cast<uintptr_t>(*p_nfa_conn_cback));
     LOG_ASSERT_S(rangeInfo, return false, "p_conn_cback range info invalid");
@@ -192,26 +207,30 @@ uint32_t HookGlobals::findNFACBOffset() {
     return 0;
 }
 
-bool HookGlobals::hookNFACB() {
+bool HookGlobals::tryHookNFACB() {
     std::lock_guard<std::mutex> lock(nfaConnCBackMutex);
 
-    uint32_t offset = findNFACBOffset();
-    LOG_ASSERT_S(offset != 0, return false, "Finding p_conn_cback offset failed");
+    if (!hookDynamicEnabled) {
+        uint32_t offset = findNFACBOffset();
+        LOG_ASSERT_S(offset != 0, return false, "Finding p_conn_cback offset failed");
 
-    auto **p_nfa_conn_cback = (def_NFA_CONN_CBACK**)(nfa_dm_cb->address<uint8_t>() + offset);
-    LOG_ASSERT_S(*p_nfa_conn_cback, return false, "NFA_CB is null");
+        auto **p_nfa_conn_cback = (def_NFA_CONN_CBACK **) (nfa_dm_cb->address<uint8_t>() + offset);
+        LOG_ASSERT_S(*p_nfa_conn_cback, return false, "NFA_CB is null");
 
-    // ensure to hook only once
-    if (*p_nfa_conn_cback != &hook_nfaConnectionCallback) {
-        LOGD("hookNFACB: Hooking NFA_CB");
+        // ensure to hook only once
+        if (*p_nfa_conn_cback != &hook_nfaConnectionCallback) {
+            LOGD("tryHookNFACB: Hooking NFA_CB");
 
-        // save old nfa connection callback
-        origNfaConnCBack = *p_nfa_conn_cback;
-        // set new nfa connection callback
-        *p_nfa_conn_cback = &hook_nfaConnectionCallback;
+            // save old nfa connection callback
+            origNfaConnCBack = *p_nfa_conn_cback;
+            // set new nfa connection callback
+            *p_nfa_conn_cback = &hook_nfaConnectionCallback;
+        } else
+            LOGD("tryHookNFACB: NFA_CB already hooked");
+
+        // save hook success
+        hookDynamicEnabled = true;
     }
-    else
-        LOGD("hookNFACB: NFA_CB already hooked");
 
     return true;
 }
