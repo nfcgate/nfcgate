@@ -200,15 +200,13 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
         // Select technology by tag
         mReader = NFCTagReader.create(tag);
 
-        if (mReader != null) {
-            Log.i(TAG, "Discovered new Tag: " + mReader.getClass().getName());
+        Log.i(TAG, "Discovered new Tag: " + mReader.getClass().getName());
 
-            // connect to tag
-            mReader.connect();
+        // connect to tag
+        mReader.connect();
 
-            // handle initial card data according to mode
-            handleData(false, new NfcComm(true, true, mReader.getConfig().build()));
-        }
+        // handle initial card data according to mode
+        handleData(false, new NfcComm(true, true, mReader.getConfig().build()));
     }
 
     /**
