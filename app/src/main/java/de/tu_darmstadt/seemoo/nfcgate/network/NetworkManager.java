@@ -68,7 +68,7 @@ public class NetworkManager implements ServerConnection.Callback {
 
     @Override
     public void onReceive(byte[] data) {
-        C2S.ServerData serverData = null;
+        final C2S.ServerData serverData;
         try {
             serverData = C2S.ServerData.parseFrom(data);
         } catch (InvalidProtocolBufferException e) {
