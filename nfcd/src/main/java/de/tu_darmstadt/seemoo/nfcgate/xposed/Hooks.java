@@ -221,7 +221,7 @@ public class Hooks implements IXposedHookLoadPackage {
     private Object loadClass(Context ctx, ClassLoader target, String loadClass) {
         // instantiate class in given class loader
         try {
-            Class loaded = target.loadClass(loadClass);
+            Class<?> loaded = target.loadClass(loadClass);
             return loaded.getConstructor(Context.class).newInstance(ctx);
         } catch (Exception e) {
             Log.e("HOOKNFC", "Failed to construct loaded class", e);
