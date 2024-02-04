@@ -71,12 +71,10 @@ public abstract class BaseNetworkFragment extends BaseFragment implements LogIns
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_refresh:
-                reset();
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_refresh) {
+            reset();
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
