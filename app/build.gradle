@@ -1,31 +1,37 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
 
 android {
+    namespace 'de.tu_darmstadt.seemoo.nfcgate'
+
     compileSdk 33
-    ndkVersion "22.1.7171670"
+    ndkVersion '22.1.7171670'
 
     defaultConfig {
-        applicationId "de.tu_darmstadt.seemoo.nfcgate"
+        applicationId 'de.tu_darmstadt.seemoo.nfcgate'
         minSdkVersion 19
         targetSdkVersion 33
         versionCode 9
-        versionName "2.3.0"
+        versionName '2.3.0'
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    namespace 'de.tu_darmstadt.seemoo.nfcgate'
+
     buildFeatures {
         buildConfig true
     }
 }
 
 dependencies {
-    //This must NOT be included
+    //This must *NOT* be included
     //compile fileTree(dir: 'libs', include: ['*.jar'])
+
     implementation project(':nfcd')
     implementation project(':protobuf')
     implementation "com.google.protobuf:protobuf-javalite:${protobufVersion}"
@@ -38,7 +44,7 @@ dependencies {
     implementation 'com.takisoft.fix:preference-v7:27.1.1.1'
 
     // About
-    implementation "com.github.medyo:android-about-page:1.2.4"
+    implementation 'com.github.medyo:android-about-page:1.2.4'
 
     // Detect phone model
     implementation 'com.jaredrummler:android-device-names:2.1.1'

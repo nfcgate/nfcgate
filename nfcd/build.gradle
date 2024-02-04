@@ -1,4 +1,6 @@
-apply plugin: 'com.android.library'
+plugins {
+    id 'com.android.library'
+}
 
 android {
     compileSdk 33
@@ -6,15 +8,17 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 33
+
         ndk {
-            moduleName "nfcgate-native"
+            moduleName 'nfcgate-native'
             //cFlags "-std=c++11" //  -fexceptions -marm -g -fPIE
-            ldLibs "log"
-            abiFilters "armeabi-v7a", "arm64-v8a"
+            ldLibs 'log'
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
         }
+
         externalNativeBuild {
             cmake {
-                arguments "-DANDROID_STL=c++_static", "-DANDROID_ARM_MODE=arm"
+                arguments '-DANDROID_STL=c++_static', '-DANDROID_ARM_MODE=arm'
             }
         }
     }
@@ -25,8 +29,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    productFlavors {
-    }
+
+    productFlavors {}
+
     externalNativeBuild {
         cmake {
             path 'CMakeLists.txt'
@@ -34,15 +39,20 @@ android {
     }
 
     namespace 'de.tu_darmstadt.seemoo.nfcgate.nfcd'
+
     buildFeatures {
         buildConfig true
     }
 }
 
 dependencies {
-    //This must NOT be included
+    //The following should NOT be included:
+
     //compile fileTree(include: ['*.jar'], dir: 'libs')
-    // provided files('libs/XposedBridgeApi-20150213.jar')
+
+    // Uncomment for easier local development - do not commit uncommented
+    //compileOnly files('libs/XposedBridgeApi-20150213.jar')
+
     compileOnly 'de.robv.android.xposed:api:82'
     compileOnly 'de.robv.android.xposed:api:82:sources'
 }
