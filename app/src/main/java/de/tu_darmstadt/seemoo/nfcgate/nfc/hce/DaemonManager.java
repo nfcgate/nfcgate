@@ -2,6 +2,9 @@ package de.tu_darmstadt.seemoo.nfcgate.nfc.hce;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
+import java.util.Date;
 
 import de.tu_darmstadt.seemoo.nfcgate.gui.MainActivity;
 
@@ -11,10 +14,10 @@ import de.tu_darmstadt.seemoo.nfcgate.gui.MainActivity;
 public class DaemonManager {
     private MainActivity mActivity;
     private boolean mIsHookEnabled = false;
+    private Date mLastResponse = null;
 
     public DaemonManager(MainActivity activity) {
         mActivity = activity;
-        beginGetHookEnabled();
     }
 
     /**
@@ -28,6 +31,7 @@ public class DaemonManager {
         else if ("HOOK_STATUS".equals(responseType)) {
             mIsHookEnabled = intent.getBooleanExtra("hookEnabled", false);
             mActivity.getNfc().notifyStatusChanged();
+            mLastResponse = new Date();
         }
     }
 
@@ -67,6 +71,12 @@ public class DaemonManager {
      */
     public void beginGetHookEnabled() {
         send(getIntent("GET_HOOK_STATUS"));
+    }
+
+    public void onResume() {
+        // debounce getting hook status because receiving the response also triggers onResume
+        if (mLastResponse == null || (new Date().getTime() - mLastResponse.getTime()) > 1000)
+            beginGetHookEnabled();
     }
 
     private Intent getIntent(String op) {
