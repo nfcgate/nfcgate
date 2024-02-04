@@ -21,7 +21,7 @@ import de.tu_darmstadt.seemoo.nfcgate.nfc.chip.NfcChipGuess;
  */
 public class NXPDetector extends BaseConfigLineDetector {
     private final static Map<String, String> NXPChipMap = new HashMap<String, String>() {{
-        // NXP chip codes as of 2020
+        // NXP chip codes as of 2023
         put("0x01","PN547C2");
         put("0x02","PN65T");
         put("0x03","PN548AD");
@@ -32,6 +32,8 @@ public class NXPDetector extends BaseConfigLineDetector {
         put("0x08","PN80T");
         put("0x09","PN557");
         put("0x0A","PN81T");
+        put("0x0B","SN1X0");
+        put("0x0C","SN2X0");
     }};
 
     @Override
