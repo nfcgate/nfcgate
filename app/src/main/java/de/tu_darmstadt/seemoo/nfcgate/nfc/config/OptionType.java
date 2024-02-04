@@ -46,7 +46,7 @@ public enum OptionType {
     ;
 
     // implementation details
-    int value;
+    final int value;
 
     OptionType(int val) {
         value = val;

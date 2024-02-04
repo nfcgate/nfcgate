@@ -57,7 +57,7 @@ public class SessionLogEntryFragment extends Fragment {
 
     // current data
     private LogAction mLogAction;
-    private List<NfcComm> mLogData = new ArrayList<>();
+    private final List<NfcComm> mLogData = new ArrayList<>();
     private SessionLog mSessionLog;
 
     // callback

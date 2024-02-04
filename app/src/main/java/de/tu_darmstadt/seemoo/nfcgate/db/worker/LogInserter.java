@@ -17,13 +17,13 @@ public class LogInserter {
     }
 
     // database
-    private AppDatabase mDatabase;
-    private SessionLog.SessionType mSessionType;
-    private BlockingQueue<LogEntry> mQueue = new LinkedBlockingQueue<>();
+    private final AppDatabase mDatabase;
+    private final SessionLog.SessionType mSessionType;
+    private final BlockingQueue<LogEntry> mQueue = new LinkedBlockingQueue<>();
     private long mSessionId = -1;
 
     // callback
-    private SIDChangedListener mListener;
+    private final SIDChangedListener mListener;
 
     public LogInserter(Context ctx, SessionLog.SessionType sessionType, SIDChangedListener listener) {
         mDatabase = AppDatabase.getDatabase(ctx);

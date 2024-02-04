@@ -9,7 +9,7 @@ import de.tu_darmstadt.seemoo.nfcgate.gui.MainActivity;
  * Interface to the nfc daemon patches
  */
 public class DaemonManager {
-    private MainActivity mActivity;
+    private final MainActivity mActivity;
     private boolean mIsHookEnabled = false;
 
     public DaemonManager(MainActivity activity) {

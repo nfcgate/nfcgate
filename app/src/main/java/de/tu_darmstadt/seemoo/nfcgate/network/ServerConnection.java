@@ -29,12 +29,12 @@ public class ServerConnection {
     // threading
     private SendThread mSendThread;
     private ReceiveThread mReceiveThread;
-    private BlockingQueue<SendRecord> mSendQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<SendRecord> mSendQueue = new LinkedBlockingQueue<>();
 
     // metadata
     private Callback mCallback;
-    private String mHostname;
-    private int mPort;
+    private final String mHostname;
+    private final int mPort;
 
     ServerConnection(String hostname, int port) {
         mHostname = hostname;

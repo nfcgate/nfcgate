@@ -12,7 +12,7 @@ public abstract class BaseThread extends Thread {
     // set on interrupt
     private boolean mExit = false;
 
-    ServerConnection mConnection;
+    final ServerConnection mConnection;
     Socket mSocket;
 
     BaseThread(ServerConnection connection) {

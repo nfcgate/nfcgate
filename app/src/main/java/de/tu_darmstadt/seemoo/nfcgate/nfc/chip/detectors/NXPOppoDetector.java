@@ -38,8 +38,8 @@ public class NXPOppoDetector extends NXPDetector {
                 return result.toString();
             }
 
-            public String targetConfig;
-            public List<String> projectNames;
+            public final String targetConfig;
+            public final List<String> projectNames;
         }
 
         public void add(String tc, List<String> pns) {
@@ -64,7 +64,7 @@ public class NXPOppoDetector extends NXPDetector {
             return result.toString();
         }
 
-        protected List<Entry> mEntries = new ArrayList<>();
+        protected final List<Entry> mEntries = new ArrayList<>();
     }
 
     @Override

@@ -9,9 +9,9 @@ import de.tu_darmstadt.seemoo.nfcgate.db.NfcCommEntry;
 import de.tu_darmstadt.seemoo.nfcgate.util.NfcComm;
 
 public class NfcLogReplayer {
-    private boolean mReader;
-    private String mMode;
-    private List<NfcCommEntry> mReplayLog;
+    private final boolean mReader;
+    private final String mMode;
+    private final List<NfcCommEntry> mReplayLog;
     private int mReplayIndex = 0;
 
     public NfcLogReplayer(boolean reader, String mode, List<NfcCommEntry> replayLog) {

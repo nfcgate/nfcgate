@@ -19,9 +19,9 @@ import de.tu_darmstadt.seemoo.nfcgate.gui.component.FileShare;
 import de.tu_darmstadt.seemoo.nfcgate.util.NfcComm;
 
 public class LogAction {
-    private Fragment mFragment;
     private SessionLogEntryViewModel mLogEntryModel;
-    private List<NfcComm> mLogItems = new ArrayList<>();
+    private final Fragment mFragment;
+    private final List<NfcComm> mLogItems = new ArrayList<>();
 
     public LogAction(Fragment fragment) {
         mFragment = fragment;

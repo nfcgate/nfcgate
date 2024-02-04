@@ -34,7 +34,7 @@ public class LoggingFragment extends Fragment {
     ListView mLog;
     TextView mEmptyText;
     ActionMode mActionMode;
-    List<Integer> mActionSelections = new ArrayList<>();
+    final List<Integer> mActionSelections = new ArrayList<>();
 
     // db data
     private LogAction mLogAction;

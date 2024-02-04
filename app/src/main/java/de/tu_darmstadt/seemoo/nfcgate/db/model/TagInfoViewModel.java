@@ -14,7 +14,7 @@ import de.tu_darmstadt.seemoo.nfcgate.db.TagInfoDao;
 
 public class TagInfoViewModel extends AndroidViewModel {
     private final LiveData<List<TagInfo>> mTagInfos;
-    private AppDatabase mAppDb;
+    private final AppDatabase mAppDb;
 
     public TagInfoViewModel(@NonNull Application application) {
         super(application);
@@ -36,7 +36,7 @@ public class TagInfoViewModel extends AndroidViewModel {
     }
 
     private static class insertAsyncTask extends AsyncTask<TagInfo, Void, Void> {
-        private TagInfoDao mAsyncTaskDao;
+        private final TagInfoDao mAsyncTaskDao;
 
         insertAsyncTask(TagInfoDao dao) {
             mAsyncTaskDao = dao;
@@ -50,7 +50,7 @@ public class TagInfoViewModel extends AndroidViewModel {
     }
 
     private static class deleteAsyncTask extends AsyncTask<TagInfo, Void, Void> {
-        private TagInfoDao mAsyncTaskDao;
+        private final TagInfoDao mAsyncTaskDao;
 
         deleteAsyncTask(TagInfoDao dao) {
             mAsyncTaskDao = dao;

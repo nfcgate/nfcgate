@@ -19,9 +19,9 @@ public class StatusBanner {
     }
 
     // UI references
-    private Context mContext;
-    private RelativeLayout mBanner;
-    private TextView mBannerText;
+    private final Context mContext;
+    private final RelativeLayout mBanner;
+    private final TextView mBannerText;
 
     public StatusBanner(MainActivity act) {
         mContext = act;

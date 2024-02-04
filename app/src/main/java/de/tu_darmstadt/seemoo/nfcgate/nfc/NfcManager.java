@@ -43,11 +43,11 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     }
 
     // references
-    private MainActivity mActivity;
-    private NfcAdapter mAdapter;
+    private final MainActivity mActivity;
+    private final NfcAdapter mAdapter;
     private ApduService mApduService;
-    private DaemonManager mDaemon;
-    private NetworkManager mNetwork;
+    private final DaemonManager mDaemon;
+    private final NetworkManager mNetwork;
     private StatusChangedListener mStatusChanged;
 
     // state

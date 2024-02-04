@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 public class CustomArrayAdapter<T> extends ArrayAdapter<T> {
-    private int mResource;
+    private final int mResource;
 
     public CustomArrayAdapter(@NonNull Context context, int resource) {
         super(context, resource);

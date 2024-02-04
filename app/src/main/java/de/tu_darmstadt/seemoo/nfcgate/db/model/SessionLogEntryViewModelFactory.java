@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 public class SessionLogEntryViewModelFactory extends ViewModelProvider.NewInstanceFactory {
-    private Application mApplication;
-    private long mSessionLog;
+    private final Application mApplication;
+    private final long mSessionLog;
 
     public SessionLogEntryViewModelFactory(Application application, long sessionLog) {
         mApplication = application;

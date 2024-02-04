@@ -14,7 +14,7 @@ import de.tu_darmstadt.seemoo.nfcgate.nfc.config.Technologies;
  *
  */
 public class IsoDepReader extends NFCTagReader {
-    private NFCTagReader mUnderlying;
+    private final NFCTagReader mUnderlying;
 
     /**
      * Provides a NFC reader interface
