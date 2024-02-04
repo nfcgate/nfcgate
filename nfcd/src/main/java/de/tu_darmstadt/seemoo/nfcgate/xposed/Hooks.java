@@ -15,7 +15,6 @@ import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
-import de.tu_darmstadt.seemoo.nfcgate.nfcd.BuildConfig;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
@@ -24,7 +23,7 @@ public class Hooks implements IXposedHookLoadPackage {
 
     private Object mReceiver;
 
-    public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
+    public void handleLoadPackage(final LoadPackageParam lpparam) {
         // hook our own NfcManager to indicate that the hook is loaded and active
         if ("de.tu_darmstadt.seemoo.nfcgate".equals(lpparam.packageName)) {
             // indicate that the hook worked and the xposed module is active
@@ -35,7 +34,7 @@ public class Hooks implements IXposedHookLoadPackage {
             findAndHookConstructor("com.android.nfc.NfcService", lpparam.classLoader,
                     Application.class, new XC_MethodHook() {
                 @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                protected void afterHookedMethod(MethodHookParam param) {
 
                     // using context, inject our class into the nfc service class loader
                     mReceiver = loadOrInjectClass((Application) param.args[0],
@@ -49,11 +48,11 @@ public class Hooks implements IXposedHookLoadPackage {
                     "findSelectAid",
                     byte[].class, new XC_MethodHook() {
                 @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                protected void afterHookedMethod(MethodHookParam param) {
 
                     if (isPatchEnabled()) {
                         // setting a result will overwrite the original result
-                        // F0010203040506 is a aid registered by the nfcgate hce service
+                        // F0010203040506 is an aid registered by the nfcgate hce service
                         param.setResult("F0010203040506");
                     }
                 }
@@ -65,7 +64,7 @@ public class Hooks implements IXposedHookLoadPackage {
                     "getMaxTransceiveLength",
                     int.class, new XC_MethodHook() {
                 @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                protected void beforeHookedMethod(MethodHookParam param) {
 
                     int technology = (int) param.args[0];
                     if (technology == 3 /* 3=TagTechnology.ISO_DEP */) {
@@ -74,7 +73,7 @@ public class Hooks implements IXposedHookLoadPackage {
                 }
             });
 
-            // hook transceive method for on-device capture of request/response data
+            // hook 'transceive' method for on-device capture of request/response data
             findAndHookMethod("com.android.nfc.NfcService.TagService", lpparam.classLoader,
                     "transceive",
                     int.class, byte[].class, boolean.class, new XC_MethodHook() {
@@ -99,7 +98,7 @@ public class Hooks implements IXposedHookLoadPackage {
                     "dispatchTag",
                     Tag.class, new XC_MethodHook() {
                 @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                protected void afterHookedMethod(MethodHookParam param) {
 
                     if (isCaptureEnabled()) {
                         Tag tag = (Tag) param.args[0];
@@ -115,7 +114,7 @@ public class Hooks implements IXposedHookLoadPackage {
                     preLollipop("notifyHostEmulationData", "onHostEmulationData"),
                     byte[].class, new XC_MethodHook() {
                 @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                protected void afterHookedMethod(MethodHookParam param) {
 
                     if (isCaptureEnabled()) {
                         byte[] commandData = (byte[]) param.args[0];
@@ -131,7 +130,7 @@ public class Hooks implements IXposedHookLoadPackage {
                     preLollipop("notifyHostEmulationActivated", "onHostEmulationActivated"),
                     new XC_MethodHook() {
                 @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                protected void afterHookedMethod(MethodHookParam param) {
 
                     if (isCaptureEnabled()) {
                         addCaptureInitial(null);
@@ -146,7 +145,7 @@ public class Hooks implements IXposedHookLoadPackage {
                     "sendData",
                     byte[].class, new XC_MethodHook() {
                 @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                protected void afterHookedMethod(MethodHookParam param) {
 
                     if (isCaptureEnabled()) {
                         byte[] responseData = (byte[]) param.args[0];
