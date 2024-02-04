@@ -1,5 +1,6 @@
 package de.tu_darmstadt.seemoo.nfcgate.xposed;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -18,6 +19,7 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
     private boolean mCaptureEnabled = false;
     private final ArrayList<Bundle> mCaptured = new ArrayList<>();
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     public InjectionBroadcastWrapper(Context ctx) {
         mCtx = ctx;
 
