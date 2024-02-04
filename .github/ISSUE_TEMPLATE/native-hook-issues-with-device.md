@@ -7,15 +7,20 @@ assignees: ''
 
 ---
 
-**App Information\***
-Screenshot of "status" page
+**App Information***
 
-**Device Information\* (please complete the following information)**
-Device: [e.g. Google Pixel 7]  
-OS: [e.g. Android 14]
+Please provide us with a screenshot of the "status" page in NFCGate.
 
-**Log\***
+**Device Information*** Which device are you using and what OS are you running on it?
+
+Device: [e.g. Google Pixel 7]
+
+OS: [e.g. Android 14, optionally add build number]
+
+**Log***
+
 Attach a boot log (system logcat since boot). See [here](https://www.xda-developers.com/how-to-take-logs-android/#system-logs) for detailed instructions.
 
 **Additional context**
-Add any other context about the problem here.
+
+Add any other relevant information for troubleshooting the problem here.

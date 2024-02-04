@@ -1,7 +1,8 @@
 Replay Mode
 =======
 
-Replay mode enables the user to replay previously captured NFC traffic. Every traffic available in `Logging` can be replayed, both the reader and the tag traffic.
+Replay mode enables you to replay previously captured NFC traffic.
+All captured traffic available in `Logging` can be replayed, both the reader and the tag traffic.
 
 ## Requirements
 - Android 4.4+ (API level 19+)
@@ -12,10 +13,10 @@ Replay mode enables the user to replay previously captured NFC traffic. Every tr
 
 ## Usage
 1. Switch to `Replay` in the navigation drawer.
-2. Select the logged session to be replayed.
+2. Select the captured session to be replayed.
 3. Click `Reader` or `Tag` to replay the respective traffic.
 
-The new NFC traffic will also be recorded and available in `Logging` for later use.
+The new NFC traffic will also be recorded and will be available in `Logging` for later use.
 
 ## Technical Information
 See [clone mode documentation](/doc/mode/Clone.md).

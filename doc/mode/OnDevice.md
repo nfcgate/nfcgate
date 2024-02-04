@@ -1,7 +1,8 @@
 On-Device Capture Mode
 =======
 
-On-device capture mode enables the user to capture NFC traffic of 3rd party applications running on the device. Every traffic between the application and the tag or the reader (in case of HCE) on ISO 14443 layer is captured.
+On-device capture mode enables the user to capture NFC traffic of third-party applications running on the device.
+All ISO 14443 layer traffic between the application and the tag, or in case of HCE, the reader, is captured.
 
 ## Requirements
 - Android 4.4+ (API level 19+)
@@ -16,10 +17,12 @@ On-device capture mode enables the user to capture NFC traffic of 3rd party appl
 5. Switch back to NFCGate.
 6. Stop recording by pressing `Stop Capture`.
 
-Captured NFC traffic is available in `Logging`. From there, the user can export it as a pcapng file.
+Captured NFC traffic is available in `Logging`. From there, it can be exported as a pcapng file.
 
 ## Technical Information
-Capturing NFC traffic requires hooking Java methods in Android's NFC service. As framework code might change between Android versions, on-device capture might cease to function depending on Android version (see [compatibility document](/doc/Compatibility.md) for detailed information).  
+Capturing NFC traffic requires hooking Java methods in Android's NFC service.
+As framework code might change between Android versions, on-device capture might break, depending on the
+Android version! Please see [compatibility document](/doc/Compatibility.md) for detailed information.
 On-device capture hooks the following functions within the Android NFC service (`com.android.nfc`):
 
 * `public TransceiveResult com.android.nfc.NfcService.TagService#transceive(int nativeHandle, byte[] data, boolean raw)`
