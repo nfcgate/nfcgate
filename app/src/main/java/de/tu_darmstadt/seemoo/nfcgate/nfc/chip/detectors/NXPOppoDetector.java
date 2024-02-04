@@ -113,7 +113,7 @@ public class NXPOppoDetector extends NXPDetector {
             for (String projectName : parts2)
                 projectNames.add(projectName.replaceFirst("(\\(.*\\))", ""));
 
-            result.add(parts1[0], Arrays.asList(parts2));
+            result.add(parts1[0], projectNames);
             return true;
         });
 
