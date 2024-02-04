@@ -9,7 +9,6 @@ import java.util.Date;
 
 @Entity
 public class SessionLog {
-    public static SimpleDateFormat ISO_DATE = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     public enum SessionType {
         RELAY,
@@ -55,8 +54,12 @@ public class SessionLog {
         this.type = type;
     }
 
+    public static final SimpleDateFormat isoDateFormatter() {
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    }
+
     @Override
     public String toString() {
-        return ISO_DATE.format(date);
+        return isoDateFormatter().format(date);
     }
 }

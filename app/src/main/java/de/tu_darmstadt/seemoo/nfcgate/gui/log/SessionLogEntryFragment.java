@@ -193,7 +193,7 @@ public class SessionLogEntryFragment extends Fragment {
             // set content to either config stream or binary content
             v.<TextView>findViewById(R.id.data).setText(byInitial(comm.isInitial(), comm.getData()));
             // set timestamp
-            v.<TextView>findViewById(R.id.timestamp).setText(SessionLog.ISO_DATE.format(new Date(comm.getTimestamp())));
+            v.<TextView>findViewById(R.id.timestamp).setText(SessionLog.isoDateFormatter().format(new Date(comm.getTimestamp())));
 
             return v;
         }
