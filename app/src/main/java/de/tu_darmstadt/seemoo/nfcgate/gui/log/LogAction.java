@@ -5,11 +5,11 @@ import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import de.tu_darmstadt.seemoo.nfcgate.db.AppDatabase;
 import de.tu_darmstadt.seemoo.nfcgate.db.NfcCommEntry;
 import de.tu_darmstadt.seemoo.nfcgate.db.SessionLog;
-import de.tu_darmstadt.seemoo.nfcgate.db.SessionLogJoin;
 import de.tu_darmstadt.seemoo.nfcgate.db.model.SessionLogEntryViewModel;
 import de.tu_darmstadt.seemoo.nfcgate.db.model.SessionLogEntryViewModelFactory;
 import de.tu_darmstadt.seemoo.nfcgate.db.pcapng.ISO14443Stream;
@@ -17,7 +17,6 @@ import de.tu_darmstadt.seemoo.nfcgate.gui.component.FileShare;
 import de.tu_darmstadt.seemoo.nfcgate.util.NfcComm;
 
 public class LogAction {
-    private SessionLogEntryViewModel mLogEntryModel;
     private final Fragment mFragment;
     private final List<NfcComm> mLogItems = new ArrayList<>();
 
@@ -39,8 +38,8 @@ public class LogAction {
         mLogItems.clear();
 
         // setup db model
-        mLogEntryModel = ViewModelProviders.of(mFragment, new SessionLogEntryViewModelFactory(
-                mFragment.getActivity().getApplication(), session.getId()))
+        final SessionLogEntryViewModel mLogEntryModel = ViewModelProviders.of(mFragment, new SessionLogEntryViewModelFactory(
+                        Objects.requireNonNull(mFragment.getActivity()).getApplication(), session.getId()))
                 .get(SessionLogEntryViewModel.class);
 
         mLogEntryModel.getSession().observe(mFragment, sessionLogJoin -> {
