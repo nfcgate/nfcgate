@@ -83,6 +83,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     /**
      * Indicates whether the Xposed module is enabled
      * This is hooked by the module to return true
+     * @noinspection SameReturnValue
      */
     public static boolean isModuleLoaded() {
         return false;
