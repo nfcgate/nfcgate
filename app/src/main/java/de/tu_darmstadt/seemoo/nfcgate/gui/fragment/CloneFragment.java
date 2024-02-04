@@ -65,35 +65,27 @@ public class CloneFragment extends BaseFragment {
 
         // setup db model
         mTagInfoViewModel = ViewModelProviders.of(this).get(TagInfoViewModel.class);
-        mTagInfoViewModel.getTagInfos().observe(this, new Observer<List<TagInfo>>() {
-            @Override
-            public void onChanged(@Nullable List<TagInfo> tagInfos) {
-                mTagInfoAdapter.clear();
-                mTagInfoAdapter.addAll(tagInfos);
-                mTagInfoAdapter.notifyDataSetChanged();
-            }
+        mTagInfoViewModel.getTagInfos().observe(this, tagInfos -> {
+            mTagInfoAdapter.clear();
+            mTagInfoAdapter.addAll(tagInfos);
+            mTagInfoAdapter.notifyDataSetChanged();
         });
 
         // handlers
-        mCloneSaved.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position >= 0) {
-                    // deleting inside models automatically updates adapter
-                    mTagInfoViewModel.delete(mTagInfoAdapter.getItem(position));
-                    return true;
-                }
-                return false;
+        mCloneSaved.setOnItemLongClickListener((parent, view, position, id) -> {
+            if (position >= 0) {
+                // deleting inside models automatically updates adapter
+                mTagInfoViewModel.delete(mTagInfoAdapter.getItem(position));
+                return true;
             }
+            return false;
         });
-        mCloneSaved.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position >= 0) {
-                    // load configuration of saved tag
-                    final TagInfo item = mTagInfoAdapter.getItem(position);
-                    getNfc().handleData(false, new NfcComm(item.getData()));
-                }
+        mCloneSaved.setOnItemClickListener((parent, view, position, id) -> {
+            if (position >= 0) {
+                // load configuration of saved tag
+                final TagInfo item = mTagInfoAdapter.getItem(position);
+                assert item != null;
+                getNfc().handleData(false, new NfcComm(item.getData()));
             }
         });
 
@@ -107,19 +99,16 @@ public class CloneFragment extends BaseFragment {
         mTagInfoAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
         mCloneSaved.setAdapter(mTagInfoAdapter);
 
-        getNfc().setStatusChangedHandler(new NfcManager.StatusChangedListener() {
-            @Override
-            public void onChange() {
-                mStatusBanner.reset();
+        getNfc().setStatusChangedHandler(() -> {
+            mStatusBanner.reset();
 
-                // show warning if xposed module does not respond
-                if (!NfcManager.isModuleLoaded() || !getNfc().isHookEnabled())
-                    mStatusBanner.setWarning(getString(R.string.error_xposed));
+            // show warning if xposed module does not respond
+            if (!NfcManager.isModuleLoaded() || !getNfc().isHookEnabled())
+                mStatusBanner.setWarning(getString(R.string.error_xposed));
 
-                // show error if NFC is disabled
-                if (!getNfc().isEnabled())
-                    mStatusBanner.setError(getString(R.string.error_nfc_disabled));
-            }
+            // show error if NFC is disabled
+            if (!getNfc().isEnabled())
+                mStatusBanner.setError(getString(R.string.error_nfc_disabled));
         });
     }
 
@@ -191,14 +180,11 @@ public class CloneFragment extends BaseFragment {
         new AlertDialog.Builder(getContext())
             .setTitle(getString(R.string.clone_save_title))
             .setView(input)
-            .setPositiveButton(getString(R.string.button_ok), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    final String description = input.getText().toString();
+            .setPositiveButton(getString(R.string.button_ok), (dialog, which) -> {
+                final String description = input.getText().toString();
 
-                    if (!description.isEmpty())
-                        mTagInfoViewModel.insert(new TagInfo(description, mCloneData));
-                }
+                if (!description.isEmpty())
+                    mTagInfoViewModel.insert(new TagInfo(description, mCloneData));
             })
             .setNegativeButton(getString(R.string.button_cancel), null)
             .show();
@@ -211,13 +197,10 @@ public class CloneFragment extends BaseFragment {
 
             FragmentActivity activity = getActivity();
             if (activity != null && data.isInitial()) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // stop waiting and display data
-                        setCloneWait(false);
-                        setCloneContent(data);
-                    }
+                activity.runOnUiThread(() -> {
+                    // stop waiting and display data
+                    setCloneWait(false);
+                    setCloneContent(data);
                 });
             }
         }

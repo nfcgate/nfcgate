@@ -45,15 +45,12 @@ public class LogAction {
                 mFragment.getActivity().getApplication(), session.getId()))
                 .get(SessionLogEntryViewModel.class);
 
-        mLogEntryModel.getSession().observe(mFragment, new Observer<SessionLogJoin>() {
-            @Override
-            public void onChanged(@Nullable SessionLogJoin sessionLogJoin) {
-                if (sessionLogJoin != null && mLogItems.isEmpty()) {
-                    for (NfcCommEntry nfcCommEntry : sessionLogJoin.getNfcCommEntries())
-                        mLogItems.add(nfcCommEntry.getNfcComm());
+        mLogEntryModel.getSession().observe(mFragment, sessionLogJoin -> {
+            if (sessionLogJoin != null && mLogItems.isEmpty()) {
+                for (NfcCommEntry nfcCommEntry : sessionLogJoin.getNfcCommEntries())
+                    mLogItems.add(nfcCommEntry.getNfcComm());
 
-                    share(session, mLogItems);
-                }
+                share(session, mLogItems);
             }
         });
     }

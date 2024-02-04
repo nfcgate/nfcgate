@@ -62,12 +62,9 @@ public class MainActivity extends AppCompatActivity {
 
         // drawer toggle in toolbar
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.empty, R.string.empty);
-        mToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // when drawer icon is NOT visible (due to fragment on backstack), issue back action
-                onBackPressed();
-            }
+        mToggle.setToolbarNavigationClickListener(v -> {
+            // when drawer icon is NOT visible (due to fragment on backstack), issue back action
+            onBackPressed();
         });
         mDrawerLayout.addDrawerListener(mToggle);
 
@@ -75,30 +72,24 @@ public class MainActivity extends AppCompatActivity {
         final FragmentManager fragmentManager = getSupportFragmentManager();
         final ActionBar actionBar = getSupportActionBar();
 
-        fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-                if (fragmentManager.getBackStackEntryCount() > 0) {
-                    // https://stackoverflow.com/a/29594947
-                    actionBar.setDisplayHomeAsUpEnabled(false);
-                    mToggle.setDrawerIndicatorEnabled(false);
-                    actionBar.setDisplayHomeAsUpEnabled(true);
-                } else {
-                    actionBar.setDisplayHomeAsUpEnabled(false);
-                    mToggle.setDrawerIndicatorEnabled(true);
-                    mToggle.syncState();
-                }
+        fragmentManager.addOnBackStackChangedListener(() -> {
+            if (fragmentManager.getBackStackEntryCount() > 0) {
+                // https://stackoverflow.com/a/29594947
+                actionBar.setDisplayHomeAsUpEnabled(false);
+                mToggle.setDrawerIndicatorEnabled(false);
+                actionBar.setDisplayHomeAsUpEnabled(true);
+            } else {
+                actionBar.setDisplayHomeAsUpEnabled(false);
+                mToggle.setDrawerIndicatorEnabled(true);
+                mToggle.syncState();
             }
         });
 
         // navbar setup actions
         mNavbar = findViewById(R.id.main_navigation);
-        mNavbar.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                onNavbarAction(item);
-                return true;
-            }
+        mNavbar.setNavigationItemSelectedListener(item -> {
+            onNavbarAction(item);
+            return true;
         });
 
         // initially select clone mode

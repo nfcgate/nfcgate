@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Objects;
 
 import de.tu_darmstadt.seemoo.nfcgate.R;
 import de.tu_darmstadt.seemoo.nfcgate.db.NfcCommEntry;
@@ -111,12 +112,9 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
                         if (sessionLogJoin != null && mSessionLog == null && mOnce) {
                             mOnce = false;
                             mSessionLog = sessionLogJoin.getNfcCommEntries();
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    // show reader/tag selector after session data is loaded
-                                    setSelectorVisible(true);
-                                }
+                            Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                                // show reader/tag selector after session data is loaded
+                                setSelectorVisible(true);
                             });
                         }
                     }
@@ -186,12 +184,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
     }
 
     void tickleReplayer() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mReplayer.onReceive(null);
-            }
-        });
+        Objects.requireNonNull(getActivity()).runOnUiThread(() -> mReplayer.onReceive(null));
     }
 
     /**
@@ -217,12 +210,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
             mLogInserter.log(data);
 
             // hide wait indicator
-            runOnUI(new Runnable() {
-                @Override
-                public void run() {
-                    setTagWaitVisible(false, false);
-                }
-            });
+            runOnUI(() -> setTagWaitVisible(false, false));
 
             // forward data to NFC or network
             super.onData(isForeign, data);
@@ -235,12 +223,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
                 super.toNetwork(data);
             else
                 // simulate network send
-                runOnUI(new Runnable() {
-                    @Override
-                    public void run() {
-                        mReplayer.onReceive(data);
-                    }
-                });
+                runOnUI(() -> mReplayer.onReceive(data));
         }
 
         @Override
@@ -248,12 +231,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
             super.onNetworkStatus(status);
 
             // report status
-            runOnUI(new Runnable() {
-                @Override
-                public void run() {
-                    handleStatus(status);
-                }
-            });
+            runOnUI(() -> handleStatus(status));
         }
     }
 
@@ -297,12 +275,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
             // report status
             final FragmentActivity activity = getActivity();
             if (activity != null) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        handleStatus(status);
-                    }
-                });
+                activity.runOnUiThread(() -> handleStatus(status));
             }
         }
     }
