@@ -54,7 +54,7 @@ public class SessionLog {
         this.type = type;
     }
 
-    public static final SimpleDateFormat isoDateFormatter() {
+    public static SimpleDateFormat isoDateFormatter() {
         return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
     }
 
