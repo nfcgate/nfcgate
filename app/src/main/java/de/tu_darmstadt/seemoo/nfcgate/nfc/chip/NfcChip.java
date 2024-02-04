@@ -12,6 +12,10 @@ import de.tu_darmstadt.seemoo.nfcgate.nfc.chip.detectors.STDetector;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.chip.detectors.SamsungDetector;
 
 public class NfcChip {
+
+    // Prevent creating this class, it only has static methods.
+    private NfcChip() {}
+
     /**
      * Detects the NFC chip on this device
      *
@@ -44,6 +48,7 @@ public class NfcChip {
 
         for (INfcChipDetector detector : detectors)
             result.addAll(detector.tryDetect());
+
         return result;
     }
 }
