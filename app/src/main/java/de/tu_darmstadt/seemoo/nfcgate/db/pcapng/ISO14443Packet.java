@@ -35,23 +35,23 @@ public class ISO14443Packet extends PcapPacket {
 
         // read payload
         ByteArrayInputStream inputStream = new ByteArrayInputStream(mPayload);
-        DataInputStream packetIn = new DataInputStream(inputStream);
+        try (final DataInputStream packetIn = new DataInputStream(inputStream)) {
 
-        // version
-        packetIn.skipBytes(1);
-        // event
-        boolean isCard = packetIn.readByte() == DATA_PICC_TO_PCD_CRC_DROPPED;
-        // length
-        short length = packetIn.readShort();
-        // PCB
-        packetIn.skipBytes(1);
-        // data
-        byte[] data = new byte[length - 1];
-        packetIn.read(data, 0, data.length);
-        // close stream
-        packetIn.close();
+            // version
+            packetIn.skipBytes(1);
+            // event
+            boolean isCard = packetIn.readByte() == DATA_PICC_TO_PCD_CRC_DROPPED;
+            // length
+            short length = packetIn.readShort();
+            // PCB
+            packetIn.skipBytes(1);
+            // data
+            byte[] data = new byte[length - 1];
+            packetIn.read(data, 0, data.length);
 
-        mData = new NfcComm(isCard, mInterfaceIndex == 1, data, mTimestamp);
+            mData = new NfcComm(isCard, mInterfaceIndex == 1, data, mTimestamp);
+        }
+
         return this;
     }
 
@@ -59,24 +59,24 @@ public class ISO14443Packet extends PcapPacket {
     public int write(DataOutputStream out) throws IOException {
         // prepare payload
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-        DataOutputStream packetOut = new DataOutputStream(byteOut);
-        final byte[] data = mData.getData();
+        try (final DataOutputStream packetOut = new DataOutputStream(byteOut)) {
+            final byte[] data = mData.getData();
 
-        // ISO 14443 header (4 bytes)
-        // version
-        packetOut.writeByte(0);
-        // event
-        packetOut.writeByte(mData.isCard() ? DATA_PICC_TO_PCD_CRC_DROPPED :
-                DATA_PCD_TO_PICC_CRC_DROPPED);
-        // len (data len + 1 byte for I_BLOCK PCB)
-        packetOut.writeShort(data.length + 1);
+            // ISO 14443 header (4 bytes)
+            // version
+            packetOut.writeByte(0);
+            // event
+            packetOut.writeByte(mData.isCard() ? DATA_PICC_TO_PCD_CRC_DROPPED :
+                    DATA_PCD_TO_PICC_CRC_DROPPED);
+            // len (data len + 1 byte for I_BLOCK PCB)
+            packetOut.writeShort(data.length + 1);
 
-        // part of frame
-        // I_BLOCK PCB: 0000010
-        packetOut.writeByte(0x02);
-        // actual data
-        packetOut.write(data);
-        packetOut.close();
+            // part of frame
+            // I_BLOCK PCB: 0000010
+            packetOut.writeByte(0x02);
+            // actual data
+            packetOut.write(data);
+        }
 
         mInterfaceIndex = mData.isInitial() ? 1 : 0;
         mPayload = byteOut.toByteArray();
