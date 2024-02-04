@@ -6,7 +6,7 @@ import java.net.Socket;
 import de.tu_darmstadt.seemoo.nfcgate.network.ServerConnection;
 
 /**
- * A interruptible thread that properly handles interrupt()
+ * An interruptible thread that properly handles interrupt()
  */
 public abstract class BaseThread extends Thread {
     // set on interrupt
