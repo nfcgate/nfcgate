@@ -20,8 +20,6 @@ import android.widget.TextView;
 
 import com.jaredrummler.android.device.DeviceName;
 
-import java.io.IOException;
-import java.io.OutputStream;
 
 import de.tu_darmstadt.seemoo.nfcgate.BuildConfig;
 import de.tu_darmstadt.seemoo.nfcgate.R;
