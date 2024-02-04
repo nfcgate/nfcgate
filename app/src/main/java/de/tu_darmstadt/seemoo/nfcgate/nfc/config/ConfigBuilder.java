@@ -37,7 +37,7 @@ public class ConfigBuilder {
         int index = 0;
 
         while(index + 2 < config.length) {
-            byte type = config[index + 0];
+            byte type = config[index];
             byte length = config[index + 1];
 
             byte[] data = new byte[length];
