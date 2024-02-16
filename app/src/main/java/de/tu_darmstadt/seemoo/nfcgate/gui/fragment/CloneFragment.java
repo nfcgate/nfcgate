@@ -126,16 +126,14 @@ public class CloneFragment extends BaseFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_clone:
-                beginClone();
-                return true;
-            case R.id.action_save:
-                beginSave();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (R.id.action_clone == item.getItemId()) {
+            beginClone();
+            return true;
+        } else if (R.id.action_save == item.getItemId()) {
+            beginSave();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setSaveEnabled(Menu menu, boolean enabled) {

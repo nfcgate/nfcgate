@@ -144,20 +144,19 @@ public class SessionLogEntryFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case android.R.id.home:
-                getActivity().onBackPressed();
-                return true;
-            case R.id.action_yes:
-                mCallback.onLogSelected(mSessionId);
-                return true;
-            case R.id.action_share:
-                mLogAction.share(mSessionLog, mLogData);
-                return true;
-            case R.id.action_delete:
-                mLogAction.delete(mSessionLog);
-                getActivity().onBackPressed();
-                return true;
+        if (android.R.id.home == item.getItemId()) {
+            getActivity().onBackPressed();
+            return true;
+        } else if (R.id.action_yes == item.getItemId()) {
+            mCallback.onLogSelected(mSessionId);
+            return true;
+        } else if (R.id.action_share == item.getItemId()) {
+            mLogAction.share(mSessionLog, mLogData);
+            return true;
+        } else if (R.id.action_delete == item.getItemId()) {
+            mLogAction.delete(mSessionLog);
+            getActivity().onBackPressed();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

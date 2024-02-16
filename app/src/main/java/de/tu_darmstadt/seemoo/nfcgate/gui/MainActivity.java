@@ -120,9 +120,9 @@ public class MainActivity extends AppCompatActivity {
         // tech discovered is triggered by XML, tag discovered by foreground dispatch
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction()) ||
                 NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction()))
-            mNfc.onTagDiscovered(intent.<Tag>getParcelableExtra(NfcAdapter.EXTRA_TAG));
+            mNfc.onTagDiscovered(intent.getParcelableExtra(NfcAdapter.EXTRA_TAG));
         else if (Intent.ACTION_SEND.equals(intent.getAction()))
-            importPcap(intent.<Uri>getParcelableExtra(Intent.EXTRA_STREAM));
+            importPcap(intent.getParcelableExtra(Intent.EXTRA_STREAM));
         else if (Intent.ACTION_VIEW.equals(intent.getAction()))
             importPcap(intent.getData());
         else if ("de.tu_darmstadt.seemoo.nfcgate.daemoncall".equals(intent.getAction()))
@@ -147,26 +147,25 @@ public class MainActivity extends AppCompatActivity {
      * Returns a Fragment for every navbar action
      */
     private Fragment getFragmentByAction(int id) {
-        switch (id) {
-            case R.id.nav_clone:
-                return new CloneFragment();
-            case R.id.nav_relay:
-                return new RelayFragment();
-            case R.id.nav_replay:
-                return new ReplayFragment();
-            case R.id.nav_capture:
-                return new CaptureFragment();
-            case R.id.nav_settings:
-                return new SettingsFragment();
-            case R.id.nav_status:
-                return new StatusFragment();
-            case R.id.nav_about:
-                return new AboutFragment();
-            case R.id.nav_logging:
-                return new LoggingFragment();
-            default:
-                throw new IllegalArgumentException("Position out of range");
+        if (R.id.nav_clone == id) {
+            return new CloneFragment();
+        } else if (R.id.nav_relay == id) {
+            return new RelayFragment();
+        } else if (R.id.nav_replay == id) {
+            return new ReplayFragment();
+        } else if (R.id.nav_capture == id) {
+            return new CaptureFragment();
+        } else if (R.id.nav_settings == id) {
+            return new SettingsFragment();
+        } else if (R.id.nav_status == id) {
+            return new StatusFragment();
+        } else if (R.id.nav_about == id) {
+            return new AboutFragment();
+        } else if (R.id.nav_logging == id) {
+            return new LoggingFragment();
         }
+
+        throw new IllegalArgumentException("Position out of range");
     }
 
     /**
