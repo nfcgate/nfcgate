@@ -56,7 +56,7 @@ public class FileShare {
 
         // create file with given prefix and extension
         final File file = new File(shareDir, mPrefix + mExtension);
-        try (final OutputStream stream = new FileOutputStream(file)){
+        try (final OutputStream stream = new FileOutputStream(file)) {
 
             // write to file (overwrites if already exists)
             share.write(stream);
