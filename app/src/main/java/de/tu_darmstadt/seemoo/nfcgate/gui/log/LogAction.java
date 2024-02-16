@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import de.tu_darmstadt.seemoo.nfcgate.db.AppDatabase;
 import de.tu_darmstadt.seemoo.nfcgate.db.NfcCommEntry;
@@ -39,7 +38,7 @@ public class LogAction {
 
         // setup db model
         final SessionLogEntryViewModel mLogEntryModel = ViewModelProviders.of(mFragment, new SessionLogEntryViewModelFactory(
-                        Objects.requireNonNull(mFragment.getActivity()).getApplication(), session.getId()))
+                        mFragment.getActivity().getApplication(), session.getId()))
                 .get(SessionLogEntryViewModel.class);
 
         mLogEntryModel.getSession().observe(mFragment, sessionLogJoin -> {
