@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.Objects;
 
 import de.tu_darmstadt.seemoo.nfcgate.R;
 import de.tu_darmstadt.seemoo.nfcgate.db.NfcCommEntry;
@@ -112,7 +111,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
                         if (sessionLogJoin != null && mSessionLog == null && mOnce) {
                             mOnce = false;
                             mSessionLog = sessionLogJoin.getNfcCommEntries();
-                            Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                            getActivity().runOnUiThread(() -> {
                                 // show reader/tag selector after session data is loaded
                                 setSelectorVisible(true);
                             });
@@ -184,7 +183,7 @@ public class ReplayFragment extends BaseNetworkFragment implements LoggingFragme
     }
 
     void tickleReplayer() {
-        Objects.requireNonNull(getActivity()).runOnUiThread(() -> mReplayer.onReceive(null));
+        getActivity().runOnUiThread(() -> mReplayer.onReceive(null));
     }
 
     /**
