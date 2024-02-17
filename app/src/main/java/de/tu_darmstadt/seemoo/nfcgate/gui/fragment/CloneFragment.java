@@ -83,7 +83,6 @@ public class CloneFragment extends BaseFragment {
             if (position >= 0) {
                 // load configuration of saved tag
                 final TagInfo item = mTagInfoAdapter.getItem(position);
-                assert item != null;
                 getNfc().handleData(false, new NfcComm(item.getData()));
             }
         });
