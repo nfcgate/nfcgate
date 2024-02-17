@@ -40,8 +40,8 @@ public class CaptureFragment extends BaseFragment {
         updateState();
 
         // handlers
-        mStartButton.setOnClickListener(v12 -> startCapture());
-        mStopButton.setOnClickListener(v1 -> stopCapture());
+        mStartButton.setOnClickListener(view -> startCapture());
+        mStopButton.setOnClickListener(view -> stopCapture());
 
         return v;
     }
