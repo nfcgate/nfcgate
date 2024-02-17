@@ -8,8 +8,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.tu_darmstadt.seemoo.nfcgate.nfc.chip.NfcChipGuess;
 
@@ -20,6 +22,7 @@ import de.tu_darmstadt.seemoo.nfcgate.nfc.chip.NfcChipGuess;
  * the chip name, otherwise falls back to the device node.
  */
 public class NXPDetector extends BaseConfigLineDetector {
+
     private final static Map<String, String> NXPChipMap = new HashMap<String, String>() {{
         // NXP chip codes as of 2023
         put("0x01","PN547C2");
@@ -34,6 +37,12 @@ public class NXPDetector extends BaseConfigLineDetector {
         put("0x0A","PN81T");
         put("0x0B","SN1X0");
         put("0x0C","SN2X0");
+    }};
+
+    // Different versions of libnfc use different keywords
+    private final static Set<String> NfcChipKeywords = new HashSet<String>() {{
+        add("NXP_NFC_CHIP");
+        add("NXP_NFC_CHIP_TYPE");
     }};
 
     @Override
@@ -69,7 +78,7 @@ public class NXPDetector extends BaseConfigLineDetector {
                 if (guess.chipName == null)
                     guess.chipName = "NXP Device " + formatNXPDeviceNode(keyVal.second);
             }
-            else if ("NXP_NFC_CHIP".equals(keyVal.first)) {
+            else if (NfcChipKeywords.contains(keyVal.first)) {
                 guess.improveConfidence(0.2f);
                 guess.chipName = "NXP " + resolveNXPChipCode(keyVal.second);
             }
