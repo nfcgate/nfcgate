@@ -18,9 +18,9 @@ public class ApduService extends HostApduService {
     private final NfcManager mNfcManager = NfcManager.getInstance();
 
     /**
-     * Returning an empty APDU response causes the hce service to wait
+     * Returning a null APDU response causes the hce service to wait
      */
-    private final byte[] DONT_RESPOND = new byte[]{};
+    private final byte[] RESPOND_LATER = null;
 
     public ApduService() {
         mNfcManager.setApduService(this);
@@ -43,7 +43,7 @@ public class ApduService extends HostApduService {
         mNfcManager.handleData(false, nfcdata);
 
         // Tell the HCE implementation to wait
-        return DONT_RESPOND;
+        return RESPOND_LATER;
     }
 
     @Override
