@@ -16,6 +16,7 @@
 
 // assert x, return on error
 #define ASSERT_X(x) do { if (!(x)) { return; } } while(0)
+#define ASSERT_S(x, s) do { if (!(x)) { s; } } while(0)
 // assert x, print to error log, execute statement
 #define LOG_ASSERT_S(x, s, ...) do { if (!(x)) { _LOG_PRINT(__VA_ARGS__); s; } } while(0)
 #define LOG_ASSERT(x, ...) LOG_ASSERT_S(x, /*unused*/, __VA_ARGS__)

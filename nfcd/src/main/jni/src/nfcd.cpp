@@ -55,12 +55,7 @@ tNFC_STATUS hook_NFC_SetConfig(uint8_t tlv_size, uint8_t *p_param_tlvs) {
     auto result = globals.hNFC_SetConfig->call<def_NFC_SetConfig>(actual.total(), bin_stream.get());
 
     // fix hook if needed
-    if (!globals.hookDynamicEnabled) {
-        if (globals.tryHookNFACB())
-            LOGI("hook_NFC_SetConfig: Delayed hook success");
-        else
-            LOGW("hook_NFC_SetConfig: Failed to establish late p_conn_cback hook");
-    }
+    globals.installHooks();
 
     globals.hNFC_SetConfig->postcall();
     return result;
@@ -104,7 +99,7 @@ tNFC_STATUS hook_NFC_DiscoveryStart(uint8_t num_params, tNCI_DISCOVER_PARAMS *p_
 tNFA_STATUS hook_NFA_Enable(void *p_dm_cback, void *p_conn_cback) {
     globals.hNFA_Enable->precall();
 
-    std::lock_guard<std::mutex> lock(globals.nfaConnCBackMutex);
+    std::lock_guard<std::mutex> lock(globals.hookInstallMutex);
     LOGD("hook_NFA_Enable: Hooking p_conn_cback");
 
     // save original callback, replace with hook callback
@@ -113,12 +108,10 @@ tNFA_STATUS hook_NFA_Enable(void *p_dm_cback, void *p_conn_cback) {
 
     // call original function with hook connection callback
     auto result = globals.hNFA_Enable->call<decltype(hook_NFA_Enable)>(p_dm_cback, p_conn_cback);
-    if (!globals.hookDynamicEnabled) {
+    if (shouldTry(globals.hookDynamicResult)) {
         LOGI("hook_NFA_Enable: Delayed hook success");
-        globals.hookDynamicEnabled = true;
+        globals.hookDynamicResult = HookResult::SUCCESS;
     }
-    else
-        LOGW("hook_NFA_Enable: Double hook detected");
 
     globals.hNFA_Enable->postcall();
     return result;
@@ -142,56 +135,122 @@ tNFC_STATUS hook_ce_select_t4t() {
     return r;
 }
 
-HookGlobals::HookGlobals() {
-    LOG_ASSERT_S(mapInfo.create(), return, "Could not create map");
+HookResult HookGlobals::installHooks() {
+    std::lock_guard<std::mutex> lock(hookInstallMutex);
 
-    // check if NCI library exists and is readable + is loaded
-    mLibrary = findLibNFC();
-    LOG_ASSERT_S(!mLibrary.empty(), return, "Library not found or not accessible");
+    // setup hooking if needed
+    if (shouldTry(hookSetupResult)) {
+        hookSetupResult = setupHooking();
+        if (hookSetupResult != HookResult::SUCCESS)
+            LOGW("Hooking setup failed with %d", static_cast<int>(hookSetupResult));
+        else
+            LOGI("Hooking setup success");
+    }
+    // install static hooks if needed
+    if (hookSetupResult == HookResult::SUCCESS && shouldTry(hookStaticResult)) {
+        hookStaticResult = installStaticHooks();
+        if (hookStaticResult != HookResult::SUCCESS)
+            LOGW("Hooking static hooks failed with %d", static_cast<int>(hookStaticResult));
+        else
+            LOGI("Hooking static hooks success");
+    }
+    // install dynamic hooks if needed
+    if (hookStaticResult == HookResult::SUCCESS && shouldTry(hookDynamicResult)) {
+        hookDynamicResult = installDynamicHooks();
+        if (hookDynamicResult != HookResult::SUCCESS)
+            LOGW("Hooking dynamic hooks failed with %d, may be delayed (waiting for NFA_Enable or NFC_SetConfig)",
+                 static_cast<int>(hookDynamicResult));
+        else
+            LOGI("Hooking dynamic hooks success");
+    }
 
-    LOGI("Library found at %s", mLibrary.c_str());
-    mLibraryRe = "^" + StringUtil::escapeBRE(mLibrary) + "$";
+    // check for errors in ascending order of priority, unknown state implies a previous error
+    auto results = {hookSetupResult, hookStaticResult, hookDynamicResult};
+    if (anyMatches(results, HookResult::ERROR_FATAL))
+        return HookResult::ERROR_FATAL;
+    else if (anyMatches(results, HookResult::ERROR_RETRY))
+        return HookResult::ERROR_RETRY;
+
+    return HookResult::SUCCESS;
+}
+
+HookResult HookGlobals::setupHooking() {
+    // create library map info
+    LOG_ASSERT_S(mapInfo.create(), return HookResult::ERROR_FATAL, "Could not create map");
+
+    // check if NCI library exists and is loaded
+    if (mLibrary.empty()) {
+        mLibrary = findLibNFC();
+        LOG_ASSERT_S(!mLibrary.empty(), return HookResult::ERROR_RETRY, "Library not found or not accessible");
+
+        LOGI("Library found at %s", mLibrary.c_str());
+        mLibraryRe = "^" + StringUtil::escapeBRE(mLibrary) + "$";
+    }
 
     // create library symbol table
-    LOG_ASSERT_S(symbolTable.create(mLibrary), return, "Building symbol table failed");
+    LOG_ASSERT_S(symbolTable.create(mLibrary), return HookResult::ERROR_FATAL, "Building symbol table failed");
 
     // try to obtain handle of already loaded library
-    mHandle = dlopen(mLibrary.c_str(), RTLD_NOLOAD);
-    LOG_ASSERT_S(mHandle, return, "Could not obtain library handle");
+    if (!mHandle) {
+        mHandle = dlopen(mLibrary.c_str(), RTLD_NOLOAD);
+        LOG_ASSERT_S(mHandle, return HookResult::ERROR_FATAL, "Could not obtain library handle");
+    }
 
+    return HookResult::SUCCESS;
+}
+
+HookResult HookGlobals::installStaticHooks() {
     // begin installing hooks
     IHook::init();
     {
         // NFC/NFA main functions
-        ASSERT_X(hNFC_SetConfig = hookSymbol("NFC_SetConfig", (void *)&hook_NFC_SetConfig));
-        ASSERT_X(hNFC_DiscoveryStart = hookSymbol("NFC_DiscoveryStart", (void *)&hook_NFC_DiscoveryStart));
+        ASSERT_HOOK(hookSymbol(hNFC_SetConfig, "NFC_SetConfig", (void *) &hook_NFC_SetConfig));
+        ASSERT_HOOK(hookSymbol(hNFC_DiscoveryStart, "NFC_DiscoveryStart", (void *)&hook_NFC_DiscoveryStart));
 
-        ASSERT_X(hNFA_Enable = hookSymbol("NFA_Enable", (void *)&hook_NFA_Enable));
+        ASSERT_HOOK(hookSymbol(hNFA_Enable, "NFA_Enable", (void *)&hook_NFA_Enable));
 
         // discovery
-        ASSERT_X(hNFA_StartRfDiscovery = lookupSymbol("NFA_StartRfDiscovery"));
-        ASSERT_X(hNFA_StopRfDiscovery = lookupSymbol("NFA_StopRfDiscovery"));
+        ASSERT_HOOK(hNFA_StartRfDiscovery = lookupSymbol("NFA_StartRfDiscovery"));
+        ASSERT_HOOK(hNFA_StopRfDiscovery = lookupSymbol("NFA_StopRfDiscovery"));
 
         // polling / listening
-        ASSERT_X(hNFA_EnablePolling = lookupSymbol("NFA_EnablePolling"));
-        ASSERT_X(hNFA_DisablePolling = lookupSymbol("NFA_DisablePolling"));
-        ASSERT_X(hNFA_EeModeSet = lookupSymbol("NFA_EeModeSet"));
-        ASSERT_X(hNFA_EeGetInfo = lookupSymbol("NFA_EeGetInfo"));
+        ASSERT_HOOK(hNFA_EnablePolling = lookupSymbol("NFA_EnablePolling"));
+        ASSERT_HOOK(hNFA_DisablePolling = lookupSymbol("NFA_DisablePolling"));
+        ASSERT_HOOK(hNFA_EeModeSet = lookupSymbol("NFA_EeModeSet"));
+        ASSERT_HOOK(hNFA_EeGetInfo = lookupSymbol("NFA_EeGetInfo"));
 
         // NFC routing
-        ASSERT_X(hce_select_t4t = hookSymbol("ce_select_t4t", (void *)&hook_ce_select_t4t));
-        ASSERT_X(hce_cb = lookupSymbol("ce_cb"));
+        ASSERT_HOOK(hookSymbol(hce_select_t4t, "ce_select_t4t", (void *)&hook_ce_select_t4t));
+        ASSERT_HOOK(hce_cb = lookupSymbol("ce_cb"));
 
         // NFA callback
-        ASSERT_X(nfa_dm_cb = lookupSymbol("nfa_dm_cb"));
-        if (!tryHookNFACB())
-            LOGW("Hooking NFA_CB failed, hook may be delayed (waiting for NFA_Enable or NFC_SetConfig)");
+        ASSERT_HOOK(nfa_dm_cb = lookupSymbol("nfa_dm_cb"));
     }
     // finish installing hooks
-    LOG_ASSERT_S(IHook::finish(), return, "Hooking install failed");
+    LOG_ASSERT_S(IHook::finish(), return HookResult::ERROR_FATAL, "Hooking install failed");
 
-    // save hook success
-    hookStaticEnabled = true;
+    return HookResult::SUCCESS;
+}
+
+HookResult HookGlobals::installDynamicHooks() {
+    uint32_t offset = findNFACBOffset();
+    LOG_ASSERT_S(offset != 0, return HookResult::ERROR_RETRY, "Finding p_conn_cback offset failed");
+
+    auto **p_nfa_conn_cback = (def_NFA_CONN_CBACK **) (nfa_dm_cb->address<uint8_t>() + offset);
+    LOG_ASSERT_S(*p_nfa_conn_cback, return HookResult::ERROR_RETRY, "NFA_CB is null");
+
+    // ensure to hook only once
+    if (*p_nfa_conn_cback != &hook_nfaConnectionCallback) {
+        LOGD("installDynamicHooks: Hooking NFA_CB");
+
+        // save old nfa connection callback
+        origNfaConnCBack = *p_nfa_conn_cback;
+        // set new nfa connection callback
+        *p_nfa_conn_cback = &hook_nfaConnectionCallback;
+    } else
+        LOGD("installDynamicHooks: NFA_CB already hooked");
+
+    return HookResult::SUCCESS;
 }
 
 std::string HookGlobals::findLibNFC() const {
@@ -247,42 +306,18 @@ uint32_t HookGlobals::findNFACBOffset() {
     return 0;
 }
 
-bool HookGlobals::tryHookNFACB() {
-    std::lock_guard<std::mutex> lock(nfaConnCBackMutex);
-
-    if (!hookDynamicEnabled) {
-        uint32_t offset = findNFACBOffset();
-        LOG_ASSERT_S(offset != 0, return false, "Finding p_conn_cback offset failed");
-
-        auto **p_nfa_conn_cback = (def_NFA_CONN_CBACK **) (nfa_dm_cb->address<uint8_t>() + offset);
-        LOG_ASSERT_S(*p_nfa_conn_cback, return false, "NFA_CB is null");
-
-        // ensure to hook only once
-        if (*p_nfa_conn_cback != &hook_nfaConnectionCallback) {
-            LOGD("tryHookNFACB: Hooking NFA_CB");
-
-            // save old nfa connection callback
-            origNfaConnCBack = *p_nfa_conn_cback;
-            // set new nfa connection callback
-            *p_nfa_conn_cback = &hook_nfaConnectionCallback;
-        } else
-            LOGD("tryHookNFACB: NFA_CB already hooked");
-
-        // save hook success
-        hookDynamicEnabled = true;
-    }
-
-    return true;
-}
-
 Symbol_ref HookGlobals::lookupSymbol(const std::string &name) const {
     Symbol_ref result(new Symbol(name, mHandle));
     LOG_ASSERT_S(result->valid(), return nullptr, "Symbol lookup failed for %s", name.c_str());
     return result;
 }
 
-IHook_ref HookGlobals::hookSymbol(const std::string &name, void *hook) const {
-    auto result = IHook::hook(name, hook, mHandle, mLibraryRe);
-    LOG_ASSERT_S(result->isHooked(), return nullptr, "Hooking failed for %s", name.c_str());
+IHook_ref HookGlobals::hookSymbol(IHook_ref &result, const std::string &name, void *hook) const {
+    if (!result || !result->isHooked()) {
+        auto temp = IHook::hook(name, hook, mHandle, mLibraryRe);
+        LOG_ASSERT_S(temp->isHooked(), return nullptr, "Hooking failed for %s", name.c_str());
+        result = temp;
+    }
+
     return result;
 }

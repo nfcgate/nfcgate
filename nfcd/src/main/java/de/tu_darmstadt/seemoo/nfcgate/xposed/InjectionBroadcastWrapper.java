@@ -25,7 +25,6 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
 
         // load our native library
         loadForeignLibrary(ctx, "de.tu_darmstadt.seemoo.nfcgate", "nfcgate");
-        Log.i("HOOKNFC", isHookEnabled() ? "Native hook success" : "Native hook failed (for now)");
 
         // start broadcast receiver on handler thread
         HandlerThread ht = new HandlerThread("ht");
@@ -35,10 +34,22 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
         } else {
             ctx.registerReceiver(this, new IntentFilter("de.tu_darmstadt.seemoo.nfcgate.daemoncall"), null, new Handler(ht.getLooper()));
         }
+
+        // try to install our hooks, schedule retry if needed
+        if (installHooks() == HookResult.ERROR_RETRY)
+            new Handler(ht.getLooper()).postDelayed(this::installHooks, 3000);
     }
 
-    public boolean isHookEnabled() {
-        return Native.Instance.isHookEnabled();
+    public HookResult installHooks() {
+        HookResult result = HookResult.fromValue(Native.Instance.installHooks());
+        if (result == HookResult.ERROR_FATAL)
+            Log.e("HOOKNFC", "Native hook failed (fatal)");
+        else if (result == HookResult.ERROR_RETRY)
+            Log.i("HOOKNFC", "Native hook failed (for now)");
+        else
+            Log.i("HOOKNFC", "Native hook success");
+
+        return result;
     }
 
     /** @noinspection unused*/
@@ -83,11 +94,11 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
                 mCaptured.clear();
             }
         }
-        else if ("GET_HOOK_STATUS".equals(op)) {
+        else if ("INSTALL_HOOKS".equals(op)) {
             // deliver hook status
             mCtx.startActivity(makeResponseIntent()
                     .putExtra("type", "HOOK_STATUS")
-                    .putExtra("hookEnabled", isHookEnabled()));
+                    .putExtra("hookEnabled", installHooks() == HookResult.SUCCESS));
         }
     }
 

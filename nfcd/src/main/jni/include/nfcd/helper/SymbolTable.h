@@ -9,8 +9,11 @@
 class SymbolTable {
 public:
     bool create(const std::string &library) {
-        LOG_ASSERT_S(parse(library), return false, "Symbol table missing from library");
-        return true;
+        if (!mCreated)
+            if (!(mCreated = parse(library)))
+                LOGE("Symbol table missing from library %s", library.c_str());
+
+        return mCreated;
     }
 
     bool contains(const std::string &name) const {
@@ -36,6 +39,7 @@ public:
 protected:
     bool parse(const std::string &library);
 
+    bool mCreated = false;
     // symbol name -> symbol size
     std::unordered_map<std::string, unsigned long> mSymbols;
     // demangled symbol name -> (mangled) symbol name

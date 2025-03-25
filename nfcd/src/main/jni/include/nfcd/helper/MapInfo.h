@@ -37,6 +37,7 @@ public:
     LookupResult lookupRange(uintptr_t address, uint64_t size = 0) const;
 
 protected:
+    bool mCreated = false;
     std::unordered_map<std::string, LibraryData> mLibraryData;
 };
 

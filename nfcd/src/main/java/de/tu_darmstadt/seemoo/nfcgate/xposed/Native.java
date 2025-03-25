@@ -6,7 +6,7 @@ public class Native {
     }
     static final Native Instance;
 
-    public native boolean isHookEnabled();
+    public native int installHooks();
     public native boolean isPatchEnabled();
     public native void setConfig(byte[] config);
     public native void resetConfig();

@@ -7,6 +7,9 @@
 #include <link.h>
 
 bool MapInfo::create() {
+    if (mCreated)
+        return true;
+
     int rv = dl_iterate_phdr([] (struct dl_phdr_info *info, size_t, void *user_data) {
         auto *instance = (MapInfo *)user_data;
 
@@ -32,7 +35,7 @@ bool MapInfo::create() {
     }, this);
     LOG_ASSERT_S(rv == 0, return false, "Error iterating dl program header");
 
-    return true;
+    return (mCreated = true);
 }
 
 std::set<std::string> MapInfo::loadedLibraries() const {

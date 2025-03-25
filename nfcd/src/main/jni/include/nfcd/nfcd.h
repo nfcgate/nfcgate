@@ -27,17 +27,31 @@ using def_NFA_EeGetInfo = tNFA_STATUS(uint8_t* p_num_nfcee, void * p_info);
 using def_NFA_CONN_CBACK = void(uint8_t event, void *data);
 using def_ce_select_t4t = decltype(hook_ce_select_t4t);
 
+enum class HookResult : int {
+    SUCCESS = 0,
+    ERROR_RETRY = 1,
+    ERROR_FATAL = 2,
+    UNKNOWN = 3,
+};
+#define ASSERT_HOOK(x) ASSERT_S(x, return HookResult::ERROR_FATAL)
+
+inline bool shouldTry(HookResult result) {
+    return result == HookResult::UNKNOWN || result == HookResult::ERROR_RETRY;
+}
+inline bool anyMatches(const std::initializer_list<HookResult> &results, HookResult search) {
+    return std::any_of(results.begin(), results.end(),[=](HookResult r) { return r == search; });
+}
+
 class HookGlobals {
 public:
-    HookGlobals();
-
     Config origValues, hookValues;
     EventQueue eventQueue;
     SymbolTable symbolTable;
     MapInfo mapInfo;
 
-    bool hookStaticEnabled = false;
-    bool hookDynamicEnabled = false;
+    HookResult hookSetupResult = HookResult::UNKNOWN;
+    HookResult hookStaticResult = HookResult::UNKNOWN;
+    HookResult hookDynamicResult = HookResult::UNKNOWN;
 
     bool patchEnabled = false;
     bool guardEnabled = true;
@@ -59,20 +73,24 @@ public:
     Symbol_ref hNFA_EeGetInfo;
 
     def_NFA_CONN_CBACK *origNfaConnCBack = nullptr;
-    std::mutex nfaConnCBackMutex;
+    std::mutex hookInstallMutex;
 
-    bool tryHookNFACB();
+    HookResult installHooks();
 
 protected:
+    HookResult setupHooking();
+    HookResult installStaticHooks();
+    HookResult installDynamicHooks();
+
     std::string findLibNFC() const;
 
     bool checkNFACBOffset(uint32_t offset) const;
     uint32_t findNFACBOffset();
 
     Symbol_ref lookupSymbol(const std::string &name) const;
-    IHook_ref hookSymbol(const std::string &name, void *hook) const;
+    IHook_ref hookSymbol(IHook_ref &result, const std::string &name, void *hook) const;
 
-    void *mHandle;
+    void *mHandle = nullptr;
     std::string mLibrary, mLibraryRe;
 };
 

@@ -2,7 +2,6 @@ package de.tu_darmstadt.seemoo.nfcgate.nfc.hce;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import java.util.Date;
 
@@ -74,16 +73,16 @@ public class DaemonManager {
     }
 
     /**
-     * Queries the daemon for the current hook status
+     * Lazily installs hooks if needed, receives the current hook status
      */
-    public void beginGetHookEnabled() {
-        send(getIntent("GET_HOOK_STATUS"));
+    public void beginInstallHooks() {
+        send(getIntent("INSTALL_HOOKS"));
     }
 
     public void onResume() {
         // debounce getting hook status because receiving the response also triggers onResume
-        if (mLastResponse == null || (new Date().getTime() - mLastResponse.getTime()) > 1000)
-            beginGetHookEnabled();
+        if (mLastResponse == null || (new Date().getTime() - mLastResponse.getTime()) > 5000)
+            beginInstallHooks();
     }
 
     private Intent getIntent(String op) {
