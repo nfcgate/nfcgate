@@ -124,7 +124,7 @@ protected:
 
         auto *header = relocate<DTGnuHeader>(hash_vaddr);
         const uint8_t* bucketsAddress =
-                (uint8_t *)header + sizeof(DTGnuHeader) + (sizeof(uint64_t) * header->bloom_size);
+                (uint8_t *)header + sizeof(DTGnuHeader) + (sizeof(ElfW(Addr)) * header->bloom_size);
 
         // Locate the chain that handles the largest index bucket.
         uint32_t lastSymbol = 0;
