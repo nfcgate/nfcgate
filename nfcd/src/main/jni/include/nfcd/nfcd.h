@@ -76,6 +76,7 @@ public:
     std::mutex hookInstallMutex;
 
     HookResult installHooks();
+    HookResult hookStatus();
 
 protected:
     HookResult setupHooking();

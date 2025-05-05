@@ -164,6 +164,10 @@ HookResult HookGlobals::installHooks() {
             LOGI("Hooking dynamic hooks success");
     }
 
+    return hookStatus();
+}
+
+HookResult HookGlobals::hookStatus() {
     // check for errors in ascending order of priority, unknown state implies a previous error
     auto results = {hookSetupResult, hookStaticResult, hookDynamicResult};
     if (anyMatches(results, HookResult::ERROR_FATAL))

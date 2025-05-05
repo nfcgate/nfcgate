@@ -70,7 +70,7 @@ void nfaDisablePolling() {
 
 void disableEEs() {
     for (uint16_t eeHandle : globals.eeManager.findActiveEEs()) {
-        LOGD("Deactivating EE: %x", eeHandle);
+        LOGD("[nfcd] Deactivating EE: %x", eeHandle);
 
         globals.hNFA_EeModeSet->call<def_NFA_EeModeSet>(eeHandle, NFA_EE_MD_DEACTIVATE);
         usleep(25000);
@@ -80,7 +80,7 @@ void disableEEs() {
 }
 void reenableEEs() {
     for (uint16_t eeHandle : globals.eeManager.deactivatedEEs()) {
-        LOGD("Re-activating EE: %x", eeHandle);
+        LOGD("[nfcd] Re-activating EE: %x", eeHandle);
 
         globals.hNFA_EeModeSet->call<def_NFA_EeModeSet>(eeHandle, NFA_EE_MD_ACTIVATE);
         usleep(25000);
@@ -117,6 +117,12 @@ extern "C" {
     }
 
     JNIEXPORT void JNICALL Java_de_tu_1darmstadt_seemoo_nfcgate_xposed_Native_setConfig(JNIEnv *env, jobject, jbyteArray config) {
+        // early return if hook not fully installed
+        if (globals.hookStatus() != HookResult::SUCCESS) {
+            LOGE("[nfcd] Failed to set config because native hook is not fully installed");
+            return;
+        }
+
         // parse config value stream
         jsize config_len = env->GetArrayLength(config);
         jbyte *config_data = env->GetByteArrayElements(config, nullptr);
@@ -145,6 +151,12 @@ extern "C" {
     }
 
     JNIEXPORT void JNICALL Java_de_tu_1darmstadt_seemoo_nfcgate_xposed_Native_resetConfig(JNIEnv *, jobject) {
+        // early return if hook not fully installed
+        if (globals.hookStatus() != HookResult::SUCCESS) {
+            LOGE("[nfcd] Failed to set config because native hook is not fully installed");
+            return;
+        }
+
         if (globals.patchEnabled) {
             // stop re-routing AIDs and limiting discovery types
             globals.patchEnabled = false;
