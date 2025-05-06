@@ -10,6 +10,7 @@
 
 class Symbol {
 public:
+    explicit Symbol(const std::string &name);
     explicit Symbol(const std::string &name, void *libraryHandle);
 
     template <typename Fn, typename... Args>

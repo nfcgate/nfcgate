@@ -1,8 +1,11 @@
 #include <nfcd/nfcd.h>
-#include <link.h>
+#include <android/dlext.h>
 #include <dlfcn.h>
+#include <link.h>
 
 HookGlobals globals;
+
+using def_get_exported_namespace = android_namespace_t*(const char *name);
 
 void hook_nfaConnectionCallback(uint8_t event, void *eventData) {
     auto eventName = System::nfaEventName(event);
@@ -178,6 +181,28 @@ HookResult HookGlobals::hookStatus() {
     return HookResult::SUCCESS;
 }
 
+void *HookGlobals::getLibraryHandle(const char *filename) const {
+    int flag = RTLD_NOW | RTLD_NOLOAD;
+
+    // try with standard dlopen first
+    if (void *result = dlopen(filename, flag)) {
+        LOGI("Library %s handle found in global or current namespace", filename);
+        return result;
+    }
+
+    // if the symbol is available, try using the list of known namespaces
+    if (getExportedNamespace->valid()) {
+        for (const char *nsName : KNOWN_NAMESPACES) {
+            if (void *result = dlopenWithNamespace(filename, flag, nsName)) {
+                LOGI("Library %s handle found in namespace %s", filename, nsName);
+                return result;
+            }
+        }
+    }
+
+    return nullptr;
+}
+
 HookResult HookGlobals::setupHooking() {
     // create library map info
     LOG_ASSERT_S(mapInfo.create(), return HookResult::ERROR_FATAL, "Could not create map");
@@ -194,9 +219,12 @@ HookResult HookGlobals::setupHooking() {
     // create library symbol table
     LOG_ASSERT_S(symbolTable.create(mLibrary), return HookResult::ERROR_FATAL, "Building symbol table failed");
 
+    // try to lookup namespace symbol (only available on Android >= 15)
+    getExportedNamespace = std::make_shared<Symbol>("android_get_exported_namespace");
+
     // try to obtain handle of already loaded library
     if (!mHandle) {
-        mHandle = dlopen(mLibrary.c_str(), RTLD_NOLOAD);
+        mHandle = getLibraryHandle(mLibrary.c_str());
         LOG_ASSERT_S(mHandle, return HookResult::ERROR_FATAL, "Could not obtain library handle");
     }
 
@@ -308,6 +336,19 @@ uint32_t HookGlobals::findNFACBOffset() {
     }
 
     return 0;
+}
+
+void *HookGlobals::dlopenWithNamespace(const char *filename, int flag, const char *nsName) const {
+    if (auto *ns = getExportedNamespace->call<def_get_exported_namespace>(nsName)) {
+        android_dlextinfo info = {
+                .flags = ANDROID_DLEXT_USE_NAMESPACE,
+                .library_namespace = ns
+        };
+
+        return android_dlopen_ext(filename, flag, &info);
+    }
+
+    return nullptr;
 }
 
 Symbol_ref HookGlobals::lookupSymbol(const std::string &name) const {
