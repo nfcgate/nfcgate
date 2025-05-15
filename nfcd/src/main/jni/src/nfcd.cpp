@@ -319,8 +319,11 @@ bool HookGlobals::checkNFACBOffset(uint32_t offset) const {
          *p_nfa_conn_cback, lookup.range->perms, lookup.library->label.c_str());
     LOG_ASSERT_S((lookup.range->perms & 1) == 1, return false,
                  "p_conn_cback permissions not execute, offset likely invalid");
-    LOG_ASSERT_S(StringUtil::strContains(StringUtil::toLower(lookup.library->label), "jni"), return false,
-                 "p_conn_cback not in JNI object, offset likely invalid");
+    auto lowerCaseLabel = StringUtil::toLower(lookup.library->label);
+    LOG_ASSERT_S(StringUtil::strContains(lowerCaseLabel, "jni") ||
+                 StringUtil::strContains(lowerCaseLabel, "nfc") ||
+                 StringUtil::strContains(lowerCaseLabel, "nci"),
+                 return false, "p_conn_cback not in JNI object, offset likely invalid");
 
     LOGD("checkOffset: success");
     return true;
