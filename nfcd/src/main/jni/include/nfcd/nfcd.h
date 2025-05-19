@@ -44,10 +44,18 @@ inline bool anyMatches(const std::initializer_list<HookResult> &results, HookRes
 
 class HookGlobals {
 public:
+    static constexpr const char *KNOWN_NAMESPACES[] = {
+        "default",
+        "system",
+        "sphal",
+        "product",
+    };
+
     Config origValues, hookValues;
     EventQueue eventQueue;
     SymbolTable symbolTable;
     MapInfo mapInfo;
+    Symbol_ref getExportedNamespace;
 
     HookResult hookSetupResult = HookResult::UNKNOWN;
     HookResult hookStaticResult = HookResult::UNKNOWN;
@@ -87,9 +95,11 @@ protected:
     HookResult installDynamicHooks();
 
     std::string findLibNFC() const;
+    void *getLibraryHandle(const char *filename) const;
 
     bool checkNFACBOffset(uint32_t offset) const;
     uint32_t findNFACBOffset();
+    void *dlopenWithNamespace(const char *filename, int flag, const char *nsName) const;
 
     void *mHandle = nullptr;
     std::string mLibrary, mLibraryRe;

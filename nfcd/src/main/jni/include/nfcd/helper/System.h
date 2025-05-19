@@ -73,7 +73,8 @@ public:
         O_1 = 26,       //< Oreo (8.0.0)
         O_2 = 27,       //< Oreo (8.1.0)
         P = 28,         //< Pie (9)
-        Q = 29,         //< Android10 (10)
+        Q = 29,         //< Quince Tart (10)
+        V = 35,         //< Vanilla Ice Cream (15)
     };
 
     static int sdkInt();

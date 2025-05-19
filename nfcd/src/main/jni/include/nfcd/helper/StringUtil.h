@@ -16,6 +16,13 @@ public:
     static bool strContains(const std::string &s, const std::string &q) {
         return s.find(q) != std::string::npos;
     }
+    static bool strContainsAny(const std::string &s, const std::initializer_list<std::string> &qs) {
+        for (auto &q : qs)
+            if (strContains(s, q))
+                return true;
+
+        return false;
+    }
     static bool strStartsWith(const std::string &s, const std::string &q) {
         return q.size() <= s.size() && std::equal(q.begin(), q.end(), s.begin());
     }
