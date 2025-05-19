@@ -79,6 +79,9 @@ public:
     HookResult hookStatus();
 
 protected:
+    friend class Symbol;
+    friend class IHook;
+
     HookResult setupHooking();
     HookResult installStaticHooks();
     HookResult installDynamicHooks();
@@ -87,9 +90,6 @@ protected:
 
     bool checkNFACBOffset(uint32_t offset) const;
     uint32_t findNFACBOffset();
-
-    Symbol_ref lookupSymbol(const std::string &name) const;
-    IHook_ref hookSymbol(IHook_ref &result, const std::string &name, void *hook) const;
 
     void *mHandle = nullptr;
     std::string mLibrary, mLibraryRe;

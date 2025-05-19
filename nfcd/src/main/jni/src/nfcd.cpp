@@ -208,27 +208,27 @@ HookResult HookGlobals::installStaticHooks() {
     IHook::init();
     {
         // NFC/NFA main functions
-        ASSERT_HOOK(hookSymbol(hNFC_SetConfig, "NFC_SetConfig", (void *) &hook_NFC_SetConfig));
-        ASSERT_HOOK(hookSymbol(hNFC_DiscoveryStart, "NFC_DiscoveryStart", (void *)&hook_NFC_DiscoveryStart));
+        ASSERT_HOOK(IHook::hookOnce(hNFC_SetConfig, "NFC_SetConfig", (void *) &hook_NFC_SetConfig));
+        ASSERT_HOOK(IHook::hookOnce(hNFC_DiscoveryStart, "NFC_DiscoveryStart", (void *)&hook_NFC_DiscoveryStart));
 
-        ASSERT_HOOK(hookSymbol(hNFA_Enable, "NFA_Enable", (void *)&hook_NFA_Enable));
+        ASSERT_HOOK(IHook::hookOnce(hNFA_Enable, "NFA_Enable", (void *)&hook_NFA_Enable));
 
         // discovery
-        ASSERT_HOOK(hNFA_StartRfDiscovery = lookupSymbol("NFA_StartRfDiscovery"));
-        ASSERT_HOOK(hNFA_StopRfDiscovery = lookupSymbol("NFA_StopRfDiscovery"));
+        ASSERT_HOOK(hNFA_StartRfDiscovery = Symbol::findInLibrary("NFA_StartRfDiscovery"));
+        ASSERT_HOOK(hNFA_StopRfDiscovery = Symbol::findInLibrary("NFA_StopRfDiscovery"));
 
         // polling / listening
-        ASSERT_HOOK(hNFA_EnablePolling = lookupSymbol("NFA_EnablePolling"));
-        ASSERT_HOOK(hNFA_DisablePolling = lookupSymbol("NFA_DisablePolling"));
-        ASSERT_HOOK(hNFA_EeModeSet = lookupSymbol("NFA_EeModeSet"));
-        ASSERT_HOOK(hNFA_EeGetInfo = lookupSymbol("NFA_EeGetInfo"));
+        ASSERT_HOOK(hNFA_EnablePolling = Symbol::findInLibrary("NFA_EnablePolling"));
+        ASSERT_HOOK(hNFA_DisablePolling = Symbol::findInLibrary("NFA_DisablePolling"));
+        ASSERT_HOOK(hNFA_EeModeSet = Symbol::findInLibrary("NFA_EeModeSet"));
+        ASSERT_HOOK(hNFA_EeGetInfo = Symbol::findInLibrary("NFA_EeGetInfo"));
 
         // NFC routing
-        ASSERT_HOOK(hookSymbol(hce_select_t4t, "ce_select_t4t", (void *)&hook_ce_select_t4t));
-        ASSERT_HOOK(hce_cb = lookupSymbol("ce_cb"));
+        ASSERT_HOOK(IHook::hookOnce(hce_select_t4t, "ce_select_t4t", (void *)&hook_ce_select_t4t));
+        ASSERT_HOOK(hce_cb = Symbol::findInLibrary("ce_cb"));
 
         // NFA callback
-        ASSERT_HOOK(nfa_dm_cb = lookupSymbol("nfa_dm_cb"));
+        ASSERT_HOOK(nfa_dm_cb = Symbol::findInLibrary("nfa_dm_cb"));
     }
     // finish installing hooks
     LOG_ASSERT_S(IHook::finish(), return HookResult::ERROR_FATAL, "Hooking install failed");
@@ -308,20 +308,4 @@ uint32_t HookGlobals::findNFACBOffset() {
     }
 
     return 0;
-}
-
-Symbol_ref HookGlobals::lookupSymbol(const std::string &name) const {
-    Symbol_ref result(new Symbol(name, mHandle));
-    LOG_ASSERT_S(result->valid(), return nullptr, "Symbol lookup failed for %s", name.c_str());
-    return result;
-}
-
-IHook_ref HookGlobals::hookSymbol(IHook_ref &result, const std::string &name, void *hook) const {
-    if (!result || !result->isHooked()) {
-        auto temp = IHook::hook(name, hook, mHandle, mLibraryRe);
-        LOG_ASSERT_S(temp->isHooked(), return nullptr, "Hooking failed for %s", name.c_str());
-        result = temp;
-    }
-
-    return result;
 }

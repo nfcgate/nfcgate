@@ -4,7 +4,13 @@
 #include <nfcd/hook/Symbol.h>
 
 class IHook : public Symbol {
+    static bool useXHook;
 public:
+    static void init();
+    static bool hookOnce(std::shared_ptr<IHook> &result, const std::string &name, void *hook);
+    static std::shared_ptr<IHook> hook(const std::string &name, void *hook, void *libraryHandle,
+                                       const std::string &reLibrary);
+    static bool finish();
     bool isHooked() const {
         return mHooked;
     }
@@ -17,15 +23,11 @@ public:
         return ((Fn*)mHookFn)(std::forward<Args>(args)...);
     }
 
-    static void init();
-    static std::shared_ptr<IHook> hook(const std::string &name, void *hook, void *libraryHandle,
-                       const std::string &reLibrary);
-    static bool finish();
-
 protected:
-    IHook(const std::string &name, void *hook, void *libraryHandle);
+    IHook(const std::string &name, void *hook, void *libraryHandle)
+            : Symbol(name, libraryHandle), mHookFn(hook) {
 
-    static bool useXHook;
+    }
 
     virtual void hookInternal() = 0;
 

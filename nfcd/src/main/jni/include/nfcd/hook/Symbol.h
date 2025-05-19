@@ -10,7 +10,8 @@
 
 class Symbol {
 public:
-    explicit Symbol(const std::string &name, void *libraryHandle);
+    static std::shared_ptr<Symbol> findDefault(const std::string &name);
+    static std::shared_ptr<Symbol> findInLibrary(const std::string &name);
 
     template <typename Fn, typename... Args>
     typename std::result_of<Fn*(Args...)>::type call(Args&&... args) {
@@ -22,13 +23,11 @@ public:
         return reinterpret_cast<T*>(mAddress);
     }
 
-    bool valid() const {
-        return mAddress != nullptr;
-    }
-
 protected:
-    void *mAddress = nullptr;
+    Symbol(const std::string &name, void *address) : mName(name), mAddress(address) { }
+
     std::string mName;
+    void *mAddress = nullptr;
 };
 
 using Symbol_ref = std::shared_ptr<Symbol>;
