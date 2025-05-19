@@ -241,6 +241,12 @@ public class MainActivity extends AppCompatActivity {
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .show();
     }
+    /**
+     * Display an informational Toast with the specified message
+     */
+    public void showInfo(String info) {
+        Toast.makeText(this, info, Toast.LENGTH_SHORT).show();
+    }
 
     public NfcManager getNfc() {
         return mNfc;

@@ -19,6 +19,7 @@ import de.tu_darmstadt.seemoo.nfcgate.nfc.hce.ApduService;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.hce.DaemonManager;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.modes.BaseMode;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.reader.NFCTagReader;
+import de.tu_darmstadt.seemoo.nfcgate.nfc.reader.NfcAReader;
 import de.tu_darmstadt.seemoo.nfcgate.util.NfcComm;
 
 public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Callback {
@@ -201,8 +202,12 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     public void onTagDiscovered(Tag tag) {
         // Select technology by tag
         mReader = NFCTagReader.create(tag);
-
         Log.i(TAG, "Discovered new Tag: " + mReader.getClass().getName());
+
+        // if the highest found tech is A and not IsoDep:
+        // Static Tag data emulation likely unsupported (e.g. Mifare Classic/Ultralight)
+        if (mReader instanceof NfcAReader)
+            mActivity.showInfo("Found likely unsupported Tag");
 
         // connect to tag
         mReader.connect();
