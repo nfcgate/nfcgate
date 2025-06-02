@@ -29,7 +29,7 @@ public class STDetector extends BaseConfigLineDetector {
             if ("NCI_HAL_MODULE".equals(keyVal.first)) {
                 String device = "/dev/" + keyVal.second.replace("nfc_nci.", "");
                 // existence of this device node confirms this is (or is not) the correct config
-                if (!fileExists(device))
+                if (!fileExists(device) || "/dev/null".equals(device))
                     return false;
 
                 guess.confidence = 0.9f;

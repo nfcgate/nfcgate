@@ -71,7 +71,7 @@ public class NXPDetector extends BaseConfigLineDetector {
         if (keyVal != null) {
             if ("NXP_NFC_DEV_NODE".equals(keyVal.first)) {
                 // existence of this device node confirms this is (or is not) the correct config
-                if (!fileExists(keyVal.second))
+                if (!fileExists(keyVal.second) || "/dev/null".equals(keyVal.second))
                     return false;
 
                 guess.improveConfidence(0.9f);

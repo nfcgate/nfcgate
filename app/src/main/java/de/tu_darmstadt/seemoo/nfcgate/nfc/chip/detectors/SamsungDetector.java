@@ -27,9 +27,8 @@ public class SamsungDetector extends BaseConfigLineDetector {
 
         if (keyVal != null) {
             if ("TRANS_DRIVER".equals(keyVal.first)) {
-                String device = keyVal.second;
                 // existence of this device node confirms this is (or is not) the correct config
-                if (!fileExists(device))
+                if (!fileExists(keyVal.second) || "/dev/null".equals(keyVal.second))
                     return false;
 
                 guess.confidence = 0.9f;

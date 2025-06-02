@@ -26,7 +26,7 @@ public class BRCMDetector extends BaseConfigLineDetector {
         if (keyVal != null) {
             if ("TRANSPORT_DRIVER".equals(keyVal.first)) {
                 // the existence of this device node confirms this is (or is not) the correct config
-                if (!fileExists(keyVal.second))
+                if (!fileExists(keyVal.second) || "/dev/null".equals(keyVal.second))
                     return false;
 
                 guess.confidence = 0.9f;
