@@ -181,52 +181,21 @@ HookResult HookGlobals::hookStatus() {
     return HookResult::SUCCESS;
 }
 
-void *HookGlobals::getLibraryHandle(const char *filename) const {
-    int flag = RTLD_NOW | RTLD_NOLOAD;
-
-    // try with standard dlopen first
-    if (void *result = dlopen(filename, flag)) {
-        LOGI("Library %s handle found in global or current namespace", filename);
-        return result;
-    }
-
-    // if the getExportedNamespace symbol is available, try using the list of known namespaces
-    if (getExportedNamespace) {
-        for (const char *nsName : KNOWN_NAMESPACES) {
-            if (void *result = dlopenWithNamespace(filename, flag, nsName)) {
-                LOGI("Library %s handle found in namespace %s", filename, nsName);
-                return result;
-            }
-        }
-    }
-
-    return nullptr;
-}
-
 HookResult HookGlobals::setupHooking() {
     // create library map info
     LOG_ASSERT_S(mapInfo.create(), return HookResult::ERROR_FATAL, "Could not create map");
-
-    // check if NCI library exists and is loaded
-    if (mLibrary.empty()) {
-        mLibrary = findLibNFC();
-        LOG_ASSERT_S(!mLibrary.empty(), return HookResult::ERROR_RETRY, "Library not found or not accessible");
-
-        LOGI("Library found at %s", mLibrary.c_str());
-        mLibraryRe = "^" + StringUtil::escapeBRE(mLibrary) + "$";
-    }
-
-    // create library symbol table
-    LOG_ASSERT_S(symbolTable.create(mLibrary), return HookResult::ERROR_FATAL, "Building symbol table failed");
 
     // try to lookup namespace symbol (only required on Android >= 15)
     if (System::sdkInt() >= System::SdkVersion::V)
         getExportedNamespace = Symbol::findDefault("android_get_exported_namespace");
 
-    // try to obtain handle of already loaded library
-    if (!mHandle) {
-        mHandle = getLibraryHandle(mLibrary.c_str());
-        LOG_ASSERT_S(mHandle, return HookResult::ERROR_FATAL, "Could not obtain library handle");
+    // check if NCI library exists and is loaded
+    if (mLibNFC.empty()) {
+        const auto candidate = findLibNFC();
+        LOG_ASSERT_S(candidate, return HookResult::ERROR_RETRY, "Library not found or not accessible");
+
+        mLibNFC = candidate.value();
+        LOGI("Library found at %s", mLibNFC.name().c_str());
     }
 
     return HookResult::SUCCESS;
@@ -243,21 +212,21 @@ HookResult HookGlobals::installStaticHooks() {
         ASSERT_HOOK(IHook::hookOnce(hNFA_Enable, "NFA_Enable", (void *)&hook_NFA_Enable));
 
         // discovery
-        ASSERT_HOOK(hNFA_StartRfDiscovery = Symbol::findInLibrary("NFA_StartRfDiscovery"));
-        ASSERT_HOOK(hNFA_StopRfDiscovery = Symbol::findInLibrary("NFA_StopRfDiscovery"));
+        ASSERT_HOOK(hNFA_StartRfDiscovery = findInLibNFC("NFA_StartRfDiscovery"));
+        ASSERT_HOOK(hNFA_StopRfDiscovery = findInLibNFC("NFA_StopRfDiscovery"));
 
         // polling / listening
-        ASSERT_HOOK(hNFA_EnablePolling = Symbol::findInLibrary("NFA_EnablePolling"));
-        ASSERT_HOOK(hNFA_DisablePolling = Symbol::findInLibrary("NFA_DisablePolling"));
-        ASSERT_HOOK(hNFA_EeModeSet = Symbol::findInLibrary("NFA_EeModeSet"));
-        ASSERT_HOOK(hNFA_EeGetInfo = Symbol::findInLibrary("NFA_EeGetInfo"));
+        ASSERT_HOOK(hNFA_EnablePolling = findInLibNFC("NFA_EnablePolling"));
+        ASSERT_HOOK(hNFA_DisablePolling = findInLibNFC("NFA_DisablePolling"));
+        ASSERT_HOOK(hNFA_EeModeSet = findInLibNFC("NFA_EeModeSet"));
+        ASSERT_HOOK(hNFA_EeGetInfo = findInLibNFC("NFA_EeGetInfo"));
 
         // NFC routing
         ASSERT_HOOK(IHook::hookOnce(hce_select_t4t, "ce_select_t4t", (void *)&hook_ce_select_t4t));
-        ASSERT_HOOK(hce_cb = Symbol::findInLibrary("ce_cb"));
+        ASSERT_HOOK(hce_cb = findInLibNFC("ce_cb"));
 
         // NFA callback
-        ASSERT_HOOK(nfa_dm_cb = Symbol::findInLibrary("nfa_dm_cb"));
+        ASSERT_HOOK(nfa_dm_cb = findInLibNFC("nfa_dm_cb"));
     }
     // finish installing hooks
     LOG_ASSERT_S(IHook::finish(), return HookResult::ERROR_FATAL, "Hooking install failed");
@@ -286,25 +255,49 @@ HookResult HookGlobals::installDynamicHooks() {
     return HookResult::SUCCESS;
 }
 
-std::string HookGlobals::findLibNFC() const {
-    for (const auto &candidate : mapInfo.loadedLibraries()) {
-        LOGD("findLibNFC: candidate: %s", candidate.c_str());
-
-        // library path must contain "nfc" case insensitive somewhere
-        if (!StringUtil::strContains(StringUtil::toLower(candidate), "nfc"))
-            continue;
-
-        LOGD("findLibNFC: candidate contains 'nfc', checking symbols: %s", candidate.c_str());
-
-        // library symbol table must contain the expected symbol
-        SymbolTable table;
-        if (table.create(candidate) && table.contains("NFC_SetConfig")) {
-            LOGD("findLibNFC: candidate contains symbol 'NFC_SetConfig': %s", candidate.c_str());
+static std::optional<LoadedLibraryInfo> selectJNICandidate(const std::vector<LoadedLibraryInfo> &candidates) {
+    // if there are multiple candidates containing NFC_SetConfig, select the JNI library
+    for (const auto &candidate : candidates) {
+        // check if the candidate is a JNI library by looking for JNI_OnLoad
+        if (Symbol::findInLibrary(candidate.handle(), candidate.symbolTable(), "JNI_OnLoad"))
             return candidate;
-        }
     }
 
-    return "";
+    // there are multiple candidates, but none is a JNI library -> error
+    return std::nullopt;
+}
+
+std::optional<LoadedLibraryInfo> HookGlobals::findLibNFC() const {
+    std::vector<LoadedLibraryInfo> finalists;
+
+    for (const auto &libPath : mapInfo.loadedLibraries()) {
+        LoadedLibraryInfo candidate(libPath);
+        LOGD("findLibNFC: candidate: %s", candidate.name().c_str());
+
+        // condition 1: library path must contain "nfc" case insensitive somewhere
+        if (!StringUtil::strContains(StringUtil::toLower(candidate.name()), "nfc"))
+            continue;
+        LOGD("findLibNFC: candidate contains 'nfc', checking symbols: %s", candidate.name().c_str());
+
+        // condition 2: library symbol table must contain the expected symbol
+        if (!candidate.createSymbolTable() || !candidate.symbolTable().contains("NFC_SetConfig"))
+            continue;
+        LOGD("findLibNFC: candidate contains symbol 'NFC_SetConfig': %s", candidate.name().c_str());
+
+        // condition 3: library handle must be found
+        if (!candidate.findLibraryHandle())
+            continue;
+        LOGD("findLibNFC: candidate handle found: %s", candidate.name().c_str());
+
+        finalists.push_back(candidate);
+    }
+
+    if (finalists.empty())
+        return std::nullopt;
+    else if (finalists.size() == 1)
+        return finalists.front();
+    else
+        return selectJNICandidate(finalists);
 }
 
 bool HookGlobals::checkNFACBOffset(uint32_t offset) const {
@@ -346,6 +339,32 @@ uint32_t HookGlobals::findNFACBOffset() {
     }
 
     return 0;
+}
+
+Symbol_ref HookGlobals::findInLibNFC(const std::string &name) const {
+    return Symbol::findInLibrary(mLibNFC.handle(), mLibNFC.symbolTable(), name);
+}
+
+void *HookGlobals::getLibraryHandle(const char *filename) const {
+    int flag = RTLD_NOW | RTLD_NOLOAD;
+
+    // try with standard dlopen first
+    if (void *result = dlopen(filename, flag)) {
+        LOGI("Library %s handle found in global or current namespace", filename);
+        return result;
+    }
+
+    // if the getExportedNamespace symbol is available, try using the list of known namespaces
+    if (getExportedNamespace) {
+        for (const char *nsName : KNOWN_NAMESPACES) {
+            if (void *result = dlopenWithNamespace(filename, flag, nsName)) {
+                LOGI("Library %s handle found in namespace %s", filename, nsName);
+                return result;
+            }
+        }
+    }
+
+    return nullptr;
 }
 
 void *HookGlobals::dlopenWithNamespace(const char *filename, int flag, const char *nsName) const {

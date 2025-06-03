@@ -8,10 +8,13 @@
 
 #include <nfcd/error.h>
 
+class SymbolTable;
+
 class Symbol {
 public:
     static std::shared_ptr<Symbol> findDefault(const std::string &name);
-    static std::shared_ptr<Symbol> findInLibrary(const std::string &name);
+    static std::shared_ptr<Symbol> findInLibrary(void *libraryHandle, const SymbolTable &symbolTable,
+                                                 const std::string &name);
 
     template <typename Fn, typename... Args>
     typename std::result_of<Fn*(Args...)>::type call(Args&&... args) {

@@ -17,7 +17,7 @@ void IHook::init() {
 
 bool IHook::hookOnce(std::shared_ptr<IHook> &result, const std::string &name, void *hook) {
     if (!result || !result->isHooked()) {
-        auto temp = IHook::hook(name, hook, globals.mHandle, globals.mLibraryRe);
+        auto temp = IHook::hook(name, hook, globals.mLibNFC.handle(), globals.mLibNFC.regex());
         LOG_ASSERT_S(temp->isHooked(), return false, "Hooking failed for %s", name.c_str());
         result = temp;
     }

@@ -11,9 +11,9 @@ Symbol_ref Symbol::findDefault(const std::string &name) {
     return Symbol_ref(new Symbol(name, address));
 }
 
-Symbol_ref Symbol::findInLibrary(const std::string &name) {
-    const auto demangledName = globals.symbolTable.getName(name);
-    void *address = dlsym(globals.mHandle, demangledName.c_str());
+Symbol_ref Symbol::findInLibrary(void *libraryHandle, const SymbolTable &symbolTable, const std::string &name) {
+    const auto demangledName = symbolTable.getName(name);
+    void *address = dlsym(libraryHandle, demangledName.c_str());
     LOG_ASSERT_S(address, return {}, "Missing library symbol: %s", name.c_str());
 
     return Symbol_ref(new Symbol(name, address));

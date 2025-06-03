@@ -12,7 +12,7 @@ ADBIHook::ADBIHook(const std::string &name, void *hookFn, void *libraryHandle) :
 
 void ADBIHook::hookInternal() {
     // get symbol alignment
-    mAlignment = globals.symbolTable.getSize(mName);
+    mAlignment = globals.mLibNFC.symbolTable().getSize(mName);
     // construct trampoline for this architecture
     LOG_ASSERT_S(constructTrampoline(), return, "Trampoline construction failed");
     // unprotect the region

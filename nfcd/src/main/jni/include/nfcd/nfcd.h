@@ -4,6 +4,7 @@
 #include <nfcd/helper/Config.h>
 #include <nfcd/helper/EEManager.h>
 #include <nfcd/helper/EventQueue.h>
+#include <nfcd/helper/LoadedLibraryInfo.h>
 #include <nfcd/helper/MapInfo.h>
 #include <nfcd/helper/StringUtil.h>
 #include <nfcd/helper/StructSizeProber.h>
@@ -51,11 +52,11 @@ public:
         "product",
     };
 
-    Config origValues, hookValues;
-    EventQueue eventQueue;
-    SymbolTable symbolTable;
     MapInfo mapInfo;
     Symbol_ref getExportedNamespace;
+
+    Config origValues, hookValues;
+    EventQueue eventQueue;
 
     HookResult hookSetupResult = HookResult::UNKNOWN;
     HookResult hookStaticResult = HookResult::UNKNOWN;
@@ -87,22 +88,24 @@ public:
     HookResult hookStatus();
 
 protected:
-    friend class Symbol;
+    friend class ADBIHook;
     friend class IHook;
+    friend class LoadedLibraryInfo;
+    friend class Symbol;
 
     HookResult setupHooking();
     HookResult installStaticHooks();
     HookResult installDynamicHooks();
 
-    std::string findLibNFC() const;
-    void *getLibraryHandle(const char *filename) const;
-
+    std::optional<LoadedLibraryInfo> findLibNFC() const;
     bool checkNFACBOffset(uint32_t offset) const;
     uint32_t findNFACBOffset();
+
+    Symbol_ref findInLibNFC(const std::string &name) const;
+    void *getLibraryHandle(const char *filename) const;
     void *dlopenWithNamespace(const char *filename, int flag, const char *nsName) const;
 
-    void *mHandle = nullptr;
-    std::string mLibrary, mLibraryRe;
+    LoadedLibraryInfo mLibNFC;
 };
 
 extern HookGlobals globals;
