@@ -3,7 +3,7 @@ name: Android CI
 on:
   push:
     # only run for v2 branch
-    branches: [ "v2" ]
+    branches: [ "*" ]
   pull_request:
     # only when targeting v2 branch
     branches: [ "v2" ]
