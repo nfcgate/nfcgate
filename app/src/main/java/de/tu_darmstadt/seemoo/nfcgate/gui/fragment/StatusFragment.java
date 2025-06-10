@@ -18,6 +18,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.tu_darmstadt.seemoo.nfcgate.R;
 import de.tu_darmstadt.seemoo.nfcgate.gui.component.CustomArrayAdapter;
 import de.tu_darmstadt.seemoo.nfcgate.gui.component.ContentShare;
@@ -162,9 +165,36 @@ public class StatusFragment extends BaseFragment {
         return result;
     }
 
+    Map<Integer, String> ANDROID_VERSION_CODENAMES_MAP = new HashMap<>() {{
+        put(Build.VERSION_CODES.LOLLIPOP, "Lollipop");
+        put(Build.VERSION_CODES.LOLLIPOP_MR1, "Lollipop");
+        put(Build.VERSION_CODES.M, "Marshmallow");
+        put(Build.VERSION_CODES.N, "Nougat");
+        put(Build.VERSION_CODES.N_MR1, "Nougat");
+        put(Build.VERSION_CODES.O, "Oreo");
+        put(Build.VERSION_CODES.O_MR1, "Oreo");
+        put(Build.VERSION_CODES.P, "Pie");
+        put(Build.VERSION_CODES.Q, "Quince Tart");
+        put(Build.VERSION_CODES.R, "Red Velvet Cake");
+        put(Build.VERSION_CODES.S, "Snow Cone");
+        put(Build.VERSION_CODES.S_V2, "Snow Cone v2");
+        put(Build.VERSION_CODES.TIRAMISU, "Tiramisu");
+        put(Build.VERSION_CODES.UPSIDE_DOWN_CAKE, "Upside Down Cake");
+        put(Build.VERSION_CODES.VANILLA_ICE_CREAM, "Vanilla Ice Cream");
+        put(36 /* Build.VERSION_CODES.BAKLAVA */, "Baklava"); // 36 is the latest version as of June 2025
+    }};
+
     StatusItem detectAndroidVersion() {
+        // get android version codename for the current SDK_INT or use "Unknown" if not found
+        String versionCodeName = ANDROID_VERSION_CODENAMES_MAP.containsKey(Build.VERSION.SDK_INT) ?
+                ANDROID_VERSION_CODENAMES_MAP.get(Build.VERSION.SDK_INT) : getString(R.string.status_unknown);
+        // assemble the version number, codename and SDK_INT into a single string in the format:
+        // "<versionNumber> <codeName> (<SDK_INT>)", e.g. "10 Quince Tart (29)"
+        String versionText = getString(R.string.status_version_text, Build.VERSION.RELEASE,
+                versionCodeName, Build.VERSION.SDK_INT);
+
         // android version should be OK for all supported versions
-        StatusItem result = new StatusItem(getContext(), getString(R.string.status_version)).setValue(Build.VERSION.RELEASE);
+        StatusItem result = new StatusItem(getContext(), getString(R.string.status_version)).setValue(versionText);
 
         // Android 16 and above is untested
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.VANILLA_ICE_CREAM)
