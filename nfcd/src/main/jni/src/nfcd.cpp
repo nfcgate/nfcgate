@@ -25,7 +25,7 @@ void hook_nfaConnectionCallback(uint8_t event, void *eventData) {
  * Prevent already set values from being overwritten.
  */
 tNFC_STATUS hook_NFC_SetConfig(uint8_t tlv_size, uint8_t *p_param_tlvs) {
-    globals.hNFC_SetConfig->precall();
+    globals.hNFC_SetConfig->preCall();
 
     LOGI("hook_NFC_SetConfig: filtering config stream");
 
@@ -60,12 +60,12 @@ tNFC_STATUS hook_NFC_SetConfig(uint8_t tlv_size, uint8_t *p_param_tlvs) {
     // fix hook if needed
     globals.installHooks();
 
-    globals.hNFC_SetConfig->postcall();
+    globals.hNFC_SetConfig->postCall();
     return result;
 }
 
 tNFC_STATUS hook_NFC_DiscoveryStart(uint8_t num_params, tNCI_DISCOVER_PARAMS *p_params, void* p_cback) {
-    globals.hNFC_DiscoveryStart->precall();
+    globals.hNFC_DiscoveryStart->preCall();
 
     LOGI("hook_NFC_DiscoveryStart: Begin: %d, %p", num_params, p_params);
 
@@ -95,12 +95,12 @@ tNFC_STATUS hook_NFC_DiscoveryStart(uint8_t num_params, tNCI_DISCOVER_PARAMS *p_
     auto res = globals.hNFC_DiscoveryStart->call<def_NFC_DiscoveryStart>(num_params, p_params, p_cback);
     LOGI("hook_NFC_DiscoveryStart: Result: %x", res);
 
-    globals.hNFC_DiscoveryStart->postcall();
+    globals.hNFC_DiscoveryStart->postCall();
     return res;
 }
 
 tNFA_STATUS hook_NFA_Enable(void *p_dm_cback, void *p_conn_cback) {
-    globals.hNFA_Enable->precall();
+    globals.hNFA_Enable->preCall();
 
     std::lock_guard<std::mutex> lock(globals.hookInstallMutex);
     LOGD("hook_NFA_Enable: Hooking p_conn_cback");
@@ -116,12 +116,12 @@ tNFA_STATUS hook_NFA_Enable(void *p_dm_cback, void *p_conn_cback) {
         globals.hookDynamicResult = HookResult::SUCCESS;
     }
 
-    globals.hNFA_Enable->postcall();
+    globals.hNFA_Enable->postCall();
     return result;
 }
 
 tNFC_STATUS hook_ce_select_t4t() {
-    globals.hce_select_t4t->precall();
+    globals.hce_select_t4t->preCall();
 
     LOGD("hook_ce_select_t4t()");
     LOGD("Patch enabled: %d", globals.patchEnabled);
@@ -134,7 +134,7 @@ tNFC_STATUS hook_ce_select_t4t() {
         *ce_cb_status |= CE_T4T_STATUS_WILDCARD_AID_SELECTED;
     }
 
-    globals.hce_select_t4t->postcall();
+    globals.hce_select_t4t->postCall();
     return r;
 }
 
@@ -187,7 +187,7 @@ HookResult HookGlobals::setupHooking() {
 
     // try to lookup namespace symbol (only required on Android >= 15)
     if (System::sdkInt() >= System::SdkVersion::V)
-        getExportedNamespace = Symbol::findDefault("android_get_exported_namespace");
+        getExportedNamespace = findDefaultSymbol("android_get_exported_namespace");
 
     // check if NCI library exists and is loaded
     if (mLibNFC.empty()) {
@@ -203,33 +203,32 @@ HookResult HookGlobals::setupHooking() {
 
 HookResult HookGlobals::installStaticHooks() {
     // begin installing hooks
-    IHook::init();
+    Hook::init();
     {
         // NFC/NFA main functions
-        ASSERT_HOOK(IHook::hookOnce(hNFC_SetConfig, "NFC_SetConfig", (void *) &hook_NFC_SetConfig));
-        ASSERT_HOOK(IHook::hookOnce(hNFC_DiscoveryStart, "NFC_DiscoveryStart", (void *)&hook_NFC_DiscoveryStart));
-
-        ASSERT_HOOK(IHook::hookOnce(hNFA_Enable, "NFA_Enable", (void *)&hook_NFA_Enable));
+        ASSERT_HOOK(mLibNFC.findAndHookOnce(hNFC_SetConfig, "NFC_SetConfig", (void *) &hook_NFC_SetConfig));
+        ASSERT_HOOK(mLibNFC.findAndHookOnce(hNFC_DiscoveryStart, "NFC_DiscoveryStart", (void *)&hook_NFC_DiscoveryStart));
+        ASSERT_HOOK(mLibNFC.findAndHookOnce(hNFA_Enable, "NFA_Enable", (void *)&hook_NFA_Enable));
 
         // discovery
-        ASSERT_HOOK(hNFA_StartRfDiscovery = findInLibNFC("NFA_StartRfDiscovery"));
-        ASSERT_HOOK(hNFA_StopRfDiscovery = findInLibNFC("NFA_StopRfDiscovery"));
+        ASSERT_HOOK(hNFA_StartRfDiscovery = mLibNFC.findSymbol("NFA_StartRfDiscovery"));
+        ASSERT_HOOK(hNFA_StopRfDiscovery = mLibNFC.findSymbol("NFA_StopRfDiscovery"));
 
         // polling / listening
-        ASSERT_HOOK(hNFA_EnablePolling = findInLibNFC("NFA_EnablePolling"));
-        ASSERT_HOOK(hNFA_DisablePolling = findInLibNFC("NFA_DisablePolling"));
-        ASSERT_HOOK(hNFA_EeModeSet = findInLibNFC("NFA_EeModeSet"));
-        ASSERT_HOOK(hNFA_EeGetInfo = findInLibNFC("NFA_EeGetInfo"));
+        ASSERT_HOOK(hNFA_EnablePolling = mLibNFC.findSymbol("NFA_EnablePolling"));
+        ASSERT_HOOK(hNFA_DisablePolling = mLibNFC.findSymbol("NFA_DisablePolling"));
+        ASSERT_HOOK(hNFA_EeModeSet = mLibNFC.findSymbol("NFA_EeModeSet"));
+        ASSERT_HOOK(hNFA_EeGetInfo = mLibNFC.findSymbol("NFA_EeGetInfo"));
 
         // NFC routing
-        ASSERT_HOOK(IHook::hookOnce(hce_select_t4t, "ce_select_t4t", (void *)&hook_ce_select_t4t));
-        ASSERT_HOOK(hce_cb = findInLibNFC("ce_cb"));
+        ASSERT_HOOK(mLibNFC.findAndHookOnce(hce_select_t4t, "ce_select_t4t", (void *)&hook_ce_select_t4t));
+        ASSERT_HOOK(hce_cb = mLibNFC.findSymbol("ce_cb"));
 
         // NFA callback
-        ASSERT_HOOK(nfa_dm_cb = findInLibNFC("nfa_dm_cb"));
+        ASSERT_HOOK(nfa_dm_cb = mLibNFC.findSymbol("nfa_dm_cb"));
     }
     // finish installing hooks
-    LOG_ASSERT_S(IHook::finish(), return HookResult::ERROR_FATAL, "Hooking install failed");
+    LOG_ASSERT_S(Hook::finish(), return HookResult::ERROR_FATAL, "Hooking install failed");
 
     return HookResult::SUCCESS;
 }
@@ -255,11 +254,11 @@ HookResult HookGlobals::installDynamicHooks() {
     return HookResult::SUCCESS;
 }
 
-static std::optional<LoadedLibraryInfo> selectJNICandidate(const std::vector<LoadedLibraryInfo> &candidates) {
+static std::optional<LoadedLibrary> selectJNICandidate(const std::vector<LoadedLibrary> &candidates) {
     // if there are multiple candidates containing NFC_SetConfig, select the JNI library
     for (const auto &candidate : candidates) {
         // check if the candidate is a JNI library by looking for JNI_OnLoad
-        if (Symbol::findInLibrary(candidate.handle(), candidate.symbolTable(), "JNI_OnLoad"))
+        if (candidate.findSymbol("JNI_OnLoad"))
             return candidate;
     }
 
@@ -267,11 +266,11 @@ static std::optional<LoadedLibraryInfo> selectJNICandidate(const std::vector<Loa
     return std::nullopt;
 }
 
-std::optional<LoadedLibraryInfo> HookGlobals::findLibNFC() const {
-    std::vector<LoadedLibraryInfo> finalists;
+std::optional<LoadedLibrary> HookGlobals::findLibNFC() const {
+    std::vector<LoadedLibrary> finalists;
 
     for (const auto &libPath : mapInfo.loadedLibraries()) {
-        LoadedLibraryInfo candidate(libPath);
+        LoadedLibrary candidate(libPath);
         LOGD("findLibNFC: candidate: %s", candidate.name().c_str());
 
         // condition 1: library path must contain "nfc" case insensitive somewhere
@@ -341,10 +340,6 @@ uint32_t HookGlobals::findNFACBOffset() {
     return 0;
 }
 
-Symbol_ref HookGlobals::findInLibNFC(const std::string &name) const {
-    return Symbol::findInLibrary(mLibNFC.handle(), mLibNFC.symbolTable(), name);
-}
-
 void *HookGlobals::getLibraryHandle(const char *filename) const {
     int flag = RTLD_NOW | RTLD_NOLOAD;
 
@@ -378,4 +373,10 @@ void *HookGlobals::dlopenWithNamespace(const char *filename, int flag, const cha
     }
 
     return nullptr;
+}
+
+Symbol_ref HookGlobals::findDefaultSymbol(const std::string &name) const {
+    auto result = std::make_shared<DefaultSymbol>(name);
+    LOG_ASSERT_S(result->isValid(), return {}, "Default symbol %s not found", name.c_str());
+    return result;
 }

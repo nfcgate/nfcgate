@@ -4,13 +4,13 @@
 #include <nfcd/helper/Config.h>
 #include <nfcd/helper/EEManager.h>
 #include <nfcd/helper/EventQueue.h>
-#include <nfcd/helper/LoadedLibraryInfo.h>
+#include <nfcd/helper/LoadedLibrary.h>
 #include <nfcd/helper/MapInfo.h>
 #include <nfcd/helper/StringUtil.h>
 #include <nfcd/helper/StructSizeProber.h>
 #include <nfcd/helper/SymbolTable.h>
 #include <nfcd/helper/System.h>
-#include <nfcd/hook/IHook.h>
+#include <nfcd/hook/Hook.h>
 
 extern tNFC_STATUS hook_NFC_SetConfig(uint8_t tlv_size, uint8_t *p_param_tlvs);
 extern tNFC_STATUS hook_NFC_DiscoveryStart(uint8_t num_params, tNCI_DISCOVER_PARAMS *p_params, void* p_cback);
@@ -68,10 +68,10 @@ public:
     EEManager eeManager;
     std::set<tNCI_DISCOVERY_TYPE> discoveryTypes;
 
-    IHook_ref hNFC_SetConfig;
-    IHook_ref hNFC_DiscoveryStart;
-    IHook_ref hNFA_Enable;
-    IHook_ref hce_select_t4t;
+    Hook_ref hNFC_SetConfig;
+    Hook_ref hNFC_DiscoveryStart;
+    Hook_ref hNFA_Enable;
+    Hook_ref hce_select_t4t;
     Symbol_ref nfa_dm_cb;
     Symbol_ref hce_cb;
     Symbol_ref hNFA_StopRfDiscovery;
@@ -88,24 +88,21 @@ public:
     HookResult hookStatus();
 
 protected:
-    friend class ADBIHook;
-    friend class IHook;
-    friend class LoadedLibraryInfo;
-    friend class Symbol;
+    friend LoadedLibrary;
 
     HookResult setupHooking();
     HookResult installStaticHooks();
     HookResult installDynamicHooks();
 
-    std::optional<LoadedLibraryInfo> findLibNFC() const;
+    std::optional<LoadedLibrary> findLibNFC() const;
     bool checkNFACBOffset(uint32_t offset) const;
     uint32_t findNFACBOffset();
 
-    Symbol_ref findInLibNFC(const std::string &name) const;
     void *getLibraryHandle(const char *filename) const;
     void *dlopenWithNamespace(const char *filename, int flag, const char *nsName) const;
+    Symbol_ref findDefaultSymbol(const std::string &name) const;
 
-    LoadedLibraryInfo mLibNFC;
+    LoadedLibrary mLibNFC;
 };
 
 extern HookGlobals globals;

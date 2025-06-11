@@ -1,32 +1,26 @@
 #ifndef NFCD_ADBIHOOK_H
 #define NFCD_ADBIHOOK_H
 
-#include <nfcd/hook/IHook.h>
+#include <nfcd/hook/Hook.h>
 
 // maximum trampoline size
 #define TR_MAX_SIZE 52
 
-class ADBIHook : public IHook {
+class ADBIHook : public Hook {
 public:
-    ADBIHook(const std::string &name, void *hook, void *libraryHandle);
+    ADBIHook(void *libraryHandle, const SymbolTable &symbolTable, const std::string &name, void *hookFn);
 
-    void precall() override;
-
-    void postcall() override;
+    void preCall() override;
+    void postCall() override;
 
 protected:
-    void hookInternal() override;
-
     bool constructTrampoline();
-
     bool swapTrampoline(bool install);
-
-    bool hookCacheflush();
-
+    bool hookCacheFlush();
     bool unprotect();
 
     // trampoline bytes, original bytes
-    uint8_t mTrampoline[TR_MAX_SIZE], mStored[TR_MAX_SIZE];
+    uint8_t mTrampoline[TR_MAX_SIZE] = {0}, mStored[TR_MAX_SIZE] = {0};
     // trampoline size, alignment size
     unsigned long mTrampolineSize = 0, mAlignment = 0;
     // thumb mode (unused for arm64)

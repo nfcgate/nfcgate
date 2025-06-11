@@ -5,14 +5,11 @@
 #include <nfcd/hook/impl/ADBIHook.h>
 #include <nfcd/hook/impl/arm64_cacheflush.h>
 
-ADBIHook::ADBIHook(const std::string &name, void *hookFn, void *libraryHandle) :
-        IHook(name, hookFn, libraryHandle) {
-    ADBIHook::hookInternal();
-}
+ADBIHook::ADBIHook(void *libraryHandle, const SymbolTable &symbolTable, const std::string &name, void *hookFn) :
+        Hook(libraryHandle, symbolTable, name, hookFn) {
 
-void ADBIHook::hookInternal() {
     // get symbol alignment
-    mAlignment = globals.mLibNFC.symbolTable().getSize(mName);
+    mAlignment = symbolTable.getSize(mName);
     // construct trampoline for this architecture
     LOG_ASSERT_S(constructTrampoline(), return, "Trampoline construction failed");
     // unprotect the region
@@ -24,20 +21,19 @@ void ADBIHook::hookInternal() {
     mHooked = true;
 }
 
-void ADBIHook::precall() {
-    IHook::precall();
+void ADBIHook::preCall() {
+    Hook::preCall();
 
     // uninstall trampoline while hook is running to avoid recursion
-    if (isHooked())
-        LOG_ASSERT(swapTrampoline(false), "Precall uninstall failed");
+    if (mHooked)
+        LOG_ASSERT(swapTrampoline(false), "PreCall uninstall failed");
 }
-
-void ADBIHook::postcall() {
-    IHook::postcall();
+void ADBIHook::postCall() {
+    Hook::postCall();
 
     // install trampoline again when hook is finished
-    if (isHooked())
-        LOG_ASSERT(swapTrampoline(true), "Postcall install failed");
+    if (mHooked)
+        LOG_ASSERT(swapTrampoline(true), "PostCall install failed");
 }
 
 bool ADBIHook::constructTrampoline() {
@@ -142,10 +138,10 @@ bool ADBIHook::swapTrampoline(bool install) {
     // install/restore trampoline bytes
     std::memcpy(symbol, install ? mTrampoline : mStored, mTrampolineSize);
     // flush cache in symbol
-    return hookCacheflush();
+    return hookCacheFlush();
 }
 
-bool ADBIHook::hookCacheflush() {
+bool ADBIHook::hookCacheFlush() {
     unsigned long begin = (unsigned long) mAddress;
     unsigned long end = begin + mTrampolineSize;
 

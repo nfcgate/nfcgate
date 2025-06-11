@@ -3,18 +3,23 @@
 
 #include <nfcd/nfcd.h>
 
-Symbol_ref Symbol::findDefault(const std::string &name) {
-    // find default symbol address
-    void *address = dlsym(RTLD_DEFAULT, name.c_str());
-    LOG_ASSERT_S(address, return {}, "Missing default symbol: %s", name.c_str());
+DefaultSymbol::DefaultSymbol(const std::string &globalName)
+        : Symbol(globalName, nullptr) {
 
-    return Symbol_ref(new Symbol(name, address));
+    // find default symbol address
+    mAddress = dlsym(RTLD_DEFAULT, mName.c_str());
+    LOG_ASSERT_S(mAddress, return, "Missing default symbol: %s", mName.c_str());
+
+    LOGI("Default symbol %s found at %p", mName.c_str(), mAddress);
 }
 
-Symbol_ref Symbol::findInLibrary(void *libraryHandle, const SymbolTable &symbolTable, const std::string &name) {
-    const auto demangledName = symbolTable.getName(name);
-    void *address = dlsym(libraryHandle, demangledName.c_str());
-    LOG_ASSERT_S(address, return {}, "Missing library symbol: %s", name.c_str());
+LibrarySymbol::LibrarySymbol(void *libraryHandle, const SymbolTable &symbolTable, const std::string &name)
+        : Symbol(name, nullptr) {
 
-    return Symbol_ref(new Symbol(name, address));
+    // find demangled name and address in the library
+    mDemangledName = symbolTable.getName(name);
+    mAddress = dlsym(libraryHandle, mDemangledName.c_str());
+    LOG_ASSERT_S(mAddress, return, "Missing library symbol: %s", name.c_str());
+
+    LOGI("Library symbol %s found at %p in library handle %p", mDemangledName.c_str(), mAddress, libraryHandle);
 }

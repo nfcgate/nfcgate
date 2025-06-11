@@ -1,15 +1,14 @@
 #ifndef NFCD_XHOOK_H
 #define NFCD_XHOOK_H
 
-#include <nfcd/hook/IHook.h>
+#include <nfcd/hook/Hook.h>
 
-class XHook : public IHook {
+class XHook : public Hook {
 public:
-    XHook(const std::string &name, void *hook, void *libraryHandle, const std::string &reLibrary);
+    XHook(void *libraryHandle, const SymbolTable &symbolTable, const std::string &name,
+          void *hookFn, const std::string &reLibrary);
 
 protected:
-    void hookInternal() override;
-
     std::string mReLibrary;
 };
 
