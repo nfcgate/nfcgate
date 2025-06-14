@@ -154,7 +154,7 @@ The initial NFCGate paper describing the first version of NFCGate can be cited a
 ## License
 
 ```
-   Copyright 2015-2024 NFCGate Team
+   Copyright 2015-2025 NFCGate Team
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
