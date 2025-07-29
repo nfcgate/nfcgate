@@ -42,7 +42,7 @@ public class Hooks implements IXposedHookLoadPackage {
             // indicate that the hook worked and the xposed module is active
             findAndHookMethod("de.tu_darmstadt.seemoo.nfcgate.nfc.NfcManager", lpparam.classLoader,
                     "isModuleLoaded", XC_MethodReplacement.returnConstant(true));
-        } else if ("com.android.nfc".equals(lpparam.packageName)) {
+        } else if ("com.android.nfc".equals(lpparam.packageName) || "com.google.android.nfc".equals(lpparam.packageName)) {
             // hook constructor to catch application context
             hookNfcServiceConstructor(lpparam.classLoader, new NfcServiceConstructorHook() {
                 @Override
