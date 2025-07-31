@@ -11,6 +11,16 @@
 
             android:summary="@string/settings_workaround_summary"
             />
+        <EditTextPreference
+            android:title="@string/settings_presence_interval"
+            android:key="presence_interval"
+
+            android:summary="@string/settings_presence_interval_summary"
+            android:dialogMessage="@string/settings_presence_interval_dialog"
+            android:inputType="number"
+            android:maxLength="5"
+            android:defaultValue="750"
+            />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/settings_network"

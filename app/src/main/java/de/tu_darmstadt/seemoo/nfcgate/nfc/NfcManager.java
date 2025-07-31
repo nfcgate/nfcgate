@@ -5,12 +5,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
+import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 
 import de.tu_darmstadt.seemoo.nfcgate.gui.MainActivity;
 import de.tu_darmstadt.seemoo.nfcgate.network.NetworkManager;
@@ -303,7 +306,12 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
                         NfcAdapter.FLAG_READER_NFC_V |
                         NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK;
 
-            mAdapter.enableReaderMode(mActivity, this, flags, null);
+            // assemble extras
+            Bundle extras = new Bundle();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+            extras.putInt(NfcAdapter.EXTRA_READER_PRESENCE_CHECK_DELAY, Integer.parseInt(prefs.getString("presence_interval", "750")));
+
+            mAdapter.enableReaderMode(mActivity, this, flags, extras);
         }
         else {
             mAdapter.disableReaderMode(mActivity);
