@@ -6,6 +6,8 @@ file(GLOB XH_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/xHook/libxhook/jni/*.c)
 set(XH_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/xHook/libxhook/jni/)
 add_library(xh STATIC ${XH_SOURCES})
 target_include_directories(xh PUBLIC ${XH_INCLUDE_DIR})
+# PAGE_SIZE macro is no longer defined in NDK >= r28, but xhook requires it. Define it by using the runtime functions.
+target_compile_definitions(xh PRIVATE "-DPAGE_SIZE=getpagesize()" "-DPAGE_MASK=~(PAGE_SIZE-1)")
 
 # find files
 file(GLOB_RECURSE NFCD_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
