@@ -49,7 +49,6 @@ public class ApduService extends HostApduService {
     @Override
     public void onDeactivated(int reason) {
         Log.i(TAG, "Deactivated: " + reason);
-        mNfcManager.setApduService(null);
     }
 
     public void sendResponse(byte[] apdu) {
