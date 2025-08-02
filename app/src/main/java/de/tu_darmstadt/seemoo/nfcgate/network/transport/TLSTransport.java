@@ -75,7 +75,7 @@ public class TLSTransport extends Transport {
         ((SSLSocket) mSocket).startHandshake();
 
         // verify the hostname, even though we do not use HTTPS, we can borrow the hostname verifier
-        if (!HttpsURLConnection.getDefaultHostnameVerifier().verify(mAddress.getHostName(), ((SSLSocket) mSocket).getSession()))
+        if (!HttpsURLConnection.getDefaultHostnameVerifier().verify(mAddress.getHostString(), ((SSLSocket) mSocket).getSession()))
             throw new SSLHandshakeException("Hostname in certificate does not match");
     }
 
