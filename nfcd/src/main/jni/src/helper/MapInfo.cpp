@@ -3,6 +3,8 @@
 
 #include <fstream>
 #include <regex>
+#include <cstring>
+#include <cstdio>
 
 #include <link.h>
 
@@ -13,8 +15,21 @@ bool MapInfo::create() {
     int rv = dl_iterate_phdr([] (struct dl_phdr_info *info, size_t, void *user_data) {
         auto *instance = (MapInfo *)user_data;
 
+        // Skip entries with null names to prevent crashes
+        if (!info->dlpi_name)
+            return 0;
+        
+        // Use memory address as unique identifier for entries with empty names
+        std::string libName;
+        if (strlen(info->dlpi_name) == 0) {
+            char addrStr[32];
+            snprintf(addrStr, sizeof(addrStr), "0x%lx", (unsigned long)info->dlpi_addr);
+            libName = addrStr;
+        } else
+            libName = info->dlpi_name;
+
         // map library name to new library entry with base address
-        auto &entry = *instance->mLibraryData.try_emplace(info->dlpi_name, info->dlpi_name).first;
+        auto &entry = *instance->mLibraryData.try_emplace(libName, libName).first;
         for (size_t i = 0; i < info->dlpi_phnum; i++) {
             // set base address to relocation + PT_LOAD vaddr if not already set
             // PT_LOAD headers are sorted in ascending vaddr order so using the first is correct
