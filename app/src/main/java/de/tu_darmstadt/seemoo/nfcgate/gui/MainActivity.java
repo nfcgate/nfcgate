@@ -87,13 +87,18 @@ public class MainActivity extends AppCompatActivity {
         // navbar setup actions
         mNavbar = findViewById(R.id.main_navigation);
         mNavbar.setNavigationItemSelectedListener(item -> {
-            onNavbarAction(item);
+            // do not reselect the same item, avoiding unnecessary fragment recreation
+            if (mNavbar.getCheckedItem() == item)
+                mDrawerLayout.closeDrawers();
+            else
+                onNavbarAction(item);
+
             return true;
         });
 
         // initially select clone mode
-        mNavbar.setCheckedItem(R.id.nav_clone);
         mNavbar.getMenu().performIdentifierAction(R.id.nav_clone, 0);
+        mNavbar.setCheckedItem(R.id.nav_clone);
 
         // NFC setup
         mNfc = new NfcManager(this);
