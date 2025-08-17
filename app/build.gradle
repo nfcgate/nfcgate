@@ -116,8 +116,8 @@ dependencies {
     implementation 'com.github.medyo:android-about-page:1.2.4'
 
     // Room
-    implementation 'androidx.room:room-runtime:2.3.0'
-    annotationProcessor 'androidx.room:room-compiler:2.3.0'
+    implementation 'androidx.room:room-runtime:2.7.2'
+    annotationProcessor 'androidx.room:room-compiler:2.7.2'
 
     // Lifecycle
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
