@@ -39,10 +39,20 @@ public enum OptionType {
 
     // LISTEN ISO-DEP
 
+        // [2.0] Frame waiting time and start-up frame guard time
+        LI_A_RATS_TB1(0x58),
         // Historical bytes (NCI spec calls this LI_A_HIST_BY)
         LA_HIST_BY(0x59),
         // Higher layer response field
         LB_H_INFO_RSP(0x5A),
+        // Configures (TA1) divisor bits up to specified bitrate
+        // 0x00 -> 106 -> 0b_0_000_0_000
+        // 0x01 -> 212 -> 0b_0_001_0_001
+        // 0x02 -> 424 -> 0b_0_011_0_011
+        // 0x03 -> 848 -> 0b_0_111_0_111
+        LI_A_BIT_RATE(0x5B),
+        // [2.0]: Protocol parameters, NAD/CID support
+        LI_A_RATS_TC1(0x5C)
     ;
 
     // implementation details

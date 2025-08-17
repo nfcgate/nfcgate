@@ -28,6 +28,10 @@ public class ConfigBuilder {
         mOptions.add(option);
     }
 
+    public void addAll(ConfigBuilder builder) {
+        mOptions.addAll(builder.getOptions());
+    }
+
     public List<ConfigOption> getOptions() {
         return mOptions;
     }
