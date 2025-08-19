@@ -19,38 +19,19 @@ import de.tu_darmstadt.seemoo.nfcgate.nfc.config.OptionType;
  * - Historical bytes (optional): Application-specific data
  */
 public final class ATS {
-    private final byte tl;
-    private final byte t0;
-    @Nullable
-    private final Byte ta;
-    @Nullable
-    private final Byte tb;
-    @Nullable
-    private final Byte tc;
-    private final byte[] historicalBytes;
-
     // T0 format byte bit masks
     private static final int TA_PRESENT = 0x10;   // TA(1) present (bit 5)
     private static final int TB_PRESENT = 0x20;   // TB(1) present (bit 6)
     private static final int TC_PRESENT = 0x40;   // TC(1) present (bit 7)
 
-    private ATS(byte tl, byte t0, @Nullable Byte ta, @Nullable Byte tb, @Nullable Byte tc, byte[] historicalBytes) {
-        this.tl = tl;
-        this.t0 = t0;
-        this.ta = ta;
-        this.tb = tb;
-        this.tc = tc;
-        this.historicalBytes = historicalBytes;
-    }
-
     /**
-     * Parse ATS bytes into an ATS object.
+     * Parse ATS bytes into NCI configuration
      *
      * @param atsBytes The complete ATS response bytes
-     * @return Parsed ATS object
+     * @return ConfigBuilder containing NCI configuration options that were extracted from the ATS data
      * @throws IllegalArgumentException if the ATS data is invalid
      */
-    public static ATS parse(byte[] atsBytes) {
+    public static ConfigBuilder parse(byte[] atsBytes) {
         if (atsBytes == null || atsBytes.length < 2) {
             throw new IllegalArgumentException("ATS must be at least 2 bytes (TL + T0)");
         }
@@ -60,70 +41,49 @@ public final class ATS {
             throw new IllegalArgumentException("ATS length mismatch: TL=" + tl + ", actual=" + atsBytes.length);
         }
 
+        ConfigBuilder builder = new ConfigBuilder();
+
         byte t0 = atsBytes[1];
         int offset = 2;
 
         // Parse optional interface bytes
-        Byte ta = null, tb = null, tc = null;
 
         if ((t0 & TA_PRESENT) != 0) {
             if (offset >= atsBytes.length) {
                 throw new IllegalArgumentException("ATS truncated: TA(1) expected but not present");
             }
-            ta = atsBytes[offset++];
+            byte ta = atsBytes[offset++];
+            // Set closest DR/DS bit config of TA(1) if present
+            builder.add(OptionType.LI_A_BIT_RATE, new byte[] { getClosestNciBitRateConfig(ta) });
         }
 
         if ((t0 & TB_PRESENT) != 0) {
             if (offset >= atsBytes.length) {
                 throw new IllegalArgumentException("ATS truncated: TB(1) expected but not present");
             }
-            tb = atsBytes[offset++];
+            byte tb = atsBytes[offset++];
+            // Add TB(1) if present - contains FWI and SFGI
+            builder.add(OptionType.LI_A_RATS_TB1, new byte[] { tb });
         }
 
         if ((t0 & TC_PRESENT) != 0) {
             if (offset >= atsBytes.length) {
                 throw new IllegalArgumentException("ATS truncated: TC(1) expected but not present");
             }
-            tc = atsBytes[offset++];
+            byte tc = atsBytes[offset++];
+            // Add TC(1) if present - contains CID/NAD support info
+            builder.add(OptionType.LI_A_RATS_TC1, new byte[] { tc });
         }
 
         // Extract historical bytes (remaining bytes)
         byte[] historical = new byte[atsBytes.length - offset - 1];
         if (historical.length > 0) {
             System.arraycopy(atsBytes, offset, historical, 0, historical.length);
-        }
+            // Add historical bytes if present
+            if (historical.length != 0) {
+                builder.add(OptionType.LA_HIST_BY, historical);
+            }
 
-        return new ATS((byte) tl, t0, ta, tb, tc, historical);
-    }
-
-    /**
-     * Get the NCI configuration from the ATS data.
-     * Extracts relevant configuration options that can be used for card emulation.
-     *
-     * @return ConfigBuilder containing NCI configuration options that were extracted from the ATS data
-     */
-    @NonNull
-    public ConfigBuilder getConfig() {
-        ConfigBuilder builder = new ConfigBuilder();
-
-        // Set closest DR/DS bit config of TA(1) if present
-        if (ta != null) {
-            builder.add(OptionType.LI_A_BIT_RATE, new byte[] { getClosestNciBitRateConfig(ta) });
-        }
-
-        // Add TB(1) if present - contains FWI and SFGI
-        if (tb != null) {
-            builder.add(OptionType.LI_A_RATS_TB1, new byte[] { tb });
-        }
-
-        // Add TC(1) if present - contains CID/NAD support info
-        if (tc != null) {
-            builder.add(OptionType.LI_A_RATS_TC1, new byte[] { tc });
-        }
-
-        // Add historical bytes if present
-        if (historicalBytes.length != 0) {
-            builder.add(OptionType.LA_HIST_BY, historicalBytes);
         }
 
         return builder;

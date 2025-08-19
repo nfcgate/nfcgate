@@ -44,10 +44,9 @@ public class IsoDepReader extends NFCTagReader {
         // an IsoDep tag can be backed by either NfcA or NfcB technology, build config accordingly
         if (mUnderlying instanceof NfcAReader) {
             // For NFC-A based ISO-DEP, try to get ATS data first
-            ATS ats = getAts();
-            if (ats != null) {
-                Log.i("IsoDepReader", "Adding ATS config");
-                builder.addAll(ats.getConfig());
+            ConfigBuilder configFromAts = getConfigFromAts();
+            if (configFromAts != null) {
+                builder.addAll(configFromAts);
             } else {
                 // Fallback to original logic if ATS retrieval fails
                 builder.add(OptionType.LA_HIST_BY, readerIsoDep.getHistoricalBytes());
@@ -61,10 +60,11 @@ public class IsoDepReader extends NFCTagReader {
 
     /**
      * Attempts to get the ATS (Answer To Select) response by issuing a RATS command manually
+     * and generating the NCI configuration matching to the extracted data
      * 
      * @return parsed ATS response object, or null if RATS command fails or not possible to execute
      */
-    public ATS getAts() {
+    public ConfigBuilder getConfigFromAts() {
         try {
             this.close();
             this.mUnderlying.connect();
