@@ -20,13 +20,7 @@ bool MapInfo::create() {
             return 0;
         
         // Use memory address as unique identifier for entries with empty names
-        std::string libName;
-        if (strlen(info->dlpi_name) == 0) {
-            char addrStr[32];
-            snprintf(addrStr, sizeof(addrStr), "0x%lx", (unsigned long)info->dlpi_addr);
-            libName = addrStr;
-        } else
-            libName = info->dlpi_name;
+        auto libName = info->dlpi_name[0] ? info->dlpi_name : "<" + std::to_string(info->dlpi_addr) + ">";
 
         // map library name to new library entry with base address
         auto &entry = *instance->mLibraryData.try_emplace(libName, libName).first;
