@@ -13,12 +13,25 @@
         android:layout_height="32dp"
         />
     <TextView
-        android:id="@+id/data"
+        android:id="@+id/command_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
 
         android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/type"
+
+        style="@style/Hexdump"
+        android:textColor="#FFA726"
+        android:textStyle="bold"
+        />
+    <TextView
+        android:id="@+id/data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+
+        android:layout_below="@+id/command_type"
         android:layout_toRightOf="@+id/type"
 
         style="@style/Hexdump"

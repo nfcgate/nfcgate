@@ -30,7 +30,9 @@ import de.tu_darmstadt.seemoo.nfcgate.db.model.SessionLogEntryViewModel;
 import de.tu_darmstadt.seemoo.nfcgate.db.model.SessionLogEntryViewModelFactory;
 import de.tu_darmstadt.seemoo.nfcgate.gui.component.CustomArrayAdapter;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.config.ConfigBuilder;
+import de.tu_darmstadt.seemoo.nfcgate.util.ApduClassifier;
 import de.tu_darmstadt.seemoo.nfcgate.util.NfcComm;
+import de.tu_darmstadt.seemoo.nfcgate.util.Utils;
 
 import static de.tu_darmstadt.seemoo.nfcgate.util.Utils.bytesToHexDump;
 
@@ -162,6 +164,8 @@ public class SessionLogEntryFragment extends Fragment {
     }
 
     private static class SessionLogEntryListAdapter extends CustomArrayAdapter<NfcComm> {
+        private String mPrevCommandType = "";
+
         SessionLogEntryListAdapter(@NonNull Context context, int resource) {
             super(context, resource);
         }
@@ -183,6 +187,25 @@ public class SessionLogEntryFragment extends Fragment {
 
             // set image indicating card or reader
             v.<ImageView>findViewById(R.id.type).setImageResource(byCard(comm.isCard()));
+
+            // classify APDU command type
+            String hexData = Utils.bytesToHex(comm.getData());
+            String commandType = ApduClassifier.classifyApdu(hexData, comm.isCard(), mPrevCommandType);
+
+            // update previous command type if this is a command (not a response)
+            if (!comm.isCard() && !commandType.equals("UNKNOWN")) {
+                mPrevCommandType = commandType;
+            }
+
+            // set command type
+            TextView commandTypeView = v.findViewById(R.id.command_type);
+            if (!commandType.equals("UNKNOWN") && !commandType.isEmpty()) {
+                commandTypeView.setText(commandType);
+                commandTypeView.setVisibility(View.VISIBLE);
+            } else {
+                commandTypeView.setVisibility(View.GONE);
+            }
+
             // set content to either config stream or binary content
             v.<TextView>findViewById(R.id.data).setText(byInitial(comm.isInitial(), comm.getData()));
             // set timestamp
