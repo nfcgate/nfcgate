@@ -101,6 +101,7 @@ dependencies {
     //This must *NOT* be included
     //compile fileTree(dir: 'libs', include: ['*.jar'])
 
+    implementation project(':common')
     implementation project(':nfcd')
     implementation project(':protobuf')
     implementation "com.google.protobuf:protobuf-javalite:${protobufVersion}"

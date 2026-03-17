@@ -2,7 +2,6 @@ package de.tu_darmstadt.seemoo.nfcgate.nfc.reader;
 
 import android.nfc.Tag;
 import android.nfc.tech.NfcB;
-import androidx.annotation.NonNull;
 
 import de.tu_darmstadt.seemoo.nfcgate.nfc.config.ConfigBuilder;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.config.OptionType;
@@ -20,7 +19,6 @@ public class NfcBReader extends NFCTagReader {
         super(NfcB.get(tag));
     }
 
-    @NonNull
     @Override
     public ConfigBuilder getConfig() {
         ConfigBuilder builder = new ConfigBuilder();

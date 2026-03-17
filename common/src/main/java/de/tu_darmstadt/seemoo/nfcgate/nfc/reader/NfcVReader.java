@@ -2,7 +2,6 @@ package de.tu_darmstadt.seemoo.nfcgate.nfc.reader;
 
 import android.nfc.Tag;
 import android.nfc.tech.NfcV;
-import androidx.annotation.NonNull;
 
 import de.tu_darmstadt.seemoo.nfcgate.nfc.config.ConfigBuilder;
 
@@ -19,7 +18,6 @@ public class NfcVReader extends NFCTagReader {
         super(NfcV.get(tag));
     }
 
-    @NonNull
     @Override
     public ConfigBuilder getConfig() {
         // TODO: V tags cannot be emulated (yet)

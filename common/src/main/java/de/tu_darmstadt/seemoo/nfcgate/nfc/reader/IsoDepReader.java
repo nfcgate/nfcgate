@@ -3,8 +3,6 @@ package de.tu_darmstadt.seemoo.nfcgate.nfc.reader;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
 
-import androidx.annotation.NonNull;
-
 import de.tu_darmstadt.seemoo.nfcgate.nfc.config.ConfigBuilder;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.config.OptionType;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.config.Technologies;
@@ -34,7 +32,6 @@ public class IsoDepReader extends NFCTagReader {
             mUnderlying = new NfcBReader(tag);
     }
 
-    @NonNull
     @Override
     public ConfigBuilder getConfig() {
         ConfigBuilder builder = mUnderlying.getConfig();
