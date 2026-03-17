@@ -19,7 +19,9 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace 'de.tu_darmstadt.seemoo.nfcgate'
 
-    compileSdk 35
+    compileSdk {
+        version = release(35)
+    }
     ndkVersion '28.2.13676358'
 
     compileOptions {
@@ -81,7 +83,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
     }
