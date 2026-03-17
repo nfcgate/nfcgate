@@ -87,7 +87,7 @@
 
     <string name="pcap_success">Pcap import success</string>
     <string name="pcap_error">Pcap import error</string>
-    <string name="pcap_log">Capture data added to log</string>
+    <string name="pcap_log">Capture: %1$d entries added to log</string>
 
     <string name="capture_none">No capture in progress</string>
     <string name="capture_progress">Capture in progress…</string>

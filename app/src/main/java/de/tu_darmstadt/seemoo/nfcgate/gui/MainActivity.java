@@ -219,13 +219,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void importCapture(List<Bundle> capture) {
+    public void importCapture(List<byte[]> capture) {
         LogInserter inserter = new LogInserter(this, SessionLog.SessionType.CAPTURE, null);
 
-        for (Bundle b : capture)
-            inserter.log(CaptureFragment.fromBundle(b));
+        for (byte[] b : capture)
+            inserter.log(new NfcComm(b));
 
-        Toast.makeText(this, getString(R.string.pcap_log), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.pcap_log, capture.size()), Toast.LENGTH_SHORT).show();
     }
 
     @Override

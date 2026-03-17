@@ -6,18 +6,24 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.BroadcastReceiver;
 import android.content.pm.PackageManager;
+import android.net.LocalSocket;
+import android.net.LocalSocketAddress;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 public class InjectionBroadcastWrapper extends BroadcastReceiver {
+    public static final String CAPTURE_SOCKET_NAME = "de.tu_darmstadt.seemoo.nfcgate.capture";
+
     private final Context mCtx;
     private boolean mCaptureEnabled = false;
-    private final ArrayList<Bundle> mCaptured = new ArrayList<>();
+    private final ArrayList<byte[]> mCaptured = new ArrayList<>();
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     public InjectionBroadcastWrapper(Context ctx) {
@@ -66,7 +72,7 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
 
     /** @noinspection unused*/
     // used by Hooks
-    public void addCapture(Bundle capture) {
+    public void addCapture(byte[] capture) {
         mCaptured.add(capture);
     }
 
@@ -85,10 +91,8 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
             mCaptureEnabled = intent.getBooleanExtra("enabled", false);
 
             if (!mCaptureEnabled) {
-                // deliver capture
-                mCtx.startActivity(makeResponseIntent()
-                        .putExtra("type", "CAPTURE")
-                        .putParcelableArrayListExtra("capture", mCaptured));
+                // send capture data to app
+                sendCaptureData();
 
                 // delete capture
                 mCaptured.clear();
@@ -107,6 +111,23 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
                 .setPackage("de.tu_darmstadt.seemoo.nfcgate")
                 .setAction("de.tu_darmstadt.seemoo.nfcgate.daemoncall")
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    }
+
+    private void sendCaptureData() {
+        try (LocalSocket socket = new LocalSocket()) {
+            // connect to socket that should be open in app
+            socket.connect(new LocalSocketAddress(CAPTURE_SOCKET_NAME));
+
+            // send capture data via socket as serialized list
+            try (ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream())) {
+                oos.writeObject(new ArrayList<>(mCaptured));
+                oos.flush();
+            }
+
+            Log.i("NATIVENFC", "Capture data sent successfully");
+        } catch (IOException e) {
+            Log.e("NATIVENFC", "Failed to send capture data", e);
+        }
     }
 
     private void loadForeignLibrary(Context ctx, String foreignPkg, String name) {

@@ -1,11 +1,17 @@
 package de.tu_darmstadt.seemoo.nfcgate.nfc.hce;
 
 import android.content.Intent;
-import android.os.Bundle;
+import android.net.LocalServerSocket;
+import android.net.LocalSocket;
+import android.util.Log;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Date;
+import java.util.List;
 
 import de.tu_darmstadt.seemoo.nfcgate.gui.MainActivity;
+import de.tu_darmstadt.seemoo.nfcgate.xposed.InjectionBroadcastWrapper;
 
 /**
  * Interface to the nfc daemon patches
@@ -25,9 +31,7 @@ public class DaemonManager {
     public void onResponse(Intent intent) {
         String responseType = intent.getStringExtra("type");
 
-        if ("CAPTURE".equals(responseType))
-            mActivity.importCapture(intent.<Bundle>getParcelableArrayListExtra("capture"));
-        else if ("HOOK_STATUS".equals(responseType)) {
+        if ("HOOK_STATUS".equals(responseType)) {
             mIsHookEnabled = intent.getBooleanExtra("hookEnabled", false);
             mActivity.getNfc().notifyStatusChanged();
             mLastResponse = new Date();
@@ -69,7 +73,21 @@ public class DaemonManager {
      * @param enabled True enables on-device capture, false disables it
      */
     public void beginSetCapture(boolean enabled) {
-        send(getIntent("SET_CAPTURE").putExtra("enabled", enabled));
+        if (enabled)
+            send(getIntent("SET_CAPTURE").putExtra("enabled", true));
+        else {
+            try (LocalSocketThread thread = new LocalSocketThread()) {
+                // start listening for capture data in thread
+                thread.start();
+                // disable capture, which triggers sending the capture data to the socket
+                send(getIntent("SET_CAPTURE").putExtra("enabled", false));
+
+                // wait for capture data to be received, with 5s timeout
+                thread.join(5 * 1000);
+            } catch (IOException | InterruptedException e) {
+                Log.e("NFC", "Error handling capture socket", e);
+            }
+        }
     }
 
     /**
@@ -93,5 +111,37 @@ public class DaemonManager {
 
     private void send(Intent intent) {
         mActivity.sendBroadcast(intent);
+    }
+
+    protected class LocalSocketThread extends Thread implements AutoCloseable {
+        private final LocalServerSocket mServer;
+
+        public LocalSocketThread() throws IOException {
+            mServer = new LocalServerSocket(InjectionBroadcastWrapper.CAPTURE_SOCKET_NAME);
+
+            setDaemon(true);
+        }
+
+        @Override
+        public void close() throws IOException {
+            mServer.close();
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void run() {
+            try (LocalSocket socket = mServer.accept()) {
+                try (ObjectInputStream ois = new ObjectInputStream(socket.getInputStream())) {
+                    List<byte[]> captureData = (List<byte[]>) ois.readObject();
+                    mActivity.runOnUiThread(() -> mActivity.importCapture(captureData));
+
+                    Log.i("NFC", "Received capture data: " + captureData.size() + " entries");
+                } catch (ClassNotFoundException e) {
+                    Log.e("NFC", "Error handling capture data", e);
+                }
+            } catch (IOException e) {
+                Log.e("NFC", "Error in capture socket", e);
+            }
+        }
     }
 }
