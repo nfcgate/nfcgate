@@ -7,6 +7,8 @@ on:
   pull_request:
     # only when targeting v2 branch
     branches: [ "v2" ]
+  schedule:
+    - cron: "0 7 15 * *"
 
 jobs:
   build:

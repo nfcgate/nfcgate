@@ -19,7 +19,7 @@ public:
     virtual void postCall() {};
 
     template <typename Fn, typename... Args>
-    typename std::result_of<Fn*(Args...)>::type callHook(Args&&... args) {
+    typename std::invoke_result_t<Fn*, Args...> callHook(Args&&... args) {
         return reinterpret_cast<Fn*>(mHookFn)(std::forward<Args>(args)...);
     }
 

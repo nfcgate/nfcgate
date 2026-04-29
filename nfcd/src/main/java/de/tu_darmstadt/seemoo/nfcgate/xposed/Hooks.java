@@ -5,17 +5,13 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.nfc.Tag;
 import android.os.Build;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeMap;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -24,6 +20,8 @@ import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+import de.tu_darmstadt.seemoo.nfcgate.nfc.reader.NFCTagReader;
+import de.tu_darmstadt.seemoo.nfcgate.util.NfcComm;
 import de.tu_darmstadt.seemoo.nfcgate.util.Utils;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
@@ -188,22 +186,13 @@ public class Hooks implements IXposedHookLoadPackage {
         }
     }
 
-    private void addCaptureInitial(Parcelable initial) {
-        Bundle capture = new Bundle();
-        capture.putString("type", "INITIAL");
-        capture.putParcelable("data", initial);
-        capture.putLong("timestamp", System.currentTimeMillis());
-
-        addCapture(capture);
+    private void addCaptureInitial(Tag tag) {
+        byte[] data = tag == null ? null : NFCTagReader.create(tag).getConfig().build();
+        addCapture(new NfcComm(true, true, data, System.currentTimeMillis()));
     }
 
     private void addCaptureData(boolean tag, byte[] data) {
-        Bundle capture = new Bundle();
-        capture.putString("type", tag ? "TAG" : "READER");
-        capture.putByteArray("data", data);
-        capture.putLong("timestamp", System.currentTimeMillis());
-
-        addCapture(capture);
+        addCapture(new NfcComm(tag, false, data, System.currentTimeMillis()));
     }
 
     private boolean isPatchEnabled() {
@@ -226,9 +215,10 @@ public class Hooks implements IXposedHookLoadPackage {
         return false;
     }
 
-    private void addCapture(Bundle capture) {
+    private void addCapture(NfcComm capture) {
         try {
-            mReceiver.getClass().getMethod("addCapture", Bundle.class).invoke(mReceiver, capture);
+            mReceiver.getClass().getMethod("addCapture", byte[].class)
+                    .invoke(mReceiver, (Object) capture.toByteArray());
         } catch (Exception e) {
             Log.e("HOOKNFC", "Failed to get addCaptureData", e);
         }

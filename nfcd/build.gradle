@@ -3,8 +3,10 @@ plugins {
 }
 
 android {
-    compileSdk 35
-    ndkVersion '22.1.7171670'
+    compileSdk {
+        version = release(35)
+    }
+    ndkVersion '28.2.13676358'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -32,7 +34,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -55,6 +57,7 @@ dependencies {
     //The following should NOT be included:
 
     //compile fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':common')
 
     compileOnly 'de.robv.android.xposed:api:82'
 }

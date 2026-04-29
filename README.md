@@ -171,6 +171,7 @@ The initial NFCGate paper describing the first version of NFCGate can be cited a
 
 ## Contact
 
+* Current Maintainers (primary): dev@nfcgate.org
 * [Steffen Klee](https://www.seemoo.tu-darmstadt.de/team/sklee/)
 * [Max Maass](https://www.seemoo.tu-darmstadt.de/team/mmaass/)
 

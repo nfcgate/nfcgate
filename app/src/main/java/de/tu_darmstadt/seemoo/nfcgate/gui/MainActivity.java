@@ -87,13 +87,18 @@ public class MainActivity extends AppCompatActivity {
         // navbar setup actions
         mNavbar = findViewById(R.id.main_navigation);
         mNavbar.setNavigationItemSelectedListener(item -> {
-            onNavbarAction(item);
+            // do not reselect the same item, avoiding unnecessary fragment recreation
+            if (mNavbar.getCheckedItem() == item)
+                mDrawerLayout.closeDrawers();
+            else
+                onNavbarAction(item);
+
             return true;
         });
 
         // initially select clone mode
-        mNavbar.setCheckedItem(R.id.nav_clone);
         mNavbar.getMenu().performIdentifierAction(R.id.nav_clone, 0);
+        mNavbar.setCheckedItem(R.id.nav_clone);
 
         // NFC setup
         mNfc = new NfcManager(this);
@@ -122,8 +127,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         // tech discovered is triggered by XML, tag discovered by foreground dispatch
-        if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction()) ||
-                NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction()))
+        if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())
+                || NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())
+                || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction()))
             mNfc.onTagDiscovered(intent.getParcelableExtra(NfcAdapter.EXTRA_TAG));
         else if (Intent.ACTION_SEND.equals(intent.getAction()))
             importPcap(intent.getParcelableExtra(Intent.EXTRA_STREAM));
@@ -213,13 +219,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void importCapture(List<Bundle> capture) {
+    public void importCapture(List<byte[]> capture) {
         LogInserter inserter = new LogInserter(this, SessionLog.SessionType.CAPTURE, null);
 
-        for (Bundle b : capture)
-            inserter.log(CaptureFragment.fromBundle(b));
+        for (byte[] b : capture)
+            inserter.log(new NfcComm(b));
 
-        Toast.makeText(this, getString(R.string.pcap_log), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.pcap_log, capture.size()), Toast.LENGTH_SHORT).show();
     }
 
     @Override

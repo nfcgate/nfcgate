@@ -2,7 +2,6 @@ package de.tu_darmstadt.seemoo.nfcgate.nfc.reader;
 
 import android.nfc.Tag;
 import android.nfc.tech.TagTechnology;
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -74,13 +73,11 @@ public abstract class NFCTagReader {
     /**
      * Returns a config object with options set to emulate this tag
      */
-    @NonNull
     public abstract ConfigBuilder getConfig();
 
     /**
      * Picks the highest available technology for a given Tag
      */
-    @NonNull
     public static NFCTagReader create(Tag tag) {
         List<String> technologies = Arrays.asList(tag.getTechList());
 

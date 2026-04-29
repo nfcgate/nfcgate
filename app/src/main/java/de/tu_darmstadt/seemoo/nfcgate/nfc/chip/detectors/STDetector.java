@@ -26,8 +26,14 @@ public class STDetector extends BaseConfigLineDetector {
         Pair<String, String> keyVal = splitConfigLine(line);
 
         if (keyVal != null) {
-            if ("NCI_HAL_MODULE".equals(keyVal.first)) {
-                String device = "/dev/" + keyVal.second.replace("nfc_nci.", "");
+            if ("STNFC_FW_BIN_NAME".equals(keyVal.first)
+                    || "STNFC_FW_CONF_NAME".equals(keyVal.first)) {
+                guess.improveConfidence(0.2f);
+                guess.chipName = formatFirmwareName(keyVal.second);
+            }
+            else if ("NCI_HAL_MODULE".equals(keyVal.first)) {
+                String module = keyVal.second.replace("nfc_nci.", "");
+                String device = "/dev/" + module.split("\\.")[0];
                 // existence of this device node confirms this is (or is not) the correct config
                 if (!fileExists(device) || "/dev/null".equals(device))
                     return false;
@@ -35,11 +41,6 @@ public class STDetector extends BaseConfigLineDetector {
                 guess.confidence = 0.9f;
                 if (guess.chipName == null)
                     guess.chipName = "ST Device " + formatSTDeviceNode(keyVal.second);
-            }
-            else if ("STNFC_FW_BIN_NAME".equals(keyVal.first)
-                    || "STNFC_FW_CONF_NAME".equals(keyVal.first)) {
-                guess.improveConfidence(0.2f);
-                guess.chipName = "NXP Device " + formatFirmwareName(keyVal.second);
             }
         }
 

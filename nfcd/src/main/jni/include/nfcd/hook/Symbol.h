@@ -30,7 +30,7 @@ public:
     }
 
     template <typename Fn, typename... Args>
-    typename std::result_of<Fn*(Args...)>::type call(Args&&... args) {
+    typename std::invoke_result_t<Fn*, Args...> call(Args&&... args) {
         return reinterpret_cast<Fn*>(mAddress)(std::forward<Args>(args)...);
     }
 

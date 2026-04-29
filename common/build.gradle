@@ -1,0 +1,39 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    compileSdk {
+        version = release(35)
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 35
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    productFlavors {}
+
+    namespace 'de.tu_darmstadt.seemoo.nfcgate.common'
+
+    buildFeatures {
+        buildConfig true
+    }
+}
+
+dependencies {
+    implementation project(':protobuf')
+    implementation "com.google.protobuf:protobuf-javalite:${protobufVersion}"
+}

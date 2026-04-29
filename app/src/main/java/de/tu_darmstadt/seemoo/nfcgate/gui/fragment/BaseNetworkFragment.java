@@ -97,6 +97,9 @@ public abstract class BaseNetworkFragment extends BaseFragment implements LogIns
     }
 
     protected void handleStatus(NetworkStatus status) {
+        if (getMainActivity() == null)
+            return;
+
         switch (status) {
             case ERROR:
                 mStatusBanner.setError(getString(R.string.network_error));
