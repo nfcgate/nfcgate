@@ -76,6 +76,14 @@ public abstract class NFCTagReader {
     public abstract ConfigBuilder getConfig();
 
     /**
+     * Returns the raw ATS_RES/ATTRIB_RES bytes of the tag response.
+     * Xposed hooks this method to return the res bytes of the tag if hooks are available.
+     */
+    public static byte[] extractTagResBytes() {
+        return null;
+    }
+
+    /**
      * Picks the highest available technology for a given Tag
      */
     public static NFCTagReader create(Tag tag) {

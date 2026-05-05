@@ -67,6 +67,12 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
 
     /** @noinspection unused*/
     // used by Hooks
+    public byte[] getResBytes() {
+        return Native.Instance.getResBytes();
+    }
+
+    /** @noinspection unused*/
+    // used by Hooks
     public boolean isCaptureEnabled() {
         return mCaptureEnabled;
     }

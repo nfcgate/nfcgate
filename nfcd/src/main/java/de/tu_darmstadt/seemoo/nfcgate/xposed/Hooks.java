@@ -5,12 +5,14 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.nfc.Tag;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -20,6 +22,7 @@ import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+import de.tu_darmstadt.seemoo.nfcgate.nfc.config.Technologies;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.reader.NFCTagReader;
 import de.tu_darmstadt.seemoo.nfcgate.util.NfcComm;
 import de.tu_darmstadt.seemoo.nfcgate.util.Utils;
@@ -33,6 +36,7 @@ public class Hooks implements IXposedHookLoadPackage {
 
     private Object mReceiver;
     private Object mNfcServiceInstance;
+    private byte[] mResBytes = null;
 
     public void handleLoadPackage(final LoadPackageParam lpparam) {
         // hook our own NfcManager to indicate that the hook is loaded and active
@@ -40,6 +44,38 @@ public class Hooks implements IXposedHookLoadPackage {
             // indicate that the hook worked and the xposed module is active
             findAndHookMethod("de.tu_darmstadt.seemoo.nfcgate.nfc.NfcManager", lpparam.classLoader,
                     "isModuleLoaded", XC_MethodReplacement.returnConstant(true));
+
+            // hook our own NFCTagReader to return cached bytes if present
+            findAndHookMethod("de.tu_darmstadt.seemoo.nfcgate.nfc.reader.NFCTagReader", lpparam.classLoader,
+                    "extractTagResBytes", new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    // return the cached result, clear the cache afterwards
+                    param.setResult(mResBytes);
+                    mResBytes = null;
+                }
+            });
+
+            // hook the Tag constructor to intercept tag result bytes cache them for retrieval in the NFCTagReader hook
+            XposedBridge.hookAllConstructors(XposedHelpers.findClass("android.nfc.Tag",
+                    lpparam.classLoader), new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    Tag tag = (Tag) param.thisObject;
+
+                    Bundle[] techListExtras = (Bundle[]) param.args[2];
+                    int techIndex = techIndexOf(tag, Technologies.IsoDep);
+                    if (techIndex >= 0) {
+                        Bundle techExtras = techListExtras[techIndex];
+
+                        // cache the res bytes if present
+                        if (techExtras.containsKey("ats_res"))
+                            mResBytes = techExtras.getByteArray("ats_res");
+                        else if (techExtras.containsKey("attrib_res"))
+                            mResBytes = techExtras.getByteArray("attrib_res");
+                    }
+                }
+            });
         } else if ("com.android.nfc".equals(lpparam.packageName) || "com.google.android.nfc".equals(lpparam.packageName)) {
             // hook constructor to catch application context
             hookNfcServiceConstructor(lpparam.classLoader, new NfcServiceConstructorHook() {
@@ -119,6 +155,33 @@ public class Hooks implements IXposedHookLoadPackage {
                 }
             });
 
+            // hook the Tag constructor to insert res bytes into the tech extras if present
+            // and to add tag to initial capture if enabled
+            XposedBridge.hookAllConstructors(XposedHelpers.findClass("android.nfc.Tag",
+                    lpparam.classLoader), new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    Tag tag = (Tag) param.thisObject;
+
+                    // add res bytes to the tech extras if present
+                    byte[] resBytes = getResBytes();
+                    Bundle techExtras = findTechExtras(tag, Technologies.IsoDep);
+                    if (resBytes != null && techExtras != null) {
+                        if (Arrays.asList(tag.getTechList()).contains(Technologies.A))
+                            techExtras.putByteArray("ats_res", resBytes);
+                        else if (Arrays.asList(tag.getTechList()).contains(Technologies.B))
+                            techExtras.putByteArray("attrib_res", resBytes);
+                    }
+
+                    // add tag to initial capture if enabled
+                    if (isCaptureEnabled()) {
+                        addCaptureInitial(tag);
+
+                        Log.i("HOOKNFC", "Captured initial data");
+                    }
+                }
+            });
+
             // hook tag dispatch for on-device capture of initial data
             findAndHookMethod("com.android.nfc.NfcDispatcher", lpparam.classLoader,
                     "dispatchTag",
@@ -186,6 +249,26 @@ public class Hooks implements IXposedHookLoadPackage {
         }
     }
 
+    private Bundle findTechExtras(Tag tag, String tech) throws Throwable {
+        Field fieldTechExtras = XposedHelpers.findField(Tag.class, "mTechExtras");
+        Bundle[] techExtras = (Bundle[]) fieldTechExtras.get(tag);
+
+        int techIndex = techIndexOf(tag, tech);
+        if (techIndex < 0)
+            return null;
+
+        return techExtras[techIndex];
+    }
+
+    private int techIndexOf(Tag tag, String tech) {
+        String[] techList = tag.getTechList();
+        for (int i = 0; i < techList.length; i++)
+            if (techList[i].equals(tech))
+                return i;
+
+        return -1;
+    }
+
     private void addCaptureInitial(Tag tag) {
         byte[] data = tag == null ? null : NFCTagReader.create(tag).getConfig().build();
         addCapture(new NfcComm(true, true, data, System.currentTimeMillis()));
@@ -222,6 +305,16 @@ public class Hooks implements IXposedHookLoadPackage {
         } catch (Exception e) {
             Log.e("HOOKNFC", "Failed to get addCaptureData", e);
         }
+    }
+
+    private byte[] getResBytes() {
+        try {
+            return (byte[])mReceiver.getClass().getMethod("getResBytes").invoke(mReceiver);
+        } catch (Exception e) {
+            Log.e("HOOKNFC", "Failed to get getResBytes", e);
+        }
+
+        return null;
     }
 
     private void dumpAIDRegistrations() {

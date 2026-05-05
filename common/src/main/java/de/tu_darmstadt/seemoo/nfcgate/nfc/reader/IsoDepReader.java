@@ -18,12 +18,15 @@ public class IsoDepReader extends NFCTagReader {
      * Provides a NFC reader interface
      *
      * @param tag: A tag using the IsoDep technology.
+     * @param underlying: The underlying technology type (e.g., Technologies.A, Technologies.B)
      */
     IsoDepReader(Tag tag, String underlying) {
         super(IsoDep.get(tag));
 
         // set extended timeout
         ((IsoDep) mReader).setTimeout(5000);
+        // extract ATS or ATTRIB response bytes if hook active
+        byte[] resBytes = extractTagResBytes();
 
         // determine underlying technology
         if (underlying.equals(Technologies.A))
