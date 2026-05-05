@@ -116,6 +116,17 @@ extern "C" {
         return globals.patchEnabled;
     }
 
+    JNIEXPORT jbyteArray JNICALL Java_de_tu_1darmstadt_seemoo_nfcgate_xposed_Native_getResBytes(JNIEnv *env, jobject) {
+        jbyteArray result = nullptr;
+        if (!globals.resBytes.empty()) {
+            result = env->NewByteArray(globals.resBytes.size());
+            env->SetByteArrayRegion(result, 0, globals.resBytes.size(), (const jbyte *) globals.resBytes.data());
+            // clear bytes after reading to prevent duplicate reads
+            globals.resBytes.clear();
+        }
+        return result;
+    }
+
     JNIEXPORT void JNICALL Java_de_tu_1darmstadt_seemoo_nfcgate_xposed_Native_setConfig(JNIEnv *env, jobject, jbyteArray config) {
         // early return if hook not fully installed
         if (globals.hookStatus() != HookResult::SUCCESS) {

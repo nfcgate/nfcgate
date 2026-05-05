@@ -21,6 +21,39 @@ void hook_nfaConnectionCallback(uint8_t event, void *eventData) {
     globals.eventQueue.enqueue(event, eventData ? *(uint8_t*)eventData : 0);
 }
 
+void hook_nfcDiscoveryCallback(uint16_t event, tNFC_ACTIVATE_DEVT *eventData) {
+    LOGI("hook_nfcDiscoveryCallback: event %x", event);
+
+    // look for discovery events with activation data on API level 28+
+    if (event == NFC_ACTIVATE_DEVT && eventData && System::sdkInt() >= System::P) {
+        LOGI("  eventData: rf_disc_id %d", eventData->rf_disc_id);
+        LOGI("  eventData: protocol %d", eventData->protocol);
+        LOGI("  eventData: rf_tech_param_mode %d", eventData->rf_tech_param_mode);
+        LOGI("  eventData: data_mode %d", eventData->data_mode);
+        LOGI("  eventData: tx_bitrate %d", eventData->tx_bitrate);
+        LOGI("  eventData: rx_bitrate %d", eventData->rx_bitrate);
+        LOGI("  eventData: intf_type %d", eventData->intf_type);
+
+        if (eventData->intf_type == NFC_INTERFACE_ISO_DEP && eventData->data_mode == NCI_DISCOVERY_TYPE_POLL_A) {
+            loghex("  eventData: pa.ats_res", eventData->pa_iso.ats_res, eventData->pa_iso.ats_res_len);
+            globals.resBytes = std::vector<uint8_t>(
+                    eventData->pa_iso.ats_res,eventData->pa_iso.ats_res + eventData->pa_iso.ats_res_len);
+        }
+        else if (eventData->intf_type == NFC_INTERFACE_ISO_DEP && eventData->data_mode == NCI_DISCOVERY_TYPE_POLL_B) {
+            loghex("  eventData: pb.attrib_res", eventData->pb_iso.attrib_res, eventData->pb_iso.attrib_res_len);
+            globals.resBytes = std::vector<uint8_t>(
+                    eventData->pb_iso.attrib_res, eventData->pb_iso.attrib_res + eventData->pb_iso.attrib_res_len);
+        }
+        else {
+            // no res bytes to save
+            globals.resBytes.clear();
+        }
+    }
+
+    // call original callback
+    globals.origNfcDiscvCBack(event, eventData);
+}
+
 /**
  * Prevent already set values from being overwritten.
  */
@@ -64,7 +97,8 @@ tNFC_STATUS hook_NFC_SetConfig(uint8_t tlv_size, uint8_t *p_param_tlvs) {
     return result;
 }
 
-tNFC_STATUS hook_NFC_DiscoveryStart(uint8_t num_params, tNCI_DISCOVER_PARAMS *p_params, void* p_cback) {
+tNFC_STATUS hook_NFC_DiscoveryStart(
+        uint8_t num_params, tNCI_DISCOVER_PARAMS *p_params, def_NFC_DISCOVER_CBACK *p_cback) {
     globals.hNFC_DiscoveryStart->preCall();
 
     LOGI("hook_NFC_DiscoveryStart: Begin: %d, %p", num_params, p_params);
@@ -91,6 +125,11 @@ tNFC_STATUS hook_NFC_DiscoveryStart(uint8_t num_params, tNCI_DISCOVER_PARAMS *p_
     }
     else
         LOGD("hook_NFC_DiscoveryStart: patch disabled");
+
+    // hook p_cback
+    globals.origNfcDiscvCBack = p_cback;
+    p_cback = &hook_nfcDiscoveryCallback;
+    LOGI("hook_NFC_DiscoveryStart: Hooking p_cback: %p -> %p", globals.origNfcDiscvCBack, p_cback);
 
     auto res = globals.hNFC_DiscoveryStart->call<def_NFC_DiscoveryStart>(num_params, p_params, p_cback);
     LOGI("hook_NFC_DiscoveryStart: Result: %x", res);

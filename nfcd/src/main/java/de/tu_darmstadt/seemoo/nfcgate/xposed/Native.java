@@ -8,6 +8,7 @@ public class Native {
 
     public native int installHooks();
     public native boolean isPatchEnabled();
+    public native byte[] getResBytes();
     public native void setConfig(byte[] config);
     public native void resetConfig();
 }

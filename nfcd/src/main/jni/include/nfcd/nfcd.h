@@ -12,8 +12,11 @@
 #include <nfcd/helper/System.h>
 #include <nfcd/hook/Hook.h>
 
+using def_NFC_DISCOVER_CBACK = void(uint16_t event, tNFC_ACTIVATE_DEVT *data);
+
 extern tNFC_STATUS hook_NFC_SetConfig(uint8_t tlv_size, uint8_t *p_param_tlvs);
-extern tNFC_STATUS hook_NFC_DiscoveryStart(uint8_t num_params, tNCI_DISCOVER_PARAMS *p_params, void* p_cback);
+extern tNFC_STATUS hook_NFC_DiscoveryStart(uint8_t num_params, tNCI_DISCOVER_PARAMS *p_params,
+                                           def_NFC_DISCOVER_CBACK* p_cback);
 extern tNFA_STATUS hook_NFA_Enable(void *p_dm_cback, void *p_conn_cback);
 extern tNFC_STATUS hook_ce_select_t4t (void);
 
@@ -64,6 +67,7 @@ public:
 
     bool patchEnabled = false;
     bool guardEnabled = true;
+    std::vector<uint8_t> resBytes;
 
     EEManager eeManager;
     std::set<tNCI_DISCOVERY_TYPE> discoveryTypes;
@@ -82,6 +86,7 @@ public:
     Symbol_ref hNFA_EeGetInfo;
 
     def_NFA_CONN_CBACK *origNfaConnCBack = nullptr;
+    def_NFC_DISCOVER_CBACK *origNfcDiscvCBack = nullptr;
     std::mutex hookInstallMutex;
 
     HookResult installHooks();

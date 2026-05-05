@@ -17,6 +17,66 @@ using tNCI_DISCOVERY_TYPE = uint8_t;
 // usual offset to nfa_dm_cb->p_conn_cback field (nfa_dm_int.h)
 #define NFA_DM_CB_CONN_CBACK (8 * sizeof(void*))
 
+// modified from nfc_api.h
+#define NFC_ACTIVATE_DEVT 0x4004
+#define NFC_INTERFACE_ISO_DEP 2
+
+typedef struct {
+    uint8_t rats;
+} tNFC_INTF_LA_ISO_DEP;
+typedef struct {
+    uint8_t ats_res_len;
+    uint8_t ats_res[64];
+    // ignore the rest as the size of ats_res varies across versions and the fields after it are not relevant
+} tNFC_INTF_PA_ISO_DEP;
+typedef struct {
+    uint8_t attrib_res_len;
+    uint8_t attrib_res[58];
+} tNFC_INTF_PB_ISO_DEP;
+typedef struct {
+    uint8_t attrib_req_len;
+    uint8_t attrib_req[58];
+} tNFC_INTF_LB_ISO_DEP;
+typedef struct {
+    uint8_t rf_disc_id;
+    uint8_t protocol;
+    uint8_t rf_tech_param_mode;
+    // rf_tech_param is a union of all possible technology parameters, the length of which was determined as follows:
+    // tNCI_RF_PA_PARAMS:
+    // 14 = 2 + 1 + 10 + 1 (2012 00c3aad)
+    // 17 = 2 + 1 + 10 + 1 + 1 + 2 (since 2013 251a2cb)
+    // tNCI_RF_PB_PARAMS;
+    // 17 = 1 + 12 + 4 (2012 00c3aad)
+    // 18 = 1 + 12 + 4 + 1 (since 2024 6271a2c)
+    // tNCI_RF_PF_PARAMS;
+    // 30 = 1 + 1 + 18 + 8 + 1 + 1 (since 2012 00c3aad)
+    // tNCI_RF_LF_PARAMS;
+    // 8 (since 2012 00c3aad)
+    // tNFC_RF_PISO15693_PARAMS;
+    // 10 = 1 + 1 + 8 (since 2012 00c3aad)
+    // tNFC_RF_PKOVIO_PARAMS;
+    // 17 = 1 + 16 (2012 00c3aad)
+    // 33 = 1 + 32 (since 2013 251a2cb)
+    // tNCI_RF_ACM_P_PARAMS;
+    // 116 = 1 + 64 + 1 + 1 + 48 + 1 (since 2017 053c73a)
+    // ---
+    // possible sizes:
+    // 2012 00c3aad: 30 (~ API 16 4.1.0)
+    // 2013 251a2cb: 33 (~ API 16 4.1.2)
+    // 2017 053c73a: 116 (~ API 28 9.0.0)
+    uint8_t rf_tech_param[116 /* or 33 or 30 */];
+    uint8_t data_mode;
+    uint8_t tx_bitrate;
+    uint8_t rx_bitrate;
+    uint8_t intf_type;
+    union {
+        tNFC_INTF_LA_ISO_DEP la_iso;
+        tNFC_INTF_PA_ISO_DEP pa_iso;
+        tNFC_INTF_LB_ISO_DEP lb_iso;
+        tNFC_INTF_PB_ISO_DEP pb_iso;
+    };
+} tNFC_ACTIVATE_DEVT;
+
 // modified from nfa_api.h
 
 typedef struct {
@@ -52,6 +112,10 @@ typedef struct {
      NFA_TECHNOLOGY_MASK_KOVIO)
 
 /* NCI Discovery Mask Values */
+#define NCI_DISCOVERY_TYPE_POLL_A 0x00
+#define NCI_DISCOVERY_TYPE_POLL_B 0x01
+#define NCI_DISCOVERY_TYPE_POLL_F 0x02
+#define NCI_DISCOVERY_TYPE_POLL_V 0x06
 #define NCI_DISCOVERY_TYPE_LISTEN_A 0x80
 #define NCI_DISCOVERY_TYPE_LISTEN_B 0x81
 #define NCI_DISCOVERY_TYPE_LISTEN_F 0x82
@@ -65,7 +129,6 @@ typedef struct {
 #define NCI_NFCEE_INTERFACE_T3T 0x02
 #define NCI_NFCEE_INTERFACE_TRANSPARENT 0x03
 #define NCI_NFCEE_INTERFACE_PROPRIETARY 0x80
-
 
 class System {
 public:
