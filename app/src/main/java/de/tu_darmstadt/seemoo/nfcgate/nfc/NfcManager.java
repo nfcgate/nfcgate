@@ -104,7 +104,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     /**
      * Indicates whether NFC is enabled or disabled
      */
-    public boolean isEnabled() {
+    public boolean isNFCEnabled() {
         return hasNfc() && mAdapter.isEnabled();
     }
 
@@ -134,7 +134,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
         mReaderMode = enabled;
 
         // apply setting if nfc is enabled
-        if (isEnabled())
+        if (isNFCEnabled())
             enableDisableReaderMode();
     }
 
@@ -181,7 +181,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
         setBroadcastReceiverEnabled(true);
         mDaemon.onResume();
 
-        if (isEnabled()) {
+        if (isNFCEnabled()) {
             enableForegroundDispatch();
             enableDisableReaderMode();
         }
@@ -193,7 +193,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     public void onPause() {
         setBroadcastReceiverEnabled(false);
 
-        if (isEnabled()) {
+        if (isNFCEnabled()) {
             disableForegroundDispatch();
         }
     }

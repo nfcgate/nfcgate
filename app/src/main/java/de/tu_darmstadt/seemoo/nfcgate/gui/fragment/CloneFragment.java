@@ -103,7 +103,7 @@ public class CloneFragment extends BaseFragment {
                 mStatusBanner.setWarning(getString(R.string.error_xposed));
 
             // show error if NFC is disabled
-            if (!getNfc().isEnabled())
+            if (!getNfc().isNFCEnabled())
                 mStatusBanner.setError(getString(R.string.error_nfc_disabled));
         });
     }

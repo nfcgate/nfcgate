@@ -212,7 +212,7 @@ public class StatusFragment extends BaseFragment {
 
     StatusItem detectNfcEnabled() {
         // NFC capability and enabled
-        boolean hasNfc = getNfc().isEnabled();
+        boolean hasNfc = getNfc().isNFCEnabled();
         // NFC Capability should be OK if it is enabled
         StatusItem result = new StatusItem(getContext(), getString(R.string.status_nfc)).setValue(hasNfc);
 

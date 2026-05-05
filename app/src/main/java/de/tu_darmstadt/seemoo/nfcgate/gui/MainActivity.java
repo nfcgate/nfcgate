@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
         // NFC setup
         mNfc = new NfcManager(this);
-        if (!mNfc.hasNfc() || !mNfc.isEnabled())
+        if (!mNfc.hasNfc() || !mNfc.isNFCEnabled())
             showWarning(getString(R.string.error_NFCCAP));
 
         // TLS setup
