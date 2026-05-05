@@ -36,6 +36,7 @@ import de.tu_darmstadt.seemoo.nfcgate.gui.fragment.SettingsFragment;
 import de.tu_darmstadt.seemoo.nfcgate.network.UserTrustManager;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.NfcManager;
 import de.tu_darmstadt.seemoo.nfcgate.util.NfcComm;
+import de.tu_darmstadt.seemoo.nfcgate.xposed.InjectionBroadcastWrapper;
 
 public class MainActivity extends AppCompatActivity {
     // UI
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             importPcap(intent.getParcelableExtra(Intent.EXTRA_STREAM));
         else if (Intent.ACTION_VIEW.equals(intent.getAction()))
             importPcap(intent.getData());
-        else if ("de.tu_darmstadt.seemoo.nfcgate.daemoncall".equals(intent.getAction()))
+        else if (InjectionBroadcastWrapper.NFCGATE_BROADCAST.equals(intent.getAction()))
             mNfc.getDaemon().onResponse(intent);
         else
             super.onNewIntent(intent);

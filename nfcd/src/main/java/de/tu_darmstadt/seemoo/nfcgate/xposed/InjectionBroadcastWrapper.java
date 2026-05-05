@@ -19,6 +19,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 public class InjectionBroadcastWrapper extends BroadcastReceiver {
+    public static final String NFCGATE_BROADCAST = "de.tu_darmstadt.seemoo.nfcgate.daemoncall";
     public static final String CAPTURE_SOCKET_NAME = "de.tu_darmstadt.seemoo.nfcgate.capture";
 
     private final Context mCtx;
@@ -36,9 +37,9 @@ public class InjectionBroadcastWrapper extends BroadcastReceiver {
         HandlerThread ht = new HandlerThread("ht");
         ht.start();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ctx.registerReceiver(this, new IntentFilter("de.tu_darmstadt.seemoo.nfcgate.daemoncall"), null, new Handler(ht.getLooper()), Context.RECEIVER_EXPORTED);
+            ctx.registerReceiver(this, new IntentFilter(NFCGATE_BROADCAST), null, new Handler(ht.getLooper()), Context.RECEIVER_EXPORTED);
         } else {
-            ctx.registerReceiver(this, new IntentFilter("de.tu_darmstadt.seemoo.nfcgate.daemoncall"), null, new Handler(ht.getLooper()));
+            ctx.registerReceiver(this, new IntentFilter(NFCGATE_BROADCAST), null, new Handler(ht.getLooper()));
         }
 
         // try to install our hooks, schedule retry if needed

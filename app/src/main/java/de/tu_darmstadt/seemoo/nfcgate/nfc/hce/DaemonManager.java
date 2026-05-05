@@ -105,7 +105,7 @@ public class DaemonManager {
 
     private Intent getIntent(String op) {
         return new Intent()
-                .setAction("de.tu_darmstadt.seemoo.nfcgate.daemoncall")
+                .setAction(InjectionBroadcastWrapper.NFCGATE_BROADCAST)
                 .putExtra("op", op);
     }
 
