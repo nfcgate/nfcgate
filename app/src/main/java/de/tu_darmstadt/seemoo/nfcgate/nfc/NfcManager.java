@@ -131,11 +131,13 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
      * Enable or disable reader mode
      */
     public void setReaderMode(boolean enabled) {
-        mReaderMode = enabled;
-
         // apply setting if nfc is enabled
-        if (isNFCEnabled())
-            enableDisableReaderMode();
+        if (isNFCEnabled()) {
+            if (enabled && !mReaderMode)
+                enableReaderMode();
+            else if (!enabled && mReaderMode)
+                disableReaderMode();
+        }
     }
 
     public void startMode(BaseMode mode) {
@@ -183,7 +185,8 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
 
         if (isNFCEnabled()) {
             enableForegroundDispatch();
-            enableDisableReaderMode();
+            if (mReaderMode)
+                enableReaderMode();
         }
     }
 
@@ -295,27 +298,31 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
     }
 
     /**
-     * Enable or disable reader mode for this activity
+     * Enable reader mode for this activity. This prevents the device from acting as a NFC tag
      */
-    private void enableDisableReaderMode() {
-        if (mReaderMode) {
-            // Read all techs, skip NDEF to skip P2P
-            int flags = NfcAdapter.FLAG_READER_NFC_A |
-                        NfcAdapter.FLAG_READER_NFC_B |
-                        NfcAdapter.FLAG_READER_NFC_F |
-                        NfcAdapter.FLAG_READER_NFC_V |
-                        NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK;
+    private void enableReaderMode() {
+        // Read all techs, skip NDEF to skip P2P
+        int flags = NfcAdapter.FLAG_READER_NFC_A |
+                    NfcAdapter.FLAG_READER_NFC_B |
+                    NfcAdapter.FLAG_READER_NFC_F |
+                    NfcAdapter.FLAG_READER_NFC_V |
+                    NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK;
 
-            // assemble extras
-            Bundle extras = new Bundle();
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
-            extras.putInt(NfcAdapter.EXTRA_READER_PRESENCE_CHECK_DELAY, Integer.parseInt(prefs.getString("presence_interval", "750")));
+        // assemble extras
+        Bundle extras = new Bundle();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+        extras.putInt(NfcAdapter.EXTRA_READER_PRESENCE_CHECK_DELAY, Integer.parseInt(prefs.getString("presence_interval", "750")));
 
-            mAdapter.enableReaderMode(mActivity, this, flags, extras);
-        }
-        else {
-            mAdapter.disableReaderMode(mActivity);
-        }
+        mAdapter.enableReaderMode(mActivity, this, flags, extras);
+        mReaderMode = true;
+    }
+
+    /**
+     * Disable reader mode for this activity. This allows the device to act as a NFC tag again
+     */
+    private void disableReaderMode() {
+        mAdapter.disableReaderMode(mActivity);
+        mReaderMode = false;
     }
 
     /**
