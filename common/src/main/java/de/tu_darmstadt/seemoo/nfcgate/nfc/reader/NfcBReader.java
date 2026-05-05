@@ -28,7 +28,7 @@ public class NfcBReader extends NFCTagReader {
         builder.add(OptionType.LB_APPLICATION_DATA, readerB.getApplicationData());
         builder.add(OptionType.LB_SFGI, readerB.getProtocolInfo()[0]);
         builder.add(OptionType.LB_SENSB_INFO, readerB.getProtocolInfo()[1]);
-        builder.add(OptionType.LB_ADC_FO, readerB.getProtocolInfo()[2]);
+        builder.add(OptionType.LB_FWI_ADC_FO, readerB.getProtocolInfo()[2]);
 
         return builder;
     }

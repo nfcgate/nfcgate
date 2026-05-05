@@ -17,16 +17,18 @@ public enum OptionType {
 
     // LISTEN B
 
+        // Max Frames (128 bytes) / Protocol Type ISO-DEP support (Protocol byte 2)
+        LB_SENSB_INFO(0x38),
         // PUPI
         LB_NFCID0(0x39),
         // Bytes 6-9 of SENSB
         LB_APPLICATION_DATA(0x3A),
         // Start-Up Frame Guard Time (Protocol byte 1)
         LB_SFGI(0x3B),
-        // Max Frames (128 bytes) / Protocol Type ISO-DEP support (Protocol byte 2)
-        LB_SENSB_INFO(0x38),
         // FWI / ADC / F0 (Protocol byte 3)
-        LB_ADC_FO(0x3C),
+        LB_FWI_ADC_FO(0x3C),
+        //
+        LB_BIT_RATE(0x3E),
 
     // LISTEN F
 
@@ -39,10 +41,16 @@ public enum OptionType {
 
     // LISTEN ISO-DEP
 
-        // Historical bytes (NCI spec calls this LI_A_HIST_BY)
-        LA_HIST_BY(0x59),
+        // [2.0] Frame waiting time and start-up frame guard time
+        LI_A_RATS_TB1(0x58),
+        // Historical bytes
+        LI_A_HIST_BY(0x59),
         // Higher layer response field
-        LB_H_INFO_RSP(0x5A),
+        LI_B_H_INFO_RSP(0x5A),
+        // Configures (TA1) divisor bits up to specified bitrate
+        LI_A_BIT_RATE(0x5B),
+        // [2.0]: Protocol parameters, NAD/CID support
+        LI_A_RATS_TC1(0x5C)
     ;
 
     // implementation details

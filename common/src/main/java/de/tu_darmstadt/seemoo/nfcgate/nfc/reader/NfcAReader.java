@@ -26,6 +26,7 @@ public class NfcAReader extends NFCTagReader {
 
         builder.add(OptionType.LA_NFCID1, readerA.getTag().getId());
         builder.add(OptionType.LA_SEL_INFO, (byte)readerA.getSak());
+        // NB: Despite NCI requiring a 5-bit value here, the ATQA bytes are 8-bit values
         builder.add(OptionType.LA_BIT_FRAME_SDD, readerA.getAtqa()[0]);
         builder.add(OptionType.LA_PLATFORM_CONFIG, readerA.getAtqa()[1]);
 

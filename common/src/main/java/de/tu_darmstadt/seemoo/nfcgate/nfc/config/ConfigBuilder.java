@@ -1,6 +1,7 @@
 package de.tu_darmstadt.seemoo.nfcgate.nfc.config;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -26,6 +27,10 @@ public class ConfigBuilder {
 
     public void add(ConfigOption option) {
         mOptions.add(option);
+    }
+
+    public void addAll(Collection<ConfigOption> options) {
+        mOptions.addAll(options);
     }
 
     public List<ConfigOption> getOptions() {
