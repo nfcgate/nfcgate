@@ -213,7 +213,7 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
         // if the highest found tech is A and not IsoDep:
         // Static Tag data emulation likely unsupported (e.g. Mifare Classic/Ultralight)
         if (mReader instanceof NfcAReader)
-            mActivity.showInfo("Found likely unsupported Tag");
+            mActivity.runOnUiThread(() -> mActivity.showInfo("Found likely unsupported Tag"));
 
         // connect to tag
         mReader.connect();
