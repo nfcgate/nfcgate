@@ -324,13 +324,13 @@ bool HookGlobals::checkNFACBOffset(uint32_t offset) const {
                  "p_conn_cback not in any NFC-related object file, offset likely invalid");
 
     // all checks passed, offset likely valid
-    LOGD("checkOffset: success");
+    LOGD("checkNFACBOffset: success");
     return true;
 }
 
 uint32_t HookGlobals::findNFACBOffset() {
     // search [standard_offset, standard_offset + 2]
-    for (uint32_t i = 0; i < 2; i++) {
+    for (uint32_t i = 0; i <= 2; i++) {
         uint32_t offset = NFA_DM_CB_CONN_CBACK + (i * sizeof(void*));
 
         if (checkNFACBOffset(offset))
