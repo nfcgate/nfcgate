@@ -23,6 +23,7 @@ public class IsoDepReader extends NFCTagReader {
 
     private final NFCTagReader mUnderlying;
     private byte[] mAtsRes = null, mAttribRes = null;
+    private boolean mSwapTB1 = false;
 
     /**
      * Provides a NFC reader interface
@@ -47,6 +48,10 @@ public class IsoDepReader extends NFCTagReader {
             mUnderlying = new NfcBReader(tag);
             mAttribRes = resBytes;
         }
+    }
+
+    public void setSwapTB1(boolean value) {
+        mSwapTB1 = value;
     }
 
     @Override
@@ -95,6 +100,11 @@ public class IsoDepReader extends NFCTagReader {
                 throw new IllegalArgumentException("ATS_RES invalid: TB(1) expected but not present");
 
             byte tb = mAtsRes[index++];
+            // flip the TB1 nibbles if needed
+            if (mSwapTB1) {
+                int fwi = (tb & 0xFF) >> 4, sfgi = tb & 0xF;
+                tb = (byte) (fwi | (sfgi << 4));
+            }
             result.add(new ConfigOption(OptionType.LI_A_RATS_TB1, tb));
         }
 

@@ -123,6 +123,8 @@
     <string name="settings_presence_interval">Presence Check Interval</string>
     <string name="settings_presence_interval_summary">Change the interval for Tags that do not like being presence-checked while relaying</string>
     <string name="settings_presence_interval_dialog">Enter an interval in milliseconds</string>
+    <string name="settings_swap_tb1">Swap FWI and SFGI nibbles</string>
+    <string name="settings_swap_tb1_summary">Some devices require the TB(1) nibbles to be swapped</string>
     <string name="settings_network">Network Settings</string>
     <string name="settings_hostname">Hostname</string>
     <string name="settings_workaround_summary">Enables the NFC Keep-Alive Workaround</string>

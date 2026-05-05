@@ -21,6 +21,7 @@ import de.tu_darmstadt.seemoo.nfcgate.network.data.NetworkStatus;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.hce.ApduService;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.hce.DaemonManager;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.modes.BaseMode;
+import de.tu_darmstadt.seemoo.nfcgate.nfc.reader.IsoDepReader;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.reader.NFCTagReader;
 import de.tu_darmstadt.seemoo.nfcgate.nfc.reader.NfcAReader;
 import de.tu_darmstadt.seemoo.nfcgate.util.NfcComm;
@@ -212,7 +213,9 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
 
         // if the highest found tech is A and not IsoDep:
         // Static Tag data emulation likely unsupported (e.g. Mifare Classic/Ultralight)
-        if (mReader instanceof NfcAReader)
+        if (mReader instanceof IsoDepReader isoDepReader)
+            isoDepReader.setSwapTB1(getSwapT1());
+        else if (mReader instanceof NfcAReader)
             mActivity.runOnUiThread(() -> mActivity.showInfo("Found likely unsupported Tag"));
 
         // connect to tag
@@ -295,6 +298,11 @@ public class NfcManager implements NfcAdapter.ReaderCallback, NetworkManager.Cal
             // use our timestamp instead of the remote
             handleData(true, new NfcComm(data.isCard(), data.isInitial(), data.getData()));
         });
+    }
+
+    private boolean getSwapT1() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+        return prefs.getBoolean("swap_tb1", false);
     }
 
     /**

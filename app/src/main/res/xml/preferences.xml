@@ -21,6 +21,12 @@
             android:maxLength="5"
             android:defaultValue="750"
             />
+        <CheckBoxPreference
+            android:title="@string/settings_swap_tb1"
+            android:key="swap_tb1"
+
+            android:summary="@string/settings_swap_tb1_summary"
+            />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/settings_network"
