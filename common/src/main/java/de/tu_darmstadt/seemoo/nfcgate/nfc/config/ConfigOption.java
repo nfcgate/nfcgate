@@ -6,24 +6,30 @@ import de.tu_darmstadt.seemoo.nfcgate.util.Utils;
  * Represents a single NCI configuration option with an option code, its length and data
  */
 public class ConfigOption {
-    private final OptionType mID;
+    private final OptionType mType;
     private final byte[] mData;
 
-    ConfigOption(OptionType ID, byte[] data) {
-        mID = ID;
+    public ConfigOption(OptionType type, byte[] data) {
+        mType = type;
         mData = data;
     }
 
-    ConfigOption(OptionType ID, byte data) {
-        this(ID, new byte[] { data });
+    public ConfigOption(OptionType type, byte data) {
+        this(type, new byte[] { data });
     }
 
+    public OptionType getType() {
+        return mType;
+    }
+    public byte[] getData() {
+        return mData;
+    }
     public int len() {
         return mData.length;
     }
 
     public void push(byte[] data, int offset) {
-        data[offset] = mID.getID();
+        data[offset] = mType.getID();
         data[offset + 1] = (byte)mData.length;
 
         System.arraycopy(mData, 0, data, offset + 2, mData.length);
@@ -31,20 +37,12 @@ public class ConfigOption {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder();
+        String comment = ConfigCommenter.comment(this);
+        String commentLine = comment != null && !comment.isBlank() ? "\n  " + comment : "";
 
-        result.append("Type: ");
-        result.append(mID.toString());
+        if (mData.length == 1)
+            return String.format("Type: %s, Value: %s%s", mType, Utils.bytesToHex(mData), commentLine);
 
-        if (mData.length > 1) {
-            result.append(" (");
-            result.append(mData.length);
-            result.append(")");
-        }
-
-        result.append(", Value: 0x");
-        result.append(Utils.bytesToHex(mData));
-
-        return result.toString();
+        return String.format("Type: %s (%d), Value: %s%s", mType, mData.length, Utils.bytesToHex(mData), commentLine);
     }
 }
