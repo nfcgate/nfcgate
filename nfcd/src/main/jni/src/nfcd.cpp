@@ -238,7 +238,7 @@ HookResult HookGlobals::installDynamicHooks() {
     LOG_ASSERT_S(offset != 0, return HookResult::ERROR_RETRY, "Finding p_conn_cback offset failed");
 
     auto **p_nfa_conn_cback = (def_NFA_CONN_CBACK **) (nfa_dm_cb->address<uint8_t>() + offset);
-    LOG_ASSERT_S(*p_nfa_conn_cback, return HookResult::ERROR_RETRY, "NFA_CB is null");
+    LOG_ASSERT_S(*p_nfa_conn_cback, return HookResult::ERROR_RETRY, "p_nfa_conn_cback is null");
 
     // ensure to hook only once
     if (*p_nfa_conn_cback != &hook_nfaConnectionCallback) {
@@ -300,7 +300,7 @@ std::optional<LoadedLibrary> HookGlobals::findLibNFC() const {
 }
 
 bool HookGlobals::checkNFACBOffset(uint32_t offset) const {
-    LOGD("checkOffset: trying offset 0x%x", offset);
+    LOGD("checkNFACBOffset: trying offset 0x%x", offset);
 
     // try to get nfa_dm_cb[offset]
     auto **p_nfa_conn_cback = (def_NFA_CONN_CBACK**)(nfa_dm_cb->address<uint8_t>() + offset);
@@ -312,7 +312,7 @@ bool HookGlobals::checkNFACBOffset(uint32_t offset) const {
     LOG_ASSERT_S(lookup, return false, "p_conn_cback range lookup failed, offset likely invalid");
 
     // Criteria 2: check that the candidate p_nfa_conn_cback is in an executable section
-    LOGD("checkOffset: candidate p_conn_cback %p with permissions %d in object file %s",
+    LOGD("checkNFACBOffset: candidate p_conn_cback %p with permissions %d in object file %s",
          *p_nfa_conn_cback, lookup.range->perms, lookup.library->label.c_str());
     LOG_ASSERT_S((lookup.range->perms & 1) == 1, return false,
                  "p_conn_cback permissions not execute, offset likely invalid");
