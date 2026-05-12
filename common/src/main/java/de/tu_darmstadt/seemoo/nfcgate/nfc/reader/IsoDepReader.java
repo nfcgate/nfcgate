@@ -22,7 +22,7 @@ public class IsoDepReader extends NFCTagReader {
     private static final int TC_PRESENT = 0x40;   // TC(1) present (bit 7)
 
     private final NFCTagReader mUnderlying;
-    private byte[] mAtsRes = null, mAttribRes = null;
+    private byte[] mAtsRes = null;
     private boolean mSwapTB1 = false;
 
     /**
@@ -44,10 +44,8 @@ public class IsoDepReader extends NFCTagReader {
             mUnderlying = new NfcAReader(tag);
             mAtsRes = resBytes;
         }
-        else {
+        else
             mUnderlying = new NfcBReader(tag);
-            mAttribRes = resBytes;
-        }
     }
 
     public void setSwapTB1(boolean value) {
@@ -64,10 +62,8 @@ public class IsoDepReader extends NFCTagReader {
             builder.addAll(parseAtsRes());
             builder.add(OptionType.LI_A_HIST_BY, readerIsoDep.getHistoricalBytes());
         }
-        else {
-            builder.addAll(parseAttribRes());
+        else
             builder.add(OptionType.LI_B_H_INFO_RSP, readerIsoDep.getHiLayerResponse());
-        }
 
         return builder;
     }
@@ -118,31 +114,5 @@ public class IsoDepReader extends NFCTagReader {
         }
 
         return result;
-    }
-
-    private static byte findMaxNCIBitRate(byte ta) {
-        // extract positive integer value from TA(1)
-        int tai = ta & 0xFF;
-        // bits 7-4: Card to reader divisor (DS)
-        // bits 3-0: Reader to card divisor (DR)
-        int ds = (tai >> 4) & 0x0F;  // Card to reader
-        int dr = tai & 0x0F;         // Reader to card
-
-        // Check if 212 kbps (0x01) is supported
-        byte result = 0x00;
-        if ((ds & 0x01) != 0 && (dr & 0x01) != 0)
-            result = 0x01;
-        // Check if 424 kbps (0x02) is supported
-        if ((ds & 0x03) == 0x03 && (dr & 0x03) == 0x03)
-            result = 0x02;
-        // Check if 848 kbps (0x03) is supported
-        if ((ds & 0x07) == 0x07 && (dr & 0x07) == 0x07)
-            result = 0x03;
-
-        return result;
-    }
-
-    List<ConfigOption> parseAttribRes() {
-        return List.of();
     }
 }

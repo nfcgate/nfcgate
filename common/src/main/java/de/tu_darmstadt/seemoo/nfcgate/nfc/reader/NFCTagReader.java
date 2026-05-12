@@ -116,4 +116,28 @@ public abstract class NFCTagReader {
 
         throw new UnsupportedOperationException("Unknown Tag type");
     }
+
+    protected static byte findMaxNCIBitRate(byte bc) {
+        // extract positive integer value
+        int bci = bc & 0xFF;
+        // bits 7-4: Card to reader divisor (DS)
+        // bits 3-0: Reader to card divisor (DR)
+        int ds = (bci >> 4) & 0x0F;  // Card to reader
+        int dr = bci & 0x0F;         // Reader to card
+
+        // default to 106 kbps
+        byte result = 0x00;
+
+        // check if 212 kbps (0x01) is supported
+        if ((ds & 0x01) != 0 && (dr & 0x01) != 0)
+            result = 0x01;
+        // check if 424 kbps (0x02) is supported
+        if ((ds & 0x03) == 0x03 && (dr & 0x03) == 0x03)
+            result = 0x02;
+        // check if 848 kbps (0x03) is supported
+        if ((ds & 0x07) == 0x07 && (dr & 0x07) == 0x07)
+            result = 0x03;
+
+        return result;
+    }
 }

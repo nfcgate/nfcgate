@@ -23,11 +23,11 @@ public enum OptionType {
         LB_NFCID0(0x39),
         // Bytes 6-9 of SENSB
         LB_APPLICATION_DATA(0x3A),
-        // Start-Up Frame Guard Time (Protocol byte 1)
+        // Start-Up Frame Guard Time
         LB_SFGI(0x3B),
         // FWI / ADC / F0 (Protocol byte 3)
         LB_FWI_ADC_FO(0x3C),
-        //
+        // Configures the max supported bitrate
         LB_BIT_RATE(0x3E),
 
     // LISTEN F
@@ -47,7 +47,7 @@ public enum OptionType {
         LI_A_HIST_BY(0x59),
         // Higher layer response field
         LI_B_H_INFO_RSP(0x5A),
-        // Configures (TA1) divisor bits up to specified bitrate
+        // Configures the max supported bitrate
         LI_A_BIT_RATE(0x5B),
         // [2.0]: Protocol parameters, NAD/CID support
         LI_A_RATS_TC1(0x5C)
