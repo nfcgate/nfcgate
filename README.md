@@ -1,6 +1,8 @@
 NFCGate
 =======
 
+**⚠️NFCGate is currently being falsely detected as "NGate" malware. Please see [this issue](https://github.com/nfcgate/nfcgate/issues/176) for up-to-date information.⚠️**
+
 NFCGate is an Android application meant to capture, analyze, or modify NFC traffic. It can be used
 as a researching tool to reverse engineer protocols or assess the security of protocols against
 traffic modifications.
