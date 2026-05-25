@@ -72,7 +72,7 @@ public class IsoDepReader extends NFCTagReader {
     List<ConfigOption> parseAtsRes() {
         // empty ATS response
         if (mAtsRes == null || mAtsRes.length == 0)
-            return null;
+            return List.of();
 
         // prepare result list
         List<ConfigOption> result = new ArrayList<>();
