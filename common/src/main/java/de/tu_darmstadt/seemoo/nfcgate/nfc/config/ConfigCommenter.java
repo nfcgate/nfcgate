@@ -30,12 +30,12 @@ public final class ConfigCommenter {
 
     private static String formatBitFrameSDD(byte[] value) {
         assertValueSize(value, 1);
-        return String.format("[%s] (Bits 5-0)", byteToBits(value[0], 0, 5));
+        return String.format("[%s] (Bits 4-0)", byteToBits(value[0], 0, 5));
     }
 
     private static String formatPlatformConfig(byte[] value) {
         assertValueSize(value, 1);
-        return String.format("[%s] (Bits 4-0)", byteToBits(value[0], 0, 4));
+        return String.format("[%s] (Bits 3-0)", byteToBits(value[0], 0, 4));
     }
 
     private static String formatSelInfo(byte[] value) {
