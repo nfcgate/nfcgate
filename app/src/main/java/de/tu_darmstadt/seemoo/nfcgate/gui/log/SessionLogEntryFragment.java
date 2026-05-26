@@ -145,7 +145,7 @@ public class SessionLogEntryFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (android.R.id.home == item.getItemId()) {
-            getActivity().onBackPressed();
+            requireActivity().getOnBackPressedDispatcher().onBackPressed();
             return true;
         } else if (R.id.action_yes == item.getItemId()) {
             mCallback.onLogSelected(mSessionId);
@@ -155,7 +155,7 @@ public class SessionLogEntryFragment extends Fragment {
             return true;
         } else if (R.id.action_delete == item.getItemId()) {
             mLogAction.delete(mSessionLog);
-            getActivity().onBackPressed();
+            requireActivity().getOnBackPressedDispatcher().onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);

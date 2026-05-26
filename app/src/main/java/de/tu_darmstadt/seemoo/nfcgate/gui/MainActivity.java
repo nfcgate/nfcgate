@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import com.google.android.material.navigation.NavigationView;
 import androidx.fragment.app.Fragment;
@@ -20,6 +22,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import de.tu_darmstadt.seemoo.nfcgate.R;
 import de.tu_darmstadt.seemoo.nfcgate.db.SessionLog;
@@ -64,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.empty, R.string.empty);
         mToggle.setToolbarNavigationClickListener(v -> {
             // when drawer icon is NOT visible (due to fragment on backstack), issue back action
-            onBackPressed();
+            getOnBackPressedDispatcher().onBackPressed();
         });
         mDrawerLayout.addDrawerListener(mToggle);
 
@@ -82,6 +85,19 @@ public class MainActivity extends AppCompatActivity {
                 actionBar.setDisplayHomeAsUpEnabled(false);
                 mToggle.setDrawerIndicatorEnabled(true);
                 mToggle.syncState();
+            }
+        });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // reset the subtitle because a fragment might have changed it
+                Objects.requireNonNull(getSupportActionBar()).setSubtitle(null);
+
+                // execute the original back action
+                setEnabled(false);
+                getOnBackPressedDispatcher().onBackPressed();
+                setEnabled(true);
             }
         });
 
@@ -227,14 +243,6 @@ public class MainActivity extends AppCompatActivity {
             inserter.log(new NfcComm(b));
 
         Toast.makeText(this, getString(R.string.pcap_log, capture.size()), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onBackPressed() {
-        // reset the subtitle because a fragment might have changed it
-        getSupportActionBar().setSubtitle(null);
-
-        super.onBackPressed();
     }
 
     /**
