@@ -19,9 +19,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace 'de.tu_darmstadt.seemoo.nfcgate'
 
-    compileSdk {
-        version = release(35)
-    }
+    compileSdk = 36
     ndkVersion '28.2.13676358'
 
     compileOptions {
@@ -32,7 +30,7 @@ android {
     defaultConfig {
         applicationId 'de.tu_darmstadt.seemoo.nfcgate'
         minSdkVersion 21
-        targetSdkVersion 35
+        targetSdkVersion 36
         multiDexEnabled true
         versionCode 16
         versionName '2.6.0'
