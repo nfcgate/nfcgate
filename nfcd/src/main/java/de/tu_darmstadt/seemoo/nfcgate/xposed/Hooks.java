@@ -12,6 +12,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
@@ -33,6 +34,13 @@ public class Hooks implements IXposedHookLoadPackage {
     private interface NfcServiceConstructorHook {
         void afterHookedMethod(XC_MethodHook.MethodHookParam param);
     }
+
+    private final static String[] NATIVE_NFC_MANAGER_CLASS_NAMES = new String[] {
+            "com.android.nfc.dhimpl.NativeNfcManager",
+            "com.android.nfc.dhimpl.NxpNativeNfcManager",
+            "com.android.nfc.dhimpl.StNativeNfcManager",
+            "com.android.nfc.dhimpl.TmsNativeNfcManager"
+    };
 
     private Object mReceiver;
     private Object mNfcServiceInstance;
@@ -123,7 +131,7 @@ public class Hooks implements IXposedHookLoadPackage {
 
             // support extended length apdus
             // see http://stackoverflow.com/questions/25913480/what-are-the-requirements-for-support-of-extended-length-apdus-and-which-smartph
-            findAndHookMethod("com.android.nfc.dhimpl.NativeNfcManager", lpparam.classLoader,
+            findAndHookMethodForAllClasses(List.of(NATIVE_NFC_MANAGER_CLASS_NAMES), lpparam.classLoader,
                     "getMaxTransceiveLength",
                     int.class, new XC_MethodHook() {
                 @Override
@@ -409,6 +417,28 @@ public class Hooks implements IXposedHookLoadPackage {
                     Log.e("HOOKNFC", "NfcService constructor called without Application context");
             }
         });
+    }
+
+    /// Finds and hooks a method in all classes that exist, returns a list of unhooks for all successful hooks
+    private List<XC_MethodHook.Unhook> findAndHookMethodForAllClasses(List<String> classNames, ClassLoader classLoader,
+            String methodName, Object... parameterTypesAndCallback) {
+        List<XC_MethodHook.Unhook> unhooks = new ArrayList<>();
+
+        // try to hook the method in all classNames that exist, collect unhooks for all successful hooks
+        for (String className : classNames) {
+            Class<?> clazz = XposedHelpers.findClassIfExists(className, classLoader);
+            if (clazz == null)
+                continue;
+
+            Log.i("HOOKNFC", "Hooking method " + methodName + " in class " + className);
+            unhooks.add(XposedHelpers.findAndHookMethod(clazz, methodName, parameterTypesAndCallback));
+        }
+
+        // if no matching class was found, log an error
+        if (unhooks.isEmpty())
+            Log.e("HOOKNFC", "Failed to find any classes for method " + methodName);
+
+        return unhooks;
     }
 
     /// Finds the most specific NFCService class that exists
