@@ -115,6 +115,7 @@ public class DaemonManager {
 
     protected class LocalSocketThread extends Thread implements AutoCloseable {
         private final LocalServerSocket mServer;
+        private boolean mIsClosing = false;
 
         public LocalSocketThread() throws IOException {
             mServer = new LocalServerSocket(InjectionBroadcastWrapper.CAPTURE_SOCKET_NAME);
@@ -124,6 +125,7 @@ public class DaemonManager {
 
         @Override
         public void close() throws IOException {
+            mIsClosing = true;
             mServer.close();
         }
 
@@ -140,7 +142,10 @@ public class DaemonManager {
                     Log.e("NFC", "Error handling capture data", e);
                 }
             } catch (IOException e) {
-                Log.e("NFC", "Error in capture socket", e);
+                if (mIsClosing)
+                    Log.i("NFC", "Capture socket closed while waiting (timeout likely)");
+                else
+                    Log.e("NFC", "Error in capture socket", e);
             }
         }
     }
